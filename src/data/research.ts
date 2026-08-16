@@ -132,15 +132,26 @@ export const researchItems: ResearchItem[] = [
         sourceLabel: "Public working paper · Figure 2"
       },
       {
+        id: "representative-protected-path",
+        title: "A Protected Portfolio Can Still Lag for Most of a 20-Year Window",
+        description:
+          "The June 2005–May 2025 illustrative path combines materially lower maximum drawdown with a 195-month benchmark-relative underwater spell and lower terminal wealth than equity.",
+        imageUrl:
+          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_3_Representative_Protected_But_Lagging_Path_v1.0.png",
+        alt:
+          "Indexed wealth for equity and the 12-month defensive trend rule from June 2005 through May 2025, with shading for months below the prior benchmark-relative high-water mark.",
+        sourceLabel: "Public working paper · Figure 3"
+      },
+      {
         id: "persistent-equity",
         title: "Persistent Equity Exposure Changes Relative Depth More Than Duration",
         description:
           "Across fixed tactical shares, retaining more persistent equity exposure materially reduces benchmark-relative drawdown depth, while the median longest underwater duration changes much less.",
         imageUrl:
-          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_3_Persistent_Equity_Depth_vs_Duration_v1.0.png",
+          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_4_Persistent_Equity_Depth_vs_Duration_v1.0.png",
         alt:
           "Twenty-year benchmark-relative drawdown depth across fixed tactical shares with labels for median longest underwater duration.",
-        sourceLabel: "Public working paper · Figure 3"
+        sourceLabel: "Public working paper · Figure 4"
       }
     ],
     links: {

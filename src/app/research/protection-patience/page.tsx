@@ -51,6 +51,7 @@ export default function ProtectionPatiencePage() {
           <a href="#question">Research Question</a>
           <a href="#findings">Key Findings</a>
           <a href="#evidence">Selected Evidence</a>
+          <a href="#timing">Timing Asymmetry</a>
           <a href="#design">Evaluation Design</a>
           <a href="#portfolio">Portfolio Design</a>
           <a href="#robustness">Robustness</a>
@@ -122,9 +123,10 @@ export default function ProtectionPatiencePage() {
                 <div className="selected-exhibits-head">
                   <div className="section-title">Selected Exhibits</div>
                   <p>
-                    Three working-paper figures capture the core protection,
-                    path-burden, and persistent-equity results. Click any
-                    figure to inspect the full-resolution public image.
+                    Four selected working-paper figures capture the core
+                    protection, path-burden, representative-path, and
+                    persistent-equity results. Click any figure to inspect the
+                    full-resolution public image.
                   </p>
                 </div>
 
@@ -135,6 +137,43 @@ export default function ProtectionPatiencePage() {
                 </div>
               </div>
             ) : null}
+          </section>
+
+          <section className="prose-section" id="timing">
+            <h2>Timing Asymmetry</h2>
+            <p className="lede">
+              Protection can arrive in concentrated stress episodes while
+              benchmark-relative opportunity cost accumulates across much
+              longer intervals.
+            </p>
+            <div className="tradeoff-grid">
+              <div className="tradeoff-card">
+                <div className="kicker">Illustrative 20-year path</div>
+                <div className="tradeoff-value">27.1 pp</div>
+                <p>
+                  June 2005–May 2025: the trend rule reduces maximum drawdown
+                  by 27.1 percentage points, yet ends at 70.4% of equity&apos;s
+                  terminal wealth and spends 195 months below a prior
+                  benchmark-relative high-water mark.
+                </p>
+              </div>
+              <div className="tradeoff-card">
+                <div className="kicker">Concentrated defensive gains</div>
+                <div className="tradeoff-value">36.2%</div>
+                <p>
+                  The 20 largest qualifying defensive-outperformance months
+                  account for 36.2% of total positive monthly active log
+                  returns after the signal becomes available; the fixed 50/50
+                  allocation accounts for 19.6%.
+                </p>
+              </div>
+            </div>
+            <p className="body-copy">
+              The trend rule records 112 qualifying months under the paper&apos;s
+              fixed criterion, with a median gap of two months. These counts
+              are descriptive because adjacent crisis months can belong to the
+              same market episode.
+            </p>
           </section>
 
           <section className="prose-section" id="design">
@@ -271,7 +310,7 @@ export default function ProtectionPatiencePage() {
             <p>
               The public replication repository reproduces the long-history
               analysis, fixed blends, trading-cost sensitivity, independent
-              reconstruction, and all four working-paper figures. Raw
+              reconstruction, and all five working-paper figures. Raw
               third-party source files are not redistributed.
             </p>
 
@@ -293,10 +332,11 @@ export default function ProtectionPatiencePage() {
               </div>
               <div className="artifact">
                 <div className="type">Replication state</div>
-                <h3>Version 1.0.0</h3>
+                <h3>Version 1.1.0</h3>
                 <p>
-                  Public citation metadata records the replication-material
-                  release as version 1.0.0, released in August 2026.
+                  Public citation metadata and the current repository state
+                  identify the replication materials as version 1.1.0, updated
+                  in August 2026.
                 </p>
               </div>
             </div>
