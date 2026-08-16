@@ -36,6 +36,7 @@ export type ResearchItem = {
   researchQuestion: string;
   findings: string[];
   tags: string[];
+  featured?: boolean;
   selectedEvidence?: EvidenceFigure[];
   links: PublicLinks;
 };

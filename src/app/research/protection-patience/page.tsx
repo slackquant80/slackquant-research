@@ -97,7 +97,7 @@ export default function ProtectionPatiencePage() {
           <section className="prose-section" id="evidence">
             <h2>Selected Evidence</h2>
             <p>
-              Four statistics summarize the central 20-year result in the
+              Four statistics summarize the central 20-year results in the
               July 1927–June 2026 Kenneth R. French Data Library sample.
             </p>
 
@@ -288,7 +288,7 @@ export default function ProtectionPatiencePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Open GitHub ↗
+                  Open GitHub &#8599;
                 </a>
               </div>
               <div className="artifact">

@@ -29,24 +29,24 @@ export default function AdaaPage() {
           <div className="paper-meta">
             <span>{item.authorLine}</span>
             {item.affiliation ? <span>{item.affiliation}</span> : null}
-            <span>
-              {item.status} {item.publicVersion}
-            </span>
+            <span>{item.status}</span>
+            {item.ssrnId ? <span>SSRN {item.ssrnId}</span> : null}
             <span>{item.dateLabel}</span>
           </div>
           <div className="actions">
-            <ArtifactLink href={item.links.paper} primary external>
-              Open Paper PDF
+            <ArtifactLink href={item.links.ssrn} primary external>
+              Open SSRN Record
             </ArtifactLink>
-            <ArtifactLink href={item.links.ssrn} external>
-              SSRN Record
-            </ArtifactLink>
-            <ArtifactLink href={item.links.github} external>
-              GitHub
-            </ArtifactLink>
-            <ArtifactLink href={item.links.researchDashboard} external>
-              Research Dashboard
-            </ArtifactLink>
+            {item.links.github ? (
+              <ArtifactLink href={item.links.github} external>
+                Replication GitHub
+              </ArtifactLink>
+            ) : null}
+            {item.links.researchDashboard ? (
+              <ArtifactLink href={item.links.researchDashboard} external>
+                Research Dashboard
+              </ArtifactLink>
+            ) : null}
           </div>
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function AdaaPage() {
           <a href="#evidence">Selected Evidence</a>
           <a href="#method">Methodology</a>
           <a href="#repro">Reproducibility</a>
-          <a href="#dashboards">Research & Implementation</a>
+          <a href="#dashboards">Research &amp; Implementation</a>
           <a href="#citation">Citation</a>
         </aside>
 
@@ -102,7 +102,7 @@ export default function AdaaPage() {
             <h2>Selected Evidence</h2>
             <p>
               Selected summary statistics from the historical simulation
-              reported in Public Working Paper {item.publicVersion}.
+              reported in Public Working Paper {item.publicVersion}. SSRN {item.ssrnId}.
             </p>
             <div className="metrics">
               {metrics.map(([value, label]) => (
@@ -113,7 +113,7 @@ export default function AdaaPage() {
               ))}
             </div>
             <div className="evidence-note">
-              These figures belong to the cited public research version. Live
+              These statistics and figures correspond to the cited public research version. Live
               implementation views are separate and may change over time.
             </div>
 
@@ -141,7 +141,7 @@ export default function AdaaPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Explore the full ADAA Research Dashboard ↗
+                    Explore the full ADAA Research Dashboard &#8599;
                   </a>
                 ) : null}
               </div>
@@ -191,7 +191,13 @@ export default function AdaaPage() {
                   <div className="type">Public code</div>
                   <h3>GitHub Repository</h3>
                   <p>Research code and public reproducibility material.</p>
-                  <a href={item.links.github} target="_blank" rel="noopener noreferrer">Open GitHub ↗</a>
+                  <a
+                    href={item.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open GitHub &#8599;
+                  </a>
                 </div>
               ) : null}
 
@@ -200,7 +206,13 @@ export default function AdaaPage() {
                   <div className="type">Replication</div>
                   <h3>Replication Package</h3>
                   <p>Current public replication release: v1.1.2.</p>
-                  <a href={item.links.replication} target="_blank" rel="noopener noreferrer">Open release ↗</a>
+                  <a
+                    href={item.links.replication}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open release &#8599;
+                  </a>
                 </div>
               ) : null}
 
@@ -209,7 +221,13 @@ export default function AdaaPage() {
                   <div className="type">Archival record</div>
                   <h3>Release / DOI</h3>
                   <p>Archived public replication release with persistent DOI.</p>
-                  <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">Open DOI ↗</a>
+                  <a
+                    href={item.links.archivalRelease}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open DOI &#8599;
+                  </a>
                 </div>
               ) : null}
             </div>
@@ -218,7 +236,7 @@ export default function AdaaPage() {
           <section className="prose-section" id="dashboards">
             <h2>Research and Implementation</h2>
             <p>
-              ADAA can be viewed through two interfaces with different jobs:
+              ADAA can be viewed through two interfaces with distinct purposes:
               one documents versioned research evidence, while the other
               supports live implementation and monitoring.
             </p>
@@ -273,7 +291,7 @@ export default function AdaaPage() {
             <h2>Citation</h2>
             <div className="citation-box">
               Lee, S. (2026). {item.title}: {item.subtitle}. Public Working
-              Paper {item.publicVersion}.
+              Paper {item.publicVersion}. SSRN {item.ssrnId}.
             </div>
           </section>
         </div>

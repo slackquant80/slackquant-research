@@ -3,7 +3,8 @@ import { researchItems } from "@/data/research";
 import { site } from "@/data/site";
 
 export default function HomePage() {
-  const featured = researchItems[0];
+  const featured =
+    researchItems.find((item) => item.featured) ?? researchItems[0];
 
   return (
     <main>
@@ -12,9 +13,8 @@ export default function HomePage() {
           <div className="eyebrow">Research platform</div>
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
-            Investment research and academic work across systematic investing,
-            asset allocation, forecasting, financial data science, and AI/ML —
-            with direct paths to papers, evidence, code, and research tools.
+            Investment research and academic research across systematic investing,
+            asset allocation, forecasting, financial data science, and AI/ML &#8212; with direct paths to papers, evidence, code, and research tools.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -32,8 +32,7 @@ export default function HomePage() {
           <div className="section-head">
             <div className="section-title">Featured Research</div>
             <Link className="section-link" href={`/research/${featured.slug}/`}>
-              View project →
-            </Link>
+              View project &#8594;            </Link>
           </div>
 
           <article className="feature-card">
@@ -84,8 +83,7 @@ export default function HomePage() {
                 implementation.
               </p>
               <Link className="section-link" href="/research/">
-                Explore Investment Research →
-              </Link>
+                Explore Investment Research &#8594;              </Link>
             </article>
             <article className="stream">
               <div className="kicker">02</div>
@@ -95,8 +93,7 @@ export default function HomePage() {
                 data science, AI/ML, and empirical methodology.
               </p>
               <Link className="section-link" href="/research/">
-                Explore Academic Research →
-              </Link>
+                Explore Academic Research &#8594;              </Link>
             </article>
           </div>
         </div>
@@ -105,7 +102,7 @@ export default function HomePage() {
       <section className="section">
         <div className="shell">
           <div className="section-head">
-            <div className="section-title">Latest Public Release</div>
+            <div className="section-title">Latest Public Research</div>
           </div>
           <div className="release-list">
             {[...researchItems].reverse().map((item) => (
@@ -151,8 +148,7 @@ export default function HomePage() {
               <strong>{site.researcher.displayName}</strong>
             </div>
             <Link className="section-link about-link" href="/about/">
-              About SlackQuant Research →
-            </Link>
+              About SlackQuant Research &#8594;            </Link>
           </div>
         </div>
       </section>

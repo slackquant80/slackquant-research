@@ -41,7 +41,7 @@ export default function AboutPage() {
               <div className="person-name">
                 {site.researcher.name} <span>({site.researcher.nameKo})</span>
               </div>
-              <div className="person-role">Research by · SlackQuant Research</div>
+              <div className="person-role">SlackQuant Research</div>
             </div>
           </div>
         </div>

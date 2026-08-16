@@ -14,14 +14,15 @@ export const researchItems: ResearchItem[] = [
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
+    featured: true,
     shortSummary:
-      "A practical architecture for dynamic asset allocation when strategy choice is uncertain. The research asks whether diversification should extend beyond assets to the decision rules that allocate them.",
+      "The framework evaluates whether combining distinct allocation rules can reduce dependence on any single strategy when strategy choice itself is uncertain.",
     researchQuestion:
       "Can a dynamic asset-allocation portfolio reduce dependence on choosing the single best rule in advance by diversifying across genuinely different decision processes?",
     findings: [
       "Decision diversity is not guaranteed by strategy count. Several strategies can share the same underlying timing or momentum logic even when their names and holdings differ.",
       "The historical ADAA sleeves disagree in economically meaningful ways, but unevenly. The analysis makes redundancy visible instead of assuming diversification from labels.",
-      "The practitioner weights sit inside a broad near-optimal region rather than at a unique optimum. The evidence favors robustness to weight uncertainty over precision unsupported by the sample.",
+      "The practitioner weights sit inside a broad near-optimal region rather than at a unique optimum. The evidence favors robustness to weight uncertainty over precise weight estimates that are not supported by the sample.",
       "ADAA is not a return-maximizing claim. The case for ADAA rests on decision diversification, implementation, and risk-return trade-offs."
     ],
     tags: ["Asset Allocation", "Systematic Investing", "Decision Diversification"],
@@ -35,7 +36,7 @@ export const researchItems: ResearchItem[] = [
           "https://slackquant80.github.io/adaa-slackquant/assets/img/Figure_1_Return_Correlation_vs_Decision_Timing_v0.36.1.png",
         alt:
           "ADAA figure comparing return correlation with disagreement in decision timing across the current strategy sleeves.",
-        sourceLabel: "Public ADAA research figure · Figure 1"
+        sourceLabel: "Public ADAA research · Figure 1"
       },
       {
         id: "decision-fingerprints",
@@ -46,7 +47,7 @@ export const researchItems: ResearchItem[] = [
           "https://slackquant80.github.io/adaa-slackquant/assets/img/Figure_2_What_When_HowMuch_Decision_Fingerprints_v0.36.1.png",
         alt:
           "ADAA decision-fingerprint figure comparing what the sleeves hold, when they change, and how much risk they take.",
-        sourceLabel: "Public ADAA research figure · Figure 2"
+        sourceLabel: "Public ADAA research · Figure 2"
       },
       {
         id: "robustness-plateau",
@@ -57,7 +58,7 @@ export const researchItems: ResearchItem[] = [
           "https://slackquant80.github.io/adaa-slackquant/assets/img/Figure_5_Broad_Plateau_Unstable_Optimum_v0.36.1.png",
         alt:
           "ADAA robustness figure showing a broad high-performing weight region and instability of the exact ex-post optimum.",
-        sourceLabel: "Public ADAA research figure · Figure 5"
+        sourceLabel: "Public ADAA research · Figure 5"
       }
     ],
     links: {
@@ -92,7 +93,7 @@ export const researchItems: ResearchItem[] = [
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
     shortSummary:
-      "A defensive strategy can reduce its own drawdown and still trail equity for years. The paper evaluates realized downside protection and the benchmark-relative path separately over long rolling holding periods.",
+      "A defensive strategy can reduce its own drawdown and still trail equity for years. The paper separates realized downside protection from the benchmark-relative path over long rolling holding periods.",
     researchQuestion:
       "When a defensive strategy actually reduces maximum drawdown, what benchmark-relative path accompanies that protection, and how does persistent equity exposure change that path?",
     findings: [
@@ -117,7 +118,7 @@ export const researchItems: ResearchItem[] = [
           "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_1_Protection_and_Benchmark_Outcomes_v1.0.png",
         alt:
           "Four-state decomposition of rolling holding periods showing protected and outperforming, protected and underperforming, and unprotected outcomes across 5-, 10-, 15-, and 20-year horizons.",
-        sourceLabel: "Public working-paper figure · Figure 1"
+        sourceLabel: "Public working paper · Figure 1"
       },
       {
         id: "protected-path-burden",
@@ -128,7 +129,7 @@ export const researchItems: ResearchItem[] = [
           "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_2_Protected_Path_Burden_v1.0.png",
         alt:
           "Benchmark-relative drawdown depth by investment horizon with labels for the median longest underwater duration among protected holding periods.",
-        sourceLabel: "Public working-paper figure · Figure 2"
+        sourceLabel: "Public working paper · Figure 2"
       },
       {
         id: "persistent-equity",
@@ -139,7 +140,7 @@ export const researchItems: ResearchItem[] = [
           "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_3_Persistent_Equity_Depth_vs_Duration_v1.0.png",
         alt:
           "Twenty-year benchmark-relative drawdown depth across fixed tactical shares with labels for median longest underwater duration.",
-        sourceLabel: "Public working-paper figure · Figure 3"
+        sourceLabel: "Public working paper · Figure 3"
       }
     ],
     links: {
