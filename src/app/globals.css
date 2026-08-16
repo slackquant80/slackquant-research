@@ -67,6 +67,12 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .footer-meta{text-align:right}
 
 /* Research index */
+.research-stream-group{padding:0 0 62px;margin-bottom:62px;border-bottom:1px solid var(--line)}
+.research-stream-group:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
+.research-stream-head{max-width:760px;margin-bottom:28px}
+.research-stream-head .kicker{margin-bottom:10px}
+.research-stream-head h2{font-family:Georgia,"Times New Roman",serif;font-size:38px;font-weight:500;line-height:1.15;letter-spacing:-.02em;margin:0 0 12px}
+.research-stream-head p{margin:0;color:var(--muted);font-size:15px;line-height:1.65}
 .research-list{display:grid;gap:18px}
 .research-card{background:var(--paper);border:1px solid var(--line);padding:38px}
 .research-card h2{font-family:Georgia,"Times New Roman",serif;font-size:34px;font-weight:500;line-height:1.15;margin:0 0 8px}
@@ -165,6 +171,8 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   .researcher-line{display:block}
   .researcher-prefix{display:block;margin-bottom:5px}
   .research-card{padding:28px}
+  .research-stream-group{padding-bottom:46px;margin-bottom:46px}
+  .research-stream-head h2{font-size:32px}
 }
 
 

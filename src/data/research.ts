@@ -160,7 +160,52 @@ export const researchItems: ResearchItem[] = [
       github:
         "https://github.com/slackquant80/protection-patience-replication"
     }
+  },
+  {
+    slug: "beyond-average-accuracy",
+    title: "Beyond Average Accuracy",
+    subtitle:
+      "Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting",
+    stream: "academic",
+    streamLabel: "Academic Research",
+    status: "Academic Working Paper",
+    ssrnId: "7164118",
+    dateLabel: "August 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation:
+      "AI Computing Program, Graduate School of Computing, Yonsei University",
+    shortSummary:
+      "Numerical forecast gains can coexist with weak statistical separation and strong dependence on a small number of influential months. The paper evaluates average accuracy, inference, and temporal durability in one common FRED-MD forecasting design.",
+    researchQuestion:
+      "When machine-learning forecasts beat a simple benchmark on average, is that advantage statistically distinguishable and persistent through time, or concentrated in a small number of difficult months?",
+    findings: [
+      "XGBoost records the lowest average relative RMSE, 0.821, across sixteen target-horizon combinations, with Random Forest, Boruta RF, and the forecast combinations also delivering sizable numerical gains.",
+      "After Holm adjustment, none of the 176 squared-error Diebold-Mariano comparisons rejects equal predictive accuracy in favor of an alternative. Five absolute-error comparisons reject, all at the one-month industrial-production horizon.",
+      "A 90% Model Confidence Set retains all twelve approaches in 25 of 32 target-horizon-loss panels and never retains fewer than ten, indicating broad model-selection uncertainty in the available sample.",
+      "The leading set changes frequently through time, and loss differences are highly concentrated. In the squared-loss diagnostic, the twelve largest favorable monthly loss reductions account for 85.6% of gross improvement on average, while the twelve largest unfavorable increases account for 89.1% of gross deterioration."
+    ],
+    tags: [
+      "Macroeconomic Forecasting",
+      "Machine Learning",
+      "Forecast Evaluation",
+      "FRED-MD"
+    ],
+    links: {
+      ssrn:
+        "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118",
+      github:
+        "https://github.com/slackquant80/ml-econ-forecasting-replication",
+      replication:
+        "https://github.com/slackquant80/ml-econ-forecasting-replication/releases/tag/v1.0.0",
+      archivalRelease:
+        "https://doi.org/10.5281/zenodo.21500978",
+      doi:
+        "https://doi.org/10.2139/ssrn.7164118",
+      researchDashboard:
+        "https://slackquant.shinyapps.io/ml_econ_forecasting/"
+    }
   }
+
 ];
 
 export function getResearch(slug: string) {
