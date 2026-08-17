@@ -194,7 +194,7 @@ export const researchItems: ResearchItem[] = [
         id: "average-relative-rmse",
         title: "Average Accuracy Shows Clear Numerical Leaders",
         description:
-          "Average relative RMSE varies materially across the twelve approaches. XGBoost is lowest at 0.821, but a numerical ranking alone does not establish statistical separation.",
+          "Average relative RMSE varies materially across the twelve approaches. The dashed line marks equality with RW. XGBoost is lowest at 0.821, but a numerical ranking alone does not establish statistical separation.",
         imageUrl: "/assets/beyond/Figure_1_Average_Relative_RMSE_v1.0.7.svg",
         alt:
           "Horizontal bar chart of mean RMSE relative to the RW persistence benchmark across twelve forecasting approaches, with a dashed equality line at one.",
@@ -218,7 +218,7 @@ export const researchItems: ResearchItem[] = [
         imageUrl: "/assets/beyond/Figure_4_Temporal_Concentration_Summary_v1.0.7.svg",
         alt:
           "Two bars showing that the twelve largest favorable and unfavorable monthly contributions account for 85.6 percent and 89.1 percent of gross squared-loss changes on average.",
-        sourceLabel: "Paper-aligned summary · Figure 4 diagnostic"
+        sourceLabel: "Academic working paper · Figure 4 diagnostic"
       }
     ],
     links: {

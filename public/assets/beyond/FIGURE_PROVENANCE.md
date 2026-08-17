@@ -28,3 +28,12 @@ Paper: `Beyond Average Accuracy`, public working paper v1.0.7, SSRN 7164118.
 - Boundary: this is a simplified reader-facing summary of the published diagnostic, **not a pixel-identical export of the manuscript Figure 4**.
 
 No new empirical result is created by these platform figures.
+
+## v1.0.4 public-display cleanup — 2026-08-18
+
+The three platform SVGs retain the same plotted values and figure meaning. Small bottom-of-image explanatory/provenance footers were removed from the public graphics because the card captions already carry the interpretation and provenance belongs in this file.
+
+- Figure 1: the useful RW-equality explanation was moved to the normal card description.
+- Figure 2: the redundant takeaway footer was removed.
+- Figure 4: the internal `not a pixel-identical export` qualification remains documented here rather than inside the public graphic.
+- No numerical value, axis, plotted point/bar, scientific interpretation, or source data changed.
