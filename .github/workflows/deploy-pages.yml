@@ -29,17 +29,11 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Resolve deployment path
+      - name: Configure custom domain environment
         shell: bash
         run: |
-          REPO_NAME="${GITHUB_REPOSITORY#*/}"
-          if [[ "$REPO_NAME" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
-            echo "NEXT_PUBLIC_BASE_PATH=" >> "$GITHUB_ENV"
-            echo "NEXT_PUBLIC_SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io" >> "$GITHUB_ENV"
-          else
-            echo "NEXT_PUBLIC_BASE_PATH=/$REPO_NAME" >> "$GITHUB_ENV"
-            echo "NEXT_PUBLIC_SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/$REPO_NAME" >> "$GITHUB_ENV"
-          fi
+          echo "NEXT_PUBLIC_BASE_PATH=" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_SITE_URL=https://research.slackquant.com" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
