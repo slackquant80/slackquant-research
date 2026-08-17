@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.description,
+  verification: {
+    other: {
+      "naver-site-verification": "020357b85fccf2b9789761b19856fbe92abc4290",
+    },
+  },
 };
 
 export default function RootLayout({
