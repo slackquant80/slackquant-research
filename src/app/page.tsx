@@ -3,8 +3,12 @@ import { researchItems } from "@/data/research";
 import { site } from "@/data/site";
 
 export default function HomePage() {
-  const featured =
-    researchItems.find((item) => item.featured) ?? researchItems[0];
+  const investmentFeatured =
+    researchItems.find(
+      (item) => item.stream === "investment" && item.featured,
+    ) ?? researchItems[0];
+  const academicFeatured =
+    researchItems.find((item) => item.stream === "academic") ?? researchItems[0];
 
   return (
     <main>
@@ -31,40 +35,74 @@ export default function HomePage() {
         <div className="shell">
           <div className="section-head">
             <div className="section-title">Featured Research</div>
-            <Link className="section-link" href={`/research/${featured.slug}/`}>
-              View project &#8594;            </Link>
+            <Link className="section-link" href="/research/">
+              View all research &#8594;
+            </Link>
           </div>
 
-          <article className="feature-card">
-            <div className="feature-copy">
-              <div className="kicker">{featured.streamLabel}</div>
-              <h2 className="feature-title">{featured.title}</h2>
-              <p className="feature-text">{featured.shortSummary}</p>
-              <div className="actions">
-                <Link
-                  className="btn primary"
-                  href={`/research/${featured.slug}/`}
-                >
-                  View Research
-                </Link>
-              </div>
-            </div>
-            <aside className="feature-side">
-              <div>
-                <div className="side-label">{featured.status}</div>
-                <div className="side-number">{featured.publicVersion}</div>
-                <div className="side-note">
-                  Latest public version · {featured.dateLabel}
+          <div className="featured-stack">
+            <article className="feature-card">
+              <div className="feature-copy">
+                <div className="kicker">{investmentFeatured.streamLabel}</div>
+                <h2 className="feature-title">{investmentFeatured.title}</h2>
+                <p className="feature-text">{investmentFeatured.shortSummary}</p>
+                <div className="actions">
+                  <Link
+                    className="btn primary"
+                    href={`/research/${investmentFeatured.slug}/`}
+                  >
+                    View Research
+                  </Link>
                 </div>
               </div>
-              <div>
-                <div className="side-label">Research focus</div>
-                <div className="side-note">
-                  Decision diversification in dynamic asset allocation.
+              <aside className="feature-side">
+                <div>
+                  <div className="side-label">{investmentFeatured.status}</div>
+                  <div className="side-number">{investmentFeatured.publicVersion}</div>
+                  <div className="side-note">
+                    Latest public version · {investmentFeatured.dateLabel}
+                  </div>
+                </div>
+                <div>
+                  <div className="side-label">Research focus</div>
+                  <div className="side-note">
+                    Decision diversification in dynamic asset allocation.
+                  </div>
+                </div>
+              </aside>
+            </article>
+
+            <article className="feature-card">
+              <div className="feature-copy">
+                <div className="kicker">{academicFeatured.streamLabel}</div>
+                <h2 className="feature-title">{academicFeatured.title}</h2>
+                <p className="feature-text">{academicFeatured.shortSummary}</p>
+                <div className="actions">
+                  <Link
+                    className="btn primary"
+                    href={`/research/${academicFeatured.slug}/`}
+                  >
+                    View Research
+                  </Link>
                 </div>
               </div>
-            </aside>
-          </article>
+              <aside className="feature-side">
+                <div>
+                  <div className="side-label">{academicFeatured.status}</div>
+                  <div className="side-number">{academicFeatured.publicVersion}</div>
+                  <div className="side-note">
+                    Latest public version · {academicFeatured.dateLabel}
+                  </div>
+                </div>
+                <div>
+                  <div className="side-label">Research focus</div>
+                  <div className="side-note">
+                    Forecast accuracy, model uncertainty, and temporal durability.
+                  </div>
+                </div>
+              </aside>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -82,7 +120,7 @@ export default function HomePage() {
                 allocation, decision architecture, robustness, and
                 implementation.
               </p>
-              <Link className="section-link" href="/research/">
+              <Link className="section-link" href="/research/#investment-research-heading">
                 Explore Investment Research &#8594;              </Link>
             </article>
             <article className="stream">
@@ -92,7 +130,7 @@ export default function HomePage() {
                 Academic and technical research across forecasting, financial
                 data science, AI/ML, and empirical methodology.
               </p>
-              <Link className="section-link" href="/research/">
+              <Link className="section-link" href="/research/#academic-research-heading">
                 Explore Academic Research &#8594;              </Link>
             </article>
           </div>

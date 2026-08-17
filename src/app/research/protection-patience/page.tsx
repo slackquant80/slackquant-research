@@ -65,7 +65,7 @@ export default function ProtectionPatiencePage() {
             <h2>Overview</h2>
             <p className="lede">
               A defensive strategy can meet its downside objective and still
-              spend years lagging equity. This paper evaluates those two
+              spend years lagging equity. The analysis evaluates those two
               outcomes separately rather than treating benchmark
               outperformance as evidence that downside protection succeeded.
             </p>
@@ -298,7 +298,7 @@ export default function ProtectionPatiencePage() {
                 <strong>Empirical, not optimization, evidence</strong>
                 <p>
                   The timing rule and blend weights are fixed design choices.
-                  The study characterizes historical trade-offs rather than
+                  The analysis characterizes historical trade-offs rather than
                   estimating an optimal tactical allocation.
                 </p>
               </div>

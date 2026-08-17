@@ -91,7 +91,7 @@ export const researchItems: ResearchItem[] = [
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
     shortSummary:
-      "A defensive strategy can reduce its own drawdown and still trail equity for years. The paper separates realized downside protection from the benchmark-relative path over long rolling holding periods.",
+      "A defensive strategy can reduce its own drawdown and still trail equity for years. The analysis separates realized downside protection from the benchmark-relative path over long rolling holding periods.",
     researchQuestion:
       "When a defensive strategy actually reduces maximum drawdown, what benchmark-relative path accompanies that protection, and how does persistent equity exposure change that path?",
     findings: [
@@ -167,6 +167,7 @@ export const researchItems: ResearchItem[] = [
     stream: "academic",
     streamLabel: "Academic Research",
     status: "Academic Working Paper",
+    publicVersion: "v1.0.7",
     ssrnId: "7164118",
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
