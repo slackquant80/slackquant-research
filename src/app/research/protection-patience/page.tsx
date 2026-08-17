@@ -332,11 +332,11 @@ export default function ProtectionPatiencePage() {
               </div>
               <div className="artifact">
                 <div className="type">Replication state</div>
-                <h3>Version 1.1.0</h3>
+                <h3>Version 1.1.1</h3>
                 <p>
                   Public citation metadata and the current repository state
-                  identify the replication materials as version 1.1.0, updated
-                  in August 2026.
+                  identify the replication materials as version 1.1.1, synchronized
+                  to the final public paper in August 2026.
                 </p>
               </div>
             </div>

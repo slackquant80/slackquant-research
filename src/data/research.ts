@@ -9,7 +9,7 @@ export const researchItems: ResearchItem[] = [
     stream: "investment",
     streamLabel: "Investment Research Series",
     status: "Public Working Paper",
-    publicVersion: "v1.25",
+    publicVersion: "v1.28",
     ssrnId: "7251518",
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
@@ -62,8 +62,6 @@ export const researchItems: ResearchItem[] = [
       }
     ],
     links: {
-      paper:
-        "https://slackquant80.github.io/adaa-slackquant/downloads/ADAA_SSRN_Working_Paper_v1.25_FINAL_FREEZE.pdf",
       ssrn:
         "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",
       github:

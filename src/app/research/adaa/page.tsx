@@ -205,7 +205,10 @@ export default function AdaaPage() {
                 <div className="artifact">
                   <div className="type">Replication</div>
                   <h3>Replication Package</h3>
-                  <p>Current public replication release: v1.1.2.</p>
+                  <p>
+                    Latest tagged public package: v1.1.2. Repository binding
+                    metadata is synchronized to the current v1.28 paper.
+                  </p>
                   <a
                     href={item.links.replication}
                     target="_blank"
