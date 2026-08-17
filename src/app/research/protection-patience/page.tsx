@@ -161,7 +161,7 @@ export default function ProtectionPatiencePage() {
                 <div className="kicker">Concentrated defensive gains</div>
                 <div className="tradeoff-value">36.2%</div>
                 <p>
-                  The 20 largest qualifying defensive-outperformance months
+                  The 20 largest months of qualifying defensive outperformance
                   account for 36.2% of total positive monthly active log
                   returns after the signal becomes available; the fixed 50/50
                   allocation accounts for 19.6%.
@@ -334,9 +334,8 @@ export default function ProtectionPatiencePage() {
                 <div className="type">Replication state</div>
                 <h3>Version 1.1.1</h3>
                 <p>
-                  Public citation metadata and the current repository state
-                  identify the replication materials as version 1.1.1, synchronized
-                  to the final public paper in August 2026.
+                  The current public replication materials are version 1.1.1 and
+                  are synchronized to the final public paper.
                 </p>
               </div>
             </div>

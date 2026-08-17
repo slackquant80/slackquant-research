@@ -113,7 +113,7 @@ export const researchItems: ResearchItem[] = [
         description:
           "The four-state decomposition shows that realized downside protection does not imply benchmark outperformance. At long horizons, protected-but-underperforming periods remain common.",
         imageUrl:
-          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_1_Protection_and_Benchmark_Outcomes_v1.0.png",
+          "/assets/t19/Figure_1_Protection_and_Benchmark_Outcomes_v1.0.png",
         alt:
           "Four-state decomposition of rolling holding periods showing protected and outperforming, protected and underperforming, and unprotected outcomes across 5-, 10-, 15-, and 20-year horizons.",
         sourceLabel: "Public working paper · Figure 1"
@@ -124,7 +124,7 @@ export const researchItems: ResearchItem[] = [
         description:
           "Protected holding periods can remain below a prior benchmark-relative high-water mark for years. Depth and duration are separate dimensions of the relative performance path.",
         imageUrl:
-          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_2_Protected_Path_Burden_v1.0.png",
+          "/assets/t19/Figure_2_Protected_Path_Burden_v1.0.png",
         alt:
           "Benchmark-relative drawdown depth by investment horizon with labels for the median longest underwater duration among protected holding periods.",
         sourceLabel: "Public working paper · Figure 2"
@@ -135,7 +135,7 @@ export const researchItems: ResearchItem[] = [
         description:
           "The June 2005–May 2025 illustrative path combines materially lower maximum drawdown with a 195-month benchmark-relative underwater spell and lower terminal wealth than equity.",
         imageUrl:
-          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_3_Representative_Protected_But_Lagging_Path_v1.0.png",
+          "/assets/t19/Figure_3_Representative_Protected_But_Lagging_Path_v1.0.png",
         alt:
           "Indexed wealth for equity and the 12-month defensive trend rule from June 2005 through May 2025, with shading for months below the prior benchmark-relative high-water mark.",
         sourceLabel: "Public working paper · Figure 3"
@@ -146,7 +146,7 @@ export const researchItems: ResearchItem[] = [
         description:
           "Across fixed tactical shares, retaining more persistent equity exposure materially reduces benchmark-relative drawdown depth, while the median longest underwater duration changes much less.",
         imageUrl:
-          "https://raw.githubusercontent.com/slackquant80/protection-patience-replication/main/figures/Figure_4_Persistent_Equity_Depth_vs_Duration_v1.0.png",
+          "/assets/t19/Figure_4_Persistent_Equity_Depth_vs_Duration_v1.0.png",
         alt:
           "Twenty-year benchmark-relative drawdown depth across fixed tactical shares with labels for median longest underwater duration.",
         sourceLabel: "Public working paper · Figure 4"
@@ -174,7 +174,7 @@ export const researchItems: ResearchItem[] = [
     affiliation:
       "AI Computing Program, Graduate School of Computing, Yonsei University",
     shortSummary:
-      "Numerical forecast gains can coexist with weak statistical separation and strong dependence on a small number of influential months. The paper evaluates average accuracy, inference, and temporal durability in one common FRED-MD forecasting design.",
+      "Numerical forecast gains can coexist with weak statistical separation and strong dependence on a small number of influential months. The analysis evaluates average accuracy, inferential uncertainty, and temporal durability within a common FRED-MD forecasting design.",
     researchQuestion:
       "When machine-learning forecasts beat a simple benchmark on average, is that advantage statistically distinguishable and persistent through time, or concentrated in a small number of difficult months?",
     findings: [
@@ -188,6 +188,38 @@ export const researchItems: ResearchItem[] = [
       "Machine Learning",
       "Forecast Evaluation",
       "FRED-MD"
+    ],
+    selectedEvidence: [
+      {
+        id: "average-relative-rmse",
+        title: "Average Accuracy Shows Clear Numerical Leaders",
+        description:
+          "Average relative RMSE varies materially across the twelve approaches. XGBoost is lowest at 0.821, but a numerical ranking alone does not establish statistical separation.",
+        imageUrl: "/assets/beyond/Figure_1_Average_Relative_RMSE_v1.0.7.svg",
+        alt:
+          "Horizontal bar chart of mean RMSE relative to the RW persistence benchmark across twelve forecasting approaches, with a dashed equality line at one.",
+        sourceLabel: "Public working paper · Figure 1"
+      },
+      {
+        id: "rank-vs-mcs",
+        title: "Numerical Rank and Statistical Survival Are Different Objects",
+        description:
+          "Mean RMSE ranks differ substantially, while most approaches survive every squared-error Model Confidence Set panel. Strong numerical ranking does not imply decisive statistical elimination.",
+        imageUrl: "/assets/beyond/Figure_2_RMSE_Rank_vs_MCS_Survival_v1.0.7.svg",
+        alt:
+          "Scatter plot comparing mean RMSE rank with squared-error Model Confidence Set survival rates for the twelve forecasting approaches.",
+        sourceLabel: "Public working paper · Figure 2"
+      },
+      {
+        id: "temporal-concentration",
+        title: "Measured Gains and Losses Are Concentrated in a Few Months",
+        description:
+          "For the squared-loss diagnostic, the twelve largest favorable monthly reductions account for 85.6% of gross improvement on average, while the twelve largest unfavorable increases account for 89.1% of gross deterioration.",
+        imageUrl: "/assets/beyond/Figure_4_Temporal_Concentration_Summary_v1.0.7.svg",
+        alt:
+          "Two bars showing that the twelve largest favorable and unfavorable monthly contributions account for 85.6 percent and 89.1 percent of gross squared-loss changes on average.",
+        sourceLabel: "Paper-aligned summary · Figure 4 diagnostic"
+      }
     ],
     links: {
       ssrn:

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
+import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -68,7 +69,7 @@ export default function BeyondAverageAccuracyPage() {
             <p className="lede">
               A model can post the lowest average forecast error without
               establishing a statistically distinguishable or persistent
-              advantage. This paper evaluates those properties separately in a
+              advantage. The analysis evaluates those properties separately in a
               common data-rich macroeconomic forecasting experiment.
             </p>
             <p className="body-copy">
@@ -121,6 +122,26 @@ export default function BeyondAverageAccuracyPage() {
               loss increases account for 89.1% of gross deterioration relative
               to the persistence benchmark.
             </div>
+
+            {item.selectedEvidence?.length ? (
+              <div className="selected-exhibits">
+                <div className="selected-exhibits-head">
+                  <div className="section-title">Selected Exhibits</div>
+                  <p>
+                    Three paper-aligned exhibits summarize average-accuracy
+                    ranking, the gap between numerical rank and MCS survival,
+                    and the temporal concentration of measured gains and losses.
+                    Click any figure to inspect the full-resolution image.
+                  </p>
+                </div>
+
+                <div className="evidence-figure-list">
+                  {item.selectedEvidence.map((figure) => (
+                    <EvidenceFigure key={figure.id} figure={figure} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
 
           <section className="prose-section" id="design">
@@ -184,7 +205,7 @@ export default function BeyondAverageAccuracyPage() {
               </div>
             </div>
             <p className="body-copy">
-              The 90% Model Confidence Set reaches the same conclusion from a
+              The 90% Model Confidence Set points in the same direction from a
               multi-model perspective: all twelve approaches survive in 25 of
               32 panels, and no panel retains fewer than ten. Survival does not
               prove equal accuracy; it indicates that the available loss data
