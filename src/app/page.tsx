@@ -97,7 +97,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">Research focus</div>
                   <div className="side-note">
-                    Forecast accuracy, model uncertainty, and temporal durability.
+                    Forecast accuracy, statistical distinguishability, and temporal stability.
                   </div>
                 </div>
               </aside>

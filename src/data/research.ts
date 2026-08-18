@@ -167,21 +167,21 @@ export const researchItems: ResearchItem[] = [
     stream: "academic",
     streamLabel: "Academic Research",
     status: "Academic Working Paper",
-    publicVersion: "v1.0.7",
+    publicVersion: "v1.0.13",
     ssrnId: "7164118",
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
     affiliation:
       "AI Computing Program, Graduate School of Computing, Yonsei University",
     shortSummary:
-      "Numerical forecast gains can coexist with weak statistical separation and strong dependence on a small number of influential months. The analysis evaluates average accuracy, inferential uncertainty, and temporal durability within a common FRED-MD forecasting design.",
+      "Lower average forecast errors can coexist with limited statistical separation and performance concentrated in a relatively small number of months. The analysis evaluates average accuracy, formal inference, and temporal stability under a common FRED-MD forecasting design.",
     researchQuestion:
-      "When machine-learning forecasts beat a simple benchmark on average, is that advantage statistically distinguishable and persistent through time, or concentrated in a small number of difficult months?",
+      "When machine-learning forecasts beat a simple benchmark on average, is that advantage statistically distinguishable and temporally stable, or concentrated in a relatively small number of dates?",
     findings: [
-      "XGBoost records the lowest average relative RMSE, 0.821, across sixteen target-horizon combinations, with Random Forest, Boruta RF, and the forecast combinations also delivering sizable numerical gains.",
+      "XGBoost records the lowest average relative RMSE, 0.821, across sixteen target-horizon combinations; Random Forest, Boruta RF, and the forecast combinations are also among the leading approaches by average RMSE.",
       "After Holm adjustment, none of the 176 squared-error Diebold-Mariano comparisons rejects equal predictive accuracy in favor of an alternative. Five absolute-error comparisons reject, all at the one-month industrial-production horizon.",
-      "A 90% Model Confidence Set retains all twelve approaches in 25 of 32 target-horizon-loss panels and never retains fewer than ten, indicating broad model-selection uncertainty in the available sample.",
-      "The leading set changes frequently through time, and loss differences are highly concentrated. In the squared-loss diagnostic, the twelve largest favorable monthly loss reductions account for 85.6% of gross improvement on average, while the twelve largest unfavorable increases account for 89.1% of gross deterioration."
+      "A 90% Model Confidence Set retains all twelve approaches in 25 of 32 target-horizon-loss panels and never retains fewer than ten, so the available loss data provide limited evidence for eliminating most candidates at the chosen confidence level.",
+      "The set of lowest-RMSE models changes frequently across rolling 12-month windows. For squared loss, the twelve months with the largest reductions relative to RW account, on average, for 85.6% of total loss reduction, while the twelve months with the largest increases account for 89.1% of total loss increase."
     ],
     tags: [
       "Macroeconomic Forecasting",
@@ -192,32 +192,32 @@ export const researchItems: ResearchItem[] = [
     selectedEvidence: [
       {
         id: "average-relative-rmse",
-        title: "Average Accuracy Shows Clear Numerical Leaders",
+        title: "Average RMSE Produces a Numerical Ranking",
         description:
-          "Average relative RMSE varies materially across the twelve approaches. The dashed line marks equality with RW. XGBoost is lowest at 0.821, but a numerical ranking alone does not establish statistical separation.",
-        imageUrl: "/assets/beyond/Figure_1_Average_Relative_RMSE_v1.0.7.svg",
+          "Average relative RMSE varies across the twelve approaches. XGBoost is lowest at 0.821, and the dashed line marks equality with RW. The ranking is numerical and does not by itself establish statistical separation.",
+        imageUrl: "/assets/beyond/Figure_1_Average_Relative_RMSE_v1.0.13.svg",
         alt:
           "Horizontal bar chart of mean RMSE relative to the RW persistence benchmark across twelve forecasting approaches, with a dashed equality line at one.",
         sourceLabel: "Public working paper · Figure 1"
       },
       {
         id: "rank-vs-mcs",
-        title: "Numerical Rank and Statistical Survival Are Different Objects",
+        title: "Numerical Rank Does Not Imply Statistical Separation",
         description:
-          "Mean RMSE ranks differ substantially, while most approaches survive every squared-error Model Confidence Set panel. Strong numerical ranking does not imply decisive statistical elimination.",
-        imageUrl: "/assets/beyond/Figure_2_RMSE_Rank_vs_MCS_Survival_v1.0.7.svg",
+          "Mean RMSE ranks differ, while most approaches survive every squared-error Model Confidence Set panel. MCS survival does not prove equal accuracy; it reflects limited evidence for eliminating candidates.",
+        imageUrl: "/assets/beyond/Figure_2_RMSE_Rank_vs_MCS_Survival_v1.0.13.svg",
         alt:
           "Scatter plot comparing mean RMSE rank with squared-error Model Confidence Set survival rates for the twelve forecasting approaches.",
         sourceLabel: "Public working paper · Figure 2"
       },
       {
         id: "temporal-concentration",
-        title: "Measured Gains and Losses Are Concentrated in a Few Months",
+        title: "Loss Differences Are Concentrated in a Few Months",
         description:
-          "For the squared-loss diagnostic, the twelve largest favorable monthly reductions account for 85.6% of gross improvement on average, while the twelve largest unfavorable increases account for 89.1% of gross deterioration.",
-        imageUrl: "/assets/beyond/Figure_4_Temporal_Concentration_Summary_v1.0.7.svg",
+          "For squared loss, the twelve months with the largest reductions relative to RW account, on average, for 85.6% of total loss reduction, while the twelve months with the largest increases account for 89.1% of total loss increase.",
+        imageUrl: "/assets/beyond/Figure_4_Temporal_Concentration_Summary_v1.0.13.svg",
         alt:
-          "Two bars showing that the twelve largest favorable and unfavorable monthly contributions account for 85.6 percent and 89.1 percent of gross squared-loss changes on average.",
+          "Two bars showing that the twelve largest monthly loss reductions and increases account for 85.6 percent and 89.1 percent of total loss reduction and increase on average.",
         sourceLabel: "Academic working paper · Figure 4 diagnostic"
       }
     ],

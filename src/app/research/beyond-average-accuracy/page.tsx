@@ -56,7 +56,7 @@ export default function BeyondAverageAccuracyPage() {
           <a href="#evidence">Selected Evidence</a>
           <a href="#design">Forecasting Design</a>
           <a href="#inference">Inference &amp; Uncertainty</a>
-          <a href="#temporal">Temporal Durability</a>
+          <a href="#temporal">Temporal Stability</a>
           <a href="#scope">Scope &amp; Limitations</a>
           <a href="#repro">Reproducibility</a>
           <a href="#dashboard">Research Dashboard</a>
@@ -67,18 +67,21 @@ export default function BeyondAverageAccuracyPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              A model can post the lowest average forecast error without
-              establishing a statistically distinguishable or persistent
-              advantage. The analysis evaluates those properties separately in a
-              common data-rich macroeconomic forecasting experiment.
+              Lower average forecast error does not by itself establish a
+              statistically distinguishable or persistent advantage. This study
+              evaluates average accuracy, statistical distinguishability, and
+              temporal stability separately within a common data-rich
+              macroeconomic forecasting design.
             </p>
             <p className="body-copy">
               The analysis uses the June 2026 FRED-MD vintage and evaluates
               twelve forecasting approaches across CPI inflation, PCE
               inflation, industrial production growth, and the monthly change
               in the unemployment rate at 1-, 3-, 6-, and 12-month horizons.
-              The central question is not only which model ranks first on
-              average, but how much confidence can be placed in that ranking.
+              The comparison includes nine individual models and three forecast
+              combinations. The central question is how much confidence can be
+              placed in the observed average rankings once formal inference and
+              temporal diagnostics are considered.
             </p>
           </section>
 
@@ -101,9 +104,9 @@ export default function BeyondAverageAccuracyPage() {
           <section className="prose-section" id="evidence">
             <h2>Selected Evidence</h2>
             <p>
-              Four headline statistics summarize the gap between numerical
-              ranking, formal inference, and temporal stability in the reported
-              pseudo-out-of-sample exercise.
+              Four headline statistics summarize how average ranking, formal
+              inference, and temporal stability provide different assessments in
+              the reported pseudo-out-of-sample exercise.
             </p>
 
             <div className="metrics">
@@ -116,11 +119,10 @@ export default function BeyondAverageAccuracyPage() {
             </div>
 
             <div className="evidence-note">
-              Under the squared-loss concentration diagnostic, the twelve most
-              favorable monthly loss reductions account for 85.6% of gross
-              improvement on average, while the twelve most unfavorable monthly
-              loss increases account for 89.1% of gross deterioration relative
-              to the persistence benchmark.
+              For squared loss, the twelve months with the largest reductions
+              relative to RW account, on average, for 85.6% of total loss
+              reduction, while the twelve months with the largest increases
+              account for 89.1% of total loss increase.
             </div>
 
             {item.selectedEvidence?.length ? (
@@ -128,10 +130,10 @@ export default function BeyondAverageAccuracyPage() {
                 <div className="selected-exhibits-head">
                   <div className="section-title">Selected Exhibits</div>
                   <p>
-                    Three paper-aligned exhibits summarize average-accuracy
-                    ranking, the gap between numerical rank and MCS survival,
-                    and the temporal concentration of measured gains and losses.
-                    Click any figure to inspect the full-resolution image.
+                    Three paper-aligned exhibits show average RMSE ranking,
+                    numerical rank versus MCS survival, and the temporal
+                    concentration of loss differences. Click any figure to
+                    inspect the full-resolution image.
                   </p>
                 </div>
 
@@ -180,8 +182,8 @@ export default function BeyondAverageAccuracyPage() {
           <section className="prose-section" id="inference">
             <h2>Inference &amp; Model Uncertainty</h2>
             <p className="lede">
-              Numerical leadership is much stronger than the evidence of
-              statistical separation.
+              Average RMSE rankings show clearer numerical differences than
+              formal inference suggests.
             </p>
             <div className="tradeoff-grid">
               <div className="tradeoff-card">
@@ -197,33 +199,33 @@ export default function BeyondAverageAccuracyPage() {
                 <div className="kicker">Formal separation</div>
                 <div className="tradeoff-value">0</div>
                 <p>
-                  None of the 176 squared-error Diebold-Mariano comparisons is
-                  significant in favor of an alternative after Holm adjustment.
-                  Five absolute-error comparisons reject, all at one-month
-                  industrial production.
+                  None of the 176 squared-error Diebold-Mariano comparisons
+                  rejects equal predictive accuracy in favor of an alternative
+                  after Holm adjustment. Five absolute-error comparisons reject,
+                  all at one-month industrial production.
                 </p>
               </div>
             </div>
             <p className="body-copy">
-              The 90% Model Confidence Set points in the same direction from a
-              multi-model perspective: all twelve approaches survive in 25 of
-              32 panels, and no panel retains fewer than ten. Survival does not
-              prove equal accuracy; it indicates that the available loss data
-              provide limited evidence for eliminating most candidates.
+              From a multi-model perspective, the 90% Model Confidence Set
+              retains all twelve approaches in 25 of 32 panels, and no panel
+              retains fewer than ten. Survival does not prove equal accuracy;
+              the available loss data provide limited evidence for eliminating
+              most candidates at the chosen confidence level.
             </p>
           </section>
 
           <section className="prose-section" id="temporal">
-            <h2>Temporal Durability</h2>
+            <h2>Temporal Stability &amp; Concentration</h2>
             <p className="lede">
-              The identity of the leading approach changes over time, and a
-              small number of difficult months account for much of the measured
-              advantage and deterioration.
+              The set of lowest-RMSE models changes frequently across rolling
+              windows, and loss differences are highly concentrated in a small
+              number of dates.
             </p>
             <div className="robustness-grid">
               <article className="robustness-card">
                 <div className="kicker">Rolling rankings</div>
-                <h3>Winner sets are unstable</h3>
+                <h3>Lowest-RMSE sets change frequently</h3>
                 <p>
                   In 12-month rolling evaluations, winner-set switch rates range
                   from 17.9% to 38.5% across target-horizon combinations, with a
@@ -232,12 +234,12 @@ export default function BeyondAverageAccuracyPage() {
               </article>
               <article className="robustness-card">
                 <div className="kicker">Benchmark-error sensitivity</div>
-                <h3>Average gains depend on influential dates</h3>
+                <h3>Average rankings are sensitive to benchmark-error dates</h3>
                 <p>
-                  Removing only the largest persistence-benchmark squared-error
-                  date within each target-horizon combination raises the best
-                  average relative RMSE from 0.821 to 0.916. After twelve such
-                  exclusions, the persistence benchmark leads on average.
+                  Removing only the date with the largest RW squared error
+                  within each target-horizon combination raises the best average
+                  relative RMSE from 0.821 to 0.916. After twelve such
+                  exclusions, RW leads on average.
                 </p>
               </article>
             </div>
@@ -258,8 +260,9 @@ export default function BeyondAverageAccuracyPage() {
                 <strong>Short, shock-heavy evaluation period</strong>
                 <p>
                   The primary evaluation contains at most 90 target months and
-                  includes the COVID-19 collapse and reopening, limiting power
-                  and the number of distinct macroeconomic environments.
+                  includes the COVID-19 collapse and reopening, limiting
+                  statistical power and the range of macroeconomic environments
+                  represented in the sample.
                 </p>
               </div>
               <div className="scope-item">
@@ -271,11 +274,11 @@ export default function BeyondAverageAccuracyPage() {
                 </p>
               </div>
               <div className="scope-item">
-                <strong>Diagnostic, not universal, instability claims</strong>
+                <strong>Descriptive temporal diagnostics</strong>
                 <p>
-                  Rolling winner-set turnover and loss concentration are
+                  Rolling winner-set changes and loss concentration are
                   descriptive diagnostics. They complement formal inference but
-                  do not by themselves establish a general instability regime.
+                  are not formal instability or state-dependence tests.
                 </p>
               </div>
             </div>
