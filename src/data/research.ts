@@ -9,7 +9,7 @@ export const researchItems: ResearchItem[] = [
     stream: "investment",
     streamLabel: "Investment Research Series",
     status: "Public Working Paper",
-    publicVersion: "v1.28",
+    publicVersion: "v1.34",
     ssrnId: "7251518",
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
@@ -67,11 +67,11 @@ export const researchItems: ResearchItem[] = [
       github:
         "https://github.com/slackquant80/adaa-decision-diversification",
       replication:
-        "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.2",
+        "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.4",
       archivalRelease:
-        "https://doi.org/10.5281/zenodo.21953502",
+        "https://doi.org/10.5281/zenodo.22006841",
       doi:
-        "https://doi.org/10.5281/zenodo.21953502",
+        "https://doi.org/10.5281/zenodo.22006841",
       researchDashboard:
         "https://slackquant80.github.io/adaa-slackquant/",
       operationalDashboard:
