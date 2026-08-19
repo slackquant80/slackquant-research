@@ -10,6 +10,7 @@ export function SiteHeader() {
         </Link>
         <nav className="nav-links" aria-label="Primary">
           <Link href="/research/">Research</Link>
+          <Link href="/methods/">Methods</Link>
           <Link href="/about/">About</Link>
           <a className="ext" href={site.github} target="_blank" rel="noopener noreferrer">
             GitHub

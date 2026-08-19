@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to comparing two forecast-loss sequences with the Diebold–Mariano test.">
+
+<title>Diebold–Mariano Test – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ca3834eb011b617e8ceb67f6ec108db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">SlackQuant Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Quantitative Methods</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://research.slackquant.com/"> 
+<span class="menu-text">Research ↗</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#from-forecast-errors-to-a-test-statistic" id="toc-from-forecast-errors-to-a-test-statistic" class="nav-link" data-scroll-target="#from-forecast-errors-to-a-test-statistic">From Forecast Errors to a Test Statistic</a></li>
+  <li><a href="#the-variance-estimate-is-part-of-the-test" id="toc-the-variance-estimate-is-part-of-the-test" class="nav-link" data-scroll-target="#the-variance-estimate-is-part-of-the-test">The Variance Estimate Is Part of the Test</a></li>
+  <li><a href="#the-loss-function-defines-the-question" id="toc-the-loss-function-defines-the-question" class="nav-link" data-scroll-target="#the-loss-function-defines-the-question">The Loss Function Defines the Question</a></li>
+  <li><a href="#small-samples-and-the-harveyleybournenewbold-adjustment" id="toc-small-samples-and-the-harveyleybournenewbold-adjustment" class="nav-link" data-scroll-target="#small-samples-and-the-harveyleybournenewbold-adjustment">Small Samples and the Harvey–Leybourne–Newbold Adjustment</a></li>
+  <li><a href="#worked-illustration-lower-rmse-but-weak-statistical-evidence" id="toc-worked-illustration-lower-rmse-but-weak-statistical-evidence" class="nav-link" data-scroll-target="#worked-illustration-lower-rmse-but-weak-statistical-evidence">Worked Illustration: Lower RMSE, but Weak Statistical Evidence</a></li>
+  <li><a href="#hands-on-lab-change-the-loss-and-the-dependence-adjustment" id="toc-hands-on-lab-change-the-loss-and-the-dependence-adjustment" class="nav-link" data-scroll-target="#hands-on-lab-change-the-loss-and-the-dependence-adjustment">Hands-on Lab: Change the Loss and the Dependence Adjustment</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#treating-a-lower-rmse-as-automatically-significant" id="toc-treating-a-lower-rmse-as-automatically-significant" class="nav-link" data-scroll-target="#treating-a-lower-rmse-as-automatically-significant">1. Treating a lower RMSE as automatically significant</a></li>
+  <li><a href="#ignoring-serial-dependence-in-the-loss-differential" id="toc-ignoring-serial-dependence-in-the-loss-differential" class="nav-link" data-scroll-target="#ignoring-serial-dependence-in-the-loss-differential">2. Ignoring serial dependence in the loss differential</a></li>
+  <li><a href="#reporting-the-p-value-without-the-loss-function" id="toc-reporting-the-p-value-without-the-loss-function" class="nav-link" data-scroll-target="#reporting-the-p-value-without-the-loss-function">3. Reporting the p-value without the loss function</a></li>
+  <li><a href="#interpreting-non-rejection-as-proof-of-equality" id="toc-interpreting-non-rejection-as-proof-of-equality" class="nav-link" data-scroll-target="#interpreting-non-rejection-as-proof-of-equality">4. Interpreting non-rejection as proof of equality</a></li>
+  <li><a href="#using-a-pairwise-dm-test-as-a-many-model-selection-procedure" id="toc-using-a-pairwise-dm-test-as-a-many-model-selection-procedure" class="nav-link" data-scroll-target="#using-a-pairwise-dm-test-as-a-many-model-selection-procedure">5. Using a pairwise DM test as a many-model selection procedure</a></li>
+  <li><a href="#applying-the-standard-pairwise-setup-mechanically-to-nested-models" id="toc-applying-the-standard-pairwise-setup-mechanically-to-nested-models" class="nav-link" data-scroll-target="#applying-the-standard-pairwise-setup-mechanically-to-nested-models">6. Applying the standard pairwise setup mechanically to nested models</a></li>
+  <li><a href="#using-unconditional-dm-when-the-real-question-is-regime-dependent-performance" id="toc-using-unconditional-dm-when-the-real-question-is-regime-dependent-performance" class="nav-link" data-scroll-target="#using-unconditional-dm-when-the-real-question-is-regime-dependent-performance">7. Using unconditional DM when the real question is regime-dependent performance</a></li>
+  </ul></li>
+  <li><a href="#a-practical-reporting-checklist" id="toc-a-practical-reporting-checklist" class="nav-link" data-scroll-target="#a-practical-reporting-checklist">A Practical Reporting Checklist</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Diebold–Mariano Test</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Is the apparent forecast advantage larger than sampling noise?</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Forecast Evaluation</div>
+    <div class="quarto-category">Intermediate</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to comparing two forecast-loss sequences with the Diebold–Mariano test.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM004 · Forecast Evaluation · Intermediate</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> The Diebold–Mariano test asks whether the average loss difference between two forecast sequences is distinguishable from zero after accounting for sampling uncertainty.</p>
+<p><strong>Use it for.</strong> Comparing two forecasts of the same target, horizon, and evaluation sample under a pre-specified loss function.</p>
+<p><strong>It does not establish.</strong> Economic importance, universal superiority, conditional superiority in every regime, or valid inference when the dependence structure of the loss differential is handled incorrectly.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>Suppose Model B has a lower RMSE than Model A over the same out-of-sample period.</p>
+<blockquote class="blockquote">
+<p><strong>Is that observed advantage large enough, relative to the variability of the paired forecast losses, to reject equal predictive accuracy?</strong></p>
+</blockquote>
+<p>A ranking by RMSE answers which model had lower average squared loss in the realized sample. It does not by itself tell us how much sampling uncertainty surrounds that difference. The Diebold–Mariano (DM) framework turns the comparison into a statistical test built from the sequence of paired loss differences <span class="citation" data-cites="dieboldmariano1995">(<a href="#ref-dieboldmariano1995" role="doc-biblioref">Diebold and Mariano 1995</a>)</span>.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Forecast comparisons are paired observations. At each forecast date, both methods face the same target realization. The natural comparison is therefore not two unrelated RMSEs, but the <strong>loss differential at each forecast date</strong>.</p>
+<p>This matters for two reasons.</p>
+<p>First, a visually meaningful RMSE difference can still be statistically weak when the loss differential is noisy or the evaluation sample is short.</p>
+<p>Second, the loss differential can be serially dependent. Multi-step forecasts often overlap, and forecast errors or losses may also be persistent for other reasons. Treating the loss differences as independent when they are not can give misleading standard errors <span class="citation" data-cites="dieboldmariano1995 harveyleybournenewbold1997">(<a href="#ref-dieboldmariano1995" role="doc-biblioref">Diebold and Mariano 1995</a>; <a href="#ref-harveyleybournenewbold1997" role="doc-biblioref">Harvey et al. 1997</a>)</span>.</p>
+</section>
+<section id="from-forecast-errors-to-a-test-statistic" class="level1">
+<h1>From Forecast Errors to a Test Statistic</h1>
+<p>Let the two forecast errors at evaluation date <span class="math inline">\(t\)</span> be <span class="math inline">\(e_{A,t}\)</span> and <span class="math inline">\(e_{B,t}\)</span>. Choose a loss function <span class="math inline">\(L(\cdot)\)</span> before looking at the result. Define the loss differential as</p>
+<p><span class="math display">\[
+d_t=L(e_{A,t})-L(e_{B,t}).
+\]</span></p>
+<p>Under this sign convention:</p>
+<ul>
+<li><span class="math inline">\(d_t&gt;0\)</span> favors Model B;</li>
+<li><span class="math inline">\(d_t&lt;0\)</span> favors Model A; and</li>
+<li><span class="math inline">\(d_t=0\)</span> means equal loss at that date.</li>
+</ul>
+<p>For squared-error loss,</p>
+<p><span class="math display">\[
+d_t=e_{A,t}^{2}-e_{B,t}^{2}.
+\]</span></p>
+<p>The null hypothesis of equal <strong>unconditional</strong> predictive accuracy is</p>
+<p><span class="math display">\[
+H_0: E[d_t]=0.
+\]</span></p>
+<p>With <span class="math inline">\(P\)</span> evaluated forecasts, let</p>
+<p><span class="math display">\[
+\bar d=\frac{1}{P}\sum_{t=1}^{P}d_t.
+\]</span></p>
+<p>A DM statistic can be written as</p>
+<p><span class="math display">\[
+DM=\frac{\bar d}{\sqrt{\widehat{\Omega}_d/P}},
+\]</span></p>
+<p>where <span class="math inline">\(\widehat{\Omega}_d\)</span> estimates the long-run variance of the loss differential. Under suitable regularity conditions, the statistic is asymptotically standard normal under the null <span class="citation" data-cites="dieboldmariano1995">(<a href="#ref-dieboldmariano1995" role="doc-biblioref">Diebold and Mariano 1995</a>)</span>.</p>
+<div id="fig-dm-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dm-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm004_dm_workflow.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dm-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The DM workflow compares paired forecast losses, forms a loss-differential sequence, and scales its average by an estimate of long-run uncertainty.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="the-variance-estimate-is-part-of-the-test" class="level1">
+<h1>The Variance Estimate Is Part of the Test</h1>
+<p>If <span class="math inline">\(d_t\)</span> is serially correlated, using only its ordinary sample variance understates or otherwise misstates uncertainty. A common horizon-based implementation estimates</p>
+<p><span class="math display">\[
+\widehat{\Omega}_d
+=
+\hat\gamma_0+2\sum_{k=1}^{h-1}\hat\gamma_k,
+\]</span></p>
+<p>where <span class="math inline">\(h\)</span> is the forecast horizon and <span class="math inline">\(\hat\gamma_k\)</span> is the sample autocovariance of <span class="math inline">\(d_t\)</span> at lag <span class="math inline">\(k\)</span>.</p>
+<p>This truncation is natural in settings where an <span class="math inline">\(h\)</span>-step forecast structure implies dependence through roughly <span class="math inline">\(h-1\)</span> lags. It is <strong>not a universal bandwidth rule</strong> for every forecasting problem. If the observed loss differential has additional persistence, seasonality, or other dependence, the long-run variance estimator should be chosen for that setting rather than mechanically copied from the horizon <span class="citation" data-cites="diebold2015">(<a href="#ref-diebold2015" role="doc-biblioref">Diebold 2015</a>)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Do not choose the variance estimator by the p-value">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Do not choose the variance estimator by the p-value
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The lag length, kernel, or other HAC choices should follow the forecast design and dependence structure. Trying several variance estimators and reporting the one that produces significance turns the inference procedure itself into a specification search.</p>
+</div>
+</div>
+</section>
+<section id="the-loss-function-defines-the-question" class="level1">
+<h1>The Loss Function Defines the Question</h1>
+<p>The DM test compares <strong>expected loss</strong>, so the loss function is not a cosmetic choice.</p>
+<p>Squared error asks whether the forecasts differ in mean squared predictive loss. Absolute error asks a different question. For density or quantile forecasts, a scoring rule appropriate to that predictive object is needed.</p>
+<p>A DM result should therefore be reported together with the loss function. Saying “Model B is significantly better” without specifying the loss is incomplete.</p>
+</section>
+<section id="small-samples-and-the-harveyleybournenewbold-adjustment" class="level1">
+<h1>Small Samples and the Harvey–Leybourne–Newbold Adjustment</h1>
+<p>The original DM result is asymptotic. In relatively short forecast samples, the finite-sample distribution can differ materially from its asymptotic approximation.</p>
+<p>For mean-squared-error comparisons, Harvey, Leybourne, and Newbold proposed a small-sample modification <span class="citation" data-cites="harveyleybournenewbold1997">(<a href="#ref-harveyleybournenewbold1997" role="doc-biblioref">Harvey et al. 1997</a>)</span>. A commonly used scaling is</p>
+<p><span class="math display">\[
+DM_{HLN}
+=
+DM
+\sqrt{
+\frac{P+1-2h+h(h-1)/P}{P}
+}.
+\]</span></p>
+<p>The adjustment usually shrinks the absolute statistic when the evaluation sample is not large relative to the horizon. It should be viewed as a finite-sample correction for the specified comparison, not as a general cure for every source of misspecification or dependence.</p>
+</section>
+<section id="worked-illustration-lower-rmse-but-weak-statistical-evidence" class="level1">
+<h1>Worked Illustration: Lower RMSE, but Weak Statistical Evidence</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative simulation — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Illustrative simulation — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example uses synthetic paired four-step forecast errors with overlapping dependence. It is designed to separate <strong>sample ranking</strong> from <strong>statistical distinguishability</strong>. The numerical size of the RMSE gap and p-value is not evidence about typical forecast-comparison outcomes in real data.</p>
+</div>
+</div>
+<p>We generate <span class="math inline">\(P=120\)</span> paired forecast errors for a four-step horizon. Both error sequences contain a shared overlapping component, so the squared-loss differential is serially dependent. Model B is designed to have somewhat lower idiosyncratic noise.</p>
+<p>The realized comparison is:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Quantity</th>
+<th style="text-align: center;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model A RMSE</td>
+<td style="text-align: center;">1.207</td>
+</tr>
+<tr class="even">
+<td>Model B RMSE</td>
+<td style="text-align: center;">1.087</td>
+</tr>
+<tr class="odd">
+<td>Model B vs.&nbsp;A RMSE</td>
+<td style="text-align: center;">-9.9%</td>
+</tr>
+<tr class="even">
+<td>Mean squared-loss differential, <span class="math inline">\(\bar d\)</span></td>
+<td style="text-align: center;">0.274</td>
+</tr>
+<tr class="odd">
+<td>DM statistic, lags 0–3</td>
+<td style="text-align: center;">1.350</td>
+</tr>
+<tr class="even">
+<td>Two-sided asymptotic p-value</td>
+<td style="text-align: center;">0.177</td>
+</tr>
+<tr class="odd">
+<td>HLN-adjusted statistic</td>
+<td style="text-align: center;">1.310</td>
+</tr>
+<tr class="even">
+<td>Two-sided HLN p-value</td>
+<td style="text-align: center;">0.190</td>
+</tr>
+</tbody>
+</table>
+<p>Model B has the lower RMSE in this sample. But under the stated squared-error comparison and long-run variance estimate, the evidence is not strong enough to reject equal predictive accuracy at conventional significance levels.</p>
+<p>That is not a contradiction. <strong>“Lower realized RMSE” and “statistically distinguishable expected loss” are different statements.</strong></p>
+<div id="fig-loss-differential" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-loss-differential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm004_loss_differential.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-loss-differential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The paired squared-loss differential varies substantially across forecast dates. Its average is positive, favoring Model B, but the sequence is noisy and serially dependent.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="hands-on-lab-change-the-loss-and-the-dependence-adjustment" class="level1">
+<h1>Hands-on Lab: Change the Loss and the Dependence Adjustment</h1>
+<p>The optional lab reproduces the baseline test and then lets you change two ingredients:</p>
+<ol type="1">
+<li>the loss function: squared error or absolute error; and</li>
+<li>the autocovariance truncation lag used in the long-run variance estimate.</li>
+</ol>
+<div class="method-action">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm004_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm004_hands_on.py">Python</a> · <a href="labs/r/qm004_hands_on.R">R</a>.</p>
+</div>
+<p>For example, compare:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> squared <span class="at">--lag</span> 3</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> squared <span class="at">--lag</span> 0</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> absolute <span class="at">--lag</span> 3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The point is <strong>not</strong> to search for a specification that produces a preferred p-value. The exercise shows that the statistical question depends on both the loss function and the uncertainty estimator.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A transparent implementation starts from paired forecasts or forecast errors:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>loss_a <span class="op">=</span> loss(error_a)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>loss_b <span class="op">=</span> loss(error_b)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>loss_diff <span class="op">=</span> loss_a <span class="op">-</span> loss_b</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mean_diff <span class="op">=</span> loss_diff.mean()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>long_run_var <span class="op">=</span> estimate_long_run_variance(loss_diff)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>dm_stat <span class="op">=</span> mean_diff <span class="op">/</span> sqrt(long_run_var <span class="op">/</span> n_forecasts)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The code is schematic. A production implementation should define the sign convention, loss function, horizon, variance estimator, alternative hypothesis, and any finite-sample adjustment explicitly.</p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>With the sign convention used here, a <strong>positive</strong> DM statistic means Model B has lower average loss; a <strong>negative</strong> statistic means Model A has lower average loss.</p>
+<p>A small two-sided p-value provides evidence against equal expected loss under the stated test design. It does not by itself tell you whether the difference is economically important.</p>
+<p>Likewise, a large p-value does <strong>not</strong> prove that the forecasts are equally accurate. It means the observed loss difference is not statistically distinguishable from zero with the available sample and test specification.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="treating-a-lower-rmse-as-automatically-significant" class="level2">
+<h2 class="anchored" data-anchor-id="treating-a-lower-rmse-as-automatically-significant">1. Treating a lower RMSE as automatically significant</h2>
+<p>RMSE is a descriptive ranking. The DM test adds uncertainty around the paired loss difference. The two answers need not coincide.</p>
+</section>
+<section id="ignoring-serial-dependence-in-the-loss-differential" class="level2">
+<h2 class="anchored" data-anchor-id="ignoring-serial-dependence-in-the-loss-differential">2. Ignoring serial dependence in the loss differential</h2>
+<p>This is especially dangerous for overlapping multi-step forecasts. The relevant object is the dependence in <span class="math inline">\(d_t\)</span>, not just the dependence in the target series.</p>
+</section>
+<section id="reporting-the-p-value-without-the-loss-function" class="level2">
+<h2 class="anchored" data-anchor-id="reporting-the-p-value-without-the-loss-function">3. Reporting the p-value without the loss function</h2>
+<p>A DM test under squared loss and a DM test under absolute loss evaluate different expected-loss questions.</p>
+</section>
+<section id="interpreting-non-rejection-as-proof-of-equality" class="level2">
+<h2 class="anchored" data-anchor-id="interpreting-non-rejection-as-proof-of-equality">4. Interpreting non-rejection as proof of equality</h2>
+<p>Failure to reject <span class="math inline">\(H_0\)</span> is not an equivalence test. Low power, short samples, or high loss variability can all produce large p-values.</p>
+</section>
+<section id="using-a-pairwise-dm-test-as-a-many-model-selection-procedure" class="level2">
+<h2 class="anchored" data-anchor-id="using-a-pairwise-dm-test-as-a-many-model-selection-procedure">5. Using a pairwise DM test as a many-model selection procedure</h2>
+<p>If many models are compared pairwise, multiplicity becomes a separate inferential problem. <strong>QM005 — Model Confidence Set</strong> addresses a set-based approach to model comparison.</p>
+</section>
+<section id="applying-the-standard-pairwise-setup-mechanically-to-nested-models" class="level2">
+<h2 class="anchored" data-anchor-id="applying-the-standard-pairwise-setup-mechanically-to-nested-models">6. Applying the standard pairwise setup mechanically to nested models</h2>
+<p>When one forecasting model nests another and parameters are estimated, the null distribution and mean-squared-error comparison can require specialized treatment. West develops inference that accounts for estimated parameters, and Clark–West propose an adjusted comparison for nested predictive models <span class="citation" data-cites="west1996 clarkwest2007">(<a href="#ref-west1996" role="doc-biblioref">West 1996</a>; <a href="#ref-clarkwest2007" role="doc-biblioref">Clark and West 2007</a>)</span>.</p>
+</section>
+<section id="using-unconditional-dm-when-the-real-question-is-regime-dependent-performance" class="level2">
+<h2 class="anchored" data-anchor-id="using-unconditional-dm-when-the-real-question-is-regime-dependent-performance">7. Using unconditional DM when the real question is regime-dependent performance</h2>
+<p>The standard DM null concerns the unconditional mean loss differential. If relative predictive performance may vary systematically with information available at the forecast origin, a conditional predictive ability framework can be more appropriate <span class="citation" data-cites="giacominiwhite2006">(<a href="#ref-giacominiwhite2006" role="doc-biblioref">Giacomini and White 2006</a>)</span>.</p>
+</section>
+</section>
+<section id="a-practical-reporting-checklist" class="level1">
+<h1>A Practical Reporting Checklist</h1>
+<p>When reporting a DM comparison, state:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>What to report</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Forecast pair</td>
+<td>Which two forecast sequences are compared?</td>
+</tr>
+<tr class="even">
+<td>Target and horizon</td>
+<td>Are both forecasts for the same target and horizon?</td>
+</tr>
+<tr class="odd">
+<td>Evaluation sample</td>
+<td>How many paired forecasts are used?</td>
+</tr>
+<tr class="even">
+<td>Loss</td>
+<td>Squared error, absolute error, or another scoring rule?</td>
+</tr>
+<tr class="odd">
+<td>Sign convention</td>
+<td>Which sign of <span class="math inline">\(d_t\)</span> favors which forecast?</td>
+</tr>
+<tr class="even">
+<td>Dependence adjustment</td>
+<td>How is long-run variance estimated?</td>
+</tr>
+<tr class="odd">
+<td>Small-sample adjustment</td>
+<td>Is HLN or another correction used?</td>
+</tr>
+<tr class="even">
+<td>Alternative</td>
+<td>Two-sided or pre-specified directional test?</td>
+</tr>
+<tr class="odd">
+<td>Effect size</td>
+<td>What is the actual difference in average loss or RMSE?</td>
+</tr>
+<tr class="even">
+<td>Multiplicity</td>
+<td>Are many forecast pairs being tested?</td>
+</tr>
+</tbody>
+</table>
+<p>The p-value should accompany the forecast-loss difference, not replace it.</p>
+</section>
+<section id="when-not-to-use-it" class="level1">
+<h1>When Not to Use It</h1>
+<p>The basic pairwise DM setup is not the right tool when:</p>
+<ul>
+<li>the main question concerns many models simultaneously rather than one pre-specified pair;</li>
+<li>the loss function does not match the predictive object being evaluated;</li>
+<li>the two forecast sequences do not refer to the same target, horizon, and evaluation dates;</li>
+<li>the long-run variance cannot be estimated credibly with the available sample;</li>
+<li>the comparison is fundamentally about nested estimated models requiring specialized inference; or</li>
+<li>the scientific question is conditional predictive ability rather than equality of unconditional mean loss.</li>
+</ul>
+</section>
+<section id="related-methods" class="level1">
+<h1>Related Methods</h1>
+<ul>
+<li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html"><strong>QM001 — Out-of-Sample Forecast Evaluation</strong></a>: how valid forecast sequences are produced before they are compared.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html"><strong>QM002 — Rolling vs Expanding Windows</strong></a>: how the estimation sample evolves across forecast origins.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html"><strong>QM003 — Look-Ahead Bias and Data Leakage</strong></a>: why a statistically polished comparison is still invalid if either forecast pipeline sees unavailable information.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html"><strong>QM005 — Model Confidence Set</strong></a>: set-based uncertainty when many forecasting models are compared.</li>
+<li><strong><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>:</strong> dependence-aware resampling for uncertainty assessment.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> uses pairwise predictive-accuracy inference alongside multiplicity control and set-based comparison. QM004 isolates the pairwise logic: how a sequence of forecast-loss differences is converted into evidence about equal predictive accuracy, and why the loss function, dependence adjustment, and finite-sample treatment matter.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. Re-running the stated loss and long-run-variance calculations reproduces the DM and HLN results reported above.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+
+
+
+<!-- -->
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-clarkwest2007" class="csl-entry" role="listitem">
+Clark, Todd E., and Kenneth D. West. 2007. <span>“Approximately Normal Tests for Equal Predictive Accuracy in Nested Models.”</span> <em>Journal of Econometrics</em> 138 (1): 291–311. <a href="https://doi.org/10.1016/j.jeconom.2006.05.023">https://doi.org/10.1016/j.jeconom.2006.05.023</a>.
+</div>
+<div id="ref-diebold2015" class="csl-entry" role="listitem">
+Diebold, Francis X. 2015. <span>“Comparing Predictive Accuracy, Twenty Years Later: A Personal Perspective on the Use and Abuse of Diebold–Mariano Tests.”</span> <em>Journal of Business &amp; Economic Statistics</em> 33 (1): 1–1. <a href="https://doi.org/10.1080/07350015.2014.983236">https://doi.org/10.1080/07350015.2014.983236</a>.
+</div>
+<div id="ref-dieboldmariano1995" class="csl-entry" role="listitem">
+Diebold, Francis X., and Roberto S. Mariano. 1995. <span>“Comparing Predictive Accuracy.”</span> <em>Journal of Business &amp; Economic Statistics</em> 13 (3): 253–63. <a href="https://doi.org/10.1080/07350015.1995.10524599">https://doi.org/10.1080/07350015.1995.10524599</a>.
+</div>
+<div id="ref-giacominiwhite2006" class="csl-entry" role="listitem">
+Giacomini, Raffaella, and Halbert White. 2006. <span>“Tests of Conditional Predictive Ability.”</span> <em>Econometrica</em> 74 (6): 1545–78. <a href="https://doi.org/10.1111/j.1468-0262.2006.00718.x">https://doi.org/10.1111/j.1468-0262.2006.00718.x</a>.
+</div>
+<div id="ref-harveyleybournenewbold1997" class="csl-entry" role="listitem">
+Harvey, David, Stephen Leybourne, and Paul Newbold. 1997. <span>“Testing the Equality of Prediction Mean Squared Errors.”</span> <em>International Journal of Forecasting</em> 13 (2): 281–91. <a href="https://doi.org/10.1016/S0169-2070(96)00719-4">https://doi.org/10.1016/S0169-2070(96)00719-4</a>.
+</div>
+<div id="ref-west1996" class="csl-entry" role="listitem">
+West, Kenneth D. 1996. <span>“Asymptotic Inference about Predictive Ability.”</span> <em>Econometrica</em> 64 (5): 1067–84. <a href="https://doi.org/10.2307/2171956">https://doi.org/10.2307/2171956</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Diebold–Mariano Test"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Is the apparent forecast advantage larger than sampling noise?"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "A practical guide to comparing two forecast-loss sequences with the Diebold–Mariano test."</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> en</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> article</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Forecast Evaluation</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Intermediate</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>::: {.method-kicker}</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>QM004 · Forecast Evaluation · Intermediate</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>::: {.method-orientation}</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>**Core idea.** The Diebold–Mariano test asks whether the average loss difference between two forecast sequences is distinguishable from zero after accounting for sampling uncertainty.</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>**Use it for.** Comparing two forecasts of the same target, horizon, and evaluation sample under a pre-specified loss function.</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>**It does not establish.** Economic importance, universal superiority, conditional superiority in every regime, or valid inference when the dependence structure of the loss differential is handled incorrectly.</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Question</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>Suppose Model B has a lower RMSE than Model A over the same out-of-sample period.</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Is that observed advantage large enough, relative to the variability of the paired forecast losses, to reject equal predictive accuracy?**</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>A ranking by RMSE answers which model had lower average squared loss in the realized sample. It does not by itself tell us how much sampling uncertainty surrounds that difference. The Diebold–Mariano (DM) framework turns the comparison into a statistical test built from the sequence of paired loss differences <span class="co">[</span><span class="ot">@dieboldmariano1995</span><span class="co">]</span>.</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Why It Matters</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>Forecast comparisons are paired observations. At each forecast date, both methods face the same target realization. The natural comparison is therefore not two unrelated RMSEs, but the **loss differential at each forecast date**.</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>This matters for two reasons.</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>First, a visually meaningful RMSE difference can still be statistically weak when the loss differential is noisy or the evaluation sample is short.</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>Second, the loss differential can be serially dependent. Multi-step forecasts often overlap, and forecast errors or losses may also be persistent for other reasons. Treating the loss differences as independent when they are not can give misleading standard errors <span class="co">[</span><span class="ot">@dieboldmariano1995; @harveyleybournenewbold1997</span><span class="co">]</span>.</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu"># From Forecast Errors to a Test Statistic</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>Let the two forecast errors at evaluation date $t$ be $e_{A,t}$ and $e_{B,t}$. Choose a loss function $L(\cdot)$ before looking at the result. Define the loss differential as</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>d_t=L(e_{A,t})-L(e_{B,t}).</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>Under this sign convention:</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$d_t&gt;0$ favors Model B;</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$d_t&lt;0$ favors Model A; and</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$d_t=0$ means equal loss at that date.</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>For squared-error loss,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>d_t=e_{A,t}^{2}-e_{B,t}^{2}.</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>The null hypothesis of equal **unconditional** predictive accuracy is</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>H_0: E<span class="co">[</span><span class="ot">d_t</span><span class="co">]</span>=0.</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>With $P$ evaluated forecasts, let</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>\bar d=\frac{1}{P}\sum_{t=1}^{P}d_t.</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>A DM statistic can be written as</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>DM=\frac{\bar d}{\sqrt{\widehat{\Omega}_d/P}},</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>where $\widehat{\Omega}_d$ estimates the long-run variance of the loss differential. Under suitable regularity conditions, the statistic is asymptotically standard normal under the null <span class="co">[</span><span class="ot">@dieboldmariano1995</span><span class="co">]</span>.</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="al">![The DM workflow compares paired forecast losses, forms a loss-differential sequence, and scales its average by an estimate of long-run uncertainty.](figures/rendered/qm004_dm_workflow.svg)</span>{#fig-dm-workflow width=95%}</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Variance Estimate Is Part of the Test</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>If $d_t$ is serially correlated, using only its ordinary sample variance understates or otherwise misstates uncertainty. A common horizon-based implementation estimates</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>\widehat{\Omega}_d</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>=</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>\hat\gamma_0+2\sum_{k=1}^{h-1}\hat\gamma_k,</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>where $h$ is the forecast horizon and $\hat\gamma_k$ is the sample autocovariance of $d_t$ at lag $k$.</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>This truncation is natural in settings where an $h$-step forecast structure implies dependence through roughly $h-1$ lags. It is **not a universal bandwidth rule** for every forecasting problem. If the observed loss differential has additional persistence, seasonality, or other dependence, the long-run variance estimator should be chosen for that setting rather than mechanically copied from the horizon <span class="co">[</span><span class="ot">@diebold2015</span><span class="co">]</span>.</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="Do not choose the variance estimator by the p-value"}</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>The lag length, kernel, or other HAC choices should follow the forecast design and dependence structure. Trying several variance estimators and reporting the one that produces significance turns the inference procedure itself into a specification search.</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Loss Function Defines the Question</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>The DM test compares **expected loss**, so the loss function is not a cosmetic choice.</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>Squared error asks whether the forecasts differ in mean squared predictive loss. Absolute error asks a different question. For density or quantile forecasts, a scoring rule appropriate to that predictive object is needed.</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>A DM result should therefore be reported together with the loss function. Saying “Model B is significantly better” without specifying the loss is incomplete.</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="fu"># Small Samples and the Harvey–Leybourne–Newbold Adjustment</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>The original DM result is asymptotic. In relatively short forecast samples, the finite-sample distribution can differ materially from its asymptotic approximation.</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>For mean-squared-error comparisons, Harvey, Leybourne, and Newbold proposed a small-sample modification <span class="co">[</span><span class="ot">@harveyleybournenewbold1997</span><span class="co">]</span>. A commonly used scaling is</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>DM_{HLN}</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>=</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>DM</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>\sqrt{</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>\frac{P+1-2h+h(h-1)/P}{P}</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>}.</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>The adjustment usually shrinks the absolute statistic when the evaluation sample is not large relative to the horizon. It should be viewed as a finite-sample correction for the specified comparison, not as a general cure for every source of misspecification or dependence.</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked Illustration: Lower RMSE, but Weak Statistical Evidence</span></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Illustrative simulation — not empirical evidence"}</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>The example uses synthetic paired four-step forecast errors with overlapping dependence. It is designed to separate **sample ranking** from **statistical distinguishability**. The numerical size of the RMSE gap and p-value is not evidence about typical forecast-comparison outcomes in real data.</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>We generate $P=120$ paired forecast errors for a four-step horizon. Both error sequences contain a shared overlapping component, so the squared-loss differential is serially dependent. Model B is designed to have somewhat lower idiosyncratic noise.</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>The realized comparison is:</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Quantity <span class="pp">|</span> Result <span class="pp">|</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|</span></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model A RMSE <span class="pp">|</span> 1.207 <span class="pp">|</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model B RMSE <span class="pp">|</span> 1.087 <span class="pp">|</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model B vs. A RMSE <span class="pp">|</span> -9.9% <span class="pp">|</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Mean squared-loss differential, $\bar d$ <span class="pp">|</span> 0.274 <span class="pp">|</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> DM statistic, lags 0–3 <span class="pp">|</span> 1.350 <span class="pp">|</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Two-sided asymptotic p-value <span class="pp">|</span> 0.177 <span class="pp">|</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> HLN-adjusted statistic <span class="pp">|</span> 1.310 <span class="pp">|</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Two-sided HLN p-value <span class="pp">|</span> 0.190 <span class="pp">|</span></span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>Model B has the lower RMSE in this sample. But under the stated squared-error comparison and long-run variance estimate, the evidence is not strong enough to reject equal predictive accuracy at conventional significance levels.</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>That is not a contradiction. **“Lower realized RMSE” and “statistically distinguishable expected loss” are different statements.**</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a><span class="al">![The paired squared-loss differential varies substantially across forecast dates. Its average is positive, favoring Model B, but the sequence is noisy and serially dependent.](figures/rendered/qm004_loss_differential.svg)</span>{#fig-loss-differential width=95%}</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hands-on Lab: Change the Loss and the Dependence Adjustment</span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>The optional lab reproduces the baseline test and then lets you change two ingredients:</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>the loss function: squared error or absolute error; and</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>the autocovariance truncation lag used in the long-run variance estimate.</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>::: {.method-action}</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>**Run it yourself.** Start with the <span class="co">[</span><span class="ot">lab guide</span><span class="co">](labs/index.qmd)</span>. For a self-contained copy, use the <span class="co">[</span><span class="ot">complete lab bundle</span><span class="co">](labs/qm004_hands_on_lab_bundle.zip)</span>. Direct source: <span class="co">[</span><span class="ot">Python</span><span class="co">](labs/python/qm004_hands_on.py)</span> · <span class="co">[</span><span class="ot">R</span><span class="co">](labs/r/qm004_hands_on.R)</span>.</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>For example, compare:</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> squared <span class="at">--lag</span> 3</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> squared <span class="at">--lag</span> 0</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm004_hands_on.py <span class="at">--loss</span> absolute <span class="at">--lag</span> 3</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>The point is **not** to search for a specification that produces a preferred p-value. The exercise shows that the statistical question depends on both the loss function and the uncertainty estimator.</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a><span class="fu"># Implementation Pattern</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>A transparent implementation starts from paired forecasts or forecast errors:</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>loss_a <span class="op">=</span> loss(error_a)</span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>loss_b <span class="op">=</span> loss(error_b)</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>loss_diff <span class="op">=</span> loss_a <span class="op">-</span> loss_b</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>mean_diff <span class="op">=</span> loss_diff.mean()</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>long_run_var <span class="op">=</span> estimate_long_run_variance(loss_diff)</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>dm_stat <span class="op">=</span> mean_diff <span class="op">/</span> sqrt(long_run_var <span class="op">/</span> n_forecasts)</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>The code is schematic. A production implementation should define the sign convention, loss function, horizon, variance estimator, alternative hypothesis, and any finite-sample adjustment explicitly.</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to Interpret the Result</span></span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>With the sign convention used here, a **positive** DM statistic means Model B has lower average loss; a **negative** statistic means Model A has lower average loss.</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>A small two-sided p-value provides evidence against equal expected loss under the stated test design. It does not by itself tell you whether the difference is economically important.</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>Likewise, a large p-value does **not** prove that the forecasts are equally accurate. It means the observed loss difference is not statistically distinguishable from zero with the available sample and test specification.</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a><span class="fu"># Common Mistakes</span></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Treating a lower RMSE as automatically significant</span></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>RMSE is a descriptive ranking. The DM test adds uncertainty around the paired loss difference. The two answers need not coincide.</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Ignoring serial dependence in the loss differential</span></span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>This is especially dangerous for overlapping multi-step forecasts. The relevant object is the dependence in $d_t$, not just the dependence in the target series.</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Reporting the p-value without the loss function</span></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>A DM test under squared loss and a DM test under absolute loss evaluate different expected-loss questions.</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Interpreting non-rejection as proof of equality</span></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>Failure to reject $H_0$ is not an equivalence test. Low power, short samples, or high loss variability can all produce large p-values.</span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Using a pairwise DM test as a many-model selection procedure</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>If many models are compared pairwise, multiplicity becomes a separate inferential problem. **QM005 — Model Confidence Set** addresses a set-based approach to model comparison.</span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Applying the standard pairwise setup mechanically to nested models</span></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>When one forecasting model nests another and parameters are estimated, the null distribution and mean-squared-error comparison can require specialized treatment. West develops inference that accounts for estimated parameters, and Clark–West propose an adjusted comparison for nested predictive models <span class="co">[</span><span class="ot">@west1996; @clarkwest2007</span><span class="co">]</span>.</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Using unconditional DM when the real question is regime-dependent performance</span></span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>The standard DM null concerns the unconditional mean loss differential. If relative predictive performance may vary systematically with information available at the forecast origin, a conditional predictive ability framework can be more appropriate <span class="co">[</span><span class="ot">@giacominiwhite2006</span><span class="co">]</span>.</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a><span class="fu"># A Practical Reporting Checklist</span></span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>When reporting a DM comparison, state:</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Item <span class="pp">|</span> What to report <span class="pp">|</span></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Forecast pair <span class="pp">|</span> Which two forecast sequences are compared? <span class="pp">|</span></span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Target and horizon <span class="pp">|</span> Are both forecasts for the same target and horizon? <span class="pp">|</span></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evaluation sample <span class="pp">|</span> How many paired forecasts are used? <span class="pp">|</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Loss <span class="pp">|</span> Squared error, absolute error, or another scoring rule? <span class="pp">|</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sign convention <span class="pp">|</span> Which sign of $d_t$ favors which forecast? <span class="pp">|</span></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Dependence adjustment <span class="pp">|</span> How is long-run variance estimated? <span class="pp">|</span></span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Small-sample adjustment <span class="pp">|</span> Is HLN or another correction used? <span class="pp">|</span></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Alternative <span class="pp">|</span> Two-sided or pre-specified directional test? <span class="pp">|</span></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Effect size <span class="pp">|</span> What is the actual difference in average loss or RMSE? <span class="pp">|</span></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Multiplicity <span class="pp">|</span> Are many forecast pairs being tested? <span class="pp">|</span></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>The p-value should accompany the forecast-loss difference, not replace it.</span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a><span class="fu"># When Not to Use It</span></span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>The basic pairwise DM setup is not the right tool when:</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the main question concerns many models simultaneously rather than one pre-specified pair;</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the loss function does not match the predictive object being evaluated;</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the two forecast sequences do not refer to the same target, horizon, and evaluation dates;</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the long-run variance cannot be estimated credibly with the available sample;</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the comparison is fundamentally about nested estimated models requiring specialized inference; or</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the scientific question is conditional predictive ability rather than equality of unconditional mean loss.</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a><span class="fu"># Related Methods</span></span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM001 — Out-of-Sample Forecast Evaluation**</span><span class="co">](../QM001_OUT_OF_SAMPLE_EVALUATION/article.qmd)</span>: how valid forecast sequences are produced before they are compared.</span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM002 — Rolling vs Expanding Windows**</span><span class="co">](../QM002_ROLLING_VS_EXPANDING_WINDOWS/article.qmd)</span>: how the estimation sample evolves across forecast origins.</span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM003 — Look-Ahead Bias and Data Leakage**</span><span class="co">](../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.qmd)</span>: why a statistically polished comparison is still invalid if either forecast pipeline sees unavailable information.</span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM005 — Model Confidence Set**</span><span class="co">](../QM005_MODEL_CONFIDENCE_SET/article.qmd)</span>: set-based uncertainty when many forecasting models are compared.</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM006 — Block Bootstrap](../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.qmd):** dependence-aware resampling for uncertainty assessment.</span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="fu"># Used in SlackQuant Research</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting**</span><span class="co">](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118)</span> uses pairwise predictive-accuracy inference alongside multiplicity control and set-based comparison. QM004 isolates the pairwise logic: how a sequence of forecast-loss differences is converted into evidence about equal predictive accuracy, and why the loss function, dependence adjustment, and finite-sample treatment matter.</span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reproducibility</span></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>The accompanying materials include the paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. Re-running the stated loss and long-run-variance calculations reproduces the DM and HLN results reported above.</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a><span class="fu"># References {.unnumbered}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

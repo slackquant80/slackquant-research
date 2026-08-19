@@ -1,0 +1,450 @@
+[
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html",
+    "title": "QM006 Hands-on Lab",
+    "section": "",
+    "text": "Goal\nThis short exercise compares IID resampling with a moving-block bootstrap on the same synthetic dependent series.\n\n\nStart here\nDownload the complete lab bundle, or use the direct Python and R scripts.\n\n\nBaseline\npython labs/python/qm006_hands_on.py\nThen try:\npython labs/python/qm006_hands_on.py --block-length 4\npython labs/python/qm006_hands_on.py --block-length 8\npython labs/python/qm006_hands_on.py --block-length 32\n\n\nInterpretation\nThe exercise is designed to show that resampling individual observations can remove serial dependence that matters for uncertainty. The numerical gap is specific to this synthetic series; block length is a tuning choice, not a universal constant."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html",
+    "title": "QM005 Hands-on Lab",
+    "section": "",
+    "text": "The lab starts from five synthetic forecast-loss sequences and follows a transparent Tmax Model Confidence Set from the full candidate set to the final survivors."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html#start-here",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html#start-here",
+    "title": "QM005 Hands-on Lab",
+    "section": "Start here",
+    "text": "Start here\n\nDownload the complete lab bundle.\nRun the 240-observation baseline.\nRun the 80-observation version and compare the size of the surviving set.\n\n\nPython\npython labs/python/qm005_hands_on.py\npython labs/python/qm005_hands_on.py --sample 80\n\n\nR\nRscript labs/r/qm005_hands_on.R 240 0.10\nRscript labs/r/qm005_hands_on.R 80 0.10"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html#what-to-notice",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html#what-to-notice",
+    "title": "QM005 Hands-on Lab",
+    "section": "What to notice",
+    "text": "What to notice\nThe lowest average loss is a ranking statement. The MCS asks a different question: which models can the data distinguish as inferior under the stated loss, resampling design, test statistic, elimination rule, and confidence level?\nThe 80-observation exercise is not evidence that every shorter sample must produce a larger MCS. It is a controlled illustration of the information-content idea."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/labs/index.html",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/labs/index.html",
+    "title": "QM004 Hands-on Lab",
+    "section": "",
+    "text": "Goal\nReproduce the baseline pairwise predictive-accuracy test, then change the loss function or autocovariance truncation lag to see how the inferential question changes.\n\n\nPython\npip install -r labs/python/requirements.txt\npython labs/python/qm004_hands_on.py --loss squared --lag 3\nTry --loss absolute or --lag 0 only as a teaching exercise. In applied work, these choices should follow the forecast design rather than the desired significance result.\n\n\nR\nRscript labs/r/qm004_hands_on.R squared 3\n\n\nWhat to notice\n\nThe sign of the average loss differential identifies which forecast has lower average loss under the chosen loss function.\nThe denominator of the DM statistic depends on the estimated long-run variance.\nA lower realized RMSE can coexist with a non-significant DM result."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html",
+    "title": "QM003 Hands-on Lab",
+    "section": "",
+    "text": "Goal\nUse the same synthetic series as the article to compare an admissible feature with two future-aware alternatives.\n\nClean: \\(x_t\\)\nCentered: \\((x_{t-1}+x_t+x_{t+1})/3\\)\nFuture: \\(x_{t+1}\\)\n\nAt forecast origin \\(t\\), the last two features use information that is not yet available.\n\n\nPython\npython labs/python/qm003_hands_on.py\nYou can isolate one feature with --feature clean, --feature centered, or --feature future.\n\n\nR\nRscript labs/r/qm003_hands_on.R all\nUse clean, centered, or future instead of all to run one feature.\n\n\nInterpretation\nThe exercise is intentionally synthetic. Do not treat the size of the RMSE difference as a general estimate of leakage bias. The point is that a held-out sample is not valid when the feature itself contains future information."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html",
+    "title": "QM002 Hands-on Lab",
+    "section": "",
+    "text": "This lab uses the same synthetic series as QM002 — Rolling vs Expanding Windows."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html#start-here",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html#start-here",
+    "title": "QM002 Hands-on Lab",
+    "section": "Start here",
+    "text": "Start here\nRun the 60-observation baseline, then try shorter and longer rolling windows.\n\nPython\npython labs/python/qm002_hands_on.py\npython labs/python/qm002_hands_on.py --window 30\npython labs/python/qm002_hands_on.py --window 120\n\n\nR\nRscript labs/r/qm002_hands_on.R 60\nRscript labs/r/qm002_hands_on.R 30\nRscript labs/r/qm002_hands_on.R 120\nFocus on the trade-off rather than searching for a single preferred number: a shorter window forgets old observations sooner but estimates the model from less data."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/labs/index.html",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/labs/index.html",
+    "title": "QM001 Hands-on Lab",
+    "section": "",
+    "text": "Start here\nThis optional lab takes about 10–15 minutes. It reproduces the synthetic example in QM001 — Out-of-Sample Forecast Evaluation and shows why a better fit on development data need not translate into better forecasts on held-out targets.\nFor the simplest setup, download the complete lab bundle. It contains the guide, both implementations, dependency information, and the synthetic data used by the article.\nIf you already have the full source package, you can instead open the scripts directly: Python · R.\n\n\nWhat you will do\n\nidentify the development and held-out observations;\nfit Model A, an AR(1) benchmark, using development data only;\nsearch the candidate noise predictors using only the development sample;\nfit Model B with the selected predictor; and\ncompare development and held-out RMSE without using the held-out targets for model selection.\n\n\n\nPython\nFrom the extracted lab bundle or the QM001 folder:\npython labs/python/qm001_hands_on.py\nIf needed, install the lab dependencies with:\npython -m pip install -r labs/python/requirements.txt\n\n\nR\nFrom the extracted lab bundle or the QM001 folder:\nRscript labs/r/qm001_hands_on.R\nThe R lab uses base R only.\n\n\nBaseline result\nWith all 80 candidate noise predictors searched, the lab should reproduce approximately:\n\n\n\nSample\nModel A RMSE\nModel B RMSE\nModel B vs. A\n\n\n\n\nDevelopment\n1.046\n0.951\n-9.1%\n\n\nHeld-out\n0.887\n1.101\n+24.1%\n\n\n\nThe example is illustrative. It does not show how often this type of reversal occurs in general or in any particular market.\n\n\nTry one change\nReduce the search size, for example:\npython labs/python/qm001_hands_on.py --n-search 20\nor:\nRscript labs/r/qm001_hands_on.R 20\nDo not expect the result to move in one direction as the search size changes. The purpose is to compare what looks best in the development sample with what performs best on held-out data."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Quantitative Methods",
+    "section": "",
+    "text": "SlackQuant Quantitative Methods explains the statistical, econometric, portfolio, and machine-learning tools that appear across SlackQuant Research. Each article connects intuition, formal definitions, reproducible implementation, common misuse, and the research settings in which the method is actually used."
+  },
+  {
+    "objectID": "index.html#current-articles",
+    "href": "index.html#current-articles",
+    "title": "Quantitative Methods",
+    "section": "Current articles",
+    "text": "Current articles\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates."
+  },
+  {
+    "objectID": "index.html#library-principles",
+    "href": "index.html#library-principles",
+    "title": "Quantitative Methods",
+    "section": "Library principles",
+    "text": "Library principles\nThe library is paper-driven rather than encyclopedic. Methods are added when they materially help readers understand a research design, empirical result, or investment decision. Articles favor plain-language intuition before unnecessary formalism, but do not simplify away assumptions that matter for validity.\nEach computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence."
+  },
+  {
+    "objectID": "index.html#next-methods",
+    "href": "index.html#next-methods",
+    "title": "Quantitative Methods",
+    "section": "Next methods",
+    "text": "Next methods\nFuture additions remain paper-driven and will be added when they materially support active SlackQuant research."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "",
+    "text": "QM001 · Forecast Evaluation · Foundation"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#single-forecast-origin",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#single-forecast-origin",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "Single forecast origin",
+    "text": "Single forecast origin\nChoose one historical cutoff, estimate the forecasting procedure using information available by that date, and generate one or more forecasts from that origin. This is conceptually clean because the information cutoff is fixed.\nIts limitation is that the conclusion may depend heavily on one historical origin or one subsequent episode. A single origin also says little about how the procedure behaves when it is repeatedly updated through time."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#repeated-or-rolling-forecast-origins",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#repeated-or-rolling-forecast-origins",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "Repeated or rolling forecast origins",
+    "text": "Repeated or rolling forecast origins\nMove the forecast origin forward through the evaluation period. At each origin, generate a forecast using only information available by that date. Parameters may be re-estimated as new observations arrive, or they may remain fixed if that is the pre-specified forecasting protocol.\nA repeated-origin design therefore comes closer to how forecasts are updated in practice. The estimation sample can itself be fixed-length or expanding; that separate design choice is treated in QM002 — Rolling vs Expanding Windows.\nA held-out test block can use either approach. What matters is that the protocol is defined before inspecting the test outcomes and that every forecast respects its own historical information cutoff."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#standardizing-with-the-full-sample",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#standardizing-with-the-full-sample",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "1. Standardizing with the full sample",
+    "text": "1. Standardizing with the full sample\nEstimating a mean, variance, or another data-dependent scaling parameter from the full dataset lets later observations influence earlier transformed inputs. Fit such parameters on the admissible training information and apply the fitted transformation forward. The numerical effect can be small or even neutral for some model classes, but the historical information boundary should still be respected."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#tuning-on-the-final-test-period",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#tuning-on-the-final-test-period",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "2. Tuning on the final test period",
+    "text": "2. Tuning on the final test period\nIf test performance is inspected, the model is changed in response, and the same test period is checked again, that period has become part of model development. At that point, a clean final assessment requires either a new untouched test period or an explicit acknowledgment that the existing test result is exploratory."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#treating-a-chronological-split-as-genuine-real-time-data",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#treating-a-chronological-split-as-genuine-real-time-data",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "3. Treating a chronological split as genuine real-time data",
+    "text": "3. Treating a chronological split as genuine real-time data\nA date cutoff does not remove revisions, backfills, or release-timing problems. The information set must be defined, not assumed."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#misaligning-origin-and-target",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#misaligning-origin-and-target",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "4. Misaligning origin and target",
+    "text": "4. Misaligning origin and target\nFor an \\(h\\)-step forecast, the relevant information cutoff is the forecast origin \\(t\\), not the target date \\(t+h\\). When features are constructed for a direct \\(h\\)-step forecast, a misaligned lag can accidentally use information that would not have been available at origin \\(t\\)."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#letting-preprocessing-see-the-future",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#letting-preprocessing-see-the-future",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "5. Letting preprocessing see the future",
+    "text": "5. Letting preprocessing see the future\nPCA, fitted imputation, feature selection, volatility estimates, risk estimates, and ensemble weights can all be part of the forecasting rule. If their data-dependent parameters are estimated with inadmissible future observations, the evaluation is no longer cleanly out of sample."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#equating-the-lowest-rmse-with-a-unique-winner",
+    "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#equating-the-lowest-rmse-with-a-unique-winner",
+    "title": "Out-of-Sample Forecast Evaluation",
+    "section": "6. Equating the lowest RMSE with a unique winner",
+    "text": "6. Equating the lowest RMSE with a unique winner\nAverage loss ranking is descriptive. Sampling uncertainty, serial dependence, multiplicity, benchmark choice, and temporal instability require additional analysis when the claim goes beyond simple ranking."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html",
+    "title": "Rolling vs Expanding Windows",
+    "section": "",
+    "text": "QM002 · Forecast Evaluation · Foundation"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#expanding-window",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#expanding-window",
+    "title": "Rolling vs Expanding Windows",
+    "section": "Expanding window",
+    "text": "Expanding window\nAt each new origin, add newly available observations and keep the earlier ones.\nThis approach is attractive when:\n\nparameter stability is a reasonable approximation;\nthe model needs a relatively large sample;\nestimation variance is a major concern; or\nthere is no strong reason to treat older observations as obsolete.\n\nThe cost is that observations from old regimes continue to influence current parameter estimates."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#rolling-window",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#rolling-window",
+    "title": "Rolling vs Expanding Windows",
+    "section": "Rolling window",
+    "text": "Rolling window\nAt each new origin, add recent observations and drop the oldest ones so the estimation sample remains approximately fixed in length.\nThis approach can react more quickly when the data-generating process changes because old regimes eventually leave the estimation sample. The cost is that a shorter sample can make parameter estimates noisier, especially when the model is complex or the signal is weak.\nA rolling window therefore introduces an additional design parameter: the window length \\(w\\). A very short window adapts quickly but may be unstable. A very long rolling window increasingly resembles an expanding window over the available sample."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#calling-repeated-forecast-origins-a-rolling-window",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#calling-repeated-forecast-origins-a-rolling-window",
+    "title": "Rolling vs Expanding Windows",
+    "section": "1. Calling repeated forecast origins a rolling window",
+    "text": "1. Calling repeated forecast origins a rolling window\nForecast origins can roll forward while the estimation sample expands. State both the origin scheme and the estimation-window scheme."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#choosing-the-window-on-the-final-test-sample",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#choosing-the-window-on-the-final-test-sample",
+    "title": "Rolling vs Expanding Windows",
+    "section": "2. Choosing the window on the final test sample",
+    "text": "2. Choosing the window on the final test sample\nIf final test outcomes determine the window length, they have become part of model development. Report that selection honestly or use a separate untouched evaluation."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#assuming-shorter-is-always-more-adaptive-and-therefore-better",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#assuming-shorter-is-always-more-adaptive-and-therefore-better",
+    "title": "Rolling vs Expanding Windows",
+    "section": "3. Assuming shorter is always more adaptive and therefore better",
+    "text": "3. Assuming shorter is always more adaptive and therefore better\nA short window forgets old regimes faster, but it also throws away observations. Adaptation and estimation precision move in opposite directions."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#treating-a-fixed-calendar-length-as-a-fixed-information-amount",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#treating-a-fixed-calendar-length-as-a-fixed-information-amount",
+    "title": "Rolling vs Expanding Windows",
+    "section": "4. Treating a fixed calendar length as a fixed information amount",
+    "text": "4. Treating a fixed calendar length as a fixed information amount\nSixty monthly observations, sixty trading days, and sixty quarterly observations represent very different amounts of information. Missing values and changing data availability can further alter the effective estimation sample."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#changing-the-window-without-changing-dependent-preprocessing",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#changing-the-window-without-changing-dependent-preprocessing",
+    "title": "Rolling vs Expanding Windows",
+    "section": "5. Changing the window without changing dependent preprocessing",
+    "text": "5. Changing the window without changing dependent preprocessing\nIf scaling, PCA, feature selection, imputation, or tuning is re-estimated at each origin, those steps must use the same admissible sample logic as the forecasting model."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#reporting-one-convenient-window-as-if-it-were-inevitable",
+    "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#reporting-one-convenient-window-as-if-it-were-inevitable",
+    "title": "Rolling vs Expanding Windows",
+    "section": "6. Reporting one convenient window as if it were inevitable",
+    "text": "6. Reporting one convenient window as if it were inevitable\nWindow size is often substantively important. If conclusions change across reasonable choices, that sensitivity is part of the result rather than a nuisance to hide."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "",
+    "text": "QM003 · Data & Research Design · Foundation"
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#future-aware-feature-construction",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#future-aware-feature-construction",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "1. Future-aware feature construction",
+    "text": "1. Future-aware feature construction\nA trailing transformation uses observations available at or before the forecast origin. A centered or forward-looking transformation may use observations that have not occurred yet.\nThis often happens quietly when a smoothing, filtering, interpolation, or imputation routine is applied to the full series before the historical evaluation loop is constructed."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#preprocessing-outside-the-permitted-split",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#preprocessing-outside-the-permitted-split",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "2. Preprocessing outside the permitted split",
+    "text": "2. Preprocessing outside the permitted split\nScaling, principal components, feature screening, outlier rules, imputation parameters, and other data-dependent transformations should be estimated inside the information boundary that applies to the model being evaluated.\nThe numerical effect of a particular preprocessing leak can be small, large, or even neutral for some model classes. The validity issue is whether the procedure used information it was not supposed to use."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#tuning-or-selecting-on-the-final-test-period",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#tuning-or-selecting-on-the-final-test-period",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "3. Tuning or selecting on the final test period",
+    "text": "3. Tuning or selecting on the final test period\nIf the final test is inspected, the model is changed, and the same test is checked again, that test has become part of development. The same logic applies when hundreds of strategies, features, or hyperparameters are ranked by their performance on one supposedly final backtest.\nThis is a selection problem even if each individual candidate was fit only on earlier data. Repeated optimization of a noisy performance estimate can produce selection bias (Cawley and Talbot 2010). In finance, large strategy searches create the same basic concern for backtest overfitting (Bailey et al. 2014)."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#incorrect-availability-or-vintage-assumptions",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#incorrect-availability-or-vintage-assumptions",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "4. Incorrect availability or vintage assumptions",
+    "text": "4. Incorrect availability or vintage assumptions\nA date printed next to an observation is not always the date on which the observation became known. Macroeconomic series may be released with lags and revised later. Financial databases can also contain restated accounting values, corrected records, or current classifications that differ from what was available historically.\nA genuine real-time design therefore needs an explicit availability rule or vintage structure rather than assuming that a chronological row split is sufficient (Stark and Croushore 2002)."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#splitting-after-feature-engineering",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#splitting-after-feature-engineering",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "1. Splitting after feature engineering",
+    "text": "1. Splitting after feature engineering\nCreating all features on the full dataset and only then dividing train and test can leak future information through smoothing, imputation, scaling, selection, or aggregation.\nSafer rule: define the historical boundary first, then ask which feature operations are permitted inside it."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#treating-the-timestamp-as-the-availability-date",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#treating-the-timestamp-as-the-availability-date",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "2. Treating the timestamp as the availability date",
+    "text": "2. Treating the timestamp as the availability date\nThe observation period and the release date can differ. A macroeconomic value labeled “March” may not have been available during March, and the value stored today may include later revisions."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#reusing-the-final-test-until-the-result-looks-acceptable",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#reusing-the-final-test-until-the-result-looks-acceptable",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "3. Reusing the final test until the result looks acceptable",
+    "text": "3. Reusing the final test until the result looks acceptable\nOnce test performance affects model changes, the test is no longer untouched. Keep a new final evaluation set, use a nested development process, or label the analysis as exploratory."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#performing-feature-selection-outside-cross-validation",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#performing-feature-selection-outside-cross-validation",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "4. Performing feature selection outside cross-validation",
+    "text": "4. Performing feature selection outside cross-validation\nSelecting variables once using all outcomes and then cross-validating only the final estimator gives the held-out folds information about themselves. Feature selection belongs inside the training portion of each fold when the goal is unbiased evaluation of the full selection-and-fit procedure (Varma and Simon 2006)."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#assuming-every-chronological-split-is-a-real-time-test",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#assuming-every-chronological-split-is-a-real-time-test",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "5. Assuming every chronological split is a real-time test",
+    "text": "5. Assuming every chronological split is a real-time test\nChronology prevents some forms of leakage, but it does not automatically handle publication lags, revisions, backfills, stale classifications, or post-event variables."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#calling-every-data-problem-leakage",
+    "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#calling-every-data-problem-leakage",
+    "title": "Look-Ahead Bias and Data Leakage",
+    "section": "6. Calling every data problem “leakage”",
+    "text": "6. Calling every data problem “leakage”\nLeakage is an information-boundary concept. Other problems—such as measurement error, weak identification, omitted variables, or an unrepresentative sample—can invalidate a result for different reasons. Keeping the diagnosis precise helps determine the correct fix."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html",
+    "title": "Diebold–Mariano Test",
+    "section": "",
+    "text": "QM004 · Forecast Evaluation · Intermediate"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#treating-a-lower-rmse-as-automatically-significant",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#treating-a-lower-rmse-as-automatically-significant",
+    "title": "Diebold–Mariano Test",
+    "section": "1. Treating a lower RMSE as automatically significant",
+    "text": "1. Treating a lower RMSE as automatically significant\nRMSE is a descriptive ranking. The DM test adds uncertainty around the paired loss difference. The two answers need not coincide."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#ignoring-serial-dependence-in-the-loss-differential",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#ignoring-serial-dependence-in-the-loss-differential",
+    "title": "Diebold–Mariano Test",
+    "section": "2. Ignoring serial dependence in the loss differential",
+    "text": "2. Ignoring serial dependence in the loss differential\nThis is especially dangerous for overlapping multi-step forecasts. The relevant object is the dependence in \\(d_t\\), not just the dependence in the target series."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#reporting-the-p-value-without-the-loss-function",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#reporting-the-p-value-without-the-loss-function",
+    "title": "Diebold–Mariano Test",
+    "section": "3. Reporting the p-value without the loss function",
+    "text": "3. Reporting the p-value without the loss function\nA DM test under squared loss and a DM test under absolute loss evaluate different expected-loss questions."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#interpreting-non-rejection-as-proof-of-equality",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#interpreting-non-rejection-as-proof-of-equality",
+    "title": "Diebold–Mariano Test",
+    "section": "4. Interpreting non-rejection as proof of equality",
+    "text": "4. Interpreting non-rejection as proof of equality\nFailure to reject \\(H_0\\) is not an equivalence test. Low power, short samples, or high loss variability can all produce large p-values."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#using-a-pairwise-dm-test-as-a-many-model-selection-procedure",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#using-a-pairwise-dm-test-as-a-many-model-selection-procedure",
+    "title": "Diebold–Mariano Test",
+    "section": "5. Using a pairwise DM test as a many-model selection procedure",
+    "text": "5. Using a pairwise DM test as a many-model selection procedure\nIf many models are compared pairwise, multiplicity becomes a separate inferential problem. QM005 — Model Confidence Set addresses a set-based approach to model comparison."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#applying-the-standard-pairwise-setup-mechanically-to-nested-models",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#applying-the-standard-pairwise-setup-mechanically-to-nested-models",
+    "title": "Diebold–Mariano Test",
+    "section": "6. Applying the standard pairwise setup mechanically to nested models",
+    "text": "6. Applying the standard pairwise setup mechanically to nested models\nWhen one forecasting model nests another and parameters are estimated, the null distribution and mean-squared-error comparison can require specialized treatment. West develops inference that accounts for estimated parameters, and Clark–West propose an adjusted comparison for nested predictive models (West 1996; Clark and West 2007)."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#using-unconditional-dm-when-the-real-question-is-regime-dependent-performance",
+    "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#using-unconditional-dm-when-the-real-question-is-regime-dependent-performance",
+    "title": "Diebold–Mariano Test",
+    "section": "7. Using unconditional DM when the real question is regime-dependent performance",
+    "text": "7. Using unconditional DM when the real question is regime-dependent performance\nThe standard DM null concerns the unconditional mean loss differential. If relative predictive performance may vary systematically with information available at the forecast origin, a conditional predictive ability framework can be more appropriate (Giacomini and White 2006)."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html",
+    "title": "Model Confidence Set",
+    "section": "",
+    "text": "QM005 · Forecast Evaluation · Advanced"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#calling-the-lowest-loss-model-the-mcs-winner",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#calling-the-lowest-loss-model-the-mcs-winner",
+    "title": "Model Confidence Set",
+    "section": "1. Calling the lowest-loss model the MCS winner",
+    "text": "1. Calling the lowest-loss model the MCS winner\nThe lowest sample loss is a ranking. The MCS is a set-valued inferential result. If several models survive, forcing a single winner throws away the uncertainty the procedure is designed to preserve."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#saying-surviving-models-are-proven-equal",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#saying-surviving-models-are-proven-equal",
+    "title": "Model Confidence Set",
+    "section": "2. Saying surviving models are proven equal",
+    "text": "2. Saying surviving models are proven equal\nStopping means the equal-predictive-ability null is not rejected for the remaining set under the chosen procedure. Non-rejection is not proof of exact equality."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#ignoring-the-initial-candidate-set",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#ignoring-the-initial-candidate-set",
+    "title": "Model Confidence Set",
+    "section": "3. Ignoring the initial candidate set",
+    "text": "3. Ignoring the initial candidate set\nThe MCS is conditional on \\(\\mathcal M_0\\). A small final set can still be uninformative about models or strategies that were never included."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#resampling-each-model-independently",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#resampling-each-model-independently",
+    "title": "Model Confidence Set",
+    "section": "4. Resampling each model independently",
+    "text": "4. Resampling each model independently\nWhen models are evaluated on the same dates, independent resampling destroys the cross-model pairing of losses. Time indices should be resampled jointly across the active models."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#treating-the-bootstrap-block-length-as-cosmetic",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#treating-the-bootstrap-block-length-as-cosmetic",
+    "title": "Model Confidence Set",
+    "section": "5. Treating the bootstrap block length as cosmetic",
+    "text": "5. Treating the bootstrap block length as cosmetic\nFor dependent losses, block length affects the uncertainty estimate and can affect elimination decisions. It should be justified rather than tuned for a preferred final set."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#reading-a-large-mcs-as-a-defect",
+    "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#reading-a-large-mcs-as-a-defect",
+    "title": "Model Confidence Set",
+    "section": "6. Reading a large MCS as a defect",
+    "text": "6. Reading a large MCS as a defect\nA large set may simply reflect weak information for discriminating among models. That can be the scientifically important result."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html",
+    "title": "Block Bootstrap",
+    "section": "",
+    "text": "QM006 · Statistical Inference · Intermediate"
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#applying-an-iid-bootstrap-to-a-serially-dependent-statistic",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#applying-an-iid-bootstrap-to-a-serially-dependent-statistic",
+    "title": "Block Bootstrap",
+    "section": "1. Applying an IID bootstrap to a serially dependent statistic",
+    "text": "1. Applying an IID bootstrap to a serially dependent statistic\nIf the statistic’s sampling variation depends on serial covariance, drawing dates independently can reproduce the marginal distribution while missing the dependence that matters for inference."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#treating-block-length-as-a-universal-constant",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#treating-block-length-as-a-universal-constant",
+    "title": "Block Bootstrap",
+    "section": "2. Treating block length as a universal constant",
+    "text": "2. Treating block length as a universal constant\nA block length that works reasonably for one statistic, frequency, or sample size need not be appropriate for another. The inferential target matters (Hall et al. 1995)."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#choosing-the-block-length-after-looking-at-the-desired-conclusion",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#choosing-the-block-length-after-looking-at-the-desired-conclusion",
+    "title": "Block Bootstrap",
+    "section": "3. Choosing the block length after looking at the desired conclusion",
+    "text": "3. Choosing the block length after looking at the desired conclusion\nBlock-length sensitivity is legitimate. Result-driven tuning is not. Report the main design and, when material, show whether conclusions survive a defensible range of alternatives."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#assuming-blocking-fixes-nonstationarity",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#assuming-blocking-fixes-nonstationarity",
+    "title": "Block Bootstrap",
+    "section": "4. Assuming blocking fixes nonstationarity",
+    "text": "4. Assuming blocking fixes nonstationarity\nThe classical moving-block logic is built for stationary or suitably weakly dependent settings (Künsch 1989; Bühlmann 2002). Structural breaks, strong trends, changing volatility, or other forms of nonstationarity may require a different design rather than longer blocks."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#resampling-related-series-independently",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#resampling-related-series-independently",
+    "title": "Block Bootstrap",
+    "section": "5. Resampling related series independently",
+    "text": "5. Resampling related series independently\nIf several model losses, asset returns, or variables are observed on the same dates, separate resampling can destroy cross-series alignment. When the statistic depends on that pairing, draw the time indices jointly."
+  },
+  {
+    "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#reporting-bootstrap-without-the-design",
+    "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#reporting-bootstrap-without-the-design",
+    "title": "Block Bootstrap",
+    "section": "6. Reporting “bootstrap” without the design",
+    "text": "6. Reporting “bootstrap” without the design\nThe label is incomplete. State whether the procedure uses IID, moving blocks, stationary blocks, or another design, and report the block length or its selection rule when relevant."
+  }
+]

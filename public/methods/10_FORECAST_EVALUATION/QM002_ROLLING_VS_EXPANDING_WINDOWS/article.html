@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to fixed-length rolling and expanding estimation windows in repeated out-of-sample forecasting.">
+
+<title>Rolling vs Expanding Windows – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ca3834eb011b617e8ceb67f6ec108db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">SlackQuant Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Quantitative Methods</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://research.slackquant.com/"> 
+<span class="menu-text">Research ↗</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition-what-changes-at-each-forecast-origin" id="toc-intuition-what-changes-at-each-forecast-origin" class="nav-link" data-scroll-target="#intuition-what-changes-at-each-forecast-origin">Intuition: What Changes at Each Forecast Origin?</a></li>
+  <li><a href="#the-two-schemes" id="toc-the-two-schemes" class="nav-link" data-scroll-target="#the-two-schemes">The Two Schemes</a>
+  <ul class="collapse">
+  <li><a href="#expanding-window" id="toc-expanding-window" class="nav-link" data-scroll-target="#expanding-window">Expanding window</a></li>
+  <li><a href="#rolling-window" id="toc-rolling-window" class="nav-link" data-scroll-target="#rolling-window">Rolling window</a></li>
+  </ul></li>
+  <li><a href="#window-choice-is-part-of-the-forecasting-procedure" id="toc-window-choice-is-part-of-the-forecasting-procedure" class="nav-link" data-scroll-target="#window-choice-is-part-of-the-forecasting-procedure">Window Choice Is Part of the Forecasting Procedure</a></li>
+  <li><a href="#worked-illustration" id="toc-worked-illustration" class="nav-link" data-scroll-target="#worked-illustration">Worked Illustration</a></li>
+  <li><a href="#hands-on-lab-change-the-look-back-length" id="toc-hands-on-lab-change-the-look-back-length" class="nav-link" data-scroll-target="#hands-on-lab-change-the-look-back-length">Hands-on Lab: Change the Look-back Length</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#calling-repeated-forecast-origins-a-rolling-window" id="toc-calling-repeated-forecast-origins-a-rolling-window" class="nav-link" data-scroll-target="#calling-repeated-forecast-origins-a-rolling-window">1. Calling repeated forecast origins a rolling window</a></li>
+  <li><a href="#choosing-the-window-on-the-final-test-sample" id="toc-choosing-the-window-on-the-final-test-sample" class="nav-link" data-scroll-target="#choosing-the-window-on-the-final-test-sample">2. Choosing the window on the final test sample</a></li>
+  <li><a href="#assuming-shorter-is-always-more-adaptive-and-therefore-better" id="toc-assuming-shorter-is-always-more-adaptive-and-therefore-better" class="nav-link" data-scroll-target="#assuming-shorter-is-always-more-adaptive-and-therefore-better">3. Assuming shorter is always more adaptive and therefore better</a></li>
+  <li><a href="#treating-a-fixed-calendar-length-as-a-fixed-information-amount" id="toc-treating-a-fixed-calendar-length-as-a-fixed-information-amount" class="nav-link" data-scroll-target="#treating-a-fixed-calendar-length-as-a-fixed-information-amount">4. Treating a fixed calendar length as a fixed information amount</a></li>
+  <li><a href="#changing-the-window-without-changing-dependent-preprocessing" id="toc-changing-the-window-without-changing-dependent-preprocessing" class="nav-link" data-scroll-target="#changing-the-window-without-changing-dependent-preprocessing">5. Changing the window without changing dependent preprocessing</a></li>
+  <li><a href="#reporting-one-convenient-window-as-if-it-were-inevitable" id="toc-reporting-one-convenient-window-as-if-it-were-inevitable" class="nav-link" data-scroll-target="#reporting-one-convenient-window-as-if-it-were-inevitable">6. Reporting one convenient window as if it were inevitable</a></li>
+  </ul></li>
+  <li><a href="#when-not-to-frame-the-problem-as-rolling-vs-expanding" id="toc-when-not-to-frame-the-problem-as-rolling-vs-expanding" class="nav-link" data-scroll-target="#when-not-to-frame-the-problem-as-rolling-vs-expanding">When Not to Frame the Problem as Rolling vs Expanding</a></li>
+  <li><a href="#practical-checklist" id="toc-practical-checklist" class="nav-link" data-scroll-target="#practical-checklist">Practical Checklist</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Rolling vs Expanding Windows</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">How much history should a forecasting model carry forward?</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Forecast Evaluation</div>
+    <div class="quarto-category">Foundation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to fixed-length rolling and expanding estimation windows in repeated out-of-sample forecasting.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM002 · Forecast Evaluation · Foundation</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> An expanding window keeps all admissible past observations, while a rolling window keeps only the most recent fixed-length block.</p>
+<p><strong>Use it for.</strong> Deciding how the estimation sample should evolve as forecast origins move forward.</p>
+<p><strong>It does not establish.</strong> That one window scheme is universally better, or that a window length chosen after inspecting test performance is an untouched design choice.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>In repeated forecasting, the information available to the model grows over time. A forecaster must decide what to do with older observations.</p>
+<blockquote class="blockquote">
+<p><strong>Should each new forecast use all available history, or only a recent fixed-length window?</strong></p>
+</blockquote>
+<p>Both choices can be valid. They answer the same forecasting problem with different assumptions about how useful older data remain. The choice matters because it changes the observations used to estimate the model at every forecast origin <span class="citation" data-cites="tashman2000">(<a href="#ref-tashman2000" role="doc-biblioref">Tashman 2000</a>)</span>.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>An expanding window gains observations as time passes. If the underlying relationship is reasonably stable, the additional history can improve estimation precision and reduce sensitivity to a short recent sample.</p>
+<p>A rolling window deliberately discards older observations. That can be useful when older regimes are less representative of the current forecasting environment, but it also means estimating the model from fewer observations.</p>
+<p>This creates a basic trade-off:</p>
+<ul>
+<li><strong>more history can reduce estimation noise;</strong></li>
+<li><strong>more recent history can place greater weight on the current regime.</strong></li>
+</ul>
+<p>Neither side dominates in every setting. Under structural change, the useful amount of pre-break information can depend on the size of the break, the amount of post-break data, the model, and the forecasting objective <span class="citation" data-cites="pesarantimmermann2007">(<a href="#ref-pesarantimmermann2007" role="doc-biblioref">Pesaran and Timmermann 2007</a>)</span>. Window size itself can also become a source of specification search if many alternatives are tried and only the best test result is reported <span class="citation" data-cites="rossiinoue2012">(<a href="#ref-rossiinoue2012" role="doc-biblioref">Rossi and Inoue 2012</a>)</span>.</p>
+</section>
+<section id="intuition-what-changes-at-each-forecast-origin" class="level1">
+<h1>Intuition: What Changes at Each Forecast Origin?</h1>
+<div id="fig-window-schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-window-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm002_window_schematic.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-window-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: An expanding window keeps earlier observations as the forecast origin moves forward. A rolling window keeps a fixed-length recent block.
+</figcaption>
+</figure>
+</div>
+<p>Suppose forecasts are made repeatedly at origins <span class="math inline">\(t=1,2,\ldots\)</span>. Let <span class="math inline">\(w\)</span> be a fixed rolling-window length.</p>
+<p>An <strong>expanding window</strong> uses all observations that are admissible by origin <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\mathcal{E}_t=\{1,\ldots,t\}.
+\]</span></p>
+<p>A <strong>rolling window</strong> uses only the most recent <span class="math inline">\(w\)</span> observations:</p>
+<p><span class="math display">\[
+\mathcal{R}_t(w)=\{t-w+1,\ldots,t\}.
+\]</span></p>
+<p>The exact indexing changes with the model and forecast horizon, but the distinction is simple: the expanding sample grows; the rolling sample keeps a fixed look-back length.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="Do not confuse two different uses of rolling">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Do not confuse two different uses of rolling
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Rolling forecast origins</strong> describe <em>when forecasts are generated</em>.<br>
+<strong>Rolling estimation windows</strong> describe <em>which historical observations are used to estimate the model at each origin</em>.</p>
+<p>A repeated-origin evaluation can use either an expanding estimation window or a fixed-length rolling estimation window.</p>
+</div>
+</div>
+</section>
+<section id="the-two-schemes" class="level1">
+<h1>The Two Schemes</h1>
+<section id="expanding-window" class="level2">
+<h2 class="anchored" data-anchor-id="expanding-window">Expanding window</h2>
+<p>At each new origin, add newly available observations and keep the earlier ones.</p>
+<p>This approach is attractive when:</p>
+<ul>
+<li>parameter stability is a reasonable approximation;</li>
+<li>the model needs a relatively large sample;</li>
+<li>estimation variance is a major concern; or</li>
+<li>there is no strong reason to treat older observations as obsolete.</li>
+</ul>
+<p>The cost is that observations from old regimes continue to influence current parameter estimates.</p>
+</section>
+<section id="rolling-window" class="level2">
+<h2 class="anchored" data-anchor-id="rolling-window">Rolling window</h2>
+<p>At each new origin, add recent observations and drop the oldest ones so the estimation sample remains approximately fixed in length.</p>
+<p>This approach can react more quickly when the data-generating process changes because old regimes eventually leave the estimation sample. The cost is that a shorter sample can make parameter estimates noisier, especially when the model is complex or the signal is weak.</p>
+<p>A rolling window therefore introduces an additional design parameter: <strong>the window length <span class="math inline">\(w\)</span></strong>. A very short window adapts quickly but may be unstable. A very long rolling window increasingly resembles an expanding window over the available sample.</p>
+</section>
+</section>
+<section id="window-choice-is-part-of-the-forecasting-procedure" class="level1">
+<h1>Window Choice Is Part of the Forecasting Procedure</h1>
+<p>The window rule should be treated like any other model-selection decision.</p>
+<p>If a researcher compares 24-, 36-, 60-, 120-, and 240-month windows on the final test sample and reports only the best one, the final test sample has influenced model development. The issue is not that multiple window lengths are illegitimate; the issue is <strong>where the choice was made</strong>.</p>
+<p>Possible clean approaches include:</p>
+<ul>
+<li>specifying the window length before the final test;</li>
+<li>choosing it within development or validation data;</li>
+<li>nesting window selection inside each forecast origin; or</li>
+<li>explicitly treating the final comparison across window sizes as exploratory rather than untouched confirmatory evidence.</li>
+</ul>
+<p>Rossi and Inoue emphasize that forecast conclusions and tests can be sensitive to estimation-window choice, which is one reason to avoid treating the chosen window as an innocuous implementation detail <span class="citation" data-cites="rossiinoue2012">(<a href="#ref-rossiinoue2012" role="doc-biblioref">Rossi and Inoue 2012</a>)</span>.</p>
+</section>
+<section id="worked-illustration" class="level1">
+<h1>Worked Illustration</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative simulation — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Illustrative simulation — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example is synthetic and deterministic. It is designed to show the bias–adaptation trade-off after a structural change. It does not imply that rolling windows usually outperform expanding windows in financial or macroeconomic data.</p>
+</div>
+</div>
+<p>We simulate an AR(1) process whose autoregressive coefficient changes once:</p>
+<p><span class="math display">\[
+y_t=\phi_t y_{t-1}+\varepsilon_t,
+\]</span></p>
+<p>with <span class="math inline">\(\phi_t=0.75\)</span> before the break and <span class="math inline">\(\phi_t=-0.25\)</span> afterward.</p>
+<p>At every forecast origin, both procedures estimate the same AR(1) model with an intercept. The only difference is the estimation sample:</p>
+<ul>
+<li><strong>Expanding:</strong> all admissible observations available by the origin.</li>
+<li><strong>Rolling:</strong> the most recent 60 estimation pairs.</li>
+</ul>
+<div id="fig-parameter-adaptation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-parameter-adaptation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm002_parameter_adaptation.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-parameter-adaptation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The fixed rolling window responds more quickly to the synthetic break, while the expanding estimate retains substantial influence from the earlier regime.
+</figcaption>
+</figure>
+</div>
+<p>Immediately before the break, the estimated AR coefficient is about 0.77 with the expanding window and 0.80 with the rolling window. Sixty forecast origins after the break, the rolling estimate has moved to about -0.34, close to the new coefficient of -0.25, while the expanding estimate remains positive at about 0.63.</p>
+<p>The forecasting comparison is:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Evaluation period</th>
+<th style="text-align: center;">Forecasts</th>
+<th style="text-align: center;">Expanding RMSE</th>
+<th style="text-align: center;">Rolling RMSE</th>
+<th style="text-align: center;">Rolling vs.&nbsp;expanding</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stable pre-break period</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">1.056</td>
+<td style="text-align: center;">1.059</td>
+<td style="text-align: center;">+0.3%</td>
+</tr>
+<tr class="even">
+<td>First 60 post-break forecasts</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">1.604</td>
+<td style="text-align: center;">1.456</td>
+<td style="text-align: center;">-9.2%</td>
+</tr>
+<tr class="odd">
+<td>All post-break forecasts</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">1.403</td>
+<td style="text-align: center;">1.179</td>
+<td style="text-align: center;">-16.0%</td>
+</tr>
+</tbody>
+</table>
+<p>Before the break, the two schemes perform almost identically in this draw. After the break, the 60-observation rolling window adapts faster and produces lower RMSE. That result is a property of this controlled example, not a general ranking of window schemes.</p>
+</section>
+<section id="hands-on-lab-change-the-look-back-length" class="level1">
+<h1>Hands-on Lab: Change the Look-back Length</h1>
+<p>The optional lab reproduces the baseline illustration and then lets you change the rolling-window length.</p>
+<p>A useful sequence is:</p>
+<ol type="1">
+<li>reproduce the 60-observation baseline;</li>
+<li>try a shorter window such as 30 observations;</li>
+<li>try a longer window such as 120 observations; and</li>
+<li>compare both parameter adaptation and forecast RMSE after the break.</li>
+</ol>
+<div class="method-action">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm002_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm002_hands_on.py">Python</a> · <a href="labs/r/qm002_hands_on.R">R</a>.</p>
+</div>
+<p>Do not expect forecast accuracy to improve monotonically as the window gets shorter or longer. The exercise is intended to show that window length changes the balance between recent-regime adaptation and estimation noise.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A repeated-origin forecasting loop can make the distinction explicit:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    expanding_train <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    rolling_train <span class="op">=</span> expanding_train.tail(window_length)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    model_expanding <span class="op">=</span> fit_model(expanding_train)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    model_rolling <span class="op">=</span> fit_model(rolling_train)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    forecast_expanding <span class="op">=</span> model_expanding.predict(features_at(origin))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    forecast_rolling <span class="op">=</span> model_rolling.predict(features_at(origin))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The code is schematic. In a real implementation, the sample boundaries must respect the forecast horizon, release timing, lag construction, and any data-dependent preprocessing described in <strong>QM001 — Out-of-Sample Forecast Evaluation</strong>.</p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>A rolling window beating an expanding window in one evaluation period means that, under that specific model, horizon, loss function, and window length, restricting estimation to recent observations produced lower historical forecast loss.</p>
+<p>It does <strong>not</strong> establish that:</p>
+<ul>
+<li>the same rolling length will remain optimal;</li>
+<li>older data are generally useless;</li>
+<li>a structural break has been statistically identified;</li>
+<li>the result is robust to other window lengths; or</li>
+<li>the observed loss difference is statistically distinguishable from zero.</li>
+</ul>
+<p>Likewise, an expanding window winning does not prove parameter stability. It may simply mean that the extra data improved estimation enough to outweigh any cost from older observations.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="calling-repeated-forecast-origins-a-rolling-window" class="level2">
+<h2 class="anchored" data-anchor-id="calling-repeated-forecast-origins-a-rolling-window">1. Calling repeated forecast origins a rolling window</h2>
+<p>Forecast origins can roll forward while the estimation sample expands. State both the <strong>origin scheme</strong> and the <strong>estimation-window scheme</strong>.</p>
+</section>
+<section id="choosing-the-window-on-the-final-test-sample" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-the-window-on-the-final-test-sample">2. Choosing the window on the final test sample</h2>
+<p>If final test outcomes determine the window length, they have become part of model development. Report that selection honestly or use a separate untouched evaluation.</p>
+</section>
+<section id="assuming-shorter-is-always-more-adaptive-and-therefore-better" class="level2">
+<h2 class="anchored" data-anchor-id="assuming-shorter-is-always-more-adaptive-and-therefore-better">3. Assuming shorter is always more adaptive and therefore better</h2>
+<p>A short window forgets old regimes faster, but it also throws away observations. Adaptation and estimation precision move in opposite directions.</p>
+</section>
+<section id="treating-a-fixed-calendar-length-as-a-fixed-information-amount" class="level2">
+<h2 class="anchored" data-anchor-id="treating-a-fixed-calendar-length-as-a-fixed-information-amount">4. Treating a fixed calendar length as a fixed information amount</h2>
+<p>Sixty monthly observations, sixty trading days, and sixty quarterly observations represent very different amounts of information. Missing values and changing data availability can further alter the effective estimation sample.</p>
+</section>
+<section id="changing-the-window-without-changing-dependent-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="changing-the-window-without-changing-dependent-preprocessing">5. Changing the window without changing dependent preprocessing</h2>
+<p>If scaling, PCA, feature selection, imputation, or tuning is re-estimated at each origin, those steps must use the same admissible sample logic as the forecasting model.</p>
+</section>
+<section id="reporting-one-convenient-window-as-if-it-were-inevitable" class="level2">
+<h2 class="anchored" data-anchor-id="reporting-one-convenient-window-as-if-it-were-inevitable">6. Reporting one convenient window as if it were inevitable</h2>
+<p>Window size is often substantively important. If conclusions change across reasonable choices, that sensitivity is part of the result rather than a nuisance to hide.</p>
+</section>
+</section>
+<section id="when-not-to-frame-the-problem-as-rolling-vs-expanding" class="level1">
+<h1>When Not to Frame the Problem as Rolling vs Expanding</h1>
+<p>The binary comparison can be too narrow when the application calls for:</p>
+<ul>
+<li>explicit structural-break models;</li>
+<li>time-varying-parameter or state-space models;</li>
+<li>observation weighting or forgetting factors rather than hard inclusion/exclusion;</li>
+<li>adaptive window selection; or</li>
+<li>forecast combinations across several estimation windows.</li>
+</ul>
+<p>These approaches can represent gradual change or uncertainty about the relevant historical span more flexibly than one fixed rolling length.</p>
+</section>
+<section id="practical-checklist" class="level1">
+<h1>Practical Checklist</h1>
+<p>Before using a rolling or expanding scheme, verify that:</p>
+<ul>
+<li>the forecast-origin protocol is defined separately from the estimation-window rule;</li>
+<li>the minimum estimation sample is large enough for the model being fitted;</li>
+<li>the rolling-window length is stated in the same units as the data frequency;</li>
+<li>preprocessing and tuning use the same admissible sample boundaries;</li>
+<li>any data-driven window selection occurs inside the permitted development process;</li>
+<li>competing schemes are scored on the same forecast origins and targets; and</li>
+<li>claims about breaks, significance, or robustness are supported by evidence beyond one window comparison.</li>
+</ul>
+</section>
+<section id="related-methods" class="level1">
+<h1>Related Methods</h1>
+<ul>
+<li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html"><strong>QM001 — Out-of-Sample Forecast Evaluation</strong></a>: the information-set logic that both window schemes must respect.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html"><strong>QM003 — Look-Ahead Bias and Data Leakage</strong></a>: ways future information can enter historical analysis.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html"><strong>QM004 — Diebold–Mariano Test</strong></a>: statistical comparison of forecast-loss sequences.</li>
+<li><strong><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>:</strong> dependence-aware uncertainty assessment.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> uses a fixed-length rolling estimation window inside a repeated pseudo-out-of-sample forecasting design. QM002 explains the estimation-window choice itself; the research paper contains the application-specific model set, horizons, benchmarks, and statistical evidence.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the synthetic series, forecasting code, figures, and a hands-on lab in Python and R. Using the stated window rules reproduces the coefficient paths and forecast comparisons shown above.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-pesarantimmermann2007" class="csl-entry" role="listitem">
+Pesaran, M. Hashem, and Allan Timmermann. 2007. <span>“Selection of Estimation Window in the Presence of Breaks.”</span> <em>Journal of Econometrics</em> 137 (1): 134–61. <a href="https://doi.org/10.1016/j.jeconom.2006.03.010">https://doi.org/10.1016/j.jeconom.2006.03.010</a>.
+</div>
+<div id="ref-rossiinoue2012" class="csl-entry" role="listitem">
+Rossi, Barbara, and Atsushi Inoue. 2012. <span>“Out-of-Sample Forecast Tests Robust to the Choice of Window Size.”</span> <em>Journal of Business &amp; Economic Statistics</em> 30 (3): 432–53. <a href="https://doi.org/10.1080/07350015.2012.693850">https://doi.org/10.1080/07350015.2012.693850</a>.
+</div>
+<div id="ref-tashman2000" class="csl-entry" role="listitem">
+Tashman, Leonard J. 2000. <span>“Out-of-Sample Tests of Forecasting Accuracy: An Analysis and Review.”</span> <em>International Journal of Forecasting</em> 16 (4): 437–50. <a href="https://doi.org/10.1016/S0169-2070(00)00065-0">https://doi.org/10.1016/S0169-2070(00)00065-0</a>.
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Rolling vs Expanding Windows"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "How much history should a forecasting model carry forward?"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "A practical guide to fixed-length rolling and expanding estimation windows in repeated out-of-sample forecasting."</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> en</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> article</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Forecast Evaluation</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Foundation</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>::: {.method-kicker}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>QM002 · Forecast Evaluation · Foundation</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>::: {.method-orientation}</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>**Core idea.** An expanding window keeps all admissible past observations, while a rolling window keeps only the most recent fixed-length block.</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>**Use it for.** Deciding how the estimation sample should evolve as forecast origins move forward.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>**It does not establish.** That one window scheme is universally better, or that a window length chosen after inspecting test performance is an untouched design choice.</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Question</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>In repeated forecasting, the information available to the model grows over time. A forecaster must decide what to do with older observations.</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Should each new forecast use all available history, or only a recent fixed-length window?**</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>Both choices can be valid. They answer the same forecasting problem with different assumptions about how useful older data remain. The choice matters because it changes the observations used to estimate the model at every forecast origin <span class="co">[</span><span class="ot">@tashman2000</span><span class="co">]</span>.</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Why It Matters</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>An expanding window gains observations as time passes. If the underlying relationship is reasonably stable, the additional history can improve estimation precision and reduce sensitivity to a short recent sample.</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>A rolling window deliberately discards older observations. That can be useful when older regimes are less representative of the current forecasting environment, but it also means estimating the model from fewer observations.</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>This creates a basic trade-off:</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**more history can reduce estimation noise;**</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**more recent history can place greater weight on the current regime.**</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>Neither side dominates in every setting. Under structural change, the useful amount of pre-break information can depend on the size of the break, the amount of post-break data, the model, and the forecasting objective <span class="co">[</span><span class="ot">@pesarantimmermann2007</span><span class="co">]</span>. Window size itself can also become a source of specification search if many alternatives are tried and only the best test result is reported <span class="co">[</span><span class="ot">@rossiinoue2012</span><span class="co">]</span>.</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu"># Intuition: What Changes at Each Forecast Origin?</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="al">![An expanding window keeps earlier observations as the forecast origin moves forward. A rolling window keeps a fixed-length recent block.](figures/rendered/qm002_window_schematic.svg)</span>{#fig-window-schematic width=95%}</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>Suppose forecasts are made repeatedly at origins $t=1,2,\ldots$. Let $w$ be a fixed rolling-window length.</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>An **expanding window** uses all observations that are admissible by origin $t$:</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>\mathcal{E}_t=<span class="sc">\{</span>1,\ldots,t<span class="sc">\}</span>.</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>A **rolling window** uses only the most recent $w$ observations:</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>\mathcal{R}_t(w)=<span class="sc">\{</span>t-w+1,\ldots,t<span class="sc">\}</span>.</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>The exact indexing changes with the model and forecast horizon, but the distinction is simple: the expanding sample grows; the rolling sample keeps a fixed look-back length.</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="Do not confuse two different uses of rolling"}</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>**Rolling forecast origins** describe *when forecasts are generated*.  </span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>**Rolling estimation windows** describe *which historical observations are used to estimate the model at each origin*.</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>A repeated-origin evaluation can use either an expanding estimation window or a fixed-length rolling estimation window.</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Two Schemes</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Expanding window</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>At each new origin, add newly available observations and keep the earlier ones.</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>This approach is attractive when:</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>parameter stability is a reasonable approximation;</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the model needs a relatively large sample;</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>estimation variance is a major concern; or</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>there is no strong reason to treat older observations as obsolete.</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>The cost is that observations from old regimes continue to influence current parameter estimates.</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rolling window</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>At each new origin, add recent observations and drop the oldest ones so the estimation sample remains approximately fixed in length.</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>This approach can react more quickly when the data-generating process changes because old regimes eventually leave the estimation sample. The cost is that a shorter sample can make parameter estimates noisier, especially when the model is complex or the signal is weak.</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>A rolling window therefore introduces an additional design parameter: **the window length $w$**. A very short window adapts quickly but may be unstable. A very long rolling window increasingly resembles an expanding window over the available sample.</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a><span class="fu"># Window Choice Is Part of the Forecasting Procedure</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>The window rule should be treated like any other model-selection decision.</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>If a researcher compares 24-, 36-, 60-, 120-, and 240-month windows on the final test sample and reports only the best one, the final test sample has influenced model development. The issue is not that multiple window lengths are illegitimate; the issue is **where the choice was made**.</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>Possible clean approaches include:</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>specifying the window length before the final test;</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>choosing it within development or validation data;</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>nesting window selection inside each forecast origin; or</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>explicitly treating the final comparison across window sizes as exploratory rather than untouched confirmatory evidence.</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>Rossi and Inoue emphasize that forecast conclusions and tests can be sensitive to estimation-window choice, which is one reason to avoid treating the chosen window as an innocuous implementation detail <span class="co">[</span><span class="ot">@rossiinoue2012</span><span class="co">]</span>.</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked Illustration</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Illustrative simulation — not empirical evidence"}</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>The example is synthetic and deterministic. It is designed to show the bias–adaptation trade-off after a structural change. It does not imply that rolling windows usually outperform expanding windows in financial or macroeconomic data.</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>We simulate an AR(1) process whose autoregressive coefficient changes once:</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>y_t=\phi_t y_{t-1}+\varepsilon_t,</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>with $\phi_t=0.75$ before the break and $\phi_t=-0.25$ afterward.</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>At every forecast origin, both procedures estimate the same AR(1) model with an intercept. The only difference is the estimation sample:</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Expanding:** all admissible observations available by the origin.</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Rolling:** the most recent 60 estimation pairs.</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a><span class="al">![The fixed rolling window responds more quickly to the synthetic break, while the expanding estimate retains substantial influence from the earlier regime.](figures/rendered/qm002_parameter_adaptation.svg)</span>{#fig-parameter-adaptation width=95%}</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>Immediately before the break, the estimated AR coefficient is about 0.77 with the expanding window and 0.80 with the rolling window. Sixty forecast origins after the break, the rolling estimate has moved to about -0.34, close to the new coefficient of -0.25, while the expanding estimate remains positive at about 0.63.</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>The forecasting comparison is:</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evaluation period <span class="pp">|</span> Forecasts <span class="pp">|</span> Expanding RMSE <span class="pp">|</span> Rolling RMSE <span class="pp">|</span> Rolling vs. expanding <span class="pp">|</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|:---:|:---:|</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Stable pre-break period <span class="pp">|</span> 100 <span class="pp">|</span> 1.056 <span class="pp">|</span> 1.059 <span class="pp">|</span> +0.3% <span class="pp">|</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> First 60 post-break forecasts <span class="pp">|</span> 60 <span class="pp">|</span> 1.604 <span class="pp">|</span> 1.456 <span class="pp">|</span> -9.2% <span class="pp">|</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> All post-break forecasts <span class="pp">|</span> 200 <span class="pp">|</span> 1.403 <span class="pp">|</span> 1.179 <span class="pp">|</span> -16.0% <span class="pp">|</span></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>Before the break, the two schemes perform almost identically in this draw. After the break, the 60-observation rolling window adapts faster and produces lower RMSE. That result is a property of this controlled example, not a general ranking of window schemes.</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hands-on Lab: Change the Look-back Length</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>The optional lab reproduces the baseline illustration and then lets you change the rolling-window length.</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>A useful sequence is:</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>reproduce the 60-observation baseline;</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>try a shorter window such as 30 observations;</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>try a longer window such as 120 observations; and</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>compare both parameter adaptation and forecast RMSE after the break.</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>::: {.method-action}</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>**Run it yourself.** Start with the <span class="co">[</span><span class="ot">lab guide</span><span class="co">](labs/index.qmd)</span>. For a self-contained copy, use the <span class="co">[</span><span class="ot">complete lab bundle</span><span class="co">](labs/qm002_hands_on_lab_bundle.zip)</span>. Direct source: <span class="co">[</span><span class="ot">Python</span><span class="co">](labs/python/qm002_hands_on.py)</span> · <span class="co">[</span><span class="ot">R</span><span class="co">](labs/r/qm002_hands_on.R)</span>.</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>Do not expect forecast accuracy to improve monotonically as the window gets shorter or longer. The exercise is intended to show that window length changes the balance between recent-regime adaptation and estimation noise.</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="fu"># Implementation Pattern</span></span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>A repeated-origin forecasting loop can make the distinction explicit:</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>    expanding_train <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>    rolling_train <span class="op">=</span> expanding_train.tail(window_length)</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>    model_expanding <span class="op">=</span> fit_model(expanding_train)</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>    model_rolling <span class="op">=</span> fit_model(rolling_train)</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>    forecast_expanding <span class="op">=</span> model_expanding.predict(features_at(origin))</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>    forecast_rolling <span class="op">=</span> model_rolling.predict(features_at(origin))</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>The code is schematic. In a real implementation, the sample boundaries must respect the forecast horizon, release timing, lag construction, and any data-dependent preprocessing described in **QM001 — Out-of-Sample Forecast Evaluation**.</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to Interpret the Result</span></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>A rolling window beating an expanding window in one evaluation period means that, under that specific model, horizon, loss function, and window length, restricting estimation to recent observations produced lower historical forecast loss.</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>It does **not** establish that:</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the same rolling length will remain optimal;</span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>older data are generally useless;</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a structural break has been statistically identified;</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the result is robust to other window lengths; or</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the observed loss difference is statistically distinguishable from zero.</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>Likewise, an expanding window winning does not prove parameter stability. It may simply mean that the extra data improved estimation enough to outweigh any cost from older observations.</span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a><span class="fu"># Common Mistakes</span></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Calling repeated forecast origins a rolling window</span></span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>Forecast origins can roll forward while the estimation sample expands. State both the **origin scheme** and the **estimation-window scheme**.</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Choosing the window on the final test sample</span></span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>If final test outcomes determine the window length, they have become part of model development. Report that selection honestly or use a separate untouched evaluation.</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Assuming shorter is always more adaptive and therefore better</span></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>A short window forgets old regimes faster, but it also throws away observations. Adaptation and estimation precision move in opposite directions.</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Treating a fixed calendar length as a fixed information amount</span></span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>Sixty monthly observations, sixty trading days, and sixty quarterly observations represent very different amounts of information. Missing values and changing data availability can further alter the effective estimation sample.</span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Changing the window without changing dependent preprocessing</span></span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>If scaling, PCA, feature selection, imputation, or tuning is re-estimated at each origin, those steps must use the same admissible sample logic as the forecasting model.</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Reporting one convenient window as if it were inevitable</span></span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>Window size is often substantively important. If conclusions change across reasonable choices, that sensitivity is part of the result rather than a nuisance to hide.</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a><span class="fu"># When Not to Frame the Problem as Rolling vs Expanding</span></span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>The binary comparison can be too narrow when the application calls for:</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>explicit structural-break models;</span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>time-varying-parameter or state-space models;</span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>observation weighting or forgetting factors rather than hard inclusion/exclusion;</span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>adaptive window selection; or</span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>forecast combinations across several estimation windows.</span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a>These approaches can represent gradual change or uncertainty about the relevant historical span more flexibly than one fixed rolling length.</span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a><span class="fu"># Practical Checklist</span></span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a>Before using a rolling or expanding scheme, verify that:</span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the forecast-origin protocol is defined separately from the estimation-window rule;</span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the minimum estimation sample is large enough for the model being fitted;</span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the rolling-window length is stated in the same units as the data frequency;</span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>preprocessing and tuning use the same admissible sample boundaries;</span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>any data-driven window selection occurs inside the permitted development process;</span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>competing schemes are scored on the same forecast origins and targets; and</span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>claims about breaks, significance, or robustness are supported by evidence beyond one window comparison.</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a><span class="fu"># Related Methods</span></span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM001 — Out-of-Sample Forecast Evaluation**</span><span class="co">](../QM001_OUT_OF_SAMPLE_EVALUATION/article.qmd)</span>: the information-set logic that both window schemes must respect.</span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM003 — Look-Ahead Bias and Data Leakage**</span><span class="co">](../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.qmd)</span>: ways future information can enter historical analysis.</span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM004 — Diebold–Mariano Test**</span><span class="co">](../QM004_DIEBOLD_MARIANO_TEST/article.qmd)</span>: statistical comparison of forecast-loss sequences.</span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM006 — Block Bootstrap](../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.qmd):** dependence-aware uncertainty assessment.</span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a><span class="fu"># Used in SlackQuant Research</span></span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting**</span><span class="co">](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118)</span> uses a fixed-length rolling estimation window inside a repeated pseudo-out-of-sample forecasting design. QM002 explains the estimation-window choice itself; the research paper contains the application-specific model set, horizons, benchmarks, and statistical evidence.</span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reproducibility</span></span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a>The accompanying materials include the synthetic series, forecasting code, figures, and a hands-on lab in Python and R. Using the stated window rules reproduces the coefficient paths and forecast comparisons shown above.</span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a><span class="fu"># References {.unnumbered}</span></span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -14,7 +15,8 @@ export default function AboutPage() {
           <h1>SlackQuant Research</h1>
           <p className="hero-copy">
             A public research platform focused on systematic investing, asset
-            allocation, forecasting, financial data science, and AI/ML.
+            allocation, forecasting, financial data science, AI/ML, and the
+            quantitative methods that support applied research.
           </p>
         </div>
       </section>
@@ -32,9 +34,10 @@ export default function AboutPage() {
           <div className="identity-copy">
             <p>
               SlackQuant Research brings practitioner-oriented investment
-              research and academic research into one coherent public research
-              platform. Papers, evidence, code, and research tools remain
-              connected while keeping their roles distinct.
+              research and academic research into one coherent public platform.
+              A cross-cutting Quantitative Methods library explains the methods
+              used across that research, while papers, evidence, code, and tools
+              remain connected without blurring their different roles.
             </p>
             <div className="person-card">
               <div className="person-kicker">Researcher</div>
@@ -64,6 +67,25 @@ export default function AboutPage() {
               Forecasting, financial data science, AI/ML, empirical methods,
               and related technical research.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell about-columns">
+          <div>
+            <div className="section-title">Shared methods layer</div>
+            <h3>Quantitative Methods</h3>
+          </div>
+          <div>
+            <p>
+              Practical explanations of the quantitative methods that appear
+              across the research portfolio, with intuition, formal definitions,
+              implementation, reproducible examples, and common failure modes.
+            </p>
+            <Link className="section-link strong-link" href="/methods/">
+              Explore Quantitative Methods &#8594;
+            </Link>
           </div>
         </div>
       </section>

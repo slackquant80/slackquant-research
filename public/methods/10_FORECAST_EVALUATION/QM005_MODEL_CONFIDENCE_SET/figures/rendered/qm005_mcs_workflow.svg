@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="305" viewBox="0 0 1120 305">
+<rect width="1120" height="350" fill="#fbfaf7"/>
+<style>.t{font:19px Arial,sans-serif;fill:#202428}.s{font:15px Arial,sans-serif;fill:#53616b}.b{fill:#f5f3ed;stroke:#8da0ad;stroke-width:1.6}.a{stroke:#6f8998;stroke-width:2.5;fill:none}.d{font:bold 14px Arial,sans-serif;fill:#53616b}</style>
+<rect class="b" x="35" y="78" rx="8" width="220" height="126"/><text class="t" x="145" y="120" text-anchor="middle">Start with M₀</text><text class="s" x="145" y="156" text-anchor="middle">all candidate models</text>
+<path class="a" d="M255 141 H315"/><path fill="#6f8998" d="M315 141 l-12 -7 v14 z"/>
+<rect class="b" x="315" y="78" rx="8" width="220" height="126"/><text class="t" x="425" y="112" text-anchor="middle">Test equal</text><text class="t" x="425" y="138" text-anchor="middle">predictive ability</text><text class="s" x="425" y="171" text-anchor="middle">for the current set</text>
+<path class="a" d="M535 141 H595"/><path fill="#6f8998" d="M595 141 l-12 -7 v14 z"/>
+<rect class="b" x="595" y="78" rx="8" width="220" height="126"/><text class="t" x="705" y="112" text-anchor="middle">If rejected</text><text class="t" x="705" y="138" text-anchor="middle">remove one model</text><text class="s" x="705" y="171" text-anchor="middle">using the elimination rule</text>
+<path class="a" d="M815 141 H875"/><path fill="#6f8998" d="M875 141 l-12 -7 v14 z"/>
+<rect class="b" x="875" y="78" rx="8" width="220" height="126"/><text class="t" x="985" y="112" text-anchor="middle">If not rejected</text><text class="t" x="985" y="138" text-anchor="middle">stop</text><text class="s" x="985" y="171" text-anchor="middle">survivors form the MCS</text>
+<path class="a" d="M705 204 V255 H425 V204"/><path fill="#6f8998" d="M425 204 l-7 12 h14 z"/><text class="d" x="565" y="280" text-anchor="middle">repeat after each elimination</text>
+</svg>

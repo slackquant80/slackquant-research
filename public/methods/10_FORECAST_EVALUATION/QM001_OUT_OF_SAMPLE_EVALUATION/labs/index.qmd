@@ -1,0 +1,74 @@
+---
+title: "QM001 Hands-on Lab"
+subtitle: "Reproduce the development-to-held-out reversal"
+description: "A short Python or R exercise that reproduces the QM001 synthetic forecasting example."
+lang: en
+toc: true
+---
+
+# Start here
+
+This optional lab takes about **10–15 minutes**. It reproduces the synthetic example in **QM001 — Out-of-Sample Forecast Evaluation** and shows why a better fit on development data need not translate into better forecasts on held-out targets.
+
+For the simplest setup, [download the complete lab bundle](qm001_hands_on_lab_bundle.zip). It contains the guide, both implementations, dependency information, and the synthetic data used by the article.
+
+If you already have the full source package, you can instead open the scripts directly: [Python](python/qm001_hands_on.py) · [R](r/qm001_hands_on.R).
+
+# What you will do
+
+1. identify the development and held-out observations;
+2. fit Model A, an AR(1) benchmark, using development data only;
+3. search the candidate noise predictors using only the development sample;
+4. fit Model B with the selected predictor; and
+5. compare development and held-out RMSE without using the held-out targets for model selection.
+
+# Python
+
+From the extracted lab bundle or the QM001 folder:
+
+```bash
+python labs/python/qm001_hands_on.py
+```
+
+If needed, install the lab dependencies with:
+
+```bash
+python -m pip install -r labs/python/requirements.txt
+```
+
+# R
+
+From the extracted lab bundle or the QM001 folder:
+
+```bash
+Rscript labs/r/qm001_hands_on.R
+```
+
+The R lab uses base R only.
+
+# Baseline result
+
+With all 80 candidate noise predictors searched, the lab should reproduce approximately:
+
+| Sample | Model A RMSE | Model B RMSE | Model B vs. A |
+|---|:---:|:---:|:---:|
+| Development | 1.046 | 0.951 | -9.1% |
+| Held-out | 0.887 | 1.101 | +24.1% |
+
+The example is illustrative. It does not show how often this type of reversal occurs in general or in any particular market.
+
+# Try one change
+
+Reduce the search size, for example:
+
+```bash
+python labs/python/qm001_hands_on.py --n-search 20
+```
+
+or:
+
+```bash
+Rscript labs/r/qm001_hands_on.R 20
+```
+
+Do not expect the result to move in one direction as the search size changes. The purpose is to compare what looks best in the development sample with what performs best on held-out data.

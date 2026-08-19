@@ -1,0 +1,3 @@
+# Versions used for the QM001 v0.4.1 reader lab validation.
+numpy==2.3.5
+pandas==2.2.3

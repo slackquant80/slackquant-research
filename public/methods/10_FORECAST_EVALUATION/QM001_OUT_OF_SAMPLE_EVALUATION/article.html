@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to evaluating forecasts without letting future targets or other unavailable information enter the forecasting process.">
+
+<title>Out-of-Sample Forecast Evaluation – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ca3834eb011b617e8ceb67f6ec108db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">SlackQuant Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Quantitative Methods</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://research.slackquant.com/"> 
+<span class="menu-text">Research ↗</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition-reconstruct-the-information-set" id="toc-intuition-reconstruct-the-information-set" class="nav-link" data-scroll-target="#intuition-reconstruct-the-information-set">Intuition: Reconstruct the Information Set</a></li>
+  <li><a href="#two-common-ways-to-generate-out-of-sample-forecasts" id="toc-two-common-ways-to-generate-out-of-sample-forecasts" class="nav-link" data-scroll-target="#two-common-ways-to-generate-out-of-sample-forecasts">Two Common Ways to Generate Out-of-Sample Forecasts</a>
+  <ul class="collapse">
+  <li><a href="#single-forecast-origin" id="toc-single-forecast-origin" class="nav-link" data-scroll-target="#single-forecast-origin">Single forecast origin</a></li>
+  <li><a href="#repeated-or-rolling-forecast-origins" id="toc-repeated-or-rolling-forecast-origins" class="nav-link" data-scroll-target="#repeated-or-rolling-forecast-origins">Repeated or rolling forecast origins</a></li>
+  </ul></li>
+  <li><a href="#pseudo-out-of-sample-is-not-automatically-real-time" id="toc-pseudo-out-of-sample-is-not-automatically-real-time" class="nav-link" data-scroll-target="#pseudo-out-of-sample-is-not-automatically-real-time">Pseudo-Out-of-Sample Is Not Automatically Real-Time</a></li>
+  <li><a href="#development-validation-and-final-testing" id="toc-development-validation-and-final-testing" class="nav-link" data-scroll-target="#development-validation-and-final-testing">Development, Validation, and Final Testing</a></li>
+  <li><a href="#what-must-stay-outside-the-forecasts-information-set" id="toc-what-must-stay-outside-the-forecasts-information-set" class="nav-link" data-scroll-target="#what-must-stay-outside-the-forecasts-information-set">What Must Stay Outside the Forecast’s Information Set</a></li>
+  <li><a href="#worked-illustration" id="toc-worked-illustration" class="nav-link" data-scroll-target="#worked-illustration">Worked Illustration</a></li>
+  <li><a href="#hands-on-lab-reproduce-the-reversal" id="toc-hands-on-lab-reproduce-the-reversal" class="nav-link" data-scroll-target="#hands-on-lab-reproduce-the-reversal">Hands-on Lab: Reproduce the Reversal</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#standardizing-with-the-full-sample" id="toc-standardizing-with-the-full-sample" class="nav-link" data-scroll-target="#standardizing-with-the-full-sample">1. Standardizing with the full sample</a></li>
+  <li><a href="#tuning-on-the-final-test-period" id="toc-tuning-on-the-final-test-period" class="nav-link" data-scroll-target="#tuning-on-the-final-test-period">2. Tuning on the final test period</a></li>
+  <li><a href="#treating-a-chronological-split-as-genuine-real-time-data" id="toc-treating-a-chronological-split-as-genuine-real-time-data" class="nav-link" data-scroll-target="#treating-a-chronological-split-as-genuine-real-time-data">3. Treating a chronological split as genuine real-time data</a></li>
+  <li><a href="#misaligning-origin-and-target" id="toc-misaligning-origin-and-target" class="nav-link" data-scroll-target="#misaligning-origin-and-target">4. Misaligning origin and target</a></li>
+  <li><a href="#letting-preprocessing-see-the-future" id="toc-letting-preprocessing-see-the-future" class="nav-link" data-scroll-target="#letting-preprocessing-see-the-future">5. Letting preprocessing see the future</a></li>
+  <li><a href="#equating-the-lowest-rmse-with-a-unique-winner" id="toc-equating-the-lowest-rmse-with-a-unique-winner" class="nav-link" data-scroll-target="#equating-the-lowest-rmse-with-a-unique-winner">6. Equating the lowest RMSE with a unique winner</a></li>
+  </ul></li>
+  <li><a href="#what-out-of-sample-evaluation-does-not-prove" id="toc-what-out-of-sample-evaluation-does-not-prove" class="nav-link" data-scroll-target="#what-out-of-sample-evaluation-does-not-prove">What Out-of-Sample Evaluation Does Not Prove</a></li>
+  <li><a href="#practical-checklist" id="toc-practical-checklist" class="nav-link" data-scroll-target="#practical-checklist">Practical Checklist</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Out-of-Sample Forecast Evaluation</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Can a model predict outcomes that were unavailable when the forecast was made?</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Forecast Evaluation</div>
+    <div class="quarto-category">Foundation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to evaluating forecasts without letting future targets or other unavailable information enter the forecasting process.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM001 · Forecast Evaluation · Foundation</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> Judge a forecasting procedure only on targets that were still unknown when each forecast was produced.</p>
+<p><strong>Use it for.</strong> Comparing predictive performance under the information that would actually have been available when each forecast was made.</p>
+<p><strong>It does not establish.</strong> Statistical significance, causal validity, economic value, or future performance outside the evaluated historical setting.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A forecasting model can fit historical data very well and still fail when it meets new observations. The basic evaluation question is therefore simple:</p>
+<blockquote class="blockquote">
+<p><strong>Can the forecasting procedure predict a target that was unavailable when the forecast was produced?</strong></p>
+</blockquote>
+<p>For a clean out-of-sample assessment, the procedure used at forecast origin <span class="math inline">\(t\)</span>—including any data-dependent preprocessing, tuning, or model selection that is part of that procedure—must use only information available at that origin under the stated data-availability assumptions. The evaluated target <span class="math inline">\(y_{t+h}\)</span> must still be unknown when the forecast is made. Such evaluations are commonly organized around forecast origins, horizons, estimation samples, and evaluation periods <span class="citation" data-cites="tashman2000">(<a href="#ref-tashman2000" role="doc-biblioref">Tashman 2000</a>)</span>.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Financial and economic forecasting makes it easy to adapt a model to a particular historical sample. A researcher can vary predictors, transformations, lags, model families, hyperparameters, sample dates, missing-data rules, and ensemble weights. If later outcomes influence those choices and the same outcomes are then reported as a test of predictive performance, the evaluation is no longer independent of the development process.</p>
+<p>Out-of-sample evaluation does not eliminate model uncertainty or research-selection risk. It does enforce one clear information rule: <strong>each reported forecast must be generated without access to its target or to other information that would not have been available at that forecast origin.</strong></p>
+<div class="callout callout-style-default callout-important callout-titled" title="Core principle">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Core principle
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Out-of-sample is a property of the forecasting pipeline, not just the final regression fit.</strong></p>
+<p>Preprocessing, feature selection, hyperparameter tuning, model selection, and ensemble construction can all introduce future information if their data-dependent components are estimated using observations that are unavailable at the forecast origin.</p>
+</div>
+</div>
+</section>
+<section id="intuition-reconstruct-the-information-set" class="level1">
+<h1>Intuition: Reconstruct the Information Set</h1>
+<p>The most useful way to think about out-of-sample forecasting is to place yourself at a historical forecast origin and ask: <em>what could I actually have known at that moment?</em></p>
+<div id="fig-information-timeline" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-information-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm001_information_timeline.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-information-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: At each forecast origin, fitting and tuning may use only admissible information. The target is evaluated only after it becomes observable.
+</figcaption>
+</figure>
+</div>
+<p>Suppose the goal is to forecast a variable <span class="math inline">\(h\)</span> periods ahead. At origin <span class="math inline">\(t\)</span>, let <span class="math inline">\(\mathcal{I}_t\)</span> denote the information set available to the forecaster. The forecast is</p>
+<p><span class="math display">\[
+\hat{y}_{t+h\mid t}=f_t(\mathcal{I}_t),
+\]</span></p>
+<p>where <span class="math inline">\(f_t\)</span> represents the full forecasting procedure used at origin <span class="math inline">\(t\)</span>. Once the target is observed, the forecast error is</p>
+<p><span class="math display">\[
+e_{t+h\mid t}=y_{t+h}-\hat{y}_{t+h\mid t}.
+\]</span></p>
+<p>Across <span class="math inline">\(P\)</span> evaluated forecasts, common point-forecast summaries include</p>
+<p><span class="math display">\[
+\mathrm{RMSE}=\sqrt{\frac{1}{P}\sum_{i=1}^{P} e_i^2}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\mathrm{MAE}=\frac{1}{P}\sum_{i=1}^{P}|e_i|.
+\]</span></p>
+<p>The loss function should match the forecasting or decision problem. Squared error penalizes large misses more heavily than absolute error. Probabilistic forecasts should be evaluated with scoring rules designed for predictive distributions rather than only with point-forecast errors <span class="citation" data-cites="gneitingraftery2007">(<a href="#ref-gneitingraftery2007" role="doc-biblioref">Gneiting and Raftery 2007</a>)</span>.</p>
+</section>
+<section id="two-common-ways-to-generate-out-of-sample-forecasts" class="level1">
+<h1>Two Common Ways to Generate Out-of-Sample Forecasts</h1>
+<section id="single-forecast-origin" class="level2">
+<h2 class="anchored" data-anchor-id="single-forecast-origin">Single forecast origin</h2>
+<p>Choose one historical cutoff, estimate the forecasting procedure using information available by that date, and generate one or more forecasts from that origin. This is conceptually clean because the information cutoff is fixed.</p>
+<p>Its limitation is that the conclusion may depend heavily on one historical origin or one subsequent episode. A single origin also says little about how the procedure behaves when it is repeatedly updated through time.</p>
+</section>
+<section id="repeated-or-rolling-forecast-origins" class="level2">
+<h2 class="anchored" data-anchor-id="repeated-or-rolling-forecast-origins">Repeated or rolling forecast origins</h2>
+<p>Move the forecast origin forward through the evaluation period. At each origin, generate a forecast using only information available by that date. Parameters may be re-estimated as new observations arrive, or they may remain fixed if that is the pre-specified forecasting protocol.</p>
+<p>A repeated-origin design therefore comes closer to how forecasts are updated in practice. The estimation sample can itself be fixed-length or expanding; that separate design choice is treated in <a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html"><strong>QM002 — Rolling vs Expanding Windows</strong></a>.</p>
+<p>A held-out test block can use either approach. What matters is that the protocol is defined before inspecting the test outcomes and that every forecast respects its own historical information cutoff.</p>
+</section>
+</section>
+<section id="pseudo-out-of-sample-is-not-automatically-real-time" class="level1">
+<h1>Pseudo-Out-of-Sample Is Not Automatically Real-Time</h1>
+<p>A chronological evaluation can still use information that was not actually available historically.</p>
+<p>Macroeconomic series, for example, are often revised after their initial release. A researcher can take today’s revised database, impose historical cutoffs, and produce forecasts that are chronologically out of sample. That is a <strong>pseudo-out-of-sample</strong> exercise, but it is not necessarily a genuine real-time exercise because the historical values may contain later revisions. Real-time evaluation requires attention to the data vintage and release availability that would have been known at the historical origin <span class="citation" data-cites="starkcroushore2002">(<a href="#ref-starkcroushore2002" role="doc-biblioref">Stark and Croushore 2002</a>)</span>.</p>
+<p>The same principle extends beyond macroeconomic data. Point-in-time index membership, delisting information, corporate fundamentals, revised accounting fields, and backfilled vendor histories can all create a gap between a chronological backtest and the information set that was truly available.</p>
+</section>
+<section id="development-validation-and-final-testing" class="level1">
+<h1>Development, Validation, and Final Testing</h1>
+<p>The words <em>validation</em> and <em>test</em> are often used loosely, but their roles are different.</p>
+<p>A validation sample may legitimately influence hyperparameters, feature choices, or model selection. Once that happens, however, it is part of model development and should not also be described as an untouched final test. A final test is most informative when its outcomes have not been used to choose the procedure whose performance is being reported.</p>
+<p>In repeated-origin forecasting, earlier evaluation-period observations may later become admissible inputs for later forecast origins after those observations have actually occurred. That is not leakage. Leakage occurs when information enters a forecast <strong>before it would have been available at that forecast origin</strong>, or when final test outcomes are used after the fact to redesign the procedure and those same outcomes are still presented as untouched evidence.</p>
+</section>
+<section id="what-must-stay-outside-the-forecasts-information-set" class="level1">
+<h1>What Must Stay Outside the Forecast’s Information Set</h1>
+<p>At each forecast origin, future observations must not influence any data-dependent step that is supposed to have been completed by that point. Depending on the application, this can include:</p>
+<ul>
+<li>estimated normalization or transformation parameters;</li>
+<li>missing-data imputation models fitted from the data;</li>
+<li>feature selection and dimensionality reduction;</li>
+<li>hyperparameter tuning and early stopping;</li>
+<li>model-family selection;</li>
+<li>ensemble weights;</li>
+<li>threshold or trading-rule calibration; and</li>
+<li>benchmark or sample definitions chosen after inspecting the evaluation result.</li>
+</ul>
+<p>Predetermined transformations do not become invalid merely because they are applied later in time. The concern is whether their <strong>choice or fitted parameters</strong> use inadmissible future information.</p>
+<p>One common approach is to keep tuning and selection inside the development data, then evaluate the chosen procedure on later observations. In a repeated-origin design, tuning can also be repeated within each origin using only information available up to that origin.</p>
+</section>
+<section id="worked-illustration" class="level1">
+<h1>Worked Illustration</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative simulation — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Illustrative simulation — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example below is deliberately synthetic. It demonstrates how a search procedure can improve development-sample fit without improving later predictive performance. It is not evidence about any market, asset class, or forecasting model, and the single deterministic draw is not used to make a frequency claim about how often such reversals occur.</p>
+</div>
+</div>
+<p>We simulate an autoregressive process. <strong>Model A</strong> uses the relevant lag of the target. <strong>Model B</strong> starts with the same lag, searches across 80 pure-noise candidate predictors using only the training sample, and keeps the candidate with the largest absolute correlation with Model A’s training residuals. The selected predictor has no true predictive role; it looks useful because the development procedure searched many irrelevant candidates.</p>
+<p>The final 60 targets are excluded from model selection and coefficient estimation. During the held-out period, coefficients and the selected predictor remain fixed. Each one-step-ahead forecast may still use the lagged target and lagged candidate value that would already have been observed by that forecast origin.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 27%">
+<col style="width: 27%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Sample</th>
+<th style="text-align: center;">Model A: AR(1) RMSE</th>
+<th style="text-align: center;">Model B: AR(1) + selected noise RMSE</th>
+<th style="text-align: center;">Model B vs.&nbsp;A</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Training</td>
+<td style="text-align: center;">1.046</td>
+<td style="text-align: center;">0.951</td>
+<td style="text-align: center;">-9.1%</td>
+</tr>
+<tr class="even">
+<td>Held-out test</td>
+<td style="text-align: center;">0.887</td>
+<td style="text-align: center;">1.101</td>
+<td style="text-align: center;">+24.1%</td>
+</tr>
+</tbody>
+</table>
+<p>Model B fits the development observations better because the search procedure finds a chance relationship. On the held-out targets, that apparent advantage disappears and reverses.</p>
+<div id="fig-train-test-rmse" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-train-test-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm001_train_test_rmse.svg" class="img-fluid figure-img" style="width:88.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-train-test-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The search-selected model improves training RMSE but performs worse on the held-out targets in this illustrative draw.
+</figcaption>
+</figure>
+</div>
+<p>The lesson is not that simpler models always win. It is that <strong>model flexibility creates more opportunities to fit sample-specific noise, so performance on held-out targets answers a different question from fit on the development sample.</strong></p>
+<p>The numerical illustration can be reproduced from the accompanying data and code. The <strong>Reproducibility</strong> section below summarizes the materials available to readers.</p>
+</section>
+<section id="hands-on-lab-reproduce-the-reversal" class="level1">
+<h1>Hands-on Lab: Reproduce the Reversal</h1>
+<p>This optional lab takes about 10–15 minutes. It uses the same synthetic data as the worked illustration, but the code is organized for a reader who wants to follow the logic step by step rather than work through the full replication code.</p>
+<p>In this example, the development sample is the training block reported in the table above. By the end, you will have reproduced four steps in the example:</p>
+<ol type="1">
+<li>split the observations into development and held-out samples;</li>
+<li>fit the AR(1) benchmark using development data only;</li>
+<li>search the 80 noise predictors using only the development sample and fit Model B with the selected predictor; and</li>
+<li>compare training and held-out RMSE without using the held-out targets for model selection.</li>
+</ol>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/labs/index.html">lab guide</a>. For the easiest setup, <a href="labs/qm001_hands_on_lab_bundle.zip">download the complete lab bundle</a>. Direct source: <a href="labs/python/qm001_hands_on.py">Python</a> · <a href="labs/r/qm001_hands_on.R">R</a></p>
+</div>
+<p>The baseline run reproduces the values in the article. After that, try reducing the number of candidate predictors searched, for example with <code>--n-search 20</code> in the Python lab or <code>20</code> as the final command-line argument in the R lab. Do not expect the result to move in one direction as you change the search size. The point of the exercise is to see how model search and held-out evaluation answer different questions.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A repeated-origin evaluation that respects the information boundary can be summarized with the following <strong>Python-like pseudocode</strong>. The functions are schematic rather than a runnable API; the purpose is to make the information boundary explicit.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    train <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Every data-dependent operation is estimated with admissible information only.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    preprocessing <span class="op">=</span> fit_preprocessing(train)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    hyperparameters <span class="op">=</span> tune_model(train, preprocessing)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> fit_model(train, preprocessing, hyperparameters)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    forecast <span class="op">=</span> model.predict(features_available_at(origin), horizon<span class="op">=</span>h)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    store(origin<span class="op">=</span>origin, target<span class="op">=</span>origin <span class="op">+</span> h, forecast<span class="op">=</span>forecast)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate each stored forecast only against the target that later became observable.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>score(stored_forecasts, realized_targets)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The exact implementation differs by model, but the core rule stays the same: <strong>for every forecast, record the origin, the target, what information was available, and which data-dependent steps were estimated from that information.</strong></p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>Lower out-of-sample loss means a model performed better under the specified target, horizon, sample, data-availability assumptions, and loss function. That statement is useful, but narrower than it may first appear.</p>
+<p>A lower RMSE <strong>does not by itself establish statistical significance</strong>, economic materiality, stability through time, superiority under another loss function, or robustness to another benchmark. Statistical comparison of two forecast sequences is a separate inferential problem; the Diebold–Mariano framework is one widely used approach <span class="citation" data-cites="dieboldmariano1995">(<a href="#ref-dieboldmariano1995" role="doc-biblioref">Diebold and Mariano 1995</a>)</span>, while conditional predictive-ability methods address a different comparison question <span class="citation" data-cites="giacominiwhite2006">(<a href="#ref-giacominiwhite2006" role="doc-biblioref">Giacomini and White 2006</a>)</span>.</p>
+<p>Likewise, one evaluation period may be dominated by a recession, crisis, policy regime, or other unusual episode. A strong out-of-sample result is therefore evidence from a specific historical evaluation, not proof that the model is universally superior.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="standardizing-with-the-full-sample" class="level2">
+<h2 class="anchored" data-anchor-id="standardizing-with-the-full-sample">1. Standardizing with the full sample</h2>
+<p>Estimating a mean, variance, or another data-dependent scaling parameter from the full dataset lets later observations influence earlier transformed inputs. Fit such parameters on the admissible training information and apply the fitted transformation forward. The numerical effect can be small or even neutral for some model classes, but the historical information boundary should still be respected.</p>
+</section>
+<section id="tuning-on-the-final-test-period" class="level2">
+<h2 class="anchored" data-anchor-id="tuning-on-the-final-test-period">2. Tuning on the final test period</h2>
+<p>If test performance is inspected, the model is changed in response, and the same test period is checked again, that period has become part of model development. At that point, a clean final assessment requires either a new untouched test period or an explicit acknowledgment that the existing test result is exploratory.</p>
+</section>
+<section id="treating-a-chronological-split-as-genuine-real-time-data" class="level2">
+<h2 class="anchored" data-anchor-id="treating-a-chronological-split-as-genuine-real-time-data">3. Treating a chronological split as genuine real-time data</h2>
+<p>A date cutoff does not remove revisions, backfills, or release-timing problems. The information set must be defined, not assumed.</p>
+</section>
+<section id="misaligning-origin-and-target" class="level2">
+<h2 class="anchored" data-anchor-id="misaligning-origin-and-target">4. Misaligning origin and target</h2>
+<p>For an <span class="math inline">\(h\)</span>-step forecast, the relevant information cutoff is the forecast origin <span class="math inline">\(t\)</span>, not the target date <span class="math inline">\(t+h\)</span>. When features are constructed for a direct <span class="math inline">\(h\)</span>-step forecast, a misaligned lag can accidentally use information that would not have been available at origin <span class="math inline">\(t\)</span>.</p>
+</section>
+<section id="letting-preprocessing-see-the-future" class="level2">
+<h2 class="anchored" data-anchor-id="letting-preprocessing-see-the-future">5. Letting preprocessing see the future</h2>
+<p>PCA, fitted imputation, feature selection, volatility estimates, risk estimates, and ensemble weights can all be part of the forecasting rule. If their data-dependent parameters are estimated with inadmissible future observations, the evaluation is no longer cleanly out of sample.</p>
+</section>
+<section id="equating-the-lowest-rmse-with-a-unique-winner" class="level2">
+<h2 class="anchored" data-anchor-id="equating-the-lowest-rmse-with-a-unique-winner">6. Equating the lowest RMSE with a unique winner</h2>
+<p>Average loss ranking is descriptive. Sampling uncertainty, serial dependence, multiplicity, benchmark choice, and temporal instability require additional analysis when the claim goes beyond simple ranking.</p>
+</section>
+</section>
+<section id="what-out-of-sample-evaluation-does-not-prove" class="level1">
+<h1>What Out-of-Sample Evaluation Does Not Prove</h1>
+<p>Out-of-sample evaluation is essential when the research question is predictive, but it does not automatically establish:</p>
+<ul>
+<li>causal or structural validity;</li>
+<li>profitability after trading costs and implementation constraints;</li>
+<li>stability across regimes or markets;</li>
+<li>statistical distinguishability from competing forecasts;</li>
+<li>immunity to data-snooping across repeated research iterations; or</li>
+<li>future performance outside the historical environments represented in the evaluation sample.</li>
+</ul>
+<p>The method is best viewed as a disciplined answer to one question: <strong>how did a forecasting procedure perform when each forecast had to be made without access to its future target?</strong></p>
+</section>
+<section id="practical-checklist" class="level1">
+<h1>Practical Checklist</h1>
+<p>Before describing a result as out of sample, verify that:</p>
+<ul>
+<li>the forecast origin and target horizon are explicit;</li>
+<li>every input was actually available at the forecast origin under the stated design;</li>
+<li>data-dependent preprocessing was fitted without inadmissible future information;</li>
+<li>model and hyperparameter selection did not use outcomes later presented as an untouched final test;</li>
+<li>any use of earlier evaluation-period observations at later origins follows the chronology and the pre-specified protocol;</li>
+<li>the loss function was defined and computed consistently across models;</li>
+<li>competing models were scored on comparable target observations; and</li>
+<li>claims about significance, stability, or economic value are supported by separate evidence.</li>
+</ul>
+</section>
+<section id="related-methods" class="level1">
+<h1>Related Methods</h1>
+<p>Related companion articles include:</p>
+<ul>
+<li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html"><strong>QM002 — Rolling vs Expanding Windows</strong></a>: how the estimation sample changes as forecast origins move forward.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html"><strong>QM003 — Look-Ahead Bias and Data Leakage</strong></a>: a broader treatment of ways future information can enter a historical analysis.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html"><strong>QM004 — Diebold–Mariano Test</strong></a>: whether the average loss differential between two forecast sequences is statistically distinguishable from zero.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html"><strong>QM005 — Model Confidence Set</strong></a>: set-based uncertainty when many forecasting models are compared.</li>
+<li><strong><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>:</strong> dependence-aware resampling for time-series inference and uncertainty assessment.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> uses a fixed-length rolling pseudo-out-of-sample exercise built from a dated FRED-MD vintage. QM001 explains the information-set logic and general evaluation framework; the research paper contains the application-specific design, statistical comparisons, and evidence.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the synthetic data, code, and figures used in the worked example, plus a hands-on lab in Python and R. Re-running the example with the stated data and analysis choices reproduces the reported training and held-out comparisons.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-dieboldmariano1995" class="csl-entry" role="listitem">
+Diebold, Francis X., and Roberto S. Mariano. 1995. <span>“Comparing Predictive Accuracy.”</span> <em>Journal of Business &amp; Economic Statistics</em> 13 (3): 253–63. <a href="https://doi.org/10.1080/07350015.1995.10524599">https://doi.org/10.1080/07350015.1995.10524599</a>.
+</div>
+<div id="ref-giacominiwhite2006" class="csl-entry" role="listitem">
+Giacomini, Raffaella, and Halbert White. 2006. <span>“Tests of Conditional Predictive Ability.”</span> <em>Econometrica</em> 74 (6): 1545–78. <a href="https://doi.org/10.1111/j.1468-0262.2006.00718.x">https://doi.org/10.1111/j.1468-0262.2006.00718.x</a>.
+</div>
+<div id="ref-gneitingraftery2007" class="csl-entry" role="listitem">
+Gneiting, Tilmann, and Adrian E. Raftery. 2007. <span>“Strictly Proper Scoring Rules, Prediction, and Estimation.”</span> <em>Journal of the American Statistical Association</em> 102 (477): 359–78. <a href="https://doi.org/10.1198/016214506000001437">https://doi.org/10.1198/016214506000001437</a>.
+</div>
+<div id="ref-starkcroushore2002" class="csl-entry" role="listitem">
+Stark, Tom, and Dean Croushore. 2002. <span>“Forecasting with a Real-Time Data Set for Macroeconomists.”</span> <em>Journal of Macroeconomics</em> 24 (4): 507–31. <a href="https://doi.org/10.1016/S0164-0704(02)00062-9">https://doi.org/10.1016/S0164-0704(02)00062-9</a>.
+</div>
+<div id="ref-tashman2000" class="csl-entry" role="listitem">
+Tashman, Leonard J. 2000. <span>“Out-of-Sample Tests of Forecasting Accuracy: An Analysis and Review.”</span> <em>International Journal of Forecasting</em> 16 (4): 437–50. <a href="https://doi.org/10.1016/S0169-2070(00)00065-0">https://doi.org/10.1016/S0169-2070(00)00065-0</a>.
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Out-of-Sample Forecast Evaluation"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Can a model predict outcomes that were unavailable when the forecast was made?"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "A practical guide to evaluating forecasts without letting future targets or other unavailable information enter the forecasting process."</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> en</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> article</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Forecast Evaluation</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Foundation</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>::: {.method-kicker}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>QM001 · Forecast Evaluation · Foundation</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>::: {.method-orientation}</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>**Core idea.** Judge a forecasting procedure only on targets that were still unknown when each forecast was produced.</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>**Use it for.** Comparing predictive performance under the information that would actually have been available when each forecast was made.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>**It does not establish.** Statistical significance, causal validity, economic value, or future performance outside the evaluated historical setting.</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Question</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>A forecasting model can fit historical data very well and still fail when it meets new observations. The basic evaluation question is therefore simple:</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Can the forecasting procedure predict a target that was unavailable when the forecast was produced?**</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>For a clean out-of-sample assessment, the procedure used at forecast origin $t$—including any data-dependent preprocessing, tuning, or model selection that is part of that procedure—must use only information available at that origin under the stated data-availability assumptions. The evaluated target $y_{t+h}$ must still be unknown when the forecast is made. Such evaluations are commonly organized around forecast origins, horizons, estimation samples, and evaluation periods <span class="co">[</span><span class="ot">@tashman2000</span><span class="co">]</span>.</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="fu"># Why It Matters</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>Financial and economic forecasting makes it easy to adapt a model to a particular historical sample. A researcher can vary predictors, transformations, lags, model families, hyperparameters, sample dates, missing-data rules, and ensemble weights. If later outcomes influence those choices and the same outcomes are then reported as a test of predictive performance, the evaluation is no longer independent of the development process.</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>Out-of-sample evaluation does not eliminate model uncertainty or research-selection risk. It does enforce one clear information rule: **each reported forecast must be generated without access to its target or to other information that would not have been available at that forecast origin.**</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="Core principle"}</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>**Out-of-sample is a property of the forecasting pipeline, not just the final regression fit.**</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>Preprocessing, feature selection, hyperparameter tuning, model selection, and ensemble construction can all introduce future information if their data-dependent components are estimated using observations that are unavailable at the forecast origin.</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu"># Intuition: Reconstruct the Information Set</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>The most useful way to think about out-of-sample forecasting is to place yourself at a historical forecast origin and ask: *what could I actually have known at that moment?*</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="al">![At each forecast origin, fitting and tuning may use only admissible information. The target is evaluated only after it becomes observable.](figures/rendered/qm001_information_timeline.svg)</span>{#fig-information-timeline width=95%}</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>Suppose the goal is to forecast a variable $h$ periods ahead. At origin $t$, let $\mathcal{I}_t$ denote the information set available to the forecaster. The forecast is</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>\hat{y}_{t+h\mid t}=f_t(\mathcal{I}_t),</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>where $f_t$ represents the full forecasting procedure used at origin $t$. Once the target is observed, the forecast error is</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>e_{t+h\mid t}=y_{t+h}-\hat{y}_{t+h\mid t}.</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>Across $P$ evaluated forecasts, common point-forecast summaries include</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>\mathrm{RMSE}=\sqrt{\frac{1}{P}\sum_{i=1}^{P} e_i^2}</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>and</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>\mathrm{MAE}=\frac{1}{P}\sum_{i=1}^{P}|e_i|.</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>The loss function should match the forecasting or decision problem. Squared error penalizes large misses more heavily than absolute error. Probabilistic forecasts should be evaluated with scoring rules designed for predictive distributions rather than only with point-forecast errors <span class="co">[</span><span class="ot">@gneitingraftery2007</span><span class="co">]</span>.</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="fu"># Two Common Ways to Generate Out-of-Sample Forecasts</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single forecast origin</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>Choose one historical cutoff, estimate the forecasting procedure using information available by that date, and generate one or more forecasts from that origin. This is conceptually clean because the information cutoff is fixed.</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>Its limitation is that the conclusion may depend heavily on one historical origin or one subsequent episode. A single origin also says little about how the procedure behaves when it is repeatedly updated through time.</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Repeated or rolling forecast origins</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>Move the forecast origin forward through the evaluation period. At each origin, generate a forecast using only information available by that date. Parameters may be re-estimated as new observations arrive, or they may remain fixed if that is the pre-specified forecasting protocol.</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>A repeated-origin design therefore comes closer to how forecasts are updated in practice. The estimation sample can itself be fixed-length or expanding; that separate design choice is treated in <span class="co">[</span><span class="ot">**QM002 — Rolling vs Expanding Windows**</span><span class="co">](../QM002_ROLLING_VS_EXPANDING_WINDOWS/article.qmd)</span>.</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>A held-out test block can use either approach. What matters is that the protocol is defined before inspecting the test outcomes and that every forecast respects its own historical information cutoff.</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="fu"># Pseudo-Out-of-Sample Is Not Automatically Real-Time</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>A chronological evaluation can still use information that was not actually available historically.</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>Macroeconomic series, for example, are often revised after their initial release. A researcher can take today's revised database, impose historical cutoffs, and produce forecasts that are chronologically out of sample. That is a **pseudo-out-of-sample** exercise, but it is not necessarily a genuine real-time exercise because the historical values may contain later revisions. Real-time evaluation requires attention to the data vintage and release availability that would have been known at the historical origin <span class="co">[</span><span class="ot">@starkcroushore2002</span><span class="co">]</span>.</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>The same principle extends beyond macroeconomic data. Point-in-time index membership, delisting information, corporate fundamentals, revised accounting fields, and backfilled vendor histories can all create a gap between a chronological backtest and the information set that was truly available.</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="fu"># Development, Validation, and Final Testing</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>The words *validation* and *test* are often used loosely, but their roles are different.</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>A validation sample may legitimately influence hyperparameters, feature choices, or model selection. Once that happens, however, it is part of model development and should not also be described as an untouched final test. A final test is most informative when its outcomes have not been used to choose the procedure whose performance is being reported.</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>In repeated-origin forecasting, earlier evaluation-period observations may later become admissible inputs for later forecast origins after those observations have actually occurred. That is not leakage. Leakage occurs when information enters a forecast **before it would have been available at that forecast origin**, or when final test outcomes are used after the fact to redesign the procedure and those same outcomes are still presented as untouched evidence.</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a><span class="fu"># What Must Stay Outside the Forecast's Information Set</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>At each forecast origin, future observations must not influence any data-dependent step that is supposed to have been completed by that point. Depending on the application, this can include:</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>estimated normalization or transformation parameters;</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>missing-data imputation models fitted from the data;</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>feature selection and dimensionality reduction;</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>hyperparameter tuning and early stopping;</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>model-family selection;</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>ensemble weights;</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>threshold or trading-rule calibration; and</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>benchmark or sample definitions chosen after inspecting the evaluation result.</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>Predetermined transformations do not become invalid merely because they are applied later in time. The concern is whether their **choice or fitted parameters** use inadmissible future information.</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>One common approach is to keep tuning and selection inside the development data, then evaluate the chosen procedure on later observations. In a repeated-origin design, tuning can also be repeated within each origin using only information available up to that origin.</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked Illustration</span></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Illustrative simulation — not empirical evidence"}</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>The example below is deliberately synthetic. It demonstrates how a search procedure can improve development-sample fit without improving later predictive performance. It is not evidence about any market, asset class, or forecasting model, and the single deterministic draw is not used to make a frequency claim about how often such reversals occur.</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>We simulate an autoregressive process. **Model A** uses the relevant lag of the target. **Model B** starts with the same lag, searches across 80 pure-noise candidate predictors using only the training sample, and keeps the candidate with the largest absolute correlation with Model A's training residuals. The selected predictor has no true predictive role; it looks useful because the development procedure searched many irrelevant candidates.</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>The final 60 targets are excluded from model selection and coefficient estimation. During the held-out period, coefficients and the selected predictor remain fixed. Each one-step-ahead forecast may still use the lagged target and lagged candidate value that would already have been observed by that forecast origin.</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sample <span class="pp">|</span> Model A: AR(1) RMSE <span class="pp">|</span> Model B: AR(1) + selected noise RMSE <span class="pp">|</span> Model B vs. A <span class="pp">|</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|:---:|</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Training <span class="pp">|</span> 1.046 <span class="pp">|</span> 0.951 <span class="pp">|</span> -9.1% <span class="pp">|</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Held-out test <span class="pp">|</span> 0.887 <span class="pp">|</span> 1.101 <span class="pp">|</span> +24.1% <span class="pp">|</span></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>Model B fits the development observations better because the search procedure finds a chance relationship. On the held-out targets, that apparent advantage disappears and reverses.</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="al">![The search-selected model improves training RMSE but performs worse on the held-out targets in this illustrative draw.](figures/rendered/qm001_train_test_rmse.svg)</span>{#fig-train-test-rmse width=88%}</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>The lesson is not that simpler models always win. It is that **model flexibility creates more opportunities to fit sample-specific noise, so performance on held-out targets answers a different question from fit on the development sample.**</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>The numerical illustration can be reproduced from the accompanying data and code. The **Reproducibility** section below summarizes the materials available to readers.</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hands-on Lab: Reproduce the Reversal</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>This optional lab takes about 10–15 minutes. It uses the same synthetic data as the worked illustration, but the code is organized for a reader who wants to follow the logic step by step rather than work through the full replication code.</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>In this example, the development sample is the training block reported in the table above. By the end, you will have reproduced four steps in the example:</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>split the observations into development and held-out samples;</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>fit the AR(1) benchmark using development data only;</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>search the 80 noise predictors using only the development sample and fit Model B with the selected predictor; and</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>compare training and held-out RMSE without using the held-out targets for model selection.</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>::: {.lab-downloads}</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>**Run it yourself.** Start with the <span class="co">[</span><span class="ot">lab guide</span><span class="co">](labs/index.qmd)</span>. For the easiest setup, <span class="co">[</span><span class="ot">download the complete lab bundle</span><span class="co">](labs/qm001_hands_on_lab_bundle.zip)</span>. Direct source: <span class="co">[</span><span class="ot">Python</span><span class="co">](labs/python/qm001_hands_on.py)</span> · <span class="co">[</span><span class="ot">R</span><span class="co">](labs/r/qm001_hands_on.R)</span></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>The baseline run reproduces the values in the article. After that, try reducing the number of candidate predictors searched, for example with <span class="in">`--n-search 20`</span> in the Python lab or <span class="in">`20`</span> as the final command-line argument in the R lab. Do not expect the result to move in one direction as you change the search size. The point of the exercise is to see how model search and held-out evaluation answer different questions.</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="fu"># Implementation Pattern</span></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>A repeated-origin evaluation that respects the information boundary can be summarized with the following **Python-like pseudocode**. The functions are schematic rather than a runnable API; the purpose is to make the information boundary explicit.</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>    train <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Every data-dependent operation is estimated with admissible information only.</span></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>    preprocessing <span class="op">=</span> fit_preprocessing(train)</span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>    hyperparameters <span class="op">=</span> tune_model(train, preprocessing)</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> fit_model(train, preprocessing, hyperparameters)</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>    forecast <span class="op">=</span> model.predict(features_available_at(origin), horizon<span class="op">=</span>h)</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>    store(origin<span class="op">=</span>origin, target<span class="op">=</span>origin <span class="op">+</span> h, forecast<span class="op">=</span>forecast)</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate each stored forecast only against the target that later became observable.</span></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>score(stored_forecasts, realized_targets)</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>The exact implementation differs by model, but the core rule stays the same: **for every forecast, record the origin, the target, what information was available, and which data-dependent steps were estimated from that information.**</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to Interpret the Result</span></span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>Lower out-of-sample loss means a model performed better under the specified target, horizon, sample, data-availability assumptions, and loss function. That statement is useful, but narrower than it may first appear.</span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>A lower RMSE **does not by itself establish statistical significance**, economic materiality, stability through time, superiority under another loss function, or robustness to another benchmark. Statistical comparison of two forecast sequences is a separate inferential problem; the Diebold–Mariano framework is one widely used approach <span class="co">[</span><span class="ot">@dieboldmariano1995</span><span class="co">]</span>, while conditional predictive-ability methods address a different comparison question <span class="co">[</span><span class="ot">@giacominiwhite2006</span><span class="co">]</span>.</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>Likewise, one evaluation period may be dominated by a recession, crisis, policy regime, or other unusual episode. A strong out-of-sample result is therefore evidence from a specific historical evaluation, not proof that the model is universally superior.</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a><span class="fu"># Common Mistakes</span></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Standardizing with the full sample</span></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>Estimating a mean, variance, or another data-dependent scaling parameter from the full dataset lets later observations influence earlier transformed inputs. Fit such parameters on the admissible training information and apply the fitted transformation forward. The numerical effect can be small or even neutral for some model classes, but the historical information boundary should still be respected.</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Tuning on the final test period</span></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>If test performance is inspected, the model is changed in response, and the same test period is checked again, that period has become part of model development. At that point, a clean final assessment requires either a new untouched test period or an explicit acknowledgment that the existing test result is exploratory.</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Treating a chronological split as genuine real-time data</span></span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>A date cutoff does not remove revisions, backfills, or release-timing problems. The information set must be defined, not assumed.</span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Misaligning origin and target</span></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>For an $h$-step forecast, the relevant information cutoff is the forecast origin $t$, not the target date $t+h$. When features are constructed for a direct $h$-step forecast, a misaligned lag can accidentally use information that would not have been available at origin $t$.</span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Letting preprocessing see the future</span></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a>PCA, fitted imputation, feature selection, volatility estimates, risk estimates, and ensemble weights can all be part of the forecasting rule. If their data-dependent parameters are estimated with inadmissible future observations, the evaluation is no longer cleanly out of sample.</span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Equating the lowest RMSE with a unique winner</span></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a>Average loss ranking is descriptive. Sampling uncertainty, serial dependence, multiplicity, benchmark choice, and temporal instability require additional analysis when the claim goes beyond simple ranking.</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a><span class="fu"># What Out-of-Sample Evaluation Does Not Prove</span></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>Out-of-sample evaluation is essential when the research question is predictive, but it does not automatically establish:</span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>causal or structural validity;</span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>profitability after trading costs and implementation constraints;</span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>stability across regimes or markets;</span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>statistical distinguishability from competing forecasts;</span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>immunity to data-snooping across repeated research iterations; or</span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>future performance outside the historical environments represented in the evaluation sample.</span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a>The method is best viewed as a disciplined answer to one question: **how did a forecasting procedure perform when each forecast had to be made without access to its future target?**</span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a><span class="fu"># Practical Checklist</span></span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a>Before describing a result as out of sample, verify that:</span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the forecast origin and target horizon are explicit;</span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>every input was actually available at the forecast origin under the stated design;</span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>data-dependent preprocessing was fitted without inadmissible future information;</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>model and hyperparameter selection did not use outcomes later presented as an untouched final test;</span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>any use of earlier evaluation-period observations at later origins follows the chronology and the pre-specified protocol;</span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the loss function was defined and computed consistently across models;</span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>competing models were scored on comparable target observations; and</span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>claims about significance, stability, or economic value are supported by separate evidence.</span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a><span class="fu"># Related Methods</span></span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a>Related companion articles include:</span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM002 — Rolling vs Expanding Windows**</span><span class="co">](../QM002_ROLLING_VS_EXPANDING_WINDOWS/article.qmd)</span>: how the estimation sample changes as forecast origins move forward.</span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM003 — Look-Ahead Bias and Data Leakage**</span><span class="co">](../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.qmd)</span>: a broader treatment of ways future information can enter a historical analysis.</span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM004 — Diebold–Mariano Test**</span><span class="co">](../QM004_DIEBOLD_MARIANO_TEST/article.qmd)</span>: whether the average loss differential between two forecast sequences is statistically distinguishable from zero.</span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM005 — Model Confidence Set**</span><span class="co">](../QM005_MODEL_CONFIDENCE_SET/article.qmd)</span>: set-based uncertainty when many forecasting models are compared.</span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM006 — Block Bootstrap](../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.qmd):** dependence-aware resampling for time-series inference and uncertainty assessment.</span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a><span class="fu"># Used in SlackQuant Research</span></span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting**</span><span class="co">](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118)</span> uses a fixed-length rolling pseudo-out-of-sample exercise built from a dated FRED-MD vintage. QM001 explains the information-set logic and general evaluation framework; the research paper contains the application-specific design, statistical comparisons, and evidence.</span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-264"><a href="#cb2-264" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reproducibility</span></span>
+<span id="cb2-265"><a href="#cb2-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-266"><a href="#cb2-266" aria-hidden="true" tabindex="-1"></a>The accompanying materials include the synthetic data, code, and figures used in the worked example, plus a hands-on lab in Python and R. Re-running the example with the stated data and analysis choices reproduces the reported training and held-out comparisons.</span>
+<span id="cb2-267"><a href="#cb2-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-268"><a href="#cb2-268" aria-hidden="true" tabindex="-1"></a><span class="fu"># References {.unnumbered}</span></span>
+<span id="cb2-269"><a href="#cb2-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-270"><a href="#cb2-270" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb2-271"><a href="#cb2-271" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

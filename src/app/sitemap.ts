@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/about/",
     "/research/",
+    "/methods/",
     ...researchItems.map((item) => `/research/${item.slug}/`),
   ];
 

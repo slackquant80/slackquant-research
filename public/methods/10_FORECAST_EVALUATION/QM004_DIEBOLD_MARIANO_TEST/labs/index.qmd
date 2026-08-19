@@ -1,0 +1,31 @@
+---
+title: "QM004 Hands-on Lab"
+subtitle: "Diebold–Mariano Test"
+page-layout: article
+toc: true
+---
+
+# Goal
+
+Reproduce the baseline pairwise predictive-accuracy test, then change the loss function or autocovariance truncation lag to see how the inferential question changes.
+
+# Python
+
+```bash
+pip install -r labs/python/requirements.txt
+python labs/python/qm004_hands_on.py --loss squared --lag 3
+```
+
+Try `--loss absolute` or `--lag 0` only as a teaching exercise. In applied work, these choices should follow the forecast design rather than the desired significance result.
+
+# R
+
+```bash
+Rscript labs/r/qm004_hands_on.R squared 3
+```
+
+# What to notice
+
+- The sign of the average loss differential identifies which forecast has lower average loss under the chosen loss function.
+- The denominator of the DM statistic depends on the estimated long-run variance.
+- A lower realized RMSE can coexist with a non-significant DM result.

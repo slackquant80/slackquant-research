@@ -1,0 +1,34 @@
+---
+title: "QM005 Hands-on Lab"
+subtitle: "Build a Model Confidence Set step by step"
+page-layout: article
+toc: true
+---
+
+The lab starts from five synthetic forecast-loss sequences and follows a transparent `Tmax` Model Confidence Set from the full candidate set to the final survivors.
+
+## Start here
+
+1. Download the [complete lab bundle](qm005_hands_on_lab_bundle.zip).
+2. Run the 240-observation baseline.
+3. Run the 80-observation version and compare the size of the surviving set.
+
+### Python
+
+```bash
+python labs/python/qm005_hands_on.py
+python labs/python/qm005_hands_on.py --sample 80
+```
+
+### R
+
+```bash
+Rscript labs/r/qm005_hands_on.R 240 0.10
+Rscript labs/r/qm005_hands_on.R 80 0.10
+```
+
+## What to notice
+
+The lowest average loss is a ranking statement. The MCS asks a different question: **which models can the data distinguish as inferior under the stated loss, resampling design, test statistic, elimination rule, and confidence level?**
+
+The 80-observation exercise is not evidence that every shorter sample must produce a larger MCS. It is a controlled illustration of the information-content idea.

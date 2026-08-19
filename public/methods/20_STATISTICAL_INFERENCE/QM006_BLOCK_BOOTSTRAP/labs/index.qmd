@@ -1,0 +1,32 @@
+---
+title: "QM006 Hands-on Lab"
+subtitle: "See what IID resampling destroys when observations are serially dependent"
+page-layout: article
+toc: true
+---
+
+# Goal
+
+This short exercise compares IID resampling with a moving-block bootstrap on the same synthetic dependent series.
+
+# Start here
+
+Download the [complete lab bundle](qm006_hands_on_lab_bundle.zip), or use the direct [Python](python/qm006_hands_on.py) and [R](r/qm006_hands_on.R) scripts.
+
+# Baseline
+
+```bash
+python labs/python/qm006_hands_on.py
+```
+
+Then try:
+
+```bash
+python labs/python/qm006_hands_on.py --block-length 4
+python labs/python/qm006_hands_on.py --block-length 8
+python labs/python/qm006_hands_on.py --block-length 32
+```
+
+# Interpretation
+
+The exercise is designed to show that resampling individual observations can remove serial dependence that matters for uncertainty. The numerical gap is specific to this synthetic series; block length is a tuning choice, not a universal constant.

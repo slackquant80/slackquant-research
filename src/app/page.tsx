@@ -18,11 +18,16 @@ export default function HomePage() {
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
             Investment and academic research across systematic investing, asset
-            allocation, forecasting, financial data science, and AI/ML &#8212; with direct paths to papers, evidence, code, and tools.
+            allocation, forecasting, financial data science, and AI/ML &#8212;
+            with direct paths to papers, evidence, code, tools, and the
+            quantitative methods behind them.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
               Explore Research
+            </Link>
+            <Link className="btn soft" href="/methods/">
+              Quantitative Methods
             </Link>
             <a className="btn soft ext" href={site.github} target="_blank" rel="noopener noreferrer">
               GitHub
@@ -47,10 +52,7 @@ export default function HomePage() {
                 <h2 className="feature-title">{investmentFeatured.title}</h2>
                 <p className="feature-text">{investmentFeatured.shortSummary}</p>
                 <div className="actions">
-                  <Link
-                    className="btn primary"
-                    href={`/research/${investmentFeatured.slug}/`}
-                  >
+                  <Link className="btn primary" href={`/research/${investmentFeatured.slug}/`}>
                     View Research
                   </Link>
                 </div>
@@ -59,9 +61,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{investmentFeatured.status}</div>
                   <div className="side-number">{investmentFeatured.publicVersion}</div>
-                  <div className="side-note">
-                    Latest public version · {investmentFeatured.dateLabel}
-                  </div>
+                  <div className="side-note">Latest public version · {investmentFeatured.dateLabel}</div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -78,10 +78,7 @@ export default function HomePage() {
                 <h2 className="feature-title">{academicFeatured.title}</h2>
                 <p className="feature-text">{academicFeatured.shortSummary}</p>
                 <div className="actions">
-                  <Link
-                    className="btn primary"
-                    href={`/research/${academicFeatured.slug}/`}
-                  >
+                  <Link className="btn primary" href={`/research/${academicFeatured.slug}/`}>
                     View Research
                   </Link>
                 </div>
@@ -90,9 +87,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{academicFeatured.status}</div>
                   <div className="side-number">{academicFeatured.publicVersion}</div>
-                  <div className="side-note">
-                    Latest public version · {academicFeatured.dateLabel}
-                  </div>
+                  <div className="side-note">Latest public version · {academicFeatured.dateLabel}</div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -117,11 +112,11 @@ export default function HomePage() {
               <h3>Investment Research Series</h3>
               <p>
                 Practitioner-oriented research on systematic investing, asset
-                allocation, decision architecture, robustness, and
-                implementation.
+                allocation, decision architecture, robustness, and implementation.
               </p>
               <Link className="section-link" href="/research/#investment-research-heading">
-                Explore Investment Research &#8594;              </Link>
+                Explore Investment Research &#8594;
+              </Link>
             </article>
             <article className="stream">
               <div className="kicker">02</div>
@@ -131,7 +126,43 @@ export default function HomePage() {
                 data science, AI/ML, and empirical methodology.
               </p>
               <Link className="section-link" href="/research/#academic-research-heading">
-                Explore Academic Research &#8594;              </Link>
+                Explore Academic Research &#8594;
+              </Link>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell">
+          <div className="section-head">
+            <div className="section-title">Quantitative Methods</div>
+            <Link className="section-link" href="/methods/">
+              Open methods library &#8594;
+            </Link>
+          </div>
+          <div className="grid-2">
+            <article className="stream">
+              <div className="kicker">Cross-cutting methods library</div>
+              <h3>Understand the methods behind the research.</h3>
+              <p>
+                A practical library of statistical, econometric, portfolio, and
+                machine-learning methods used across SlackQuant Research. Each
+                article connects intuition, formal definitions, implementation,
+                common failure modes, and reproducible examples.
+              </p>
+              <Link className="section-link strong-link" href="/methods/">
+                Explore Quantitative Methods &#8594;
+              </Link>
+            </article>
+            <article className="stream">
+              <div className="kicker">Role</div>
+              <h3>A shared layer, not another research stream.</h3>
+              <p>
+                Quantitative Methods explains tools used across the research
+                portfolio while keeping Investment Research and Academic Research
+                as distinct research purposes.
+              </p>
             </article>
           </div>
         </div>
@@ -144,11 +175,7 @@ export default function HomePage() {
           </div>
           <div className="release-list">
             {[...researchItems].reverse().map((item) => (
-              <Link
-                className="release release-link"
-                href={`/research/${item.slug}/`}
-                key={item.slug}
-              >
+              <Link className="release release-link" href={`/research/${item.slug}/`} key={item.slug}>
                 <div className="date">{item.dateLabel}</div>
                 <div>
                   <strong>{item.title}</strong>
@@ -178,15 +205,17 @@ export default function HomePage() {
           <div className="about-copy">
             <p>
               SlackQuant Research brings practitioner-oriented investment
-              research and academic research into one coherent public research
-              platform.
+              research and academic research into one coherent public platform,
+              with a shared Quantitative Methods library that explains the tools
+              used across the research.
             </p>
             <div className="researcher-line">
               <span className="researcher-prefix">Research by</span>
               <strong>{site.researcher.displayName}</strong>
             </div>
             <Link className="section-link about-link" href="/about/">
-              About SlackQuant Research &#8594;            </Link>
+              About SlackQuant Research &#8594;
+            </Link>
           </div>
         </div>
       </section>

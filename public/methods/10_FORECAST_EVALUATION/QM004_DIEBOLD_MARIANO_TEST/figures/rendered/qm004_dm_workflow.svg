@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="310" viewBox="0 0 1120 310">
+<rect width="1120" height="310" fill="#fbfaf7"/>
+<style>.t{font:20px Arial,sans-serif;fill:#202428}.s{font:16px Arial,sans-serif;fill:#53616b}.b{fill:#f5f3ed;stroke:#8da0ad;stroke-width:1.6}.a{stroke:#6f8998;stroke-width:2.5;fill:none}</style>
+<rect class="b" x="35" y="72" rx="8" width="220" height="126"/><text class="t" x="145" y="116" text-anchor="middle">Paired errors</text><text class="s" x="145" y="154" text-anchor="middle">eA,t and eB,t</text>
+<path class="a" d="M255 135 H315"/><path fill="#6f8998" d="M315 135 l-12 -7 v14 z"/>
+<rect class="b" x="315" y="72" rx="8" width="220" height="126"/><text class="t" x="425" y="116" text-anchor="middle">Loss differential</text><text class="s" x="425" y="154" text-anchor="middle">dt = LA,t − LB,t</text>
+<path class="a" d="M535 135 H595"/><path fill="#6f8998" d="M595 135 l-12 -7 v14 z"/>
+<rect class="b" x="595" y="72" rx="8" width="220" height="126"/><text class="t" x="705" y="106" text-anchor="middle">Average loss</text><text class="t" x="705" y="132" text-anchor="middle">+ dependence</text><text class="s" x="705" y="166" text-anchor="middle">d̄ and long-run variance</text>
+<path class="a" d="M815 135 H875"/><path fill="#6f8998" d="M875 135 l-12 -7 v14 z"/>
+<rect class="b" x="875" y="72" rx="8" width="220" height="126"/><text class="t" x="985" y="116" text-anchor="middle">DM statistic</text><text class="s" x="985" y="154" text-anchor="middle">signal / uncertainty</text>
+<text class="s" x="560" y="255" text-anchor="middle">Compare the mean loss difference with its sampling uncertainty and serial dependence.</text>
+</svg>

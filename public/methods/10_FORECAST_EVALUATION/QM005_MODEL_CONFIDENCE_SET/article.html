@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to set-based model comparison with the Model Confidence Set procedure.">
+
+<title>Model Confidence Set – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ca3834eb011b617e8ceb67f6ec108db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">SlackQuant Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Quantitative Methods</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://research.slackquant.com/"> 
+<span class="menu-text">Research ↗</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#from-a-ranking-to-a-set" id="toc-from-a-ranking-to-a-set" class="nav-link" data-scroll-target="#from-a-ranking-to-a-set">From a Ranking to a Set</a></li>
+  <li><a href="#a-transparent-t_max-version" id="toc-a-transparent-t_max-version" class="nav-link" data-scroll-target="#a-transparent-t_max-version">A Transparent <span class="math inline">\(T_{max}\)</span> Version</a></li>
+  <li><a href="#why-bootstrap-resampling-enters" id="toc-why-bootstrap-resampling-enters" class="nav-link" data-scroll-target="#why-bootstrap-resampling-enters">Why Bootstrap Resampling Enters</a></li>
+  <li><a href="#worked-illustration-one-ranking-two-survivors" id="toc-worked-illustration-one-ranking-two-survivors" class="nav-link" data-scroll-target="#worked-illustration-one-ranking-two-survivors">Worked Illustration: One Ranking, Two Survivors</a></li>
+  <li><a href="#hands-on-lab-make-the-data-less-informative" id="toc-hands-on-lab-make-the-data-less-informative" class="nav-link" data-scroll-target="#hands-on-lab-make-the-data-less-informative">Hands-on Lab: Make the Data Less Informative</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#calling-the-lowest-loss-model-the-mcs-winner" id="toc-calling-the-lowest-loss-model-the-mcs-winner" class="nav-link" data-scroll-target="#calling-the-lowest-loss-model-the-mcs-winner">1. Calling the lowest-loss model the MCS winner</a></li>
+  <li><a href="#saying-surviving-models-are-proven-equal" id="toc-saying-surviving-models-are-proven-equal" class="nav-link" data-scroll-target="#saying-surviving-models-are-proven-equal">2. Saying surviving models are proven equal</a></li>
+  <li><a href="#ignoring-the-initial-candidate-set" id="toc-ignoring-the-initial-candidate-set" class="nav-link" data-scroll-target="#ignoring-the-initial-candidate-set">3. Ignoring the initial candidate set</a></li>
+  <li><a href="#resampling-each-model-independently" id="toc-resampling-each-model-independently" class="nav-link" data-scroll-target="#resampling-each-model-independently">4. Resampling each model independently</a></li>
+  <li><a href="#treating-the-bootstrap-block-length-as-cosmetic" id="toc-treating-the-bootstrap-block-length-as-cosmetic" class="nav-link" data-scroll-target="#treating-the-bootstrap-block-length-as-cosmetic">5. Treating the bootstrap block length as cosmetic</a></li>
+  <li><a href="#reading-a-large-mcs-as-a-defect" id="toc-reading-a-large-mcs-as-a-defect" class="nav-link" data-scroll-target="#reading-a-large-mcs-as-a-defect">6. Reading a large MCS as a defect</a></li>
+  </ul></li>
+  <li><a href="#relationship-to-pairwise-dm-tests" id="toc-relationship-to-pairwise-dm-tests" class="nav-link" data-scroll-target="#relationship-to-pairwise-dm-tests">Relationship to Pairwise DM Tests</a></li>
+  <li><a href="#a-practical-reporting-checklist" id="toc-a-practical-reporting-checklist" class="nav-link" data-scroll-target="#a-practical-reporting-checklist">A Practical Reporting Checklist</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Model Confidence Set</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">When the data cannot justify a single winner</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Forecast Evaluation</div>
+    <div class="quarto-category">Advanced</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to set-based model comparison with the Model Confidence Set procedure.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM005 · Forecast Evaluation · Advanced</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> A Model Confidence Set (MCS) keeps the models that the available data cannot reliably distinguish from the best under a stated loss criterion and confidence level.</p>
+<p><strong>Use it for.</strong> Comparing several forecasting models when forcing a single winner would hide model-selection uncertainty.</p>
+<p><strong>It does not establish.</strong> That every surviving model is equally good, that a survivor is best with a stated posterior probability, or that the result is independent of the candidate set, loss function, sample, or bootstrap design.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>Suppose five models are evaluated over the same out-of-sample period. One has the lowest average loss.</p>
+<blockquote class="blockquote">
+<p><strong>Does the evidence support naming that model as the winner, or can the data only narrow the field to a set of plausible leaders?</strong></p>
+</blockquote>
+<p>Pairwise tests can compare two models at a time. But when many models are in contention, a long list of pairwise p-values is difficult to interpret and can obscure the uncertainty involved in selecting a winner. The Model Confidence Set procedure of Hansen, Lunde, and Nason approaches the problem directly: begin with the full candidate set, test whether the current models have equal expected performance, remove one model according to the specified elimination rule when the test rejects, and stop when the remaining set can no longer be separated by the chosen procedure <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>A ranking always produces a first-place model. The data may not contain enough information to support that degree of certainty.</p>
+<p>This distinction is especially important when:</p>
+<ul>
+<li>many models have similar out-of-sample loss;</li>
+<li>the evaluation sample is short or noisy;</li>
+<li>forecast losses are serially dependent; or</li>
+<li>model choice itself is part of the scientific conclusion.</li>
+</ul>
+<p>A large MCS is therefore not automatically a failed analysis. It can be an honest statement that the sample does not separate the candidates sharply. Hansen, Lunde, and Nason emphasize this feature explicitly: informative data can lead to a small set, while less informative data can leave many models in the set <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>.</p>
+</section>
+<section id="from-a-ranking-to-a-set" class="level1">
+<h1>From a Ranking to a Set</h1>
+<p>Let the initial candidate set be</p>
+<p><span class="math display">\[
+\mathcal{M}_0=\{1,\ldots,m\},
+\]</span></p>
+<p>and let <span class="math inline">\(L_{i,t}\)</span> denote the loss of model <span class="math inline">\(i\)</span> at evaluation date <span class="math inline">\(t\)</span>. For two models, define the relative loss</p>
+<p><span class="math display">\[
+d_{ij,t}=L_{i,t}-L_{j,t}.
+\]</span></p>
+<p>The population mean relative loss is</p>
+<p><span class="math display">\[
+\mu_{ij}=E[d_{ij,t}].
+\]</span></p>
+<p>For a current set <span class="math inline">\(\mathcal{M}\subseteq\mathcal{M}_0\)</span>, the equal-predictive-ability null is</p>
+<p><span class="math display">\[
+H_{0,\mathcal{M}}:\mu_{ij}=0 \quad \text{for all } i,j\in\mathcal{M}.
+\]</span></p>
+<p>The MCS algorithm combines two pieces <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>:</p>
+<ol type="1">
+<li>an <strong>equivalence test</strong> for the current set; and</li>
+<li>an <strong>elimination rule</strong> that identifies which model to remove if the null is rejected.</li>
+</ol>
+<div id="fig-mcs-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mcs-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm005_mcs_workflow.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mcs-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The MCS begins with the full candidate set. When the equal-performance null is rejected, one model is removed according to the specified elimination rule; non-rejection stops the procedure and defines the surviving set.
+</figcaption>
+</figure>
+</div>
+<p>This sequential structure is the key idea. The procedure does not choose the best model first and then build an uncertainty statement around that fixed choice. The set itself is the output of repeated testing and elimination.</p>
+</section>
+<section id="a-transparent-t_max-version" class="level1">
+<h1>A Transparent <span class="math inline">\(T_{max}\)</span> Version</h1>
+<p>One implementation uses each model’s loss relative to the average loss of the models still under consideration. Let</p>
+<p><span class="math display">\[
+\bar L_i=\frac{1}{P}\sum_{t=1}^{P}L_{i,t},
+\]</span></p>
+<p>and, for the current set <span class="math inline">\(\mathcal M\)</span> with <span class="math inline">\(|\mathcal M|\)</span> members,</p>
+<p><span class="math display">\[
+\bar d_{i\cdot}=\bar L_i-\frac{1}{|\mathcal M|}\sum_{j\in\mathcal M}\bar L_j.
+\]</span></p>
+<p>A standardized relative-loss statistic is</p>
+<p><span class="math display">\[
+t_{i\cdot}=\frac{\bar d_{i\cdot}}{\widehat{\operatorname{se}}(\bar d_{i\cdot})}.
+\]</span></p>
+<p>The <span class="math inline">\(T_{max}\)</span> statistic is</p>
+<p><span class="math display">\[
+T_{max,\mathcal M}=\max_{i\in\mathcal M} t_{i\cdot}.
+\]</span></p>
+<p>Because higher loss is worse, the model with the largest positive standardized excess loss is the natural elimination candidate when the test rejects. This pairing of test statistic and elimination rule is one of the coherent implementations developed by Hansen, Lunde, and Nason <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>.</p>
+<p>The original paper also develops a range statistic based on pairwise standardized loss differences. <strong>The MCS is a framework, not a single universal numerical recipe.</strong> A reported result should identify the test statistic and elimination rule that were actually used.</p>
+</section>
+<section id="why-bootstrap-resampling-enters" class="level1">
+<h1>Why Bootstrap Resampling Enters</h1>
+<p>The null distribution of the multiple-model statistic is not generally a simple textbook distribution. Forecast losses can also be dependent over time.</p>
+<p>Bootstrap resampling provides a practical way to estimate the uncertainty of the relative losses and the distribution of the set-level statistic <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>. In a time-series application, the resampling scheme should preserve dependence that matters for the loss sequence.</p>
+<p>The worked example below uses a <strong>moving-block bootstrap</strong> and resamples the same time indices jointly for every model. That joint resampling matters: the models are evaluated on the same dates, so their loss sequences should remain aligned.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="The bootstrap design is part of the result">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>The bootstrap design is part of the result
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Changing the resampling scheme, block length, test statistic, elimination rule, confidence level, or candidate set can change the final MCS. These choices should be specified before interpreting the survivors.</p>
+</div>
+</div>
+</section>
+<section id="worked-illustration-one-ranking-two-survivors" class="level1">
+<h1>Worked Illustration: One Ranking, Two Survivors</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative simulation — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Illustrative simulation — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example uses five synthetic forecast-error sequences and squared-error loss. It is designed to show how a clear sample ranking can still lead to a multi-model confidence set. The numerical values are not evidence about typical MCS size in real forecasting applications.</p>
+</div>
+</div>
+<p>We evaluate five synthetic models, A through E, over 240 dates. The loss series share a persistent common component, so model losses are correlated through time and across models. The MCS uses:</p>
+<ul>
+<li>squared-error loss;</li>
+<li>a 90% confidence level (<span class="math inline">\(\alpha=0.10\)</span>);</li>
+<li>the <span class="math inline">\(T_{max}\)</span> statistic;</li>
+<li>the coherent maximum-standardized-excess-loss elimination rule; and</li>
+<li>999 moving-block bootstrap draws with block length 12.</li>
+</ul>
+<p>The sample mean losses are:</p>
+<div class="qm-table-model-summary">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th style="text-align: center;">Mean squared loss</th>
+<th style="text-align: center;">Sample rank</th>
+<th>90% MCS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td style="text-align: center;">0.576</td>
+<td style="text-align: center;">1</td>
+<td>Survives</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td style="text-align: center;">0.633</td>
+<td style="text-align: center;">2</td>
+<td>Survives</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td style="text-align: center;">0.704</td>
+<td style="text-align: center;">3</td>
+<td>Eliminated</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td style="text-align: center;">0.743</td>
+<td style="text-align: center;">4</td>
+<td>Eliminated</td>
+</tr>
+<tr class="odd">
+<td>E</td>
+<td style="text-align: center;">0.988</td>
+<td style="text-align: center;">5</td>
+<td>Eliminated</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Model A has the lowest realized mean loss. The MCS does <strong>not</strong> conclude that A is uniquely superior. The sequential path is:</p>
+<div class="qm-table-mcs-path">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Step</th>
+<th style="text-align: center;">Models remaining</th>
+<th style="text-align: center;"><span class="math inline">\(T_{max}\)</span></th>
+<th style="text-align: center;">Bootstrap p-value</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4.677</td>
+<td style="text-align: center;">0.001</td>
+<td>Eliminate E</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2.081</td>
+<td style="text-align: center;">0.089</td>
+<td>Eliminate D</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2.991</td>
+<td style="text-align: center;">0.007</td>
+<td>Eliminate C</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1.232</td>
+<td style="text-align: center;">0.230</td>
+<td>Stop</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The final 90% MCS is therefore</p>
+<p><span class="math display">\[
+\widehat{\mathcal M}^{*}_{0.90}=\{A,B\}.
+\]</span></p>
+<p>The correct interpretation is not “A and B are exactly equal.” It is that, under this candidate set, loss function, sample, bootstrap design, statistic, elimination rule, and confidence level, the procedure does not find enough evidence to remove either A or B.</p>
+<div id="fig-mcs-survivors" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mcs-survivors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm005_mean_loss_and_survivors.svg" class="img-fluid figure-img" style="width:92.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mcs-survivors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Mean loss ranks all five models, while the 90% MCS preserves two survivors. The set communicates uncertainty that a single ranking suppresses.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="hands-on-lab-make-the-data-less-informative" class="level1">
+<h1>Hands-on Lab: Make the Data Less Informative</h1>
+<p>The optional lab reproduces the 240-observation baseline and then repeats the same procedure using only the first 80 observations of the synthetic sequence.</p>
+<div class="method-action">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm005_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm005_hands_on.py">Python</a> · <a href="labs/r/qm005_hands_on.R">R</a>.</p>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm005_hands_on.py</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm005_hands_on.py <span class="at">--sample</span> 80</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In this particular synthetic draw, the 240-observation sample narrows the set to <span class="math inline">\(\{A,B\}\)</span>. With only the first 80 observations, the initial equal-predictive-ability test is not rejected at the 10% level and <strong>all five models remain</strong>.</p>
+<p>That comparison shows how less informative data can leave a wider MCS. It is not a general claim that every shorter sample must produce a larger set; the realized sample and dependence structure also matter.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A transparent sequential implementation has the following shape:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>active <span class="op">=</span> initial_models</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">len</span>(active) <span class="op">&gt;</span> <span class="dv">1</span>:</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    relative_loss <span class="op">=</span> mean_loss_relative_to_active_average(active)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    standard_error <span class="op">=</span> bootstrap_standard_error(relative_loss)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    t_stat <span class="op">=</span> relative_loss <span class="op">/</span> standard_error</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    tmax <span class="op">=</span> <span class="bu">max</span>(t_stat)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    p_value <span class="op">=</span> recentered_bootstrap_p_value(tmax)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> p_value <span class="op">&gt;</span> alpha:</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    active.remove(model_with_largest_t_stat)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>mcs <span class="op">=</span> active</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is <strong>Python-like pseudocode</strong>, not a drop-in API. A production implementation needs a clearly documented resampling design, statistic, elimination rule, handling of ties, and numerical treatment of degenerate standard errors.</p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>The MCS answers a set-based question:</p>
+<blockquote class="blockquote">
+<p><strong>Which candidates survive a sequential attempt to eliminate models that are statistically inferior under the specified comparison?</strong></p>
+</blockquote>
+<p>It does not assign a probability that each surviving model is “the best.” A survivor can have worse realized average loss than another survivor and remain in the set because the available evidence does not justify eliminating it.</p>
+<p>The result is also <strong>candidate-set dependent</strong>. If a relevant model was never placed in <span class="math inline">\(\mathcal M_0\)</span>, the MCS says nothing about it. Hansen, Lunde, and Nason explicitly frame the procedure relative to the initial collection of candidates <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="calling-the-lowest-loss-model-the-mcs-winner" class="level2">
+<h2 class="anchored" data-anchor-id="calling-the-lowest-loss-model-the-mcs-winner">1. Calling the lowest-loss model the MCS winner</h2>
+<p>The lowest sample loss is a ranking. The MCS is a set-valued inferential result. If several models survive, forcing a single winner throws away the uncertainty the procedure is designed to preserve.</p>
+</section>
+<section id="saying-surviving-models-are-proven-equal" class="level2">
+<h2 class="anchored" data-anchor-id="saying-surviving-models-are-proven-equal">2. Saying surviving models are proven equal</h2>
+<p>Stopping means the equal-predictive-ability null is not rejected for the remaining set under the chosen procedure. Non-rejection is not proof of exact equality.</p>
+</section>
+<section id="ignoring-the-initial-candidate-set" class="level2">
+<h2 class="anchored" data-anchor-id="ignoring-the-initial-candidate-set">3. Ignoring the initial candidate set</h2>
+<p>The MCS is conditional on <span class="math inline">\(\mathcal M_0\)</span>. A small final set can still be uninformative about models or strategies that were never included.</p>
+</section>
+<section id="resampling-each-model-independently" class="level2">
+<h2 class="anchored" data-anchor-id="resampling-each-model-independently">4. Resampling each model independently</h2>
+<p>When models are evaluated on the same dates, independent resampling destroys the cross-model pairing of losses. Time indices should be resampled jointly across the active models.</p>
+</section>
+<section id="treating-the-bootstrap-block-length-as-cosmetic" class="level2">
+<h2 class="anchored" data-anchor-id="treating-the-bootstrap-block-length-as-cosmetic">5. Treating the bootstrap block length as cosmetic</h2>
+<p>For dependent losses, block length affects the uncertainty estimate and can affect elimination decisions. It should be justified rather than tuned for a preferred final set.</p>
+</section>
+<section id="reading-a-large-mcs-as-a-defect" class="level2">
+<h2 class="anchored" data-anchor-id="reading-a-large-mcs-as-a-defect">6. Reading a large MCS as a defect</h2>
+<p>A large set may simply reflect weak information for discriminating among models. That can be the scientifically important result.</p>
+</section>
+</section>
+<section id="relationship-to-pairwise-dm-tests" class="level1">
+<h1>Relationship to Pairwise DM Tests</h1>
+<p>QM004 asks whether <strong>two</strong> forecast-loss sequences have distinguishable expected loss. MCS extends the problem to a <strong>collection</strong> of candidates and adds a sequential elimination mechanism that controls the set-building problem rather than reporting a large matrix of pairwise tests <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>.</p>
+<p>The two tools therefore answer related but different questions:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Natural tool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Are these two pre-specified forecasts distinguishable in expected loss?</td>
+<td>Pairwise DM-style comparison</td>
+</tr>
+<tr class="even">
+<td>Which models can survive a many-model comparison without forcing one winner?</td>
+<td>Model Confidence Set</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="a-practical-reporting-checklist" class="level1">
+<h1>A Practical Reporting Checklist</h1>
+<p>When reporting an MCS, state:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>What to report</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Candidate set</td>
+<td>Which models entered <span class="math inline">\(\mathcal M_0\)</span>?</td>
+</tr>
+<tr class="even">
+<td>Evaluation sample</td>
+<td>Which dates and how many observations?</td>
+</tr>
+<tr class="odd">
+<td>Loss function</td>
+<td>What criterion defines “better”?</td>
+</tr>
+<tr class="even">
+<td>Confidence level</td>
+<td>What value of <span class="math inline">\(1-\alpha\)</span>?</td>
+</tr>
+<tr class="odd">
+<td>Test statistic</td>
+<td><span class="math inline">\(T_{max}\)</span>, range statistic, or another valid implementation?</td>
+</tr>
+<tr class="even">
+<td>Elimination rule</td>
+<td>Which model is removed after rejection?</td>
+</tr>
+<tr class="odd">
+<td>Resampling</td>
+<td>Bootstrap type, number of draws, and block design?</td>
+</tr>
+<tr class="even">
+<td>Final set</td>
+<td>Which models survive?</td>
+</tr>
+<tr class="odd">
+<td>Elimination path</td>
+<td>Which models were removed and at what stage?</td>
+</tr>
+<tr class="even">
+<td>Sensitivity</td>
+<td>Are conclusions materially sensitive to defensible implementation choices?</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="when-not-to-use-it" class="level1">
+<h1>When Not to Use It</h1>
+<p>MCS is not the right tool when:</p>
+<ul>
+<li>only two pre-specified forecasts are being compared and a pairwise test answers the scientific question directly;</li>
+<li>the candidate models are evaluated on different targets, horizons, dates, or loss functions;</li>
+<li>the loss sequence is too short to support credible resampling or variance estimation;</li>
+<li>the initial candidate set was selected using the same evaluation outcomes in a way that invalidates the intended inference; or</li>
+<li>the goal is to estimate model probabilities under a Bayesian framework rather than construct a frequentist confidence set.</li>
+</ul>
+</section>
+<section id="related-methods" class="level1">
+<h1>Related Methods</h1>
+<ul>
+<li><strong><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">QM001 — Out-of-Sample Forecast Evaluation</a>:</strong> defines the information boundary for the forecast losses entering the comparison.</li>
+<li><strong><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">QM004 — Diebold–Mariano Test</a>:</strong> pairwise predictive-accuracy inference.</li>
+<li><strong><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>:</strong> explains dependence-aware resampling used in many time-series implementations.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> reports 90% Model Confidence Sets across target-horizon-loss panels. The broad retention of models is interpreted as evidence that the evaluation data often do not sharply separate the candidate forecasting approaches, rather than as a requirement to force a single winner.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the synthetic loss panel, code, figures, and a hands-on lab in Python and R. The supplied resampling draws reproduce the elimination path and final 90% Model Confidence Set shown above.</p>
+</section>
+<section id="references" class="level1">
+
+
+
+<!-- -->
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-hansenlundenason2011" class="csl-entry" role="listitem">
+Hansen, Peter R., Asger Lunde, and James M. Nason. 2011. <span>“The Model Confidence Set.”</span> <em>Econometrica</em> 79 (2): 453–97. <a href="https://doi.org/10.3982/ECTA5771">https://doi.org/10.3982/ECTA5771</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Model Confidence Set"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "When the data cannot justify a single winner"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "A practical guide to set-based model comparison with the Model Confidence Set procedure."</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> en</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> article</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Forecast Evaluation</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Advanced</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>::: {.method-kicker}</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>QM005 · Forecast Evaluation · Advanced</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>::: {.method-orientation}</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>**Core idea.** A Model Confidence Set (MCS) keeps the models that the available data cannot reliably distinguish from the best under a stated loss criterion and confidence level.</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>**Use it for.** Comparing several forecasting models when forcing a single winner would hide model-selection uncertainty.</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>**It does not establish.** That every surviving model is equally good, that a survivor is best with a stated posterior probability, or that the result is independent of the candidate set, loss function, sample, or bootstrap design.</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Question</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>Suppose five models are evaluated over the same out-of-sample period. One has the lowest average loss.</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Does the evidence support naming that model as the winner, or can the data only narrow the field to a set of plausible leaders?**</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>Pairwise tests can compare two models at a time. But when many models are in contention, a long list of pairwise p-values is difficult to interpret and can obscure the uncertainty involved in selecting a winner. The Model Confidence Set procedure of Hansen, Lunde, and Nason approaches the problem directly: begin with the full candidate set, test whether the current models have equal expected performance, remove one model according to the specified elimination rule when the test rejects, and stop when the remaining set can no longer be separated by the chosen procedure <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>.</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Why It Matters</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>A ranking always produces a first-place model. The data may not contain enough information to support that degree of certainty.</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>This distinction is especially important when:</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>many models have similar out-of-sample loss;</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the evaluation sample is short or noisy;</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>forecast losses are serially dependent; or</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>model choice itself is part of the scientific conclusion.</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>A large MCS is therefore not automatically a failed analysis. It can be an honest statement that the sample does not separate the candidates sharply. Hansen, Lunde, and Nason emphasize this feature explicitly: informative data can lead to a small set, while less informative data can leave many models in the set <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>.</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu"># From a Ranking to a Set</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>Let the initial candidate set be</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>\mathcal{M}_0=<span class="sc">\{</span>1,\ldots,m<span class="sc">\}</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>and let $L_{i,t}$ denote the loss of model $i$ at evaluation date $t$. For two models, define the relative loss</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>d_{ij,t}=L_{i,t}-L_{j,t}.</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>The population mean relative loss is</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>\mu_{ij}=E<span class="co">[</span><span class="ot">d_{ij,t}</span><span class="co">]</span>.</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>For a current set $\mathcal{M}\subseteq\mathcal{M}_0$, the equal-predictive-ability null is</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>H_{0,\mathcal{M}}:\mu_{ij}=0 \quad \text{for all } i,j\in\mathcal{M}.</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>The MCS algorithm combines two pieces <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>:</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>an **equivalence test** for the current set; and</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>an **elimination rule** that identifies which model to remove if the null is rejected.</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="al">![The MCS begins with the full candidate set. When the equal-performance null is rejected, one model is removed according to the specified elimination rule; non-rejection stops the procedure and defines the surviving set.](figures/rendered/qm005_mcs_workflow.svg)</span>{#fig-mcs-workflow width=95%}</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>This sequential structure is the key idea. The procedure does not choose the best model first and then build an uncertainty statement around that fixed choice. The set itself is the output of repeated testing and elimination.</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="fu"># A Transparent $T_{max}$ Version</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>One implementation uses each model's loss relative to the average loss of the models still under consideration. Let</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>\bar L_i=\frac{1}{P}\sum_{t=1}^{P}L_{i,t},</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>and, for the current set $\mathcal M$ with $|\mathcal M|$ members,</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>\bar d_{i\cdot}=\bar L_i-\frac{1}{|\mathcal M|}\sum_{j\in\mathcal M}\bar L_j.</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>A standardized relative-loss statistic is</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>t_{i\cdot}=\frac{\bar d_{i\cdot}}{\widehat{\operatorname{se}}(\bar d_{i\cdot})}.</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>The $T_{max}$ statistic is</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>T_{max,\mathcal M}=\max_{i\in\mathcal M} t_{i\cdot}.</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>Because higher loss is worse, the model with the largest positive standardized excess loss is the natural elimination candidate when the test rejects. This pairing of test statistic and elimination rule is one of the coherent implementations developed by Hansen, Lunde, and Nason <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>.</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>The original paper also develops a range statistic based on pairwise standardized loss differences. **The MCS is a framework, not a single universal numerical recipe.** A reported result should identify the test statistic and elimination rule that were actually used.</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="fu"># Why Bootstrap Resampling Enters</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>The null distribution of the multiple-model statistic is not generally a simple textbook distribution. Forecast losses can also be dependent over time.</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>Bootstrap resampling provides a practical way to estimate the uncertainty of the relative losses and the distribution of the set-level statistic <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>. In a time-series application, the resampling scheme should preserve dependence that matters for the loss sequence.</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>The worked example below uses a **moving-block bootstrap** and resamples the same time indices jointly for every model. That joint resampling matters: the models are evaluated on the same dates, so their loss sequences should remain aligned.</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="The bootstrap design is part of the result"}</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>Changing the resampling scheme, block length, test statistic, elimination rule, confidence level, or candidate set can change the final MCS. These choices should be specified before interpreting the survivors.</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked Illustration: One Ranking, Two Survivors</span></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Illustrative simulation — not empirical evidence"}</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>The example uses five synthetic forecast-error sequences and squared-error loss. It is designed to show how a clear sample ranking can still lead to a multi-model confidence set. The numerical values are not evidence about typical MCS size in real forecasting applications.</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>We evaluate five synthetic models, A through E, over 240 dates. The loss series share a persistent common component, so model losses are correlated through time and across models. The MCS uses:</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>squared-error loss;</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a 90% confidence level ($\alpha=0.10$);</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the $T_{max}$ statistic;</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the coherent maximum-standardized-excess-loss elimination rule; and</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>999 moving-block bootstrap draws with block length 12.</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>The sample mean losses are:</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>::: {.qm-table-model-summary}</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model <span class="pp">|</span> Mean squared loss <span class="pp">|</span> Sample rank <span class="pp">|</span> 90% MCS <span class="pp">|</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|---|</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> A <span class="pp">|</span> 0.576 <span class="pp">|</span> 1 <span class="pp">|</span> Survives <span class="pp">|</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> B <span class="pp">|</span> 0.633 <span class="pp">|</span> 2 <span class="pp">|</span> Survives <span class="pp">|</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> C <span class="pp">|</span> 0.704 <span class="pp">|</span> 3 <span class="pp">|</span> Eliminated <span class="pp">|</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> D <span class="pp">|</span> 0.743 <span class="pp">|</span> 4 <span class="pp">|</span> Eliminated <span class="pp">|</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> E <span class="pp">|</span> 0.988 <span class="pp">|</span> 5 <span class="pp">|</span> Eliminated <span class="pp">|</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>Model A has the lowest realized mean loss. The MCS does **not** conclude that A is uniquely superior. The sequential path is:</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>::: {.qm-table-mcs-path}</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Step <span class="pp">|</span> Models remaining <span class="pp">|</span> $T_{max}$ <span class="pp">|</span> Bootstrap p-value <span class="pp">|</span> Action <span class="pp">|</span></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|:---:|:---:|:---:|---|</span></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> 5 <span class="pp">|</span> 4.677 <span class="pp">|</span> 0.001 <span class="pp">|</span> Eliminate E <span class="pp">|</span></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> 4 <span class="pp">|</span> 2.081 <span class="pp">|</span> 0.089 <span class="pp">|</span> Eliminate D <span class="pp">|</span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> 3 <span class="pp">|</span> 2.991 <span class="pp">|</span> 0.007 <span class="pp">|</span> Eliminate C <span class="pp">|</span></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> 2 <span class="pp">|</span> 1.232 <span class="pp">|</span> 0.230 <span class="pp">|</span> Stop <span class="pp">|</span></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>The final 90% MCS is therefore</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>\widehat{\mathcal M}^{*}_{0.90}=<span class="sc">\{</span>A,B<span class="sc">\}</span>.</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>The correct interpretation is not “A and B are exactly equal.” It is that, under this candidate set, loss function, sample, bootstrap design, statistic, elimination rule, and confidence level, the procedure does not find enough evidence to remove either A or B.</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a><span class="al">![Mean loss ranks all five models, while the 90% MCS preserves two survivors. The set communicates uncertainty that a single ranking suppresses.](figures/rendered/qm005_mean_loss_and_survivors.svg)</span>{#fig-mcs-survivors width=92%}</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hands-on Lab: Make the Data Less Informative</span></span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>The optional lab reproduces the 240-observation baseline and then repeats the same procedure using only the first 80 observations of the synthetic sequence.</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>::: {.method-action}</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>**Run it yourself.** Start with the <span class="co">[</span><span class="ot">lab guide</span><span class="co">](labs/index.qmd)</span>. For a self-contained copy, use the <span class="co">[</span><span class="ot">complete lab bundle</span><span class="co">](labs/qm005_hands_on_lab_bundle.zip)</span>. Direct source: <span class="co">[</span><span class="ot">Python</span><span class="co">](labs/python/qm005_hands_on.py)</span> · <span class="co">[</span><span class="ot">R</span><span class="co">](labs/r/qm005_hands_on.R)</span>.</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm005_hands_on.py</span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm005_hands_on.py <span class="at">--sample</span> 80</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>In this particular synthetic draw, the 240-observation sample narrows the set to $<span class="sc">\{</span>A,B<span class="sc">\}</span>$. With only the first 80 observations, the initial equal-predictive-ability test is not rejected at the 10% level and **all five models remain**.</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>That comparison shows how less informative data can leave a wider MCS. It is not a general claim that every shorter sample must produce a larger set; the realized sample and dependence structure also matter.</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="fu"># Implementation Pattern</span></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>A transparent sequential implementation has the following shape:</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>active <span class="op">=</span> initial_models</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">len</span>(active) <span class="op">&gt;</span> <span class="dv">1</span>:</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>    relative_loss <span class="op">=</span> mean_loss_relative_to_active_average(active)</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>    standard_error <span class="op">=</span> bootstrap_standard_error(relative_loss)</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>    t_stat <span class="op">=</span> relative_loss <span class="op">/</span> standard_error</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>    tmax <span class="op">=</span> <span class="bu">max</span>(t_stat)</span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>    p_value <span class="op">=</span> recentered_bootstrap_p_value(tmax)</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> p_value <span class="op">&gt;</span> alpha:</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>    active.remove(model_with_largest_t_stat)</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>mcs <span class="op">=</span> active</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>This is **Python-like pseudocode**, not a drop-in API. A production implementation needs a clearly documented resampling design, statistic, elimination rule, handling of ties, and numerical treatment of degenerate standard errors.</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to Interpret the Result</span></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>The MCS answers a set-based question:</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Which candidates survive a sequential attempt to eliminate models that are statistically inferior under the specified comparison?**</span></span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>It does not assign a probability that each surviving model is “the best.” A survivor can have worse realized average loss than another survivor and remain in the set because the available evidence does not justify eliminating it.</span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>The result is also **candidate-set dependent**. If a relevant model was never placed in $\mathcal M_0$, the MCS says nothing about it. Hansen, Lunde, and Nason explicitly frame the procedure relative to the initial collection of candidates <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>.</span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a><span class="fu"># Common Mistakes</span></span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Calling the lowest-loss model the MCS winner</span></span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>The lowest sample loss is a ranking. The MCS is a set-valued inferential result. If several models survive, forcing a single winner throws away the uncertainty the procedure is designed to preserve.</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Saying surviving models are proven equal</span></span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>Stopping means the equal-predictive-ability null is not rejected for the remaining set under the chosen procedure. Non-rejection is not proof of exact equality.</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Ignoring the initial candidate set</span></span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>The MCS is conditional on $\mathcal M_0$. A small final set can still be uninformative about models or strategies that were never included.</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Resampling each model independently</span></span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>When models are evaluated on the same dates, independent resampling destroys the cross-model pairing of losses. Time indices should be resampled jointly across the active models.</span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Treating the bootstrap block length as cosmetic</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>For dependent losses, block length affects the uncertainty estimate and can affect elimination decisions. It should be justified rather than tuned for a preferred final set.</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Reading a large MCS as a defect</span></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>A large set may simply reflect weak information for discriminating among models. That can be the scientifically important result.</span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a><span class="fu"># Relationship to Pairwise DM Tests</span></span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>QM004 asks whether **two** forecast-loss sequences have distinguishable expected loss. MCS extends the problem to a **collection** of candidates and adds a sequential elimination mechanism that controls the set-building problem rather than reporting a large matrix of pairwise tests <span class="co">[</span><span class="ot">@hansenlundenason2011</span><span class="co">]</span>.</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>The two tools therefore answer related but different questions:</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question <span class="pp">|</span> Natural tool <span class="pp">|</span></span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Are these two pre-specified forecasts distinguishable in expected loss? <span class="pp">|</span> Pairwise DM-style comparison <span class="pp">|</span></span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Which models can survive a many-model comparison without forcing one winner? <span class="pp">|</span> Model Confidence Set <span class="pp">|</span></span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a><span class="fu"># A Practical Reporting Checklist</span></span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>When reporting an MCS, state:</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Item <span class="pp">|</span> What to report <span class="pp">|</span></span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Candidate set <span class="pp">|</span> Which models entered $\mathcal M_0$? <span class="pp">|</span></span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evaluation sample <span class="pp">|</span> Which dates and how many observations? <span class="pp">|</span></span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Loss function <span class="pp">|</span> What criterion defines “better”? <span class="pp">|</span></span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Confidence level <span class="pp">|</span> What value of $1-\alpha$? <span class="pp">|</span></span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Test statistic <span class="pp">|</span> $T_{max}$, range statistic, or another valid implementation? <span class="pp">|</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Elimination rule <span class="pp">|</span> Which model is removed after rejection? <span class="pp">|</span></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Resampling <span class="pp">|</span> Bootstrap type, number of draws, and block design? <span class="pp">|</span></span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Final set <span class="pp">|</span> Which models survive? <span class="pp">|</span></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Elimination path <span class="pp">|</span> Which models were removed and at what stage? <span class="pp">|</span></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sensitivity <span class="pp">|</span> Are conclusions materially sensitive to defensible implementation choices? <span class="pp">|</span></span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a><span class="fu"># When Not to Use It</span></span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>MCS is not the right tool when:</span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>only two pre-specified forecasts are being compared and a pairwise test answers the scientific question directly;</span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the candidate models are evaluated on different targets, horizons, dates, or loss functions;</span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the loss sequence is too short to support credible resampling or variance estimation;</span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the initial candidate set was selected using the same evaluation outcomes in a way that invalidates the intended inference; or</span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the goal is to estimate model probabilities under a Bayesian framework rather than construct a frequentist confidence set.</span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a><span class="fu"># Related Methods</span></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM001 — Out-of-Sample Forecast Evaluation](../QM001_OUT_OF_SAMPLE_EVALUATION/article.qmd):** defines the information boundary for the forecast losses entering the comparison.</span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM004 — Diebold–Mariano Test](../QM004_DIEBOLD_MARIANO_TEST/article.qmd):** pairwise predictive-accuracy inference.</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM006 — Block Bootstrap](../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.qmd):** explains dependence-aware resampling used in many time-series implementations.</span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a><span class="fu"># Used in SlackQuant Research</span></span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting**</span><span class="co">](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118)</span> reports 90% Model Confidence Sets across target-horizon-loss panels. The broad retention of models is interpreted as evidence that the evaluation data often do not sharply separate the candidate forecasting approaches, rather than as a requirement to force a single winner.</span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reproducibility</span></span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a>The accompanying materials include the synthetic loss panel, code, figures, and a hands-on lab in Python and R. The supplied resampling draws reproduce the elimination path and final 90% Model Confidence Set shown above.</span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

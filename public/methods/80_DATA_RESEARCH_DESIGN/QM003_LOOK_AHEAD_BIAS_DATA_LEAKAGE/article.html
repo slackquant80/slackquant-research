@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to detecting and preventing future-information contamination in forecasting, machine learning, and financial backtests.">
+
+<title>Look-Ahead Bias and Data Leakage – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6ca3834eb011b617e8ceb67f6ec108db.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">SlackQuant Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Quantitative Methods</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://research.slackquant.com/"> 
+<span class="menu-text">Research ↗</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#look-ahead-bias-and-data-leakage-are-related-but-not-identical" id="toc-look-ahead-bias-and-data-leakage-are-related-but-not-identical" class="nav-link" data-scroll-target="#look-ahead-bias-and-data-leakage-are-related-but-not-identical">Look-Ahead Bias and Data Leakage Are Related, but Not Identical</a></li>
+  <li><a href="#the-information-boundary" id="toc-the-information-boundary" class="nav-link" data-scroll-target="#the-information-boundary">The Information Boundary</a></li>
+  <li><a href="#four-common-leakage-paths" id="toc-four-common-leakage-paths" class="nav-link" data-scroll-target="#four-common-leakage-paths">Four Common Leakage Paths</a>
+  <ul class="collapse">
+  <li><a href="#future-aware-feature-construction" id="toc-future-aware-feature-construction" class="nav-link" data-scroll-target="#future-aware-feature-construction">1. Future-aware feature construction</a></li>
+  <li><a href="#preprocessing-outside-the-permitted-split" id="toc-preprocessing-outside-the-permitted-split" class="nav-link" data-scroll-target="#preprocessing-outside-the-permitted-split">2. Preprocessing outside the permitted split</a></li>
+  <li><a href="#tuning-or-selecting-on-the-final-test-period" id="toc-tuning-or-selecting-on-the-final-test-period" class="nav-link" data-scroll-target="#tuning-or-selecting-on-the-final-test-period">3. Tuning or selecting on the final test period</a></li>
+  <li><a href="#incorrect-availability-or-vintage-assumptions" id="toc-incorrect-availability-or-vintage-assumptions" class="nav-link" data-scroll-target="#incorrect-availability-or-vintage-assumptions">4. Incorrect availability or vintage assumptions</a></li>
+  </ul></li>
+  <li><a href="#worked-illustration-a-held-out-test-cannot-repair-a-leaky-feature" id="toc-worked-illustration-a-held-out-test-cannot-repair-a-leaky-feature" class="nav-link" data-scroll-target="#worked-illustration-a-held-out-test-cannot-repair-a-leaky-feature">Worked Illustration: A Held-Out Test Cannot Repair a Leaky Feature</a></li>
+  <li><a href="#hands-on-lab-move-the-feature-across-the-boundary" id="toc-hands-on-lab-move-the-feature-across-the-boundary" class="nav-link" data-scroll-target="#hands-on-lab-move-the-feature-across-the-boundary">Hands-on Lab: Move the Feature Across the Boundary</a></li>
+  <li><a href="#leakage-in-cross-validation" id="toc-leakage-in-cross-validation" class="nav-link" data-scroll-target="#leakage-in-cross-validation">Leakage in Cross-Validation</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#splitting-after-feature-engineering" id="toc-splitting-after-feature-engineering" class="nav-link" data-scroll-target="#splitting-after-feature-engineering">1. Splitting after feature engineering</a></li>
+  <li><a href="#treating-the-timestamp-as-the-availability-date" id="toc-treating-the-timestamp-as-the-availability-date" class="nav-link" data-scroll-target="#treating-the-timestamp-as-the-availability-date">2. Treating the timestamp as the availability date</a></li>
+  <li><a href="#reusing-the-final-test-until-the-result-looks-acceptable" id="toc-reusing-the-final-test-until-the-result-looks-acceptable" class="nav-link" data-scroll-target="#reusing-the-final-test-until-the-result-looks-acceptable">3. Reusing the final test until the result looks acceptable</a></li>
+  <li><a href="#performing-feature-selection-outside-cross-validation" id="toc-performing-feature-selection-outside-cross-validation" class="nav-link" data-scroll-target="#performing-feature-selection-outside-cross-validation">4. Performing feature selection outside cross-validation</a></li>
+  <li><a href="#assuming-every-chronological-split-is-a-real-time-test" id="toc-assuming-every-chronological-split-is-a-real-time-test" class="nav-link" data-scroll-target="#assuming-every-chronological-split-is-a-real-time-test">5. Assuming every chronological split is a real-time test</a></li>
+  <li><a href="#calling-every-data-problem-leakage" id="toc-calling-every-data-problem-leakage" class="nav-link" data-scroll-target="#calling-every-data-problem-leakage">6. Calling every data problem “leakage”</a></li>
+  </ul></li>
+  <li><a href="#a-practical-leakage-audit" id="toc-a-practical-leakage-audit" class="nav-link" data-scroll-target="#a-practical-leakage-audit">A Practical Leakage Audit</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#how-to-interpret-a-clean-result" id="toc-how-to-interpret-a-clean-result" class="nav-link" data-scroll-target="#how-to-interpret-a-clean-result">How to Interpret a Clean Result</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Look-Ahead Bias and Data Leakage</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">When future information slips into a historical test</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Data &amp; Research Design</div>
+    <div class="quarto-category">Foundation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to detecting and preventing future-information contamination in forecasting, machine learning, and financial backtests.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM003 · Data &amp; Research Design · Foundation</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> A historical test intended to mimic an ex-ante decision is valid only if every input, transformation, model choice, and decision uses information that would have been available when that decision was supposed to occur.</p>
+<p><strong>Use it for.</strong> Auditing forecasting pipelines, machine-learning validation, financial backtests, and any research design that tries to reconstruct a past decision.</p>
+<p><strong>It does not establish.</strong> That every optimistic result is caused by leakage, or that a clean information boundary makes a model useful, stable, or economically valuable.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A backtest can be chronologically split and still use information from the future.</p>
+<blockquote class="blockquote">
+<p><strong>At each historical decision point, did any part of the analysis know something that the real decision maker could not have known yet?</strong></p>
+</blockquote>
+<p>That question is broader than checking whether the target column appears in the training set. Leakage can enter through features, preprocessing, model selection, sample construction, revisions, or repeated use of the final test period <span class="citation" data-cites="kaufman2012">(<a href="#ref-kaufman2012" role="doc-biblioref">Kaufman et al. 2012</a>)</span>.</p>
+</section>
+<section id="look-ahead-bias-and-data-leakage-are-related-but-not-identical" class="level1">
+<h1>Look-Ahead Bias and Data Leakage Are Related, but Not Identical</h1>
+<p>In this library, <strong>look-ahead bias</strong> refers to a time-ordering problem: an analysis at historical time <span class="math inline">\(t\)</span> uses information that became available only after <span class="math inline">\(t\)</span>.</p>
+<p>We use <strong>data leakage</strong> more broadly for failures of an intended information boundary. Information that should have been excluded from a model-development or evaluation step influences that step anyway. In time-series research, look-ahead bias is therefore an important form of leakage.</p>
+<p>The distinction matters because leakage need not look like an obvious future date. It can be hidden inside a transformation or selection rule.</p>
+<p>Examples include:</p>
+<ul>
+<li>computing a centered moving average that uses future observations;</li>
+<li>standardizing features with full-sample moments before a historical split;</li>
+<li>selecting features or hyperparameters after inspecting the final test period;</li>
+<li>using revised macroeconomic data that were unavailable at the historical forecast origin;</li>
+<li>aligning a predictor to the target date rather than to the date when the predictor was actually observable; or</li>
+<li>using a post-outcome variable as if it were an ex-ante predictor.</li>
+</ul>
+<p>A separate held-out period protects only the information that is actually kept out. It cannot repair features or model choices that were already contaminated before evaluation.</p>
+</section>
+<section id="the-information-boundary" class="level1">
+<h1>The Information Boundary</h1>
+<div id="fig-information-boundary" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-information-boundary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm003_information_boundary.svg" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-information-boundary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: A centered feature can cross the historical information boundary by using a value that lies to the right of the forecast origin.
+</figcaption>
+</figure>
+</div>
+<p>Suppose a forecast is made at origin <span class="math inline">\(t\)</span>. Let <span class="math inline">\(\mathcal{I}_t\)</span> denote the information available by that origin. A valid forecasting procedure can be written schematically as</p>
+<p><span class="math display">\[
+\widehat{y}_{t+h\mid t}=f_t(\mathcal{I}_t).
+\]</span></p>
+<p>The requirement applies to the <strong>whole procedure</strong> <span class="math inline">\(f_t\)</span>, not just the final regression or machine-learning estimator. If a feature transformation, tuning rule, or sample filter uses information outside <span class="math inline">\(\mathcal{I}_t\)</span>, the final model inherits that contamination.</p>
+<p>This is why a useful audit asks not only <em>what data entered the model?</em> but also:</p>
+<ol type="1">
+<li>when was each raw input observable?</li>
+<li>when were transformation parameters estimated?</li>
+<li>where were features selected?</li>
+<li>where were hyperparameters chosen?</li>
+<li>which observations influenced the reported performance measure?</li>
+</ol>
+</section>
+<section id="four-common-leakage-paths" class="level1">
+<h1>Four Common Leakage Paths</h1>
+<section id="future-aware-feature-construction" class="level2">
+<h2 class="anchored" data-anchor-id="future-aware-feature-construction">1. Future-aware feature construction</h2>
+<p>A trailing transformation uses observations available at or before the forecast origin. A centered or forward-looking transformation may use observations that have not occurred yet.</p>
+<p>This often happens quietly when a smoothing, filtering, interpolation, or imputation routine is applied to the full series before the historical evaluation loop is constructed.</p>
+</section>
+<section id="preprocessing-outside-the-permitted-split" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-outside-the-permitted-split">2. Preprocessing outside the permitted split</h2>
+<p>Scaling, principal components, feature screening, outlier rules, imputation parameters, and other data-dependent transformations should be estimated inside the information boundary that applies to the model being evaluated.</p>
+<p>The numerical effect of a particular preprocessing leak can be small, large, or even neutral for some model classes. The validity issue is whether the procedure used information it was not supposed to use.</p>
+</section>
+<section id="tuning-or-selecting-on-the-final-test-period" class="level2">
+<h2 class="anchored" data-anchor-id="tuning-or-selecting-on-the-final-test-period">3. Tuning or selecting on the final test period</h2>
+<p>If the final test is inspected, the model is changed, and the same test is checked again, that test has become part of development. The same logic applies when hundreds of strategies, features, or hyperparameters are ranked by their performance on one supposedly final backtest.</p>
+<p>This is a selection problem even if each individual candidate was fit only on earlier data. Repeated optimization of a noisy performance estimate can produce selection bias <span class="citation" data-cites="cawley2010">(<a href="#ref-cawley2010" role="doc-biblioref">Cawley and Talbot 2010</a>)</span>. In finance, large strategy searches create the same basic concern for backtest overfitting <span class="citation" data-cites="bailey2014">(<a href="#ref-bailey2014" role="doc-biblioref">Bailey et al. 2014</a>)</span>.</p>
+</section>
+<section id="incorrect-availability-or-vintage-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="incorrect-availability-or-vintage-assumptions">4. Incorrect availability or vintage assumptions</h2>
+<p>A date printed next to an observation is not always the date on which the observation became known. Macroeconomic series may be released with lags and revised later. Financial databases can also contain restated accounting values, corrected records, or current classifications that differ from what was available historically.</p>
+<p>A genuine real-time design therefore needs an explicit availability rule or vintage structure rather than assuming that a chronological row split is sufficient <span class="citation" data-cites="starkcroushore2002">(<a href="#ref-starkcroushore2002" role="doc-biblioref">Stark and Croushore 2002</a>)</span>.</p>
+</section>
+</section>
+<section id="worked-illustration-a-held-out-test-cannot-repair-a-leaky-feature" class="level1">
+<h1>Worked Illustration: A Held-Out Test Cannot Repair a Leaky Feature</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative simulation — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Illustrative simulation — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example is synthetic and deterministic. It is designed to isolate one mechanism: a centered feature that includes a future predictor value. The numerical size of the apparent improvement is not evidence about how large leakage effects usually are in real financial or economic data.</p>
+</div>
+</div>
+<p>Consider a persistent predictor process</p>
+<p><span class="math display">\[
+x_t=0.85x_{t-1}+u_t,
+\]</span></p>
+<p>and a next-period target</p>
+<p><span class="math display">\[
+y_{t+1}=0.80x_{t+1}+v_{t+1}.
+\]</span></p>
+<p>At forecast origin <span class="math inline">\(t\)</span>, <span class="math inline">\(x_t\)</span> is observable but <span class="math inline">\(x_{t+1}\)</span> is not.</p>
+<p>We compare two one-variable forecasting models. Both are estimated on the same development sample and then evaluated on the same untouched held-out sample.</p>
+<p>The <strong>clean feature</strong> is simply</p>
+<p><span class="math display">\[
+z_t^{\text{clean}}=x_t.
+\]</span></p>
+<p>The <strong>leaked feature</strong> is a centered three-point smoother,</p>
+<p><span class="math display">\[
+z_t^{\text{leak}}=\frac{x_{t-1}+x_t+x_{t+1}}{3}.
+\]</span></p>
+<p>The second feature looks innocuous if it is created by a generic smoothing function before the split. But it contains <span class="math inline">\(x_{t+1}\)</span>, which lies beyond the information boundary at forecast origin <span class="math inline">\(t\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Evaluation sample</th>
+<th style="text-align: right;">Forecasts</th>
+<th style="text-align: right;">Clean RMSE</th>
+<th style="text-align: right;">Leaked RMSE</th>
+<th style="text-align: right;">Leaked vs.&nbsp;clean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Development</td>
+<td style="text-align: right;">219</td>
+<td style="text-align: right;">1.105</td>
+<td style="text-align: right;">0.962</td>
+<td style="text-align: right;">-13.0%</td>
+</tr>
+<tr class="even">
+<td>Held-out</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">1.087</td>
+<td style="text-align: right;">0.952</td>
+<td style="text-align: right;">-12.4%</td>
+</tr>
+</tbody>
+</table>
+<div id="fig-rmse-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rmse-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm003_rmse_comparison.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rmse-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The future-aware centered feature appears to improve RMSE in both development and held-out samples. The held-out result is still invalid because the feature itself crosses the information boundary.
+</figcaption>
+</figure>
+</div>
+<p>The important point is not that the leaked model fits better. It is that <strong>the held-out sample does not rescue the comparison</strong>. The same future-aware feature construction is applied inside the held-out period, so the evaluation is contaminated at every origin.</p>
+<p>This is different from ordinary overfitting. A flexible model can overfit while respecting the information boundary. Leakage means the procedure has access to information that the intended historical decision did not have.</p>
+</section>
+<section id="hands-on-lab-move-the-feature-across-the-boundary" class="level1">
+<h1>Hands-on Lab: Move the Feature Across the Boundary</h1>
+<p>The optional lab uses the same synthetic series and compares three features:</p>
+<ol type="1">
+<li><strong>clean:</strong> <span class="math inline">\(x_t\)</span>;</li>
+<li><strong>centered:</strong> <span class="math inline">\((x_{t-1}+x_t+x_{t+1})/3\)</span>; and</li>
+<li><strong>future:</strong> <span class="math inline">\(x_{t+1}\)</span> itself.</li>
+</ol>
+<p>The exercise makes the information boundary visible. As more future information enters the feature, the reported historical RMSE can improve even though the forecasting problem has become less realistic.</p>
+<div class="method-action">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm003_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm003_hands_on.py">Python</a> · <a href="labs/r/qm003_hands_on.R">R</a>.</p>
+</div>
+<p>Do not interpret the ordering of these three synthetic features as a general law about leakage magnitude. The lesson is procedural: <strong>performance is not comparable when the competing pipelines are allowed to see different information.</strong></p>
+</section>
+<section id="leakage-in-cross-validation" class="level1">
+<h1>Leakage in Cross-Validation</h1>
+<p>The same principle applies when cross-validation replaces a fixed holdout. If feature selection or parameter tuning is performed using all observations before the folds are created, information from each validation fold has already influenced the model-development process.</p>
+<p>Varma and Simon show why the full model-building algorithm, including parameter tuning, must be repeated inside the evaluation loop when cross-validation is being used to estimate predictive error <span class="citation" data-cites="varma2006">(<a href="#ref-varma2006" role="doc-biblioref">Varma and Simon 2006</a>)</span>. The general lesson is simple:</p>
+<blockquote class="blockquote">
+<p><strong>The unit being evaluated is the entire model-building procedure, not a partially precomputed model object.</strong></p>
+</blockquote>
+<p>For time-series forecasting, a second issue is chronology. Random folds may be appropriate for some exchangeable prediction problems, but they do not reproduce a historical forecasting exercise when future observations can enter the training side of a fold. In that setting, the validation design must respect the deployment-time information boundary.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="splitting-after-feature-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="splitting-after-feature-engineering">1. Splitting after feature engineering</h2>
+<p>Creating all features on the full dataset and only then dividing train and test can leak future information through smoothing, imputation, scaling, selection, or aggregation.</p>
+<p><strong>Safer rule:</strong> define the historical boundary first, then ask which feature operations are permitted inside it.</p>
+</section>
+<section id="treating-the-timestamp-as-the-availability-date" class="level2">
+<h2 class="anchored" data-anchor-id="treating-the-timestamp-as-the-availability-date">2. Treating the timestamp as the availability date</h2>
+<p>The observation period and the release date can differ. A macroeconomic value labeled “March” may not have been available during March, and the value stored today may include later revisions.</p>
+</section>
+<section id="reusing-the-final-test-until-the-result-looks-acceptable" class="level2">
+<h2 class="anchored" data-anchor-id="reusing-the-final-test-until-the-result-looks-acceptable">3. Reusing the final test until the result looks acceptable</h2>
+<p>Once test performance affects model changes, the test is no longer untouched. Keep a new final evaluation set, use a nested development process, or label the analysis as exploratory.</p>
+</section>
+<section id="performing-feature-selection-outside-cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="performing-feature-selection-outside-cross-validation">4. Performing feature selection outside cross-validation</h2>
+<p>Selecting variables once using all outcomes and then cross-validating only the final estimator gives the held-out folds information about themselves. Feature selection belongs inside the training portion of each fold when the goal is unbiased evaluation of the full selection-and-fit procedure <span class="citation" data-cites="varma2006">(<a href="#ref-varma2006" role="doc-biblioref">Varma and Simon 2006</a>)</span>.</p>
+</section>
+<section id="assuming-every-chronological-split-is-a-real-time-test" class="level2">
+<h2 class="anchored" data-anchor-id="assuming-every-chronological-split-is-a-real-time-test">5. Assuming every chronological split is a real-time test</h2>
+<p>Chronology prevents some forms of leakage, but it does not automatically handle publication lags, revisions, backfills, stale classifications, or post-event variables.</p>
+</section>
+<section id="calling-every-data-problem-leakage" class="level2">
+<h2 class="anchored" data-anchor-id="calling-every-data-problem-leakage">6. Calling every data problem “leakage”</h2>
+<p>Leakage is an information-boundary concept. Other problems—such as measurement error, weak identification, omitted variables, or an unrepresentative sample—can invalidate a result for different reasons. Keeping the diagnosis precise helps determine the correct fix.</p>
+</section>
+</section>
+<section id="a-practical-leakage-audit" class="level1">
+<h1>A Practical Leakage Audit</h1>
+<p>For every historical forecast, trade, classification, or allocation decision, record:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Audit item</th>
+<th>Question</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Decision time</td>
+<td>When is the prediction or portfolio decision assumed to be made?</td>
+</tr>
+<tr class="even">
+<td>Target</td>
+<td>What future outcome is being predicted or evaluated?</td>
+</tr>
+<tr class="odd">
+<td>Raw inputs</td>
+<td>Which observations were actually available by the decision time?</td>
+</tr>
+<tr class="even">
+<td>Transformations</td>
+<td>Were fitted preprocessing parameters estimated only from admissible data?</td>
+</tr>
+<tr class="odd">
+<td>Feature construction</td>
+<td>Do any lags, windows, smoothers, joins, or imputations reach beyond the boundary?</td>
+</tr>
+<tr class="even">
+<td>Model selection</td>
+<td>Were features, models, or hyperparameters chosen without using the final evaluation outcomes?</td>
+</tr>
+<tr class="odd">
+<td>Data vintage</td>
+<td>Are revisions and release lags handled consistently with the stated historical exercise?</td>
+</tr>
+<tr class="even">
+<td>Evaluation</td>
+<td>Has the reported test period remained outside the development loop?</td>
+</tr>
+</tbody>
+</table>
+<p>A good implementation makes these boundaries explicit in code rather than relying on memory or naming conventions.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A historical pipeline that respects the information boundary can be summarized as:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    available <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    preprocessing <span class="op">=</span> fit_preprocessing(available)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> build_features(available, preprocessing)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> select_and_fit_model(features)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    forecast <span class="op">=</span> model.predict(features_available_at(origin))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    store(origin<span class="op">=</span>origin, target<span class="op">=</span>origin <span class="op">+</span> horizon, forecast<span class="op">=</span>forecast)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>score_only_after_targets_are_observed(stored_forecasts)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The functions are schematic. The key requirement is that every data-dependent operation must be evaluated against the same historical information boundary.</p>
+</section>
+<section id="how-to-interpret-a-clean-result" class="level1">
+<h1>How to Interpret a Clean Result</h1>
+<p>Removing leakage makes the evaluation <em>eligible</em> to answer the intended historical question. It does not guarantee a useful model.</p>
+<p>A clean backtest can still fail because of:</p>
+<ul>
+<li>ordinary estimation error;</li>
+<li>model overfitting inside the development sample;</li>
+<li>structural instability;</li>
+<li>weak economic signal;</li>
+<li>transaction costs and implementation frictions;</li>
+<li>multiple testing across a broader research program; or</li>
+<li>a sample that does not represent the future environment.</li>
+</ul>
+<p>Leakage control is therefore a validity condition, not evidence of performance by itself.</p>
+</section>
+<section id="related-methods" class="level1">
+<h1>Related Methods</h1>
+<ul>
+<li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html"><strong>QM001 — Out-of-Sample Forecast Evaluation</strong></a>: the information-set and forecast-origin logic that defines a valid historical evaluation.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html"><strong>QM002 — Rolling vs Expanding Windows</strong></a>: how the admissible estimation sample changes across repeated forecast origins.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html"><strong>QM004 — Diebold–Mariano Test</strong></a>: testing whether two forecast-loss sequences are statistically distinguishable.</li>
+<li><strong><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>:</strong> dependence-aware uncertainty assessment.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> uses a dated FRED-MD snapshot and a repeated pseudo-out-of-sample protocol. QM003 explains why those information-set and timing choices matter: a chronological evaluation is credible only to the extent that the inputs and transformations match the information assumed to be available at each forecast origin.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the synthetic series, feature-construction code, figures, and a hands-on lab in Python and R. The clean, centered, and future-aware feature comparisons can be reproduced directly from the definitions used in the article.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+
+
+
+<!-- -->
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bailey2014" class="csl-entry" role="listitem">
+Bailey, David H., Jonathan M. Borwein, Marcos López de Prado, and Qiji Jim Zhu. 2014. <span>“Pseudo-Mathematics and Financial Charlatanism: The Effects of Backtest Overfitting on Out-of-Sample Performance.”</span> <em>Notices of the American Mathematical Society</em> 61 (5): 458–71. <a href="https://doi.org/10.1090/noti1105">https://doi.org/10.1090/noti1105</a>.
+</div>
+<div id="ref-cawley2010" class="csl-entry" role="listitem">
+Cawley, Gavin C., and Nicola L. C. Talbot. 2010. <span>“On over-Fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation.”</span> <em>Journal of Machine Learning Research</em> 11 (70): 2079–107.
+</div>
+<div id="ref-kaufman2012" class="csl-entry" role="listitem">
+Kaufman, Shachar, Saharon Rosset, Claudia Perlich, and Ori Stitelman. 2012. <span>“Leakage in Data Mining: Formulation, Detection, and Avoidance.”</span> <em>ACM Transactions on Knowledge Discovery from Data</em> 6 (4): 1–21. <a href="https://doi.org/10.1145/2382577.2382579">https://doi.org/10.1145/2382577.2382579</a>.
+</div>
+<div id="ref-starkcroushore2002" class="csl-entry" role="listitem">
+Stark, Tom, and Dean Croushore. 2002. <span>“Forecasting with a Real-Time Data Set for Macroeconomists.”</span> <em>Journal of Macroeconomics</em> 24 (4): 507–31. <a href="https://doi.org/10.1016/S0164-0704(02)00062-9">https://doi.org/10.1016/S0164-0704(02)00062-9</a>.
+</div>
+<div id="ref-varma2006" class="csl-entry" role="listitem">
+Varma, Sudhir, and Richard Simon. 2006. <span>“Bias in Error Estimation When Using Cross-Validation for Model Selection.”</span> <em>BMC Bioinformatics</em> 7: 91. <a href="https://doi.org/10.1186/1471-2105-7-91">https://doi.org/10.1186/1471-2105-7-91</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Look-Ahead Bias and Data Leakage"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "When future information slips into a historical test"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "A practical guide to detecting and preventing future-information contamination in forecasting, machine learning, and financial backtests."</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> en</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> article</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">  - Data &amp; Research Design</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">  - Foundation</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>::: {.method-kicker}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>QM003 · Data &amp; Research Design · Foundation</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>::: {.method-orientation}</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>**Core idea.** A historical test intended to mimic an ex-ante decision is valid only if every input, transformation, model choice, and decision uses information that would have been available when that decision was supposed to occur.</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>**Use it for.** Auditing forecasting pipelines, machine-learning validation, financial backtests, and any research design that tries to reconstruct a past decision.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>**It does not establish.** That every optimistic result is caused by leakage, or that a clean information boundary makes a model useful, stable, or economically valuable.</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Question</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>A backtest can be chronologically split and still use information from the future.</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **At each historical decision point, did any part of the analysis know something that the real decision maker could not have known yet?**</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>That question is broader than checking whether the target column appears in the training set. Leakage can enter through features, preprocessing, model selection, sample construction, revisions, or repeated use of the final test period <span class="co">[</span><span class="ot">@kaufman2012</span><span class="co">]</span>.</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Look-Ahead Bias and Data Leakage Are Related, but Not Identical</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>In this library, **look-ahead bias** refers to a time-ordering problem: an analysis at historical time $t$ uses information that became available only after $t$.</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>We use **data leakage** more broadly for failures of an intended information boundary. Information that should have been excluded from a model-development or evaluation step influences that step anyway. In time-series research, look-ahead bias is therefore an important form of leakage.</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>The distinction matters because leakage need not look like an obvious future date. It can be hidden inside a transformation or selection rule.</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>Examples include:</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>computing a centered moving average that uses future observations;</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>standardizing features with full-sample moments before a historical split;</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>selecting features or hyperparameters after inspecting the final test period;</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>using revised macroeconomic data that were unavailable at the historical forecast origin;</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>aligning a predictor to the target date rather than to the date when the predictor was actually observable; or</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>using a post-outcome variable as if it were an ex-ante predictor.</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>A separate held-out period protects only the information that is actually kept out. It cannot repair features or model choices that were already contaminated before evaluation.</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Information Boundary</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="al">![A centered feature can cross the historical information boundary by using a value that lies to the right of the forecast origin.](figures/rendered/qm003_information_boundary.svg)</span>{#fig-information-boundary width=95%}</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>Suppose a forecast is made at origin $t$. Let $\mathcal{I}_t$ denote the information available by that origin. A valid forecasting procedure can be written schematically as</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>\widehat{y}_{t+h\mid t}=f_t(\mathcal{I}_t).</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>The requirement applies to the **whole procedure** $f_t$, not just the final regression or machine-learning estimator. If a feature transformation, tuning rule, or sample filter uses information outside $\mathcal{I}_t$, the final model inherits that contamination.</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>This is why a useful audit asks not only *what data entered the model?* but also:</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>when was each raw input observable?</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>when were transformation parameters estimated?</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>where were features selected?</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>where were hyperparameters chosen?</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>which observations influenced the reported performance measure?</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="fu"># Four Common Leakage Paths</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Future-aware feature construction</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>A trailing transformation uses observations available at or before the forecast origin. A centered or forward-looking transformation may use observations that have not occurred yet.</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>This often happens quietly when a smoothing, filtering, interpolation, or imputation routine is applied to the full series before the historical evaluation loop is constructed.</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Preprocessing outside the permitted split</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>Scaling, principal components, feature screening, outlier rules, imputation parameters, and other data-dependent transformations should be estimated inside the information boundary that applies to the model being evaluated.</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>The numerical effect of a particular preprocessing leak can be small, large, or even neutral for some model classes. The validity issue is whether the procedure used information it was not supposed to use.</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Tuning or selecting on the final test period</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>If the final test is inspected, the model is changed, and the same test is checked again, that test has become part of development. The same logic applies when hundreds of strategies, features, or hyperparameters are ranked by their performance on one supposedly final backtest.</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>This is a selection problem even if each individual candidate was fit only on earlier data. Repeated optimization of a noisy performance estimate can produce selection bias <span class="co">[</span><span class="ot">@cawley2010</span><span class="co">]</span>. In finance, large strategy searches create the same basic concern for backtest overfitting <span class="co">[</span><span class="ot">@bailey2014</span><span class="co">]</span>.</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Incorrect availability or vintage assumptions</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>A date printed next to an observation is not always the date on which the observation became known. Macroeconomic series may be released with lags and revised later. Financial databases can also contain restated accounting values, corrected records, or current classifications that differ from what was available historically.</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>A genuine real-time design therefore needs an explicit availability rule or vintage structure rather than assuming that a chronological row split is sufficient <span class="co">[</span><span class="ot">@starkcroushore2002</span><span class="co">]</span>.</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="fu"># Worked Illustration: A Held-Out Test Cannot Repair a Leaky Feature</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Illustrative simulation — not empirical evidence"}</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>The example is synthetic and deterministic. It is designed to isolate one mechanism: a centered feature that includes a future predictor value. The numerical size of the apparent improvement is not evidence about how large leakage effects usually are in real financial or economic data.</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>Consider a persistent predictor process</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>x_t=0.85x_{t-1}+u_t,</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>and a next-period target</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>y_{t+1}=0.80x_{t+1}+v_{t+1}.</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>At forecast origin $t$, $x_t$ is observable but $x_{t+1}$ is not.</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>We compare two one-variable forecasting models. Both are estimated on the same development sample and then evaluated on the same untouched held-out sample.</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>The **clean feature** is simply</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>z_t^{\text{clean}}=x_t.</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>The **leaked feature** is a centered three-point smoother,</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>z_t^{\text{leak}}=\frac{x_{t-1}+x_t+x_{t+1}}{3}.</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>The second feature looks innocuous if it is created by a generic smoothing function before the split. But it contains $x_{t+1}$, which lies beyond the information boundary at forecast origin $t$.</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evaluation sample <span class="pp">|</span> Forecasts <span class="pp">|</span> Clean RMSE <span class="pp">|</span> Leaked RMSE <span class="pp">|</span> Leaked vs. clean <span class="pp">|</span></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|---:|</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Development <span class="pp">|</span> 219 <span class="pp">|</span> 1.105 <span class="pp">|</span> 0.962 <span class="pp">|</span> -13.0% <span class="pp">|</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Held-out <span class="pp">|</span> 100 <span class="pp">|</span> 1.087 <span class="pp">|</span> 0.952 <span class="pp">|</span> -12.4% <span class="pp">|</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="al">![The future-aware centered feature appears to improve RMSE in both development and held-out samples. The held-out result is still invalid because the feature itself crosses the information boundary.](figures/rendered/qm003_rmse_comparison.svg)</span>{#fig-rmse-comparison width=90%}</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>The important point is not that the leaked model fits better. It is that **the held-out sample does not rescue the comparison**. The same future-aware feature construction is applied inside the held-out period, so the evaluation is contaminated at every origin.</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>This is different from ordinary overfitting. A flexible model can overfit while respecting the information boundary. Leakage means the procedure has access to information that the intended historical decision did not have.</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hands-on Lab: Move the Feature Across the Boundary</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>The optional lab uses the same synthetic series and compares three features:</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**clean:** $x_t$;</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**centered:** $(x_{t-1}+x_t+x_{t+1})/3$; and</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**future:** $x_{t+1}$ itself.</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>The exercise makes the information boundary visible. As more future information enters the feature, the reported historical RMSE can improve even though the forecasting problem has become less realistic.</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>::: {.method-action}</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>**Run it yourself.** Start with the <span class="co">[</span><span class="ot">lab guide</span><span class="co">](labs/index.qmd)</span>. For a self-contained copy, use the <span class="co">[</span><span class="ot">complete lab bundle</span><span class="co">](labs/qm003_hands_on_lab_bundle.zip)</span>. Direct source: <span class="co">[</span><span class="ot">Python</span><span class="co">](labs/python/qm003_hands_on.py)</span> · <span class="co">[</span><span class="ot">R</span><span class="co">](labs/r/qm003_hands_on.R)</span>.</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>Do not interpret the ordering of these three synthetic features as a general law about leakage magnitude. The lesson is procedural: **performance is not comparable when the competing pipelines are allowed to see different information.**</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="fu"># Leakage in Cross-Validation</span></span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>The same principle applies when cross-validation replaces a fixed holdout. If feature selection or parameter tuning is performed using all observations before the folds are created, information from each validation fold has already influenced the model-development process.</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>Varma and Simon show why the full model-building algorithm, including parameter tuning, must be repeated inside the evaluation loop when cross-validation is being used to estimate predictive error <span class="co">[</span><span class="ot">@varma2006</span><span class="co">]</span>. The general lesson is simple:</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **The unit being evaluated is the entire model-building procedure, not a partially precomputed model object.**</span></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>For time-series forecasting, a second issue is chronology. Random folds may be appropriate for some exchangeable prediction problems, but they do not reproduce a historical forecasting exercise when future observations can enter the training side of a fold. In that setting, the validation design must respect the deployment-time information boundary.</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="fu"># Common Mistakes</span></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Splitting after feature engineering</span></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>Creating all features on the full dataset and only then dividing train and test can leak future information through smoothing, imputation, scaling, selection, or aggregation.</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>**Safer rule:** define the historical boundary first, then ask which feature operations are permitted inside it.</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Treating the timestamp as the availability date</span></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>The observation period and the release date can differ. A macroeconomic value labeled “March” may not have been available during March, and the value stored today may include later revisions.</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Reusing the final test until the result looks acceptable</span></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>Once test performance affects model changes, the test is no longer untouched. Keep a new final evaluation set, use a nested development process, or label the analysis as exploratory.</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Performing feature selection outside cross-validation</span></span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>Selecting variables once using all outcomes and then cross-validating only the final estimator gives the held-out folds information about themselves. Feature selection belongs inside the training portion of each fold when the goal is unbiased evaluation of the full selection-and-fit procedure <span class="co">[</span><span class="ot">@varma2006</span><span class="co">]</span>.</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Assuming every chronological split is a real-time test</span></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>Chronology prevents some forms of leakage, but it does not automatically handle publication lags, revisions, backfills, stale classifications, or post-event variables.</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Calling every data problem “leakage”</span></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>Leakage is an information-boundary concept. Other problems—such as measurement error, weak identification, omitted variables, or an unrepresentative sample—can invalidate a result for different reasons. Keeping the diagnosis precise helps determine the correct fix.</span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a><span class="fu"># A Practical Leakage Audit</span></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>For every historical forecast, trade, classification, or allocation decision, record:</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Audit item <span class="pp">|</span> Question <span class="pp">|</span></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Decision time <span class="pp">|</span> When is the prediction or portfolio decision assumed to be made? <span class="pp">|</span></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Target <span class="pp">|</span> What future outcome is being predicted or evaluated? <span class="pp">|</span></span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Raw inputs <span class="pp">|</span> Which observations were actually available by the decision time? <span class="pp">|</span></span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Transformations <span class="pp">|</span> Were fitted preprocessing parameters estimated only from admissible data? <span class="pp">|</span></span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature construction <span class="pp">|</span> Do any lags, windows, smoothers, joins, or imputations reach beyond the boundary? <span class="pp">|</span></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model selection <span class="pp">|</span> Were features, models, or hyperparameters chosen without using the final evaluation outcomes? <span class="pp">|</span></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Data vintage <span class="pp">|</span> Are revisions and release lags handled consistently with the stated historical exercise? <span class="pp">|</span></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Evaluation <span class="pp">|</span> Has the reported test period remained outside the development loop? <span class="pp">|</span></span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>A good implementation makes these boundaries explicit in code rather than relying on memory or naming conventions.</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a><span class="fu"># Implementation Pattern</span></span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>A historical pipeline that respects the information boundary can be summarized as:</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> origin <span class="kw">in</span> forecast_origins:</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>    available <span class="op">=</span> data_available_by(origin)</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>    preprocessing <span class="op">=</span> fit_preprocessing(available)</span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> build_features(available, preprocessing)</span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> select_and_fit_model(features)</span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a>    forecast <span class="op">=</span> model.predict(features_available_at(origin))</span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a>    store(origin<span class="op">=</span>origin, target<span class="op">=</span>origin <span class="op">+</span> horizon, forecast<span class="op">=</span>forecast)</span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a>score_only_after_targets_are_observed(stored_forecasts)</span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a>The functions are schematic. The key requirement is that every data-dependent operation must be evaluated against the same historical information boundary.</span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to Interpret a Clean Result</span></span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a>Removing leakage makes the evaluation *eligible* to answer the intended historical question. It does not guarantee a useful model.</span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a>A clean backtest can still fail because of:</span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>ordinary estimation error;</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>model overfitting inside the development sample;</span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>structural instability;</span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>weak economic signal;</span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>transaction costs and implementation frictions;</span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>multiple testing across a broader research program; or</span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a sample that does not represent the future environment.</span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a>Leakage control is therefore a validity condition, not evidence of performance by itself.</span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a><span class="fu"># Related Methods</span></span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM001 — Out-of-Sample Forecast Evaluation**</span><span class="co">](../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.qmd)</span>: the information-set and forecast-origin logic that defines a valid historical evaluation.</span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM002 — Rolling vs Expanding Windows**</span><span class="co">](../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.qmd)</span>: how the admissible estimation sample changes across repeated forecast origins.</span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">**QM004 — Diebold–Mariano Test**</span><span class="co">](../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.qmd)</span>: testing whether two forecast-loss sequences are statistically distinguishable.</span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**[QM006 — Block Bootstrap](../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.qmd):** dependence-aware uncertainty assessment.</span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a><span class="fu"># Used in SlackQuant Research</span></span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">**Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting**</span><span class="co">](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7164118)</span> uses a dated FRED-MD snapshot and a repeated pseudo-out-of-sample protocol. QM003 explains why those information-set and timing choices matter: a chronological evaluation is credible only to the extent that the inputs and transformations match the information assumed to be available at each forecast origin.</span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-264"><a href="#cb2-264" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reproducibility</span></span>
+<span id="cb2-265"><a href="#cb2-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-266"><a href="#cb2-266" aria-hidden="true" tabindex="-1"></a>The accompanying materials include the synthetic series, feature-construction code, figures, and a hands-on lab in Python and R. The clean, centered, and future-aware feature comparisons can be reproduced directly from the definitions used in the article.</span>
+<span id="cb2-267"><a href="#cb2-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-268"><a href="#cb2-268" aria-hidden="true" tabindex="-1"></a><span class="fu"># References {.unnumbered}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
