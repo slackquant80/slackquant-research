@@ -70,8 +70,9 @@ export default function AdaaPage() {
             <p className="lede">
               ADAA treats strategy selection as a source of uncertainty rather
               than assuming that one allocation rule can be identified as best
-              in advance. It asks whether diversification should extend beyond
-              assets to the decision rules that determine portfolio exposures.
+              in advance. Historical performance and risk still matter; decision
+              diversification asks an additional question: do the strategies
+              worth holding actually make different portfolio decisions?
             </p>
             <p className="body-copy">
               The framework compares several dynamic allocation sleeves by what

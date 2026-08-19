@@ -16,14 +16,14 @@ export const researchItems: ResearchItem[] = [
     affiliation: "Graduate School of Computing, Yonsei University",
     featured: true,
     shortSummary:
-      "The framework evaluates whether combining distinct allocation rules can reduce dependence on any single strategy when strategy choice itself is uncertain.",
+      "Historical performance and risk still guide strategy choice. ADAA adds a complementary check: whether the selected rules make genuinely different decisions and whether the portfolio depends too heavily on one historically best-performing rule or one precise set of weights.",
     researchQuestion:
-      "Can a dynamic asset-allocation portfolio reduce dependence on choosing the single best rule in advance by diversifying across genuinely different decision processes?",
+      "Among strategies worth considering on their own performance and risk merits, does combining them diversify the decisions that generate portfolio outcomes, and how dependent are the results on the chosen weights?",
     findings: [
       "Decision diversity is not guaranteed by strategy count. Several strategies can share the same underlying timing or momentum logic even when their names and holdings differ.",
       "The historical ADAA sleeves disagree in economically meaningful ways, but unevenly. The analysis makes redundancy visible instead of assuming diversification from labels.",
       "The practitioner weights sit inside a broad near-optimal region rather than at a unique optimum. The evidence favors robustness to weight uncertainty over precise weight estimates that are not supported by the sample.",
-      "ADAA is not a return-maximizing claim. The case for ADAA rests on decision diversification, implementation, and risk-return trade-offs."
+      "Decision diversification complements rather than replaces conventional evaluation of historical performance, risk, and implementation. The evidence does not identify a universally superior rule or weight vector."
     ],
     tags: ["Asset Allocation", "Systematic Investing", "Decision Diversification"],
     selectedEvidence: [
@@ -53,7 +53,7 @@ export const researchItems: ResearchItem[] = [
         id: "robustness-plateau",
         title: "Broad Plateau, Unstable Optimum",
         description:
-          "The robustness exercise emphasizes a broad high-performing region rather than a single ex-post peak, supporting moderate practitioner weights instead of precision optimization.",
+          "The robustness exercise emphasizes a broad high-performing region rather than a single ex-post peak. The lesson is not to abandon optimization, but to avoid treating one historical optimum as more precise than the sample supports.",
         imageUrl:
           "https://slackquant80.github.io/adaa-slackquant/assets/img/Figure_5_Broad_Plateau_Unstable_Optimum_v0.36.1.png",
         alt:

@@ -66,7 +66,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">Research focus</div>
                   <div className="side-note">
-                    Decision diversification in dynamic asset allocation.
+                    Decision diversification as a complement to performance and risk evaluation.
                   </div>
                 </div>
               </aside>
