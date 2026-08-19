@@ -190,7 +190,7 @@ export default function AdaaPage() {
               {item.links.github ? (
                 <div className="artifact">
                   <div className="type">Public code</div>
-                  <h3>GitHub Repository</h3>
+                  <h3>Replication Repository</h3>
                   <p>Research code and public reproducibility material.</p>
                   <a
                     href={item.links.github}

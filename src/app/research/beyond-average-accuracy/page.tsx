@@ -312,11 +312,12 @@ export default function BeyondAverageAccuracyPage() {
               </div>
 
               <div className="artifact">
-                <div className="type">Replication release</div>
-                <h3>Version 1.0.0</h3>
+                <div className="type">Replication</div>
+                <h3>Replication Package</h3>
                 <p>
-                  Frozen public software and replication snapshot for the
-                  reported research design and outputs.
+                  Latest tagged public package: v1.0.0. Frozen public software
+                  and replication snapshot for the reported research design
+                  and outputs.
                 </p>
                 <a
                   href={item.links.replication}
@@ -329,10 +330,9 @@ export default function BeyondAverageAccuracyPage() {
 
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Zenodo Version DOI</h3>
+                <h3>Release / DOI</h3>
                 <p>
-                  Persistent archival record for the versioned replication
-                  release.
+                  Archived public replication release with persistent DOI.
                 </p>
                 <a
                   href={item.links.archivalRelease}
