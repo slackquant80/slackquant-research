@@ -17,8 +17,8 @@ export default function HomePage() {
           <div className="eyebrow">Research platform</div>
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
-            Investment research and academic research across systematic investing,
-            asset allocation, forecasting, financial data science, and AI/ML &#8212; with direct paths to papers, evidence, code, and research tools.
+            Investment and academic research across systematic investing, asset
+            allocation, forecasting, financial data science, and AI/ML &#8212; with direct paths to papers, evidence, code, and tools.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -97,7 +97,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">Research focus</div>
                   <div className="side-note">
-                    Forecast accuracy, statistical distinguishability, and temporal stability.
+                    Forecast accuracy, model uncertainty, and temporal durability.
                   </div>
                 </div>
               </aside>
