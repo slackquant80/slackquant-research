@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { site } from "@/data/site";
 
@@ -26,9 +26,9 @@ export default function HomePage() {
             <Link className="btn primary" href="/research/">
               Explore Research
             </Link>
-            <Link className="btn soft" href="/methods/">
+            <a className="btn soft" href="/methods/">
               Quantitative Methods
-            </Link>
+            </a>
             <a className="btn soft ext" href={site.github} target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
@@ -61,7 +61,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{investmentFeatured.status}</div>
                   <div className="side-number">{investmentFeatured.publicVersion}</div>
-                  <div className="side-note">Latest public version · {investmentFeatured.dateLabel}</div>
+                  <div className="side-note">Latest public version 쨌 {investmentFeatured.dateLabel}</div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -87,7 +87,7 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{academicFeatured.status}</div>
                   <div className="side-number">{academicFeatured.publicVersion}</div>
-                  <div className="side-note">Latest public version · {academicFeatured.dateLabel}</div>
+                  <div className="side-note">Latest public version 쨌 {academicFeatured.dateLabel}</div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -137,9 +137,9 @@ export default function HomePage() {
         <div className="shell">
           <div className="section-head">
             <div className="section-title">Quantitative Methods</div>
-            <Link className="section-link" href="/methods/">
+            <a className="section-link" href="/methods/">
               Open methods library &#8594;
-            </Link>
+            </a>
           </div>
           <div className="grid-2">
             <article className="stream">
@@ -151,9 +151,9 @@ export default function HomePage() {
                 article connects intuition, formal definitions, implementation,
                 common failure modes, and reproducible examples.
               </p>
-              <Link className="section-link strong-link" href="/methods/">
+              <a className="section-link strong-link" href="/methods/">
                 Explore Quantitative Methods &#8594;
-              </Link>
+              </a>
             </article>
             <article className="stream">
               <div className="kicker">Role</div>
@@ -182,7 +182,7 @@ export default function HomePage() {
                   <br />
                   <span className="meta">
                     {item.status}
-                    {item.ssrnId ? ` · SSRN ${item.ssrnId}` : ""}
+                    {item.ssrnId ? ` 쨌 SSRN ${item.ssrnId}` : ""}
                   </span>
                 </div>
                 <div className="meta">{item.streamLabel}</div>
@@ -222,3 +222,4 @@ export default function HomePage() {
     </main>
   );
 }
+

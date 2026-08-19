@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { getMethodsForResearch } from "@/data/methods";
+﻿import { getMethodsForResearch } from "@/data/methods";
 
 type MethodsUsedProps = {
   researchSlug: string;
@@ -22,9 +21,9 @@ export function MethodsUsed({ researchSlug }: MethodsUsedProps) {
 
       <div className="methods-used-list">
         {methods.map((method) => (
-          <Link className="method-used-row" href={method.href} key={method.id}>
+          <a className="method-used-row" href={method.href} key={method.id}>
             <div className="method-used-meta">
-              {method.id} · {method.category} · {method.level}
+              {method.id} 쨌 {method.category} 쨌 {method.level}
             </div>
             <div className="method-used-copy">
               <h3>{method.title}</h3>
@@ -33,13 +32,13 @@ export function MethodsUsed({ researchSlug }: MethodsUsedProps) {
             <span className="method-used-arrow" aria-hidden="true">
               &#8594;
             </span>
-          </Link>
+          </a>
         ))}
       </div>
 
-      <Link className="section-link methods-library-link" href="/methods/">
+      <a className="section-link methods-library-link" href="/methods/">
         Browse the Quantitative Methods library &#8594;
-      </Link>
+      </a>
     </section>
   );
 }

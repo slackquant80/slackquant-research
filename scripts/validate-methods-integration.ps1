@@ -52,4 +52,43 @@ foreach ($pattern in $visibleSearchPatterns) {
 }
 if ($methodArticle -match 'quarto-code-tools') { throw "Generic Quarto Code tools should be disabled" }
 
+
+# METHODS_HARD_NAVIGATION_GATE
+# Quarto Methods pages live under public/methods rather than the Next.js route
+# tree. Next Link can hand these destinations to the client router and produce
+# the app-level not-found page. All crossings into /methods/ therefore use
+# ordinary <a> navigation.
+$methodsUsedSource = Get-Content (Join-Path $PlatformRoot "src\components\MethodsUsed.tsx") -Raw
+
+foreach ($entry in @(
+  @{ Name = "SiteHeader"; Text = $header },
+  @{ Name = "HomePage"; Text = $homePage },
+  @{ Name = "ResearchPage"; Text = $research },
+  @{ Name = "MethodsUsed"; Text = $methodsUsedSource }
+)) {
+  if ($entry.Text -match '(?s)<Link[^>]*href="/methods/"') {
+    throw "$($entry.Name) routes /methods/ through next/link; use a plain anchor for the static Quarto subtree"
+  }
+}
+
+if ($methodsUsedSource -match '<Link[^>]*method-used-row') {
+  throw "Research-to-Methods rows must use plain anchors, not next/link"
+}
+if ($methodsUsedSource -notmatch '<a[^>]*method-used-row[^>]*href=\{method\.href\}') {
+  throw "Research-to-Methods hard-navigation anchor missing"
+}
+
+$hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
+if ($hrefMatches.Count -lt 6) {
+  throw "Expected Quantitative Methods href mappings were not found"
+}
+foreach ($match in $hrefMatches) {
+  $href = $match.Groups['href'].Value
+  $rel = $href.TrimStart('/') -replace '/', '\'
+  $publicPath = Join-Path $PlatformRoot ("public\" + $rel)
+  if (-not (Test-Path $publicPath)) {
+    throw "Mapped Methods destination does not exist in public/: $href"
+  }
+}
 Write-Host "METHODS_PLATFORM_INTEGRATION_VALIDATION_PASS" -ForegroundColor Green
+

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { ResearchCard } from "@/components/ResearchCard";
 import { researchItems } from "@/data/research";
@@ -68,12 +68,13 @@ export default function ResearchPage() {
               library is separate from the numbered research streams and focuses
               on how the methods work, how to implement them, and where they can fail.
             </p>
-            <Link className="section-link strong-link" href="/methods/">
+            <a className="section-link strong-link" href="/methods/">
               Explore Quantitative Methods &#8594;
-            </Link>
+            </a>
           </article>
         </div>
       </section>
     </main>
   );
 }
+
