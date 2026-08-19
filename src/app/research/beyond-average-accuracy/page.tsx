@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
+import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -58,6 +59,7 @@ export default function BeyondAverageAccuracyPage() {
           <a href="#inference">Inference &amp; Uncertainty</a>
           <a href="#temporal">Temporal Stability</a>
           <a href="#scope">Scope &amp; Limitations</a>
+          <a href="#methods">Related Methods</a>
           <a href="#repro">Reproducibility</a>
           <a href="#dashboard">Research Dashboard</a>
           <a href="#citation">Citation</a>
@@ -283,6 +285,8 @@ export default function BeyondAverageAccuracyPage() {
               </div>
             </div>
           </section>
+
+          <MethodsUsed researchSlug={item.slug} />
 
           <section className="prose-section" id="repro">
             <h2>Reproducibility</h2>

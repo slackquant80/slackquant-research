@@ -3,6 +3,11 @@ title: "QM004 Hands-on Lab"
 subtitle: "Diebold–Mariano Test"
 page-layout: article
 toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 # Goal

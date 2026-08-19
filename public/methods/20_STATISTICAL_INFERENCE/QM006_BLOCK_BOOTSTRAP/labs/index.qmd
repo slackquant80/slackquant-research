@@ -3,6 +3,11 @@ title: "QM006 Hands-on Lab"
 subtitle: "See what IID resampling destroys when observations are serially dependent"
 page-layout: article
 toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 # Goal

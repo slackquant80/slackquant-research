@@ -4,6 +4,11 @@ subtitle: "Reproduce the development-to-held-out reversal"
 description: "A short Python or R exercise that reproduces the QM001 synthetic forecasting example."
 lang: en
 toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 # Start here

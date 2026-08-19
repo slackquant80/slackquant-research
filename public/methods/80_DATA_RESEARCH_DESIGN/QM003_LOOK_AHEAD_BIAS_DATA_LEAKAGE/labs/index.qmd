@@ -3,6 +3,11 @@ title: "QM003 Hands-on Lab"
 subtitle: "Move the feature across the historical information boundary"
 page-layout: article
 toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 # Goal

@@ -3,6 +3,11 @@ title: "QM005 Hands-on Lab"
 subtitle: "Build a Model Confidence Set step by step"
 page-layout: article
 toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 The lab starts from five synthetic forecast-loss sequences and follows a transparent `Tmax` Model Confidence Set from the full candidate set to the final survivors.

@@ -2,6 +2,11 @@
 title: "QM002 Hands-on Lab"
 subtitle: "Change the rolling look-back length"
 toc: false
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
 ---
 
 This lab uses the same synthetic series as **QM002 — Rolling vs Expanding Windows**.
