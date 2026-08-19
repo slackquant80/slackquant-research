@@ -156,7 +156,13 @@ export const researchItems: ResearchItem[] = [
       ssrn:
         "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7291898",
       github:
-        "https://github.com/slackquant80/protection-patience-replication"
+        "https://github.com/slackquant80/protection-patience-replication",
+      replication:
+        "https://github.com/slackquant80/protection-patience-replication/releases/tag/v1.1.1",
+      archivalRelease:
+        "https://doi.org/10.5281/zenodo.21991470",
+      doi:
+        "https://doi.org/10.5281/zenodo.21991470"
     }
   },
   {

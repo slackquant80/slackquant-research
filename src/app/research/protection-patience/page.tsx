@@ -315,29 +315,56 @@ export default function ProtectionPatiencePage() {
             </p>
 
             <div className="repro-links">
-              <div className="artifact">
-                <div className="type">Public code</div>
-                <h3>Replication Repository</h3>
-                <p>
-                  Python pipeline, tests, reference hashes, generated results,
-                  and manuscript figures.
-                </p>
-                <a
-                  href={item.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open GitHub &#8599;
-                </a>
-              </div>
-              <div className="artifact">
-                <div className="type">Replication state</div>
-                <h3>Version 1.1.1</h3>
-                <p>
-                  The current public replication materials are version 1.1.1 and
-                  are synchronized to the final public paper.
-                </p>
-              </div>
+              {item.links.github ? (
+                <div className="artifact">
+                  <div className="type">Public code</div>
+                  <h3>Replication Repository</h3>
+                  <p>
+                    Python pipeline, tests, reference hashes, generated results,
+                    and manuscript figures.
+                  </p>
+                  <a
+                    href={item.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open GitHub &#8599;
+                  </a>
+                </div>
+              ) : null}
+
+              {item.links.replication ? (
+                <div className="artifact">
+                  <div className="type">Replication</div>
+                  <h3>Replication Package</h3>
+                  <p>
+                    Latest tagged public package: v1.1.1. The repository is
+                    synchronized to the final public SSRN paper.
+                  </p>
+                  <a
+                    href={item.links.replication}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open release &#8599;
+                  </a>
+                </div>
+              ) : null}
+
+              {item.links.archivalRelease ? (
+                <div className="artifact">
+                  <div className="type">Archival record</div>
+                  <h3>Release / DOI</h3>
+                  <p>Archived public replication release with persistent DOI.</p>
+                  <a
+                    href={item.links.archivalRelease}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open DOI &#8599;
+                  </a>
+                </div>
+              ) : null}
             </div>
           </section>
 
