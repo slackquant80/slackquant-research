@@ -96,7 +96,7 @@ div.csl-indent {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-746f85c217bd9c135d5ed8da4e98957c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-a24a3777685fee9960b6ad6fc5957f7d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -163,7 +163,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../research/"> 
+    <a class="nav-link" href="https://research.slackquant.com/research/"> 
 <span class="menu-text">Research</span></a>
   </li>  
   <li class="nav-item">
@@ -171,7 +171,7 @@ window.Quarto = {
 <span class="menu-text">Methods</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about/"> 
+    <a class="nav-link" href="https://research.slackquant.com/about/"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
@@ -213,7 +213,6 @@ window.Quarto = {
   <li><a href="#resampling-related-series-independently" id="toc-resampling-related-series-independently" class="nav-link" data-scroll-target="#resampling-related-series-independently">5. Resampling related series independently</a></li>
   <li><a href="#reporting-bootstrap-without-the-design" id="toc-reporting-bootstrap-without-the-design" class="nav-link" data-scroll-target="#reporting-bootstrap-without-the-design">6. Reporting “bootstrap” without the design</a></li>
   </ul></li>
-  <li><a href="#relationship-to-qm004-and-qm005" id="toc-relationship-to-qm004-and-qm005" class="nav-link" data-scroll-target="#relationship-to-qm004-and-qm005">Relationship to QM004 and QM005</a></li>
   <li><a href="#a-practical-reporting-checklist" id="toc-a-practical-reporting-checklist" class="nav-link" data-scroll-target="#a-practical-reporting-checklist">A Practical Reporting Checklist</a></li>
   <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
@@ -497,14 +496,6 @@ Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this 
 <p>The label is incomplete. State whether the procedure uses IID, moving blocks, stationary blocks, or another design, and report the block length or its selection rule when relevant.</p>
 </section>
 </section>
-<section id="relationship-to-qm004-and-qm005" class="level1">
-<h1>Relationship to QM004 and QM005</h1>
-<ul>
-<li><strong><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">QM004 — Diebold–Mariano Test</a></strong> explains why serial dependence in loss differentials matters for predictive-accuracy inference through long-run variance.</li>
-<li><strong><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">QM005 — Model Confidence Set</a></strong> uses moving-block resampling in its worked example to preserve dependence while estimating set-level uncertainty.</li>
-</ul>
-<p>QM006 isolates the resampling idea itself: what information blocks preserve, what they break, and why block length is part of the method rather than a formatting choice.</p>
-</section>
 <section id="a-practical-reporting-checklist" class="level1">
 <h1>A Practical Reporting Checklist</h1>
 <div class="qm-table-qm006-checklist">
@@ -567,12 +558,12 @@ Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this 
 <li>a model-based bootstrap, subsampling method, or another dependence-aware procedure better matches the inferential problem.</li>
 </ul>
 </section>
-<section id="related-methods" class="level1">
-<h1>Related Methods</h1>
+<section id="related-methods" class="level1 related-methods">
+<h1 class="related-methods">Related Methods</h1>
 <ul>
-<li><strong><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">QM001 — Out-of-Sample Forecast Evaluation</a>:</strong> establishes the time-indexed evaluation setting in which loss sequences arise.</li>
-<li><strong><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">QM004 — Diebold–Mariano Test</a>:</strong> uses long-run variance to handle dependent loss differentials.</li>
-<li><strong><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">QM005 — Model Confidence Set</a>:</strong> a many-model procedure whose worked example uses moving-block resampling.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">QM001 — Out-of-Sample Forecast Evaluation</a>: the time-indexed evaluation setting in which forecast-loss sequences arise.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">QM004 — Diebold–Mariano Test</a>: why serial dependence in loss differentials matters for predictive-accuracy inference.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">QM005 — Model Confidence Set</a>: a many-model procedure whose worked example uses moving-block resampling to preserve dependence.</li>
 </ul>
 </section>
 <section id="reproducibility" class="level1">
