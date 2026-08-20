@@ -67,7 +67,7 @@
     "href": "index.html",
     "title": "Quantitative Methods",
     "section": "",
-    "text": "SlackQuant Quantitative Methods explains the statistical, econometric, portfolio, and machine-learning tools that appear across SlackQuant Research. Each article connects intuition, formal definitions, reproducible implementation, common misuse, and the research settings in which the method is actually used."
+    "text": "This library explains the statistical, econometric, portfolio, and machine-learning methods used across the research platform. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice."
   },
   {
     "objectID": "index.html#current-articles",
