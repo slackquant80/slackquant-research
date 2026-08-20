@@ -49,6 +49,11 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .stream{padding:36px;background:var(--paper);border:1px solid var(--line);min-height:220px}
 .stream h3{font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:500;letter-spacing:-.02em;margin:0 0 14px}
 .stream p{color:#5d6267;max-width:480px;margin:0 0 28px}
+.output-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.output-metric{border-top:2px solid var(--ink);padding-top:18px}
+.output-value{font-family:Georgia,"Times New Roman",serif;font-size:42px;line-height:1;color:var(--ink);margin-bottom:9px}
+.output-label{font-size:13px;line-height:1.4;color:#4f555a}
+.output-note{margin:16px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
 .release-list{border-top:1px solid var(--line)}
 .release{display:grid;grid-template-columns:150px 1fr 180px;gap:24px;padding:21px 0;border-bottom:1px solid var(--line);font-size:14px}
 .release .date,.release .meta{color:var(--muted)}
@@ -169,6 +174,7 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   h1{font-size:46px}
   .hero-copy{font-size:18px}
   .feature-card,.grid-2,.about-grid,.dual,.repro-links,.method-grid,.identity-grid,.about-columns{grid-template-columns:1fr}
+  .output-metrics{grid-template-columns:1fr 1fr}
   .feature-side{min-height:250px}
   .section{padding:54px 0}
   .release{grid-template-columns:1fr;gap:4px}
@@ -184,6 +190,8 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   .nav-links{gap:12px}
   .nav-links a:first-child{display:none}
   .metrics{grid-template-columns:1fr}
+  .output-metrics{grid-template-columns:1fr 1fr;gap:22px}
+  .output-value{font-size:36px}
   .paper-title{font-size:38px}
   .feature-copy{padding:34px}
   .feature-title{font-size:34px}
@@ -373,7 +381,11 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   .metrics{
     grid-template-columns:1fr;
   }
+  .output-metrics{
+    grid-template-columns:1fr;
+  }
 }
+
 
 
 /* v0.7.2 external-link + dual-dashboard CTA QA */

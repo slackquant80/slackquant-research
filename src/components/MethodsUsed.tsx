@@ -1,4 +1,4 @@
-﻿import { getMethodsForResearch } from "@/data/methods";
+import { getMethodsForResearch } from "@/data/methods";
 
 type MethodsUsedProps = {
   researchSlug: string;
@@ -23,7 +23,7 @@ export function MethodsUsed({ researchSlug }: MethodsUsedProps) {
         {methods.map((method) => (
           <a className="method-used-row" href={method.href} key={method.id}>
             <div className="method-used-meta">
-              {method.id} 쨌 {method.category} 쨌 {method.level}
+              {method.id} &middot; {method.category} &middot; {method.level}
             </div>
             <div className="method-used-copy">
               <h3>{method.title}</h3>

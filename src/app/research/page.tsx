@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ResearchCard } from "@/components/ResearchCard";
 import { researchItems } from "@/data/research";
@@ -60,13 +60,13 @@ export default function ResearchPage() {
           </section>
 
           <article className="stream" aria-labelledby="quantitative-methods-heading">
-            <div className="kicker">Cross-cutting methods layer</div>
+            <div className="kicker">Methods library</div>
             <h3 id="quantitative-methods-heading">Quantitative Methods</h3>
             <p>
-              Companion explanations of the statistical, econometric, portfolio,
-              and machine-learning methods used across SlackQuant Research. The
-              library is separate from the numbered research streams and focuses
-              on how the methods work, how to implement them, and where they can fail.
+              Practical explanations of statistical, econometric, portfolio, and
+              machine-learning methods used across SlackQuant Research. Each article
+              focuses on how a method works, how to implement it, and where it can
+              fail, with hands-on examples where useful.
             </p>
             <a className="section-link strong-link" href="/methods/">
               Explore Quantitative Methods &#8594;

@@ -35,8 +35,8 @@ export default function AboutPage() {
             <p>
               SlackQuant Research brings practitioner-oriented investment
               research and academic research into one coherent public platform.
-              A cross-cutting Quantitative Methods library explains the methods
-              used across that research, while papers, evidence, code, and tools
+              The Quantitative Methods library explains methods used across that
+              research, while papers, evidence, code, and tools
               remain connected without blurring their different roles.
             </p>
             <div className="person-card">
@@ -74,7 +74,7 @@ export default function AboutPage() {
       <section className="section">
         <div className="shell about-columns">
           <div>
-            <div className="section-title">Shared methods layer</div>
+            <div className="section-title">Methods library</div>
             <h3>Quantitative Methods</h3>
           </div>
           <div>

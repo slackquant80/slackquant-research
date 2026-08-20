@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { researchItems } from "@/data/research";
+import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
 
 export default function HomePage() {
@@ -9,6 +10,12 @@ export default function HomePage() {
     ) ?? researchItems[0];
   const academicFeatured =
     researchItems.find((item) => item.stream === "academic") ?? researchItems[0];
+  const reproducibleRepositoryCount = new Set(
+    researchItems.map((item) => item.links.github).filter(Boolean),
+  ).size;
+  const publicReleaseCount = new Set(
+    researchItems.map((item) => item.links.replication).filter(Boolean),
+  ).size;
 
   return (
     <main>
@@ -61,7 +68,9 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{investmentFeatured.status}</div>
                   <div className="side-number">{investmentFeatured.publicVersion}</div>
-                  <div className="side-note">Latest public version 쨌 {investmentFeatured.dateLabel}</div>
+                  <div className="side-note">
+                    Latest public version &middot; {investmentFeatured.dateLabel}
+                  </div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -87,7 +96,9 @@ export default function HomePage() {
                 <div>
                   <div className="side-label">{academicFeatured.status}</div>
                   <div className="side-number">{academicFeatured.publicVersion}</div>
-                  <div className="side-note">Latest public version 쨌 {academicFeatured.dateLabel}</div>
+                  <div className="side-note">
+                    Latest public version &middot; {academicFeatured.dateLabel}
+                  </div>
                 </div>
                 <div>
                   <div className="side-label">Research focus</div>
@@ -143,7 +154,7 @@ export default function HomePage() {
           </div>
           <div className="grid-2">
             <article className="stream">
-              <div className="kicker">Cross-cutting methods library</div>
+              <div className="kicker">Methods library</div>
               <h3>Understand the methods behind the research.</h3>
               <p>
                 A practical library of statistical, econometric, portfolio, and
@@ -156,15 +167,45 @@ export default function HomePage() {
               </a>
             </article>
             <article className="stream">
-              <div className="kicker">Role</div>
-              <h3>A shared layer, not another research stream.</h3>
+              <div className="kicker">Purpose</div>
+              <h3>A shared methods resource across the research portfolio.</h3>
               <p>
-                Quantitative Methods explains tools used across the research
-                portfolio while keeping Investment Research and Academic Research
-                as distinct research purposes.
+                Quantitative Methods supports Investment Research and Academic
+                Research with reusable explanations, implementation guidance,
+                reproducible examples, and failure-mode checks.
               </p>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell">
+          <div className="section-head">
+            <div className="section-title">Research Output</div>
+          </div>
+          <div className="output-metrics" aria-label="Current public research output">
+            <div className="output-metric">
+              <div className="output-value">{researchItems.length}</div>
+              <div className="output-label">Research Papers</div>
+            </div>
+            <div className="output-metric">
+              <div className="output-value">{quantitativeMethods.length}</div>
+              <div className="output-label">Methods Articles</div>
+            </div>
+            <div className="output-metric">
+              <div className="output-value">{reproducibleRepositoryCount}</div>
+              <div className="output-label">Reproducible Repositories</div>
+            </div>
+            <div className="output-metric">
+              <div className="output-value">{publicReleaseCount}</div>
+              <div className="output-label">Public Releases</div>
+            </div>
+          </div>
+          <p className="output-note">
+            Current public artifacts; companion Quantitative Methods labs are not
+            counted as Methods Articles.
+          </p>
         </div>
       </section>
 
@@ -182,7 +223,9 @@ export default function HomePage() {
                   <br />
                   <span className="meta">
                     {item.status}
-                    {item.ssrnId ? ` 쨌 SSRN ${item.ssrnId}` : ""}
+                    {item.ssrnId ? (
+                      <> &middot; SSRN {item.ssrnId}</>
+                    ) : null}
                   </span>
                 </div>
                 <div className="meta">{item.streamLabel}</div>
