@@ -13,7 +13,7 @@ export default function HomePage() {
   const reproducibleRepositoryCount = new Set(
     researchItems.map((item) => item.links.github).filter(Boolean),
   ).size;
-  const publicReleaseCount = new Set(
+  const versionedReleaseCount = new Set(
     researchItems.map((item) => item.links.replication).filter(Boolean),
   ).size;
 
@@ -198,13 +198,13 @@ export default function HomePage() {
               <div className="output-label">Reproducible Repositories</div>
             </div>
             <div className="output-metric">
-              <div className="output-value">{publicReleaseCount}</div>
-              <div className="output-label">Public Releases</div>
+              <div className="output-value">{versionedReleaseCount}</div>
+              <div className="output-label">Versioned Releases</div>
             </div>
           </div>
           <p className="output-note">
-            Current public artifacts; companion Quantitative Methods labs are not
-            counted as Methods Articles.
+            Counts reflect the current public research catalog. Companion Quantitative
+            Methods labs are excluded from the Methods Articles count.
           </p>
         </div>
       </section>

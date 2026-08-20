@@ -49,6 +49,7 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .stream{padding:36px;background:var(--paper);border:1px solid var(--line);min-height:220px}
 .stream h3{font-family:Georgia,"Times New Roman",serif;font-size:29px;font-weight:500;letter-spacing:-.02em;margin:0 0 14px}
 .stream p{color:#5d6267;max-width:480px;margin:0 0 28px}
+.quantitative-methods-card p{max-width:760px}
 .output-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
 .output-metric{border-top:2px solid var(--ink);padding-top:18px}
 .output-value{font-family:Georgia,"Times New Roman",serif;font-size:42px;line-height:1;color:var(--ink);margin-bottom:9px}

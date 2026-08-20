@@ -59,7 +59,7 @@ export default function ResearchPage() {
             </div>
           </section>
 
-          <article className="stream" aria-labelledby="quantitative-methods-heading">
+          <article className="stream quantitative-methods-card" aria-labelledby="quantitative-methods-heading">
             <div className="kicker">Methods library</div>
             <h3 id="quantitative-methods-heading">Quantitative Methods</h3>
             <p>
