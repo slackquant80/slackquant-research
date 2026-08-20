@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/labs/index.html",
+    "title": "QM008 Hands-on Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nQM008 · Hands-on Lab\n\n\nGoal\nUse a small wealth path to reproduce the state variables in the article:\n\nrunning high-water mark;\npeak-normalized drawdown;\nsigned underwater value;\ncurrent underwater age;\ncompleted peak-to-recovery duration; and\na right-censored unrecovered episode.\n\n\n\nData\nThe input is data/qm008_wealth_path.csv. It contains 11 regular-grid observations and is deliberately designed to include exact equality recoveries and one incomplete final episode.\n\n\nPython\npython python/qm008_hands_on.py\nThe script uses only the Python standard library.\n\n\nR\nWith base R available:\nRscript r/qm008_hands_on.R\nBoth implementations use the same QM008 convention: positive peak-normalized drawdown, equality recovery, elapsed peak-to-recovery intervals, and right-censoring when recovery has not occurred by sample end.\n\n\nTry one change\nChange the last wealth observation from 100 to 122 and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article’s convention.\nDo not change the recovery rule from &gt;= to &gt; in this exercise. That would be a different convention rather than a different observed path."
+  },
+  {
     "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html",
     "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html",
     "title": "QM007 Hands-on Lab",
@@ -81,7 +88,7 @@
     "href": "index.html#current-articles",
     "title": "Quantitative Methods",
     "section": "Current articles",
-    "text": "Current articles\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead."
+    "text": "Current articles\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete."
   },
   {
     "objectID": "index.html#library-principles",
@@ -502,5 +509,68 @@
     "title": "Portfolio Backtesting and Rebalancing",
     "section": "6. Treating a clean backtest as proof of a good strategy",
     "text": "6. Treating a clean backtest as proof of a good strategy\nA technically correct historical simulation can still be overfit, economically weak, or selected from many alternatives after inspecting the same data. Backtest overfitting is a separate model-selection problem (Bailey et al. 2017)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#calling-the-worst-one-period-return-maximum-drawdown",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#calling-the-worst-one-period-return-maximum-drawdown",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "1. Calling the worst one-period return “maximum drawdown”",
+    "text": "1. Calling the worst one-period return “maximum drawdown”\nMaximum drawdown comes from the compounded wealth path relative to a running peak. A 10% monthly loss produces a 10% drawdown when the period starts at the high-water mark, but it can occur inside a materially deeper drawdown when the portfolio was already underwater."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#switching-denominators-without-changing-the-label",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#switching-denominators-without-changing-the-label",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "2. Switching denominators without changing the label",
+    "text": "2. Switching denominators without changing the label\nAt a peak of 110 and current wealth of 88, \\((H-W)/H=20\\%\\) while \\((H-W)/W=25\\%\\). Both cannot be reported as the same “drawdown percentage.”"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#mixing-positive-drawdown-depth-with-a-negative-underwater-chart",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#mixing-positive-drawdown-depth-with-a-negative-underwater-chart",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "3. Mixing positive drawdown depth with a negative underwater chart",
+    "text": "3. Mixing positive drawdown depth with a negative underwater chart\nUnder the QM008 convention, they are the same state with opposite sign: \\(u_t=-d_t\\)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#treating-below-peak-observations-as-peak-to-recovery-duration",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#treating-below-peak-observations-as-peak-to-recovery-duration",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "4. Treating below-peak observations as peak-to-recovery duration",
+    "text": "4. Treating below-peak observations as peak-to-recovery duration\nIn the first example episode, three observations are strictly underwater but four intervals elapse from the peak to the equality recovery."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#fabricating-recovery-at-the-sample-end",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#fabricating-recovery-at-the-sample-end",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "5. Fabricating recovery at the sample end",
+    "text": "5. Fabricating recovery at the sample end\nAn unrecovered final episode is right-censored. The sample end tells us its age-to-date, not its completed recovery duration."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-new-high-when-the-stated-rule-says-re-touch",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-new-high-when-the-stated-rule-says-re-touch",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "6. Requiring a new high when the stated rule says re-touch",
+    "text": "6. Requiring a new high when the stated rule says re-touch\nW_t\\ge W_p and W_t&gt;W_p are different recovery rules. A backtest or risk report should not switch between them silently."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#ignoring-sampling-frequency",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#ignoring-sampling-frequency",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "7. Ignoring sampling frequency",
+    "text": "7. Ignoring sampling frequency\nHistorical MDD can change when a finer observation grid reveals an interim trough that a coarser grid misses (Goldberg and Mahmoud 2017)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#reading-depth-as-a-forecast-of-recovery-time",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#reading-depth-as-a-forecast-of-recovery-time",
+    "title": "Drawdown, Underwater Duration, and Recovery",
+    "section": "8. Reading depth as a forecast of recovery time",
+    "text": "8. Reading depth as a forecast of recovery time\nThe identity \\(d/(1-d)\\) gives the gain required to regain the old peak. It does not say how quickly or whether that gain will occur."
   }
 ]

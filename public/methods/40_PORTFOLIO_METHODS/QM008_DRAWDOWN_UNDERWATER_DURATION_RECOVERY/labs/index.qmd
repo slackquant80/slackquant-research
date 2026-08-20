@@ -1,0 +1,54 @@
+---
+title: "QM008 Hands-on Lab"
+subtitle: "Recompute drawdown depth, underwater age, recovery, and censoring"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+::: {.method-kicker}
+QM008 · Hands-on Lab
+:::
+
+# Goal
+
+Use a small wealth path to reproduce the state variables in the article:
+
+- running high-water mark;
+- peak-normalized drawdown;
+- signed underwater value;
+- current underwater age;
+- completed peak-to-recovery duration; and
+- a right-censored unrecovered episode.
+
+# Data
+
+The input is [`data/qm008_wealth_path.csv`](data/qm008_wealth_path.csv). It contains 11 regular-grid observations and is deliberately designed to include exact equality recoveries and one incomplete final episode.
+
+# Python
+
+```bash
+python python/qm008_hands_on.py
+```
+
+The script uses only the Python standard library.
+
+# R
+
+With base R available:
+
+```bash
+Rscript r/qm008_hands_on.R
+```
+
+Both implementations use the same QM008 convention: positive peak-normalized drawdown, equality recovery, elapsed peak-to-recovery intervals, and right-censoring when recovery has not occurred by sample end.
+
+# Try one change
+
+Change the last wealth observation from `100` to `122` and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article's convention.
+
+Do **not** change the recovery rule from `>=` to `>` in this exercise. That would be a different convention rather than a different observed path.

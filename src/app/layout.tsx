@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ExternalLinkPolicy } from "@/components/ExternalLinkPolicy";
 import { site } from "@/data/site";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -33,6 +34,7 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <SiteFooter />
+        <ExternalLinkPolicy />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
           strategy="afterInteractive"

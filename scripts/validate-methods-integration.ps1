@@ -22,7 +22,8 @@ $required = @(
   "public\methods\10_FORECAST_EVALUATION\QM004_DIEBOLD_MARIANO_TEST\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
   "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
-  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html"
+  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html"
 )
 
 foreach ($rel in $required) {
@@ -40,6 +41,7 @@ $methodsData = Get-Content (Join-Path $PlatformRoot "src\data\methods.ts") -Raw
 $methodsIndex = Get-Content (Join-Path $PlatformRoot "public\methods\index.html") -Raw
 $methodArticle = Get-Content (Join-Path $PlatformRoot "public\methods\10_FORECAST_EVALUATION\QM002_ROLLING_VS_EXPANDING_WINDOWS\article.html") -Raw
 $qm007Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html") -Raw
+$qm008Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html") -Raw
 
 # Main-platform surface checks.
 if ($header -notmatch '/methods/') { throw "Header Methods link missing" }
@@ -58,14 +60,20 @@ if ($protection -notmatch 'MethodsUsed' -or $protection -notmatch 'href="#method
 foreach ($id in @('QM001','QM002','QM003','QM004','QM005')) {
   if ($methodsData -notmatch $id) { throw "Research-method mapping missing: $id" }
 }
-if ($methodsData -notmatch 'QM007' -or $methodsData -notmatch '"protection-patience"\s*:\s*\["QM007"\]') {
-  throw "Protection / Patience -> QM007 mapping missing"
+if ($methodsData -notmatch 'QM007' -or $methodsData -notmatch 'QM008' -or
+    $methodsData -notmatch '"protection-patience"\s*:\s*\["QM007",\s*"QM008"\]') {
+  throw "Protection / Patience -> QM007/QM008 mapping missing"
 }
 if ($qm007Article -notmatch 'https://research.slackquant.com/research/protection-patience/') {
   throw "QM007 -> Protection / Patience research link missing"
 }
-if ($methodsIndex -notmatch 'Investment Methods' -or $methodsIndex -notmatch 'QM007') {
-  throw "QM007 Investment Methods index entry missing"
+if ($qm008Article -notmatch 'https://research.slackquant.com/research/protection-patience/') {
+  throw "QM008 -> Protection / Patience research link missing"
+}
+if ($methodsIndex -notmatch 'Investment Methods' -or
+    $methodsIndex -notmatch 'QM007' -or
+    $methodsIndex -notmatch 'QM008') {
+  throw "QM007/QM008 Investment Methods index entries missing"
 }
 
 # Next.js -> Quarto boundary: use hard browser navigation, not next/link.
@@ -88,7 +96,7 @@ if ($methodsUsedSource -notmatch '<a[^>]*className="method-used-row"[^>]*href=\{
 
 # Every mapped method href must exist under public/.
 $hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
-if ($hrefMatches.Count -lt 7) { throw "Expected Quantitative Methods href mappings were not found" }
+if ($hrefMatches.Count -lt 8) { throw "Expected eight Quantitative Methods href mappings were not found" }
 foreach ($match in $hrefMatches) {
   $href = $match.Groups['href'].Value
   $rel = $href.TrimStart('/') -replace '/', '\'
@@ -132,7 +140,7 @@ foreach ($file in $methodsHtmlFiles) {
     throw "Obsolete Quarto navbar markup remains in rendered Methods page: $($file.FullName)"
   }
 }
-if ($sharedHeaderPagesChecked -lt 15) {
+if ($sharedHeaderPagesChecked -lt 17) {
   throw "Too few rendered Methods shared-header pages were validated: $sharedHeaderPagesChecked"
 }
 
@@ -235,7 +243,8 @@ $articlePaths = @(
   "public\methods\10_FORECAST_EVALUATION\QM004_DIEBOLD_MARIANO_TEST\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
   "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
-  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html"
+  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html"
 )
 foreach ($rel in $articlePaths) {
   $html = Get-Content (Join-Path $PlatformRoot $rel) -Raw

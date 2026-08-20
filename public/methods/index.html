@@ -198,6 +198,15 @@ QM007 · PORTFOLIO METHODS · FOUNDATION
 <p>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.</p>
 </section>
 </div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM008 · PORTFOLIO METHODS · FOUNDATION
+</div>
+<section id="drawdown-underwater-duration-and-recovery" class="level3">
+<h3 class="anchored" data-anchor-id="drawdown-underwater-duration-and-recovery"><a href="./40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">Drawdown, Underwater Duration, and Recovery</a></h3>
+<p>How deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.</p>
+</section>
+</div>
 </section>
 </section>
 <section id="library-principles" class="level2">
@@ -300,6 +309,11 @@ QM007 · PORTFOLIO METHODS · FOUNDATION
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
         }
       }
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
@@ -627,6 +641,32 @@ QM007 · PORTFOLIO METHODS · FOUNDATION
 </div>
   </div>
 </footer>
+<script id="sq-external-link-policy">
+  (() => {
+    const canonicalHost = "research.slackquant.com";
+    const apply = () => {
+      document.querySelectorAll("a[href]").forEach((anchor) => {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        let url;
+        try { url = new URL(href, window.location.href); } catch { return; }
+        if (url.protocol !== "http:" && url.protocol !== "https:") return;
+        if (url.hostname === canonicalHost) return;
+        anchor.target = "_blank";
+        const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
+        rel.add("noopener");
+        rel.add("noreferrer");
+        anchor.rel = Array.from(rel).join(" ");
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+      apply();
+    }
+    new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
 
 
 

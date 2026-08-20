@@ -71,11 +71,20 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains the portfolio accounting, weight drift, monthly rebalancing, turnover conventions, and next-period timing needed to interpret the portfolio paths used in this research.",
   },
+  {
+    id: "QM008",
+    title: "Drawdown, Underwater Duration, and Recovery",
+    category: "Portfolio Methods",
+    level: "Foundation",
+    href: "/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html",
+    researchContext:
+      "Explains drawdown, high-water-mark, underwater-duration, recovery, and censoring conventions used to interpret path-dependent downside and recovery in this research.",
+  },
 ];
 
 const researchMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
-  "protection-patience": ["QM007"],
+  "protection-patience": ["QM007", "QM008"],
 };
 
 export function getMethodsForResearch(slug: string) {

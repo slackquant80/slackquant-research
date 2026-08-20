@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>QM002 Hands-on Lab – SlackQuant Research</title>
+<title>QM008 Hands-on Lab – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -105,14 +105,26 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#goal" id="toc-goal" class="nav-link active" data-scroll-target="#goal">Goal</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
+  <li><a href="#r" id="toc-r" class="nav-link" data-scroll-target="#r">R</a></li>
+  <li><a href="#try-one-change" id="toc-try-one-change" class="nav-link" data-scroll-target="#try-one-change">Try one change</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
@@ -142,8 +154,8 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">QM002 Hands-on Lab</h1>
-<p class="subtitle lead">Change the rolling look-back length</p>
+<h1 class="title">QM008 Hands-on Lab</h1>
+<p class="subtitle lead">Recompute drawdown depth, underwater age, recovery, and censoring</p>
 </div>
 
 
@@ -160,25 +172,42 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </header>
 
 
-<p>This lab uses the same synthetic series as <strong>QM002 — Rolling vs Expanding Windows</strong>.</p>
-<section id="start-here" class="level2">
-<h2 class="anchored" data-anchor-id="start-here">Start here</h2>
-<p>Run the 60-observation baseline, then try shorter and longer rolling windows.</p>
-<section id="python" class="level3">
-<h3 class="anchored" data-anchor-id="python">Python</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm002_hands_on.py</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm002_hands_on.py <span class="at">--window</span> 30</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm002_hands_on.py <span class="at">--window</span> 120</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="method-kicker">
+<p>QM008 · Hands-on Lab</p>
+</div>
+<section id="goal" class="level1">
+<h1>Goal</h1>
+<p>Use a small wealth path to reproduce the state variables in the article:</p>
+<ul>
+<li>running high-water mark;</li>
+<li>peak-normalized drawdown;</li>
+<li>signed underwater value;</li>
+<li>current underwater age;</li>
+<li>completed peak-to-recovery duration; and</li>
+<li>a right-censored unrecovered episode.</li>
+</ul>
 </section>
-<section id="r" class="level3">
-<h3 class="anchored" data-anchor-id="r">R</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> labs/r/qm002_hands_on.R 60</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> labs/r/qm002_hands_on.R 30</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> labs/r/qm002_hands_on.R 120</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Focus on the trade-off rather than searching for a single preferred number: a shorter window forgets old observations sooner but estimates the model from less data.</p>
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>The input is <a href="data/qm008_wealth_path.csv"><code>data/qm008_wealth_path.csv</code></a>. It contains 11 regular-grid observations and is deliberately designed to include exact equality recoveries and one incomplete final episode.</p>
+</section>
+<section id="python" class="level1">
+<h1>Python</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm008_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The script uses only the Python standard library.</p>
+</section>
+<section id="r" class="level1">
+<h1>R</h1>
+<p>With base R available:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> r/qm008_hands_on.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Both implementations use the same QM008 convention: positive peak-normalized drawdown, equality recovery, elapsed peak-to-recovery intervals, and right-censoring when recovery has not occurred by sample end.</p>
+</section>
+<section id="try-one-change" class="level1">
+<h1>Try one change</h1>
+<p>Change the last wealth observation from <code>100</code> to <code>122</code> and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article’s convention.</p>
+<p>Do <strong>not</strong> change the recovery rule from <code>&gt;=</code> to <code>&gt;</code> in this exercise. That would be a different convention rather than a different observed path.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
