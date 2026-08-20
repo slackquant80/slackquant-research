@@ -86,6 +86,10 @@ foreach ($file in $methodsHtmlFiles) {
   if ($html -notmatch 'class=["'']sq-platform-header["'']') { continue }
   $sharedHeaderPagesChecked++
 
+  if ($html -notmatch 'id=["'']sq-header-relocator["'']') {
+    throw "Methods header relocator missing: $($file.FullName)"
+  }
+
   foreach ($url in @(
     'https://research.slackquant.com/research/',
     'https://research.slackquant.com/methods/',
@@ -162,24 +166,42 @@ if ($bootstrapCssFiles.Count -lt 1) {
   throw "No compiled Methods CSS files were found under: $bootstrapCssDir"
 }
 $compiledMethodsCss = ($bootstrapCssFiles | ForEach-Object { Get-Content $_.FullName -Raw }) -join "`n"
+
+# Normalize compiled CSS before structural checks. Quarto/Sass may emit either
+# minified or pretty-printed CSS, so whitespace must never decide PASS/FAIL.
+$compiledMethodsCssNormalized = [regex]::Replace(
+  $compiledMethodsCss,
+  '/\*.*?\*/',
+  '',
+  [System.Text.RegularExpressions.RegexOptions]::Singleline
+)
+$compiledMethodsCssNormalized = [regex]::Replace($compiledMethodsCssNormalized, '\s+', '')
+
 $sharedHeaderChecks = @(
-  @{ Name = "shell width"; Pattern = '\.sq-platform-shell\{[^}]*max-width\s*:\s*1180px' },
-  @{ Name = "desktop shell padding"; Pattern = '\.sq-platform-shell\{[^}]*padding\s*:\s*0 30px' },
-  @{ Name = "row height"; Pattern = '\.sq-platform-nav\{[^}]*height\s*:\s*72px' },
-  @{ Name = "space between"; Pattern = '\.sq-platform-nav\{[^}]*justify-content\s*:\s*space-between' },
-  @{ Name = "brand size"; Pattern = '\.sq-platform-brand\{[^}]*font-size\s*:\s*19px' },
-  @{ Name = "brand weight"; Pattern = '\.sq-platform-brand\{[^}]*font-weight\s*:\s*720' },
-  @{ Name = "brand tracking"; Pattern = '\.sq-platform-brand\{[^}]*letter-spacing\s*:\s*-0?\.025em' },
-  @{ Name = "nav gap"; Pattern = '\.sq-platform-nav-links\{[^}]*gap\s*:\s*28px' },
-  @{ Name = "nav size"; Pattern = '\.sq-platform-nav-links\{[^}]*font-size\s*:\s*14px' },
-  @{ Name = "mobile breakpoint"; Pattern = '@media\s*\(max-width\s*:\s*620px\)' },
-  @{ Name = "mobile brand size"; Pattern = '@media\s*\(max-width\s*:\s*620px\)[^{]*\{.*?\.sq-platform-brand\{[^}]*font-size\s*:\s*18px' },
-  @{ Name = "mobile nav gap"; Pattern = '@media\s*\(max-width\s*:\s*620px\)[^{]*\{.*?\.sq-platform-nav-links\{[^}]*gap\s*:\s*20px' }
+  @{ Name = "sticky header"; Pattern = '\.sq-platform-header\{[^}]*position:sticky' },
+  @{ Name = "Quarto nav-fixed reset"; Pattern = 'body\.nav-fixed\{[^}]*padding-top:0!important' },
+  @{ Name = "desktop content clearance"; Pattern = '#quarto-content>main\.content\{[^}]*margin-top:0[^}]*padding-top:64px' },
+  @{ Name = "shell width"; Pattern = '\.sq-platform-shell\{[^}]*max-width:1180px' },
+  @{ Name = "desktop shell padding"; Pattern = '\.sq-platform-shell\{[^}]*padding:0(?:px)?30px' },
+  @{ Name = "row height"; Pattern = '\.sq-platform-nav\{[^}]*height:72px' },
+  @{ Name = "space between"; Pattern = '\.sq-platform-nav\{[^}]*justify-content:space-between' },
+  @{ Name = "brand size"; Pattern = '\.sq-platform-brand\{[^}]*font-size:19px' },
+  @{ Name = "brand weight"; Pattern = '\.sq-platform-brand\{[^}]*font-weight:720' },
+  @{ Name = "brand tracking"; Pattern = '\.sq-platform-brand\{[^}]*letter-spacing:-0?\.025em' },
+  @{ Name = "nav gap"; Pattern = '\.sq-platform-nav-links\{[^}]*gap:28px' },
+  @{ Name = "nav size"; Pattern = '\.sq-platform-nav-links\{[^}]*font-size:14px' },
+  @{ Name = "mobile breakpoint"; Pattern = '@media\(max-width:620px\)' },
+  @{ Name = "mobile brand size"; Pattern = '@media\(max-width:620px\)\{.*?\.sq-platform-brand\{[^}]*font-size:18px' },
+  @{ Name = "mobile nav gap"; Pattern = '@media\(max-width:620px\)\{.*?\.sq-platform-nav-links\{[^}]*gap:20px' }
 )
 foreach ($check in $sharedHeaderChecks) {
-  if ($compiledMethodsCss -notmatch $check.Pattern) {
+  if ($compiledMethodsCssNormalized -notmatch $check.Pattern) {
     throw "Compiled Methods shared header check failed: $($check.Name)"
   }
+}
+
+if ($compiledMethodsCssNormalized -match '\.sq-platform-header\{[^}]*position:fixed') {
+  throw "Obsolete fixed Methods header remains in compiled CSS"
 }
 
 

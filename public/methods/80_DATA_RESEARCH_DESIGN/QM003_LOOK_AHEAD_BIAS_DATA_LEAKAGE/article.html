@@ -95,7 +95,7 @@ div.csl-indent {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-dc688f17c5edc8ab63ab3324946fa3b9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-5bb00137787fb61b6cc7a5bfc122228d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -202,6 +202,19 @@ window.Quarto = {
     </nav>
   </div>
 </header>
+<script id="sq-header-relocator">
+  (() => {
+    const script = document.currentScript;
+    const header = script?.previousElementSibling;
+    const quartoContent = document.getElementById("quarto-content");
+    if (
+      header?.classList.contains("sq-platform-header") &&
+      quartoContent?.parentNode
+    ) {
+      quartoContent.parentNode.insertBefore(header, quartoContent);
+    }
+  })();
+</script>
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
