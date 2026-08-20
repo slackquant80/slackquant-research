@@ -4,14 +4,14 @@
     "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html",
     "title": "QM006 Hands-on Lab",
     "section": "",
-    "text": "Goal\nThis short exercise compares IID resampling with a moving-block bootstrap on the same synthetic dependent series.\n\n\nStart here\nDownload the complete lab bundle, or use the direct Python and R scripts.\n\n\nBaseline\npython labs/python/qm006_hands_on.py\nThen try:\npython labs/python/qm006_hands_on.py --block-length 4\npython labs/python/qm006_hands_on.py --block-length 8\npython labs/python/qm006_hands_on.py --block-length 32\n\n\nInterpretation\nThe exercise is designed to show that resampling individual observations can remove serial dependence that matters for uncertainty. The numerical gap is specific to this synthetic series; block length is a tuning choice, not a universal constant."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\nGoal\nThis short exercise compares IID resampling with a moving-block bootstrap on the same synthetic dependent series.\n\n\nStart here\nDownload the complete lab bundle, or use the direct Python and R scripts.\n\n\nBaseline\npython labs/python/qm006_hands_on.py\nThen try:\npython labs/python/qm006_hands_on.py --block-length 4\npython labs/python/qm006_hands_on.py --block-length 8\npython labs/python/qm006_hands_on.py --block-length 32\n\n\nInterpretation\nThe exercise is designed to show that resampling individual observations can remove serial dependence that matters for uncertainty. The numerical gap is specific to this synthetic series; block length is a tuning choice, not a universal constant."
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html",
     "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html",
     "title": "QM005 Hands-on Lab",
     "section": "",
-    "text": "The lab starts from five synthetic forecast-loss sequences and follows a transparent Tmax Model Confidence Set from the full candidate set to the final survivors."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\nThe lab starts from five synthetic forecast-loss sequences and follows a transparent Tmax Model Confidence Set from the full candidate set to the final survivors."
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html#start-here",
@@ -32,21 +32,21 @@
     "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/labs/index.html",
     "title": "QM004 Hands-on Lab",
     "section": "",
-    "text": "Goal\nReproduce the baseline pairwise predictive-accuracy test, then change the loss function or autocovariance truncation lag to see how the inferential question changes.\n\n\nPython\npip install -r labs/python/requirements.txt\npython labs/python/qm004_hands_on.py --loss squared --lag 3\nTry --loss absolute or --lag 0 only as a teaching exercise. In applied work, these choices should follow the forecast design rather than the desired significance result.\n\n\nR\nRscript labs/r/qm004_hands_on.R squared 3\n\n\nWhat to notice\n\nThe sign of the average loss differential identifies which forecast has lower average loss under the chosen loss function.\nThe denominator of the DM statistic depends on the estimated long-run variance.\nA lower realized RMSE can coexist with a non-significant DM result."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\nGoal\nReproduce the baseline pairwise predictive-accuracy test, then change the loss function or autocovariance truncation lag to see how the inferential question changes.\n\n\nPython\npip install -r labs/python/requirements.txt\npython labs/python/qm004_hands_on.py --loss squared --lag 3\nTry --loss absolute or --lag 0 only as a teaching exercise. In applied work, these choices should follow the forecast design rather than the desired significance result.\n\n\nR\nRscript labs/r/qm004_hands_on.R squared 3\n\n\nWhat to notice\n\nThe sign of the average loss differential identifies which forecast has lower average loss under the chosen loss function.\nThe denominator of the DM statistic depends on the estimated long-run variance.\nA lower realized RMSE can coexist with a non-significant DM result."
   },
   {
     "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html",
     "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html",
     "title": "QM003 Hands-on Lab",
     "section": "",
-    "text": "Goal\nUse the same synthetic series as the article to compare an admissible feature with two future-aware alternatives.\n\nClean: \\(x_t\\)\nCentered: \\((x_{t-1}+x_t+x_{t+1})/3\\)\nFuture: \\(x_{t+1}\\)\n\nAt forecast origin \\(t\\), the last two features use information that is not yet available.\n\n\nPython\npython labs/python/qm003_hands_on.py\nYou can isolate one feature with --feature clean, --feature centered, or --feature future.\n\n\nR\nRscript labs/r/qm003_hands_on.R all\nUse clean, centered, or future instead of all to run one feature.\n\n\nInterpretation\nThe exercise is intentionally synthetic. Do not treat the size of the RMSE difference as a general estimate of leakage bias. The point is that a held-out sample is not valid when the feature itself contains future information."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\nGoal\nUse the same synthetic series as the article to compare an admissible feature with two future-aware alternatives.\n\nClean: \\(x_t\\)\nCentered: \\((x_{t-1}+x_t+x_{t+1})/3\\)\nFuture: \\(x_{t+1}\\)\n\nAt forecast origin \\(t\\), the last two features use information that is not yet available.\n\n\nPython\npython labs/python/qm003_hands_on.py\nYou can isolate one feature with --feature clean, --feature centered, or --feature future.\n\n\nR\nRscript labs/r/qm003_hands_on.R all\nUse clean, centered, or future instead of all to run one feature.\n\n\nInterpretation\nThe exercise is intentionally synthetic. Do not treat the size of the RMSE difference as a general estimate of leakage bias. The point is that a held-out sample is not valid when the feature itself contains future information."
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html",
     "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html",
     "title": "QM002 Hands-on Lab",
     "section": "",
-    "text": "This lab uses the same synthetic series as QM002 — Rolling vs Expanding Windows."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\nThis lab uses the same synthetic series as QM002 — Rolling vs Expanding Windows."
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html#start-here",
@@ -60,14 +60,14 @@
     "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/labs/index.html",
     "title": "QM001 Hands-on Lab",
     "section": "",
-    "text": "Start here\nThis optional lab takes about 10–15 minutes. It reproduces the synthetic example in QM001 — Out-of-Sample Forecast Evaluation and shows why a better fit on development data need not translate into better forecasts on held-out targets.\nFor the simplest setup, download the complete lab bundle. It contains the guide, both implementations, dependency information, and the synthetic data used by the article.\nIf you already have the full source package, you can instead open the scripts directly: Python · R.\n\n\nWhat you will do\n\nidentify the development and held-out observations;\nfit Model A, an AR(1) benchmark, using development data only;\nsearch the candidate noise predictors using only the development sample;\nfit Model B with the selected predictor; and\ncompare development and held-out RMSE without using the held-out targets for model selection.\n\n\n\nPython\nFrom the extracted lab bundle or the QM001 folder:\npython labs/python/qm001_hands_on.py\nIf needed, install the lab dependencies with:\npython -m pip install -r labs/python/requirements.txt\n\n\nR\nFrom the extracted lab bundle or the QM001 folder:\nRscript labs/r/qm001_hands_on.R\nThe R lab uses base R only.\n\n\nBaseline result\nWith all 80 candidate noise predictors searched, the lab should reproduce approximately:\n\n\n\nSample\nModel A RMSE\nModel B RMSE\nModel B vs. A\n\n\n\n\nDevelopment\n1.046\n0.951\n-9.1%\n\n\nHeld-out\n0.887\n1.101\n+24.1%\n\n\n\nThe example is illustrative. It does not show how often this type of reversal occurs in general or in any particular market.\n\n\nTry one change\nReduce the search size, for example:\npython labs/python/qm001_hands_on.py --n-search 20\nor:\nRscript labs/r/qm001_hands_on.R 20\nDo not expect the result to move in one direction as the search size changes. The purpose is to compare what looks best in the development sample with what performs best on held-out data."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\nStart here\nThis optional lab takes about 10–15 minutes. It reproduces the synthetic example in QM001 — Out-of-Sample Forecast Evaluation and shows why a better fit on development data need not translate into better forecasts on held-out targets.\nFor the simplest setup, download the complete lab bundle. It contains the guide, both implementations, dependency information, and the synthetic data used by the article.\nIf you already have the full source package, you can instead open the scripts directly: Python · R.\n\n\nWhat you will do\n\nidentify the development and held-out observations;\nfit Model A, an AR(1) benchmark, using development data only;\nsearch the candidate noise predictors using only the development sample;\nfit Model B with the selected predictor; and\ncompare development and held-out RMSE without using the held-out targets for model selection.\n\n\n\nPython\nFrom the extracted lab bundle or the QM001 folder:\npython labs/python/qm001_hands_on.py\nIf needed, install the lab dependencies with:\npython -m pip install -r labs/python/requirements.txt\n\n\nR\nFrom the extracted lab bundle or the QM001 folder:\nRscript labs/r/qm001_hands_on.R\nThe R lab uses base R only.\n\n\nBaseline result\nWith all 80 candidate noise predictors searched, the lab should reproduce approximately:\n\n\n\nSample\nModel A RMSE\nModel B RMSE\nModel B vs. A\n\n\n\n\nDevelopment\n1.046\n0.951\n-9.1%\n\n\nHeld-out\n0.887\n1.101\n+24.1%\n\n\n\nThe example is illustrative. It does not show how often this type of reversal occurs in general or in any particular market.\n\n\nTry one change\nReduce the search size, for example:\npython labs/python/qm001_hands_on.py --n-search 20\nor:\nRscript labs/r/qm001_hands_on.R 20\nDo not expect the result to move in one direction as the search size changes. The purpose is to compare what looks best in the development sample with what performs best on held-out data."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Quantitative Methods",
     "section": "",
-    "text": "This library explains the statistical, econometric, portfolio, and machine-learning methods used across the research platform. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "index.html#current-articles",
@@ -95,7 +95,7 @@
     "href": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html",
     "title": "Out-of-Sample Forecast Evaluation",
     "section": "",
-    "text": "QM001 · Forecast Evaluation · Foundation"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html#single-forecast-origin",
@@ -158,7 +158,7 @@
     "href": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html",
     "title": "Rolling vs Expanding Windows",
     "section": "",
-    "text": "QM002 · Forecast Evaluation · Foundation"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html#expanding-window",
@@ -221,7 +221,7 @@
     "href": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html",
     "title": "Look-Ahead Bias and Data Leakage",
     "section": "",
-    "text": "QM003 · Data & Research Design · Foundation"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html#future-aware-feature-construction",
@@ -298,7 +298,7 @@
     "href": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html",
     "title": "Diebold–Mariano Test",
     "section": "",
-    "text": "QM004 · Forecast Evaluation · Intermediate"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html#treating-a-lower-rmse-as-automatically-significant",
@@ -354,7 +354,7 @@
     "href": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html",
     "title": "Model Confidence Set",
     "section": "",
-    "text": "QM005 · Forecast Evaluation · Advanced"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html#calling-the-lowest-loss-model-the-mcs-winner",
@@ -403,7 +403,7 @@
     "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html",
     "title": "Block Bootstrap",
     "section": "",
-    "text": "QM006 · Statistical Inference · Intermediate"
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
   },
   {
     "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html#applying-an-iid-bootstrap-to-a-serially-dependent-statistic",

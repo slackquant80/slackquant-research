@@ -74,26 +74,41 @@ foreach ($match in $hrefMatches) {
   if (-not (Test-Path $publicPath)) { throw "Mapped Methods destination does not exist in public/: $href" }
 }
 
-# Quarto -> Next.js boundary: generated navbar must preserve absolute canonical
-# URLs. Root-relative links are rewritten by Quarto inside /methods/ and can
-# produce a first-click 404 such as /methods/.../research/.
+# Methods -> main-platform boundary: every rendered Methods page must carry the
+# shared raw platform header and absolute canonical URLs. Quarto navbar markup
+# is intentionally disabled in v1.0.6.
 $methodsHtmlFiles = Get-ChildItem (Join-Path $PlatformRoot "public\methods") -Filter "*.html" -Recurse
-$navbarPagesChecked = 0
+$sharedHeaderPagesChecked = 0
 foreach ($file in $methodsHtmlFiles) {
   $html = Get-Content $file.FullName -Raw
-  if ($html -notmatch 'navbar-title') { continue }
-  $navbarPagesChecked++
-  if ($html -notmatch 'href="https://research\.slackquant\.com/research/"') {
-    throw "Generated Methods navbar is missing the canonical absolute Research URL: $($file.FullName)"
+
+  # Only count actual rendered Methods pages that include the shared header.
+  if ($html -notmatch 'class=["'']sq-platform-header["'']') { continue }
+  $sharedHeaderPagesChecked++
+
+  foreach ($url in @(
+    'https://research.slackquant.com/research/',
+    'https://research.slackquant.com/methods/',
+    'https://research.slackquant.com/about/'
+  )) {
+    if ($html -notmatch [regex]::Escape($url)) {
+      throw "Rendered Methods shared header is missing canonical URL $url : $($file.FullName)"
+    }
   }
-  if ($html -notmatch 'href="https://research\.slackquant\.com/about/"') {
-    throw "Generated Methods navbar is missing the canonical absolute About URL: $($file.FullName)"
+
+  if ($html -match 'href=["''](?:\./|\.\./|/)(?:research|about)/["'']') {
+    throw "Rendered Methods shared header contains a relative Research/About URL: $($file.FullName)"
   }
-  if ($html -match 'href="(?:\./|\.\./|/)(?:research|about)/"') {
-    throw "Generated Methods navbar contains a relative Research/About URL: $($file.FullName)"
+
+  if ($html -match 'id=["'']quarto-header["'']' -or
+      $html -match 'navbar-toggler' -or
+      $html -match 'navbar-collapse') {
+    throw "Obsolete Quarto navbar markup remains in rendered Methods page: $($file.FullName)"
   }
 }
-if ($navbarPagesChecked -lt 13) { throw "Too few rendered Methods navbar pages were validated: $navbarPagesChecked" }
+if ($sharedHeaderPagesChecked -lt 13) {
+  throw "Too few rendered Methods shared-header pages were validated: $sharedHeaderPagesChecked"
+}
 
 # Global Methods header labels and generic UI controls.
 foreach ($label in @('Research','Methods','About','GitHub')) {
@@ -109,28 +124,64 @@ foreach ($pattern in $visibleSearchPatterns) {
 }
 if ($methodArticle -match 'quarto-code-tools') { throw "Generic Quarto Code tools should be disabled" }
 
-# Header identity: verify the compiled Methods stylesheet contains the same
-# desktop geometry and brand type values as the Next.js platform.
-#
-# Sass/Bootstrap compilation may legally normalize CSS numbers, e.g.
-# -0.025em -> -.025em, and may insert/remove whitespace. Validation therefore
-# checks semantic-equivalent declaration forms instead of one literal spelling.
-$bootstrapCssFiles = Get-ChildItem (Join-Path $PlatformRoot "public\methods\site_libs\bootstrap") -Filter "*.css"
-$bootstrapCss = ($bootstrapCssFiles | ForEach-Object { Get-Content $_.FullName -Raw }) -join "`n"
 
-$headerIdentityChecks = @(
-  @{ Name = "max width";      Pattern = 'max-width\s*:\s*1180px' },
-  @{ Name = "header height";  Pattern = 'height\s*:\s*72px' },
-  @{ Name = "brand size";     Pattern = 'font-size\s*:\s*19px' },
-  @{ Name = "brand weight";   Pattern = 'font-weight\s*:\s*720' },
-  @{ Name = "brand tracking"; Pattern = 'letter-spacing\s*:\s*-0?\.025em' },
-  @{ Name = "brand font stack"; Pattern = 'Inter[^;{}]*ui-sans-serif[^;{}]*system-ui[^;{}]*Segoe UI[^;{}]*Arial' }
-)
-foreach ($check in $headerIdentityChecks) {
-  if ($bootstrapCss -notmatch $check.Pattern) {
-    throw "Compiled Methods header identity check failed: $($check.Name)"
+# METHODS_SHARED_PLATFORM_HEADER_GATE
+# Methods now uses an isolated raw header rather than Quarto/Bootstrap navbar
+# markup. This removes cross-framework pixel drift and must remain structural.
+if ($methodsIndex -notmatch 'class=["'']sq-platform-header["'']') {
+  throw "Methods shared platform header missing"
+}
+if ($methodsIndex -notmatch 'class=["'']sq-platform-shell sq-platform-nav["'']') {
+  throw "Methods shared shell/navigation row missing"
+}
+if ($methodsIndex -notmatch 'class=["'']sq-platform-brand["''][^>]*>SlackQuant Research<') {
+  throw "Methods shared platform brand missing"
+}
+if ($methodsIndex -notmatch 'class=["'']sq-platform-nav-links["'']') {
+  throw "Methods shared navigation links missing"
+}
+if ($methodsIndex -match 'id=["'']quarto-header["'']' -or $methodsIndex -match 'navbar-toggler') {
+  throw "Quarto navbar markup must not be rendered in Methods"
+}
+foreach ($url in @(
+  'https://research.slackquant.com/research/',
+  'https://research.slackquant.com/methods/',
+  'https://research.slackquant.com/about/'
+)) {
+  if ($methodsIndex -notmatch [regex]::Escape($url)) {
+    throw "Methods shared header URL missing: $url"
   }
 }
+
+$bootstrapCssDir = Join-Path $PlatformRoot "public\methods\site_libs\bootstrap"
+if (-not (Test-Path $bootstrapCssDir)) {
+  throw "Rendered Methods Bootstrap/CSS directory missing: $bootstrapCssDir"
+}
+$bootstrapCssFiles = Get-ChildItem $bootstrapCssDir -Filter "*.css"
+if ($bootstrapCssFiles.Count -lt 1) {
+  throw "No compiled Methods CSS files were found under: $bootstrapCssDir"
+}
+$compiledMethodsCss = ($bootstrapCssFiles | ForEach-Object { Get-Content $_.FullName -Raw }) -join "`n"
+$sharedHeaderChecks = @(
+  @{ Name = "shell width"; Pattern = '\.sq-platform-shell\{[^}]*max-width\s*:\s*1180px' },
+  @{ Name = "desktop shell padding"; Pattern = '\.sq-platform-shell\{[^}]*padding\s*:\s*0 30px' },
+  @{ Name = "row height"; Pattern = '\.sq-platform-nav\{[^}]*height\s*:\s*72px' },
+  @{ Name = "space between"; Pattern = '\.sq-platform-nav\{[^}]*justify-content\s*:\s*space-between' },
+  @{ Name = "brand size"; Pattern = '\.sq-platform-brand\{[^}]*font-size\s*:\s*19px' },
+  @{ Name = "brand weight"; Pattern = '\.sq-platform-brand\{[^}]*font-weight\s*:\s*720' },
+  @{ Name = "brand tracking"; Pattern = '\.sq-platform-brand\{[^}]*letter-spacing\s*:\s*-0?\.025em' },
+  @{ Name = "nav gap"; Pattern = '\.sq-platform-nav-links\{[^}]*gap\s*:\s*28px' },
+  @{ Name = "nav size"; Pattern = '\.sq-platform-nav-links\{[^}]*font-size\s*:\s*14px' },
+  @{ Name = "mobile breakpoint"; Pattern = '@media\s*\(max-width\s*:\s*620px\)' },
+  @{ Name = "mobile brand size"; Pattern = '@media\s*\(max-width\s*:\s*620px\)[^{]*\{.*?\.sq-platform-brand\{[^}]*font-size\s*:\s*18px' },
+  @{ Name = "mobile nav gap"; Pattern = '@media\s*\(max-width\s*:\s*620px\)[^{]*\{.*?\.sq-platform-nav-links\{[^}]*gap\s*:\s*20px' }
+)
+foreach ($check in $sharedHeaderChecks) {
+  if ($compiledMethodsCss -notmatch $check.Pattern) {
+    throw "Compiled Methods shared header check failed: $($check.Name)"
+  }
+}
+
 
 # Related Methods render consistency.
 $articlePaths = @(
@@ -144,9 +195,20 @@ $articlePaths = @(
 foreach ($rel in $articlePaths) {
   $html = Get-Content (Join-Path $PlatformRoot $rel) -Raw
   $headingCount = ([regex]::Matches($html, '>Related Methods</h1>')).Count
-  if ($headingCount -ne 1) { throw "Expected exactly one Related Methods heading in $rel; found $headingCount" }
-  if ($html -notmatch 'related-methods') { throw "Related Methods house class missing in $rel" }
-  if ($html -match 'Relationship to QM004 and QM005') { throw "Obsolete duplicate relationship section remains in $rel" }
+  if ($headingCount -ne 1) {
+    throw "Expected exactly one Related Methods heading in $rel; found $headingCount"
+  }
+  if ($html -notmatch 'related-methods') {
+    throw "Related Methods house class missing in $rel"
+  }
+  if ($html -match 'Relationship to QM004 and QM005') {
+    throw "Obsolete duplicate relationship section remains in $rel"
+  }
+}
+
+# Public-copy economy: the index header/title already establishes the brand.
+if ($methodsIndex -match 'SlackQuant Quantitative Methods explains') {
+  throw "Methods index repeats the SlackQuant brand unnecessarily"
 }
 
 Write-Host "METHODS_PLATFORM_INTEGRATION_VALIDATION_PASS" -ForegroundColor Green
