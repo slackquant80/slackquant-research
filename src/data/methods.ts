@@ -62,10 +62,20 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains dependence-aware resampling for time-series inference when IID resampling would break serial structure.",
   },
+  {
+    id: "QM007",
+    title: "Portfolio Backtesting and Rebalancing",
+    category: "Portfolio Methods",
+    level: "Foundation",
+    href: "/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html",
+    researchContext:
+      "Explains the portfolio accounting, weight drift, monthly rebalancing, turnover conventions, and next-period timing needed to interpret the portfolio paths used in this research.",
+  },
 ];
 
 const researchMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
+  "protection-patience": ["QM007"],
 };
 
 export function getMethodsForResearch(slug: string) {

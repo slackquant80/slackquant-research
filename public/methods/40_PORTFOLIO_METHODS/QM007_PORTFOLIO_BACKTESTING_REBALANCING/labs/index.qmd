@@ -1,0 +1,50 @@
+---
+title: "QM007 Hands-on Lab"
+subtitle: "Change the rebalancing frequency without changing the information timeline"
+lang: en
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Goal
+
+This lab uses the same four-period synthetic return path as QM007. It changes only the **rebalancing frequency** so that you can see how a trading rule changes the weight path, terminal wealth, and turnover.
+
+The example is a numerical illustration, not evidence that one rebalancing frequency is better than another.
+
+# Run the Python version
+
+```bash
+python python/qm007_hands_on.py
+```
+
+The script compares:
+
+- rebalancing to 50/50 every period;
+- rebalancing every two periods; and
+- buy-and-hold after the initial 50/50 allocation.
+
+# What to inspect
+
+1. A non-rebalance date carries the **drifted** weights forward.
+2. A rebalance changes the weights used in the **next** period; it does not change the return already earned.
+3. More frequent rebalancing can increase turnover, but this four-period path does not establish a general performance ranking.
+
+# Try one change
+
+Edit the return path in `data/qm007_two_asset_returns.csv`, or change the target weights in the script. Keep the timing contract unchanged: start-of-period weights earn the current period's returns, then weights drift, then an optional rebalance sets the next period's starting weights.
+
+# R version
+
+If base R is available:
+
+```bash
+Rscript r/qm007_hands_on.R
+```
+
+The Python and R files implement the same accounting convention. Runtime parity for R remains environment-dependent until it is executed in the normal local toolchain.

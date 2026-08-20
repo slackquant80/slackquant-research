@@ -356,7 +356,7 @@ DM
 \frac{P+1-2h+h(h-1)/P}{P}
 }.
 \]</span></p>
-<p>The adjustment usually shrinks the absolute statistic when the evaluation sample is not large relative to the horizon. It should be viewed as a finite-sample correction for the specified comparison, not as a general cure for every source of misspecification or dependence.</p>
+<p>The adjustment usually shrinks the absolute statistic when the evaluation sample is not large relative to the horizon. In the HLN modification used here, the adjusted statistic is compared with a Student <span class="math inline">\(t\)</span> reference distribution with <span class="math inline">\(P-1\)</span> degrees of freedom rather than with the standard normal distribution <span class="citation" data-cites="harveyleybournenewbold1997">(<a href="#ref-harveyleybournenewbold1997" role="doc-biblioref">Harvey et al. 1997</a>)</span>. It should be viewed as a finite-sample correction for the specified comparison, not as a general cure for every source of misspecification or dependence.</p>
 </section>
 <section id="worked-illustration-lower-rmse-but-weak-statistical-evidence" class="level1">
 <h1>Worked Illustration: Lower RMSE, but Weak Statistical Evidence</h1>
@@ -413,7 +413,7 @@ DM
 </tr>
 <tr class="even">
 <td>Two-sided HLN p-value</td>
-<td style="text-align: center;">0.190</td>
+<td style="text-align: center;">0.193</td>
 </tr>
 </tbody>
 </table>
@@ -583,7 +583,7 @@ Figure&nbsp;2: The paired squared-loss differential varies substantially across 
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
-<p>The accompanying materials include the paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. Re-running the stated loss and long-run-variance calculations reproduces the DM and HLN results reported above.</p>
+<p>The accompanying materials include the paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. The canonical example generator reproduces both the DM and HLN results reported above; the reader-facing lab focuses on the unadjusted DM calculation under alternative loss functions and autocovariance truncation lags.</p>
 </section>
 <section id="references" class="level1 unnumbered">
 

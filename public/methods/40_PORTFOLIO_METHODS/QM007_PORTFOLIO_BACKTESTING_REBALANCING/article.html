@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to portfolio backtest accounting, weight drift, rebalancing timing, and turnover conventions.">
+
+<title>Portfolio Backtesting and Rebalancing – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-5bb00137787fb61b6cc7a5bfc122228d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition-one-period-has-four-states" id="toc-intuition-one-period-has-four-states" class="nav-link" data-scroll-target="#intuition-one-period-has-four-states">Intuition: One Period Has Four States</a></li>
+  <li><a href="#portfolio-return-and-wealth" id="toc-portfolio-return-and-wealth" class="nav-link" data-scroll-target="#portfolio-return-and-wealth">Portfolio Return and Wealth</a></li>
+  <li><a href="#weight-drift-before-rebalancing" id="toc-weight-drift-before-rebalancing" class="nav-link" data-scroll-target="#weight-drift-before-rebalancing">Weight Drift Before Rebalancing</a></li>
+  <li><a href="#rebalancing-is-a-rule-not-a-label" id="toc-rebalancing-is-a-rule-not-a-label" class="nav-link" data-scroll-target="#rebalancing-is-a-rule-not-a-label">Rebalancing Is a Rule, Not a Label</a></li>
+  <li><a href="#numerical-illustration-the-same-returns-different-rules" id="toc-numerical-illustration-the-same-returns-different-rules" class="nav-link" data-scroll-target="#numerical-illustration-the-same-returns-different-rules">Numerical Illustration: The Same Returns, Different Rules</a></li>
+  <li><a href="#turnover-state-the-convention" id="toc-turnover-state-the-convention" class="nav-link" data-scroll-target="#turnover-state-the-convention">Turnover: State the Convention</a></li>
+  <li><a href="#information-timing-for-signal-driven-weights" id="toc-information-timing-for-signal-driven-weights" class="nav-link" data-scroll-target="#information-timing-for-signal-driven-weights">Information Timing for Signal-Driven Weights</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#hands-on-lab-change-the-rebalancing-frequency" id="toc-hands-on-lab-change-the-rebalancing-frequency" class="nav-link" data-scroll-target="#hands-on-lab-change-the-rebalancing-frequency">Hands-on Lab: Change the Rebalancing Frequency</a></li>
+  <li><a href="#what-a-backtest-must-declare" id="toc-what-a-backtest-must-declare" class="nav-link" data-scroll-target="#what-a-backtest-must-declare">What a Backtest Must Declare</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t" id="toc-letting-w_t-earn-r_t-when-w_t-uses-information-from-t" class="nav-link" data-scroll-target="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t">1. Letting <span class="math inline">\(w_t\)</span> earn <span class="math inline">\(r_t\)</span> when <span class="math inline">\(w_t\)</span> uses information from <span class="math inline">\(t\)</span></a></li>
+  <li><a href="#resetting-to-target-weights-on-non-rebalance-dates" id="toc-resetting-to-target-weights-on-non-rebalance-dates" class="nav-link" data-scroll-target="#resetting-to-target-weights-on-non-rebalance-dates">2. Resetting to target weights on non-rebalance dates</a></li>
+  <li><a href="#computing-turnover-from-target-to-target" id="toc-computing-turnover-from-target-to-target" class="nav-link" data-scroll-target="#computing-turnover-from-target-to-target">3. Computing turnover from target to target</a></li>
+  <li><a href="#mixing-simple-and-log-return-algebra" id="toc-mixing-simple-and-log-return-algebra" class="nav-link" data-scroll-target="#mixing-simple-and-log-return-algebra">4. Mixing simple and log-return algebra</a></li>
+  <li><a href="#calling-a-gross-backtest-net-performance" id="toc-calling-a-gross-backtest-net-performance" class="nav-link" data-scroll-target="#calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</a></li>
+  <li><a href="#treating-a-clean-backtest-as-proof-of-a-good-strategy" id="toc-treating-a-clean-backtest-as-proof-of-a-good-strategy" class="nav-link" data-scroll-target="#treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</a></li>
+  </ul></li>
+  <li><a href="#when-not-to-use-this-base-form-directly" id="toc-when-not-to-use-this-base-form-directly" class="nav-link" data-scroll-target="#when-not-to-use-this-base-form-directly">When Not to Use This Base Form Directly</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<header class="sq-platform-header">
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/">Research</a>
+      <a href="https://research.slackquant.com/methods/">Methods</a>
+      <a href="https://research.slackquant.com/about/">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
+</header>
+<script id="sq-header-relocator">
+  (() => {
+    const script = document.currentScript;
+    const header = script?.previousElementSibling;
+    const quartoContent = document.getElementById("quarto-content");
+    if (
+      header?.classList.contains("sq-platform-header") &&
+      quartoContent?.parentNode
+    ) {
+      quartoContent.parentNode.insertBefore(header, quartoContent);
+    }
+  })();
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Portfolio Backtesting and Rebalancing</h1>
+<p class="subtitle lead">Getting the timeline, weight drift, and turnover right before interpreting performance</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Investment Methods</div>
+    <div class="quarto-category">Portfolio Methods</div>
+    <div class="quarto-category">Foundation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to portfolio backtest accounting, weight drift, rebalancing timing, and turnover conventions.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM007 · Investment Methods · Portfolio Methods · Foundation</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> A portfolio backtest is a timeline, not just a return formula. The weights in force at the start of a period earn that period’s asset returns. Those returns change the weights. A rebalance, if one occurs, then sets the holdings for the next period.</p>
+<p><strong>Use it for.</strong> Historical simulations of fixed-weight, periodically rebalanced, or signal-driven portfolios when you need transparent wealth accounting, weight drift, turnover, and information timing.</p>
+<p><strong>It does not establish.</strong> That a backtested strategy is economically useful, statistically reliable, investable after costs, or robust to strategy selection. Correct bookkeeping is necessary; it is not sufficient evidence of investment skill.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A portfolio rule may sound simple: choose weights, multiply them by returns, and compound the result.</p>
+<p>The difficulty is that weights have <strong>timestamps</strong>. Suppose a portfolio begins month <span class="math inline">\(t\)</span> with 50% in each of two assets. If one asset rises and the other does not, the portfolio no longer ends the month at 50/50. If the strategy does not trade, those drifted weights must carry into the next month. If it does trade, the rebalance happens only after the return that caused the drift has already been earned.</p>
+<p>That leads to the central question:</p>
+<blockquote class="blockquote">
+<p><strong>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio?</strong></p>
+</blockquote>
+<p>If those three pieces are not explicit, a backtest can look numerically plausible while embedding a hidden rebalance, a one-period timing error, or a turnover measure that does not match the stated trading rule.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Historical portfolio results are path dependent. Buy-and-hold and periodic rebalancing are different dynamic rules, and they generally generate different weight and wealth paths <span class="citation" data-cites="peroldsharpe1988">(<a href="#ref-peroldsharpe1988" role="doc-biblioref">Perold and Sharpe 1988</a>)</span>. A backtest must therefore reproduce the rule that an investor could actually have followed through time.</p>
+<p>The same principle applies when weights are estimated from data. In a rolling out-of-sample portfolio exercise, information available before the holding period determines the weights used during that holding period. DeMiguel, Garlappi, and Uppal use prior observations to form portfolio weights and then evaluate the resulting portfolio out of sample <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>. A signal formed with information through the end of period <span class="math inline">\(t\)</span> should not quietly earn period-<span class="math inline">\(t\)</span> returns under a next-period implementation convention.</p>
+<p>Correct timing also matters for turnover. The trade at a rebalance date is not generally the difference between today’s target and the <strong>previous target</strong>. It is the difference between today’s target and the <strong>drifted portfolio that actually exists immediately before trading</strong>.</p>
+</section>
+<section id="intuition-one-period-has-four-states" class="level1">
+<h1>Intuition: One Period Has Four States</h1>
+<p>A useful way to reason about a backtest is to split every period into four states.</p>
+<div id="fig-qm007-timing" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm007_timing_flow.svg" class="img-fluid figure-img" style="width:96.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Start-of-period weights earn the current period’s returns. Those returns create drifted pre-trade weights. An optional rebalance then sets the weights that enter the next period.
+</figcaption>
+</figure>
+</div>
+<p>For period <span class="math inline">\(t\)</span>:</p>
+<ol type="1">
+<li><strong>Start:</strong> enter the period with actual weights <span class="math inline">\(\mathbf w_{t-1}\)</span>.</li>
+<li><strong>Return realization:</strong> those weights earn asset returns <span class="math inline">\(\mathbf r_t\)</span>.</li>
+<li><strong>Drift:</strong> relative asset performance creates pre-rebalance weights <span class="math inline">\(\widetilde{\mathbf w}_t\)</span>.</li>
+<li><strong>Trade or carry:</strong> if the date is a rebalance date, trade to target <span class="math inline">\(\mathbf w_t\)</span>; otherwise set <span class="math inline">\(\mathbf w_t=\widetilde{\mathbf w}_t\)</span>.</li>
+</ol>
+<p>The final <span class="math inline">\(\mathbf w_t\)</span> then enters period <span class="math inline">\(t+1\)</span>.</p>
+<p>This timeline is the accounting backbone of the article.</p>
+</section>
+<section id="portfolio-return-and-wealth" class="level1">
+<h1>Portfolio Return and Wealth</h1>
+<p>Let <span class="math inline">\(r_{i,t}\)</span> be the simple return of asset <span class="math inline">\(i\)</span> during period <span class="math inline">\(t\)</span>, and define its gross return or price relative as</p>
+<p><span class="math display">\[
+x_{i,t}=1+r_{i,t}.
+\]</span></p>
+<p>Let <span class="math inline">\(w_{i,t-1}\)</span> be the actual weight in force <strong>before</strong> period-<span class="math inline">\(t\)</span> returns are realized. In the fully invested long-only base case,</p>
+<p><span class="math display">\[
+\sum_i w_{i,t-1}=1,
+\qquad w_{i,t-1}\ge 0.
+\]</span></p>
+<p>The portfolio gross wealth factor is</p>
+<p><span class="math display">\[
+g_{p,t}
+=
+\mathbf w_{t-1}^{\top}\mathbf x_t,
+\]</span></p>
+<p>so the simple portfolio return is</p>
+<p><span class="math display">\[
+r_{p,t}
+=
+g_{p,t}-1
+=
+\mathbf w_{t-1}^{\top}\mathbf r_t.
+\]</span></p>
+<p>If <span class="math inline">\(V_{t-1}\)</span> is wealth entering the period, gross-of-cost wealth evolves as</p>
+<p><span class="math display">\[
+V_t=V_{t-1}(1+r_{p,t}).
+\]</span></p>
+<p>Across <span class="math inline">\(T\)</span> periods,</p>
+<p><span class="math display">\[
+\frac{V_T}{V_0}
+=
+\prod_{t=1}^{T}(1+r_{p,t}).
+\]</span></p>
+<p>These discrete-time wealth identities are consistent with the portfolio and price-relative formulation used by Cover and Ordentlich <span class="citation" data-cites="coverordentlich1996">(<a href="#ref-coverordentlich1996" role="doc-biblioref">Cover and Ordentlich 1996</a>)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="The subscript is a timing statement">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>The subscript is a timing statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Under the convention used here, <span class="math inline">\(\mathbf w_{t-1}\)</span> earns <span class="math inline">\(\mathbf r_t\)</span>. An end-of-period target <span class="math inline">\(\mathbf w_t\)</span> is the portfolio that enters period <span class="math inline">\(t+1\)</span>. Changing this notation is possible, but the code and prose must change together.</p>
+</div>
+</div>
+</section>
+<section id="weight-drift-before-rebalancing" class="level1">
+<h1>Weight Drift Before Rebalancing</h1>
+<p>Returns change the dollar value of each position. Even when no trade occurs, portfolio weights therefore move.</p>
+<p>Immediately after period-<span class="math inline">\(t\)</span> returns, but before any rebalance, asset <span class="math inline">\(i\)</span> has weight</p>
+<p><span class="math display">\[
+\widetilde w_{i,t}
+=
+\frac{w_{i,t-1}(1+r_{i,t})}
+{\mathbf w_{t-1}^{\top}(\mathbf 1+\mathbf r_t)}.
+\]</span></p>
+<p>The denominator is the portfolio’s gross wealth factor. The numerator is asset <span class="math inline">\(i\)</span>’s contribution to end-of-period wealth.</p>
+<p>This formula can also be derived by keeping explicit share counts: let each position grow by its own gross return, add the resulting position values to obtain total wealth, and divide each position value by the total. The two calculations must agree.</p>
+<p>If there is <strong>no rebalance</strong>, the next period begins with</p>
+<p><span class="math display">\[
+\mathbf w_t=\widetilde{\mathbf w}_t.
+\]</span></p>
+<p>Resetting weights to the old target without recording a trade is a hidden rebalance.</p>
+</section>
+<section id="rebalancing-is-a-rule-not-a-label" class="level1">
+<h1>Rebalancing Is a Rule, Not a Label</h1>
+<p>A rebalanced portfolio needs at least three pieces of information:</p>
+<ul>
+<li>the target weights or target-weight rule;</li>
+<li>the dates on which the target may be restored or changed; and</li>
+<li>the execution convention that determines when the new weights start earning returns.</li>
+</ul>
+<p>Perold and Sharpe describe dynamic asset-allocation strategies as explicit rules for changing portfolio exposures as asset values move <span class="citation" data-cites="peroldsharpe1988">(<a href="#ref-peroldsharpe1988" role="doc-biblioref">Perold and Sharpe 1988</a>)</span>. Buy-and-hold is the no-trade case after the initial allocation. A constant-mix strategy is different: it restores a constant fraction of wealth to the risky asset according to its stated rebalance rule.</p>
+<p>Under this article’s base convention, a rebalance at the end of period <span class="math inline">\(t\)</span> changes the portfolio from <span class="math inline">\(\widetilde{\mathbf w}_t\)</span> to <span class="math inline">\(\mathbf w_t\)</span>. The new weights earn <strong>period <span class="math inline">\(t+1\)</span></strong>, not the return that has already occurred in period <span class="math inline">\(t\)</span>.</p>
+</section>
+<section id="numerical-illustration-the-same-returns-different-rules" class="level1">
+<h1>Numerical Illustration: The Same Returns, Different Rules</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Deterministic numerical illustration — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Deterministic numerical illustration — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The four-period path below is deliberately small. It is designed to expose the accounting mechanics. It does not show that rebalancing generally raises or lowers returns.</p>
+</div>
+</div>
+<p>Start with two assets, A and B, and an initial 50/50 allocation. Consider the following simple returns:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Period</th>
+<th style="text-align: center;">Asset A</th>
+<th style="text-align: center;">Asset B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td style="text-align: center;">10%</td>
+<td style="text-align: center;">0%</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td style="text-align: center;">-10%</td>
+<td style="text-align: center;">0%</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td style="text-align: center;">20%</td>
+<td style="text-align: center;">-5%</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td style="text-align: center;">-5%</td>
+<td style="text-align: center;">10%</td>
+</tr>
+</tbody>
+</table>
+<p>First consider a portfolio that rebalances to 50/50 after <strong>every</strong> period.</p>
+<p>After period 1, its return is</p>
+<p><span class="math display">\[
+0.5(0.10)+0.5(0)=0.05.
+\]</span></p>
+<p>Wealth rises from 1.000 to 1.050. But the portfolio is no longer 50/50 before trading. Asset A’s pre-rebalance weight is</p>
+<p><span class="math display">\[
+\widetilde w_{A,1}
+=
+\frac{0.5(1.10)}{1.05}
+=
+0.52381,
+\]</span></p>
+<p>and asset B’s weight is 0.47619.</p>
+<p>Trading back to 50/50 produces L1 turnover of</p>
+<p><span class="math display">\[
+|0.50-0.52381|+|0.50-0.47619|
+=0.04762.
+\]</span></p>
+<p>Under the one-way convention defined below, that is 0.02381, or 2.381% of wealth on one side of the trade.</p>
+<p>The full path is:</p>
+<div class="qm-table-qm007-path">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Period</th>
+<th style="text-align: center;">Rebalanced return</th>
+<th style="text-align: center;">Rebalanced wealth</th>
+<th style="text-align: center;">Pre-trade weight in A</th>
+<th style="text-align: center;">L1 turnover</th>
+<th style="text-align: center;">One-way turnover</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td style="text-align: center;">5.000%</td>
+<td style="text-align: center;">1.050000</td>
+<td style="text-align: center;">52.381%</td>
+<td style="text-align: center;">4.762%</td>
+<td style="text-align: center;">2.381%</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td style="text-align: center;">-5.000%</td>
+<td style="text-align: center;">0.997500</td>
+<td style="text-align: center;">47.368%</td>
+<td style="text-align: center;">5.263%</td>
+<td style="text-align: center;">2.632%</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td style="text-align: center;">7.500%</td>
+<td style="text-align: center;">1.072313</td>
+<td style="text-align: center;">55.814%</td>
+<td style="text-align: center;">11.628%</td>
+<td style="text-align: center;">5.814%</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td style="text-align: center;">2.500%</td>
+<td style="text-align: center;">1.099120</td>
+<td style="text-align: center;">46.341%</td>
+<td style="text-align: center;">7.317%</td>
+<td style="text-align: center;">3.659%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Now compare the same initial 50/50 portfolio with <strong>buy-and-hold</strong>. After period 1, the 52.381/47.619 drift is carried into period 2 because no trade occurs. That changes period-2 return and every later weight.</p>
+<div id="fig-qm007-wealth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/rendered/qm007_wealth_paths.svg" class="img-fluid figure-img" style="width:92.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The two rules begin with the same 50/50 allocation and see the same asset returns. Their wealth paths diverge because periodic rebalancing resets the weights while buy-and-hold carries drift forward. The terminal difference is specific to this synthetic path.
+</figcaption>
+</figure>
+</div>
+<p>After the first two periods, rebalanced wealth is 0.9975 while buy-and-hold wealth is 0.9950. After all four periods, the corresponding values are approximately 1.09912 and 1.08680.</p>
+<p>Those numbers are <strong>not</strong> evidence that rebalancing is superior. Reverse the return sequence or change the path and the comparison can change. The point is narrower: two different trading rules should not be expected to generate the same backtest.</p>
+</section>
+<section id="turnover-state-the-convention" class="level1">
+<h1>Turnover: State the Convention</h1>
+<p>“Turnover” is not a convention-free scalar.</p>
+<p>DeMiguel, Garlappi, and Uppal measure the amount traded by comparing desired post-rebalance weights with the portfolio weights that exist immediately before rebalancing <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>. Following that structure, define <strong>L1 turnover</strong> as</p>
+<p><span class="math display">\[
+TO_t^{L1}
+=
+\sum_i |w_{i,t}-\widetilde w_{i,t}|.
+\]</span></p>
+<p>For the fully invested, no-external-flow base case in this article, total buys equal total sells. We therefore also report an explicitly named <strong>one-way turnover</strong> convention:</p>
+<p><span class="math display">\[
+TO_t^{1w}
+=
+\frac12 TO_t^{L1}.
+\]</span></p>
+<p>The factor of one-half is an accounting consequence of the scoped base case; it is not presented as a universal naming standard.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Never report turnover without the equation">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Never report turnover without the equation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A statement such as “turnover is 10%” is incomplete unless the reader knows whether the number is L1, one-way, annualized, averaged across dates, or defined another way. QM009 treats the separate question of how a declared turnover measure maps into trading costs and net performance.</p>
+</div>
+</div>
+</section>
+<section id="information-timing-for-signal-driven-weights" class="level1">
+<h1>Information Timing for Signal-Driven Weights</h1>
+<p>A backtest may use fixed targets, but many investment rules estimate weights from historical information. The timing contract should then be written before any performance code is run.</p>
+<p>Under the base next-period convention:</p>
+<ol type="1">
+<li>information available through the end of period <span class="math inline">\(t\)</span> is used to form the target <span class="math inline">\(\mathbf w_t\)</span>;</li>
+<li>the portfolio trades, if the execution rule allows it, after that information becomes available; and</li>
+<li><span class="math inline">\(\mathbf w_t\)</span> earns the return of period <span class="math inline">\(t+1\)</span>.</li>
+</ol>
+<p>This is the same broad out-of-sample discipline used in rolling portfolio evaluation: estimates from a historical window determine subsequent holdings, and those holdings are evaluated on future returns <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
+<p>A same-close implementation is not automatically impossible. It is simply a <strong>different empirical claim</strong>. It requires timestamps and execution assumptions precise enough to show that the signal was known and tradable at the price used in the backtest. The safe rule is not “always lag by one day” or “same-close is always wrong”; it is to make the information and execution boundary explicit and internally consistent.</p>
+</section>
+<section id="implementation-pattern" class="level1">
+<h1>Implementation Pattern</h1>
+<p>A transparent backtest can be written as a state transition rather than as a single vectorized return expression:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> initial_weights</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wealth <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> periods:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># weights are known before period-t returns</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    portfolio_return <span class="op">=</span> weights <span class="op">@</span> returns[t]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    wealth <span class="op">*=</span> <span class="dv">1</span> <span class="op">+</span> portfolio_return</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># returns create the pre-trade portfolio</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    drifted <span class="op">=</span> weights <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> returns[t]) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> portfolio_return)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> is_rebalance_date(t):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        target <span class="op">=</span> target_from_information_available_through(t)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="bu">abs</span>(target <span class="op">-</span> drifted).<span class="bu">sum</span>()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> drifted</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is Python-like pseudocode. A production implementation still needs explicit rules for the return series, missing observations, universe membership, instrument inception, corporate actions, currencies, external cash flows, transaction costs, taxes, leverage, and execution.</p>
+</section>
+<section id="hands-on-lab-change-the-rebalancing-frequency" class="level1">
+<h1>Hands-on Lab: Change the Rebalancing Frequency</h1>
+<p>The optional lab uses the same four-period return path and compares three rules: 50/50 rebalanced every period, 50/50 rebalanced every two periods, and buy-and-hold.</p>
+<div class="method-action">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm007_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm007_hands_on.py">Python</a> · <a href="labs/r/qm007_hands_on.R">R</a>.</p>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm007_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The exercise is useful because it changes one design choice while preserving the accounting timeline. More frequent rebalancing will generally create more opportunities to trade, but the realized turnover and wealth effects remain path dependent.</p>
+</section>
+<section id="what-a-backtest-must-declare" class="level1">
+<h1>What a Backtest Must Declare</h1>
+<p>The generic formulas do not decide how an empirical dataset should be built. Before interpreting historical performance, document the choices that can change the path.</p>
+<div class="qm-table-qm007-checklist">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Minimum declaration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Return series</td>
+<td>Price return or total return; currency/FX treatment when relevant</td>
+</tr>
+<tr class="even">
+<td>Start weights</td>
+<td>Initial allocation and whether it is assumed tradable at the start date</td>
+</tr>
+<tr class="odd">
+<td>Weight timing</td>
+<td>Which weights earn which period’s returns</td>
+</tr>
+<tr class="even">
+<td>Signal timing</td>
+<td>Information cutoff used to form each target</td>
+</tr>
+<tr class="odd">
+<td>Rebalance rule</td>
+<td>Frequency, trigger, target, and execution convention</td>
+</tr>
+<tr class="even">
+<td>Non-rebalance dates</td>
+<td>Drifted weights carried forward rather than silently reset</td>
+</tr>
+<tr class="odd">
+<td>Turnover</td>
+<td>Exact formula and aggregation convention</td>
+</tr>
+<tr class="even">
+<td>Universe</td>
+<td>Entry, exit, inception, missing-price, and delisting rules when relevant</td>
+</tr>
+<tr class="odd">
+<td>Costs and taxes</td>
+<td>Gross or net result; if net, the explicit cost/tax mapping</td>
+</tr>
+<tr class="even">
+<td>Benchmark</td>
+<td>Its own rebalancing and return conventions, not only its label</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<section id="letting-w_t-earn-r_t-when-w_t-uses-information-from-t" class="level2">
+<h2 class="anchored" data-anchor-id="letting-w_t-earn-r_t-when-w_t-uses-information-from-t">1. Letting <span class="math inline">\(w_t\)</span> earn <span class="math inline">\(r_t\)</span> when <span class="math inline">\(w_t\)</span> uses information from <span class="math inline">\(t\)</span></h2>
+<p>That is a same-period information leak under the next-period convention. Either lag the exposure or justify a different execution timeline with actual timestamps and tradability assumptions.</p>
+</section>
+<section id="resetting-to-target-weights-on-non-rebalance-dates" class="level2">
+<h2 class="anchored" data-anchor-id="resetting-to-target-weights-on-non-rebalance-dates">2. Resetting to target weights on non-rebalance dates</h2>
+<p>If the code carries <code>target_weights</code> forward instead of the drifted holdings, it is rebalancing even when the strategy claims not to trade.</p>
+</section>
+<section id="computing-turnover-from-target-to-target" class="level2">
+<h2 class="anchored" data-anchor-id="computing-turnover-from-target-to-target">3. Computing turnover from target to target</h2>
+<p>Trading occurs from the portfolio that exists immediately before the trade. Relative price changes can make that portfolio materially different from the previous target.</p>
+</section>
+<section id="mixing-simple-and-log-return-algebra" class="level2">
+<h2 class="anchored" data-anchor-id="mixing-simple-and-log-return-algebra">4. Mixing simple and log-return algebra</h2>
+<p>The weighted-return identity in this article uses simple returns. Log returns are useful in many settings, but a weighted sum of asset log returns is not generally the portfolio’s simple return.</p>
+</section>
+<section id="calling-a-gross-backtest-net-performance" class="level2">
+<h2 class="anchored" data-anchor-id="calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</h2>
+<p>No transaction costs or taxes are deducted in the base accounting shown here. A gross path should remain labeled gross until a separately specified implementation-cost model is applied.</p>
+</section>
+<section id="treating-a-clean-backtest-as-proof-of-a-good-strategy" class="level2">
+<h2 class="anchored" data-anchor-id="treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</h2>
+<p>A technically correct historical simulation can still be overfit, economically weak, or selected from many alternatives after inspecting the same data. Backtest overfitting is a separate model-selection problem <span class="citation" data-cites="baileyetal2017">(<a href="#ref-baileyetal2017" role="doc-biblioref">Bailey et al. 2017</a>)</span>.</p>
+</section>
+</section>
+<section id="when-not-to-use-this-base-form-directly" class="level1">
+<h1>When Not to Use This Base Form Directly</h1>
+<p>The formulas above are intentionally scoped. They should not be copied unchanged when the portfolio has material features that alter the accounting, including:</p>
+<ul>
+<li>leverage, short positions, margin, or financing costs;</li>
+<li>external deposits or withdrawals;</li>
+<li>transaction costs, taxes, or nonlinear market impact;</li>
+<li>derivatives with cash flows or changing notionals that are not represented by a simple asset-return vector;</li>
+<li>changing universes whose entry and exit rules are not already encoded in the return/weight process; or</li>
+<li>an execution convention that depends on intraday information and prices.</li>
+</ul>
+<p>Those cases can still be backtested, but the state variables and accounting must be extended rather than hidden inside the base formula.</p>
+</section>
+<section id="related-methods" class="level1 related-methods">
+<h1 class="related-methods">Related Methods</h1>
+<ul>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: the broader information-boundary framework behind the signal-timing rules used here.</li>
+<li><strong>QM009 — Turnover, Transaction Costs, and Net Performance</strong> <em>(planned)</em>: extends the declared turnover convention into explicit trading-cost and net-return accounting.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p><a href="https://research.slackquant.com/research/protection-patience/"><strong>When Protection Works but the Portfolio Still Lags</strong></a> uses historical portfolio paths with explicit monthly rebalancing and signal timing. QM007 explains the general portfolio-accounting mechanics; the research paper contains the application-specific defensive rule, long-horizon evidence, benchmarks, and implementation details.</p>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The accompanying materials include the synthetic return path, Python and base-R implementations, expected numerical results, two reproducible figures, and the hands-on rebalancing-frequency lab. The example code reproduces the weight drift, turnover, and wealth paths reported above.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-baileyetal2017" class="csl-entry" role="listitem">
+Bailey, David H., Jonathan M. Borwein, Marcos López de Prado, and Qiji Jim Zhu. 2017. <span>“The Probability of Backtest Overfitting.”</span> <em>The Journal of Computational Finance</em> 20 (4): 39–69. <a href="https://doi.org/10.21314/JCF.2016.322">https://doi.org/10.21314/JCF.2016.322</a>.
+</div>
+<div id="ref-coverordentlich1996" class="csl-entry" role="listitem">
+Cover, Thomas M., and Erik Ordentlich. 1996. <span>“Universal Portfolios with Side Information.”</span> <em>IEEE Transactions on Information Theory</em> 42 (2): 348–63. <a href="https://doi.org/10.1109/18.485708">https://doi.org/10.1109/18.485708</a>.
+</div>
+<div id="ref-demiguelgarlappiuppal2009" class="csl-entry" role="listitem">
+DeMiguel, Victor, Lorenzo Garlappi, and Raman Uppal. 2009. <span>“Optimal Versus Naive Diversification: How Inefficient Is the 1/n Portfolio Strategy?”</span> <em>The Review of Financial Studies</em> 22 (5): 1915–53. <a href="https://doi.org/10.1093/rfs/hhm075">https://doi.org/10.1093/rfs/hhm075</a>.
+</div>
+<div id="ref-peroldsharpe1988" class="csl-entry" role="listitem">
+Perold, André F., and William F. Sharpe. 1988. <span>“Dynamic Strategies for Asset Allocation.”</span> <em>Financial Analysts Journal</em> 44 (1): 16–27. <a href="https://doi.org/10.2469/faj.v44.n1.16">https://doi.org/10.2469/faj.v44.n1.16</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

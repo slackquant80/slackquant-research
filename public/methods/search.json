@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html",
+    "title": "QM007 Hands-on Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nGoal\nThis lab uses the same four-period synthetic return path as QM007. It changes only the rebalancing frequency so that you can see how a trading rule changes the weight path, terminal wealth, and turnover.\nThe example is a numerical illustration, not evidence that one rebalancing frequency is better than another.\n\n\nRun the Python version\npython python/qm007_hands_on.py\nThe script compares:\n\nrebalancing to 50/50 every period;\nrebalancing every two periods; and\nbuy-and-hold after the initial 50/50 allocation.\n\n\n\nWhat to inspect\n\nA non-rebalance date carries the drifted weights forward.\nA rebalance changes the weights used in the next period; it does not change the return already earned.\nMore frequent rebalancing can increase turnover, but this four-period path does not establish a general performance ranking.\n\n\n\nTry one change\nEdit the return path in data/qm007_two_asset_returns.csv, or change the target weights in the script. Keep the timing contract unchanged: start-of-period weights earn the current period’s returns, then weights drift, then an optional rebalance sets the next period’s starting weights.\n\n\nR version\nIf base R is available:\nRscript r/qm007_hands_on.R\nThe Python and R files implement the same accounting convention. Runtime parity for R remains environment-dependent until it is executed in the normal local toolchain."
+  },
+  {
     "objectID": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html",
     "href": "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html",
     "title": "QM006 Hands-on Lab",
@@ -74,7 +81,7 @@
     "href": "index.html#current-articles",
     "title": "Quantitative Methods",
     "section": "Current articles",
-    "text": "Current articles\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates."
+    "text": "Current articles\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead."
   },
   {
     "objectID": "index.html#library-principles",
@@ -446,5 +453,54 @@
     "title": "Block Bootstrap",
     "section": "6. Reporting “bootstrap” without the design",
     "text": "6. Reporting “bootstrap” without the design\nThe label is incomplete. State whether the procedure uses IID, moving blocks, stationary blocks, or another design, and report the block length or its selection rule when relevant."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#letting-w_t-earn-r_t-when-w_t-uses-information-from-t",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#letting-w_t-earn-r_t-when-w_t-uses-information-from-t",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "1. Letting \\(w_t\\) earn \\(r_t\\) when \\(w_t\\) uses information from \\(t\\)",
+    "text": "1. Letting \\(w_t\\) earn \\(r_t\\) when \\(w_t\\) uses information from \\(t\\)\nThat is a same-period information leak under the next-period convention. Either lag the exposure or justify a different execution timeline with actual timestamps and tradability assumptions."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#resetting-to-target-weights-on-non-rebalance-dates",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#resetting-to-target-weights-on-non-rebalance-dates",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "2. Resetting to target weights on non-rebalance dates",
+    "text": "2. Resetting to target weights on non-rebalance dates\nIf the code carries target_weights forward instead of the drifted holdings, it is rebalancing even when the strategy claims not to trade."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#computing-turnover-from-target-to-target",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#computing-turnover-from-target-to-target",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "3. Computing turnover from target to target",
+    "text": "3. Computing turnover from target to target\nTrading occurs from the portfolio that exists immediately before the trade. Relative price changes can make that portfolio materially different from the previous target."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#mixing-simple-and-log-return-algebra",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#mixing-simple-and-log-return-algebra",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "4. Mixing simple and log-return algebra",
+    "text": "4. Mixing simple and log-return algebra\nThe weighted-return identity in this article uses simple returns. Log returns are useful in many settings, but a weighted sum of asset log returns is not generally the portfolio’s simple return."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#calling-a-gross-backtest-net-performance",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#calling-a-gross-backtest-net-performance",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "5. Calling a gross backtest “net performance”",
+    "text": "5. Calling a gross backtest “net performance”\nNo transaction costs or taxes are deducted in the base accounting shown here. A gross path should remain labeled gross until a separately specified implementation-cost model is applied."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#treating-a-clean-backtest-as-proof-of-a-good-strategy",
+    "href": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html#treating-a-clean-backtest-as-proof-of-a-good-strategy",
+    "title": "Portfolio Backtesting and Rebalancing",
+    "section": "6. Treating a clean backtest as proof of a good strategy",
+    "text": "6. Treating a clean backtest as proof of a good strategy\nA technically correct historical simulation can still be overfit, economically weak, or selected from many alternatives after inspecting the same data. Backtest overfitting is a separate model-selection problem (Bailey et al. 2017)."
   }
 ]

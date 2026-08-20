@@ -12,6 +12,7 @@ $required = @(
   "src\app\page.tsx",
   "src\app\research\page.tsx",
   "src\app\research\beyond-average-accuracy\page.tsx",
+  "src\app\research\protection-patience\page.tsx",
   "src\app\about\page.tsx",
   "src\app\sitemap.ts",
   "public\methods\index.html",
@@ -20,7 +21,8 @@ $required = @(
   "public\methods\80_DATA_RESEARCH_DESIGN\QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM004_DIEBOLD_MARIANO_TEST\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
-  "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html"
+  "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html"
 )
 
 foreach ($rel in $required) {
@@ -32,18 +34,38 @@ $homePage = Get-Content (Join-Path $PlatformRoot "src\app\page.tsx") -Raw
 $header = Get-Content (Join-Path $PlatformRoot "src\components\SiteHeader.tsx") -Raw
 $research = Get-Content (Join-Path $PlatformRoot "src\app\research\page.tsx") -Raw
 $beyond = Get-Content (Join-Path $PlatformRoot "src\app\research\beyond-average-accuracy\page.tsx") -Raw
+$protection = Get-Content (Join-Path $PlatformRoot "src\app\research\protection-patience\page.tsx") -Raw
 $methodsUsedSource = Get-Content (Join-Path $PlatformRoot "src\components\MethodsUsed.tsx") -Raw
 $methodsData = Get-Content (Join-Path $PlatformRoot "src\data\methods.ts") -Raw
 $methodsIndex = Get-Content (Join-Path $PlatformRoot "public\methods\index.html") -Raw
 $methodArticle = Get-Content (Join-Path $PlatformRoot "public\methods\10_FORECAST_EVALUATION\QM002_ROLLING_VS_EXPANDING_WINDOWS\article.html") -Raw
+$qm007Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html") -Raw
 
 # Main-platform surface checks.
 if ($header -notmatch '/methods/') { throw "Header Methods link missing" }
-if ($homePage -notmatch 'Cross-cutting methods library') { throw "Home Methods layer copy missing" }
-if ($research -notmatch 'Cross-cutting methods layer') { throw "Research-page Methods bridge missing" }
+# Integration must not depend on one frozen marketing sentence. v1.0.8-v1.0.9
+# deliberately refined the public Methods copy while preserving the bridge.
+if ($homePage -notmatch 'Quantitative Methods' -or $homePage -notmatch 'href="/methods/"') {
+  throw "Home Methods bridge missing"
+}
+if ($research -notmatch 'Quantitative Methods' -or $research -notmatch 'href="/methods/"') {
+  throw "Research-page Methods bridge missing"
+}
 if ($beyond -notmatch 'MethodsUsed') { throw "Beyond Average Accuracy Methods bridge missing" }
+if ($protection -notmatch 'MethodsUsed' -or $protection -notmatch 'href="#methods"') {
+  throw "Protection / Patience Methods bridge missing"
+}
 foreach ($id in @('QM001','QM002','QM003','QM004','QM005')) {
   if ($methodsData -notmatch $id) { throw "Research-method mapping missing: $id" }
+}
+if ($methodsData -notmatch 'QM007' -or $methodsData -notmatch '"protection-patience"\s*:\s*\["QM007"\]') {
+  throw "Protection / Patience -> QM007 mapping missing"
+}
+if ($qm007Article -notmatch 'https://research.slackquant.com/research/protection-patience/') {
+  throw "QM007 -> Protection / Patience research link missing"
+}
+if ($methodsIndex -notmatch 'Investment Methods' -or $methodsIndex -notmatch 'QM007') {
+  throw "QM007 Investment Methods index entry missing"
 }
 
 # Next.js -> Quarto boundary: use hard browser navigation, not next/link.
@@ -66,7 +88,7 @@ if ($methodsUsedSource -notmatch '<a[^>]*className="method-used-row"[^>]*href=\{
 
 # Every mapped method href must exist under public/.
 $hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
-if ($hrefMatches.Count -lt 6) { throw "Expected Quantitative Methods href mappings were not found" }
+if ($hrefMatches.Count -lt 7) { throw "Expected Quantitative Methods href mappings were not found" }
 foreach ($match in $hrefMatches) {
   $href = $match.Groups['href'].Value
   $rel = $href.TrimStart('/') -replace '/', '\'
@@ -110,7 +132,7 @@ foreach ($file in $methodsHtmlFiles) {
     throw "Obsolete Quarto navbar markup remains in rendered Methods page: $($file.FullName)"
   }
 }
-if ($sharedHeaderPagesChecked -lt 13) {
+if ($sharedHeaderPagesChecked -lt 15) {
   throw "Too few rendered Methods shared-header pages were validated: $sharedHeaderPagesChecked"
 }
 
@@ -212,7 +234,8 @@ $articlePaths = @(
   "public\methods\80_DATA_RESEARCH_DESIGN\QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM004_DIEBOLD_MARIANO_TEST\article.html",
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
-  "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html"
+  "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html"
 )
 foreach ($rel in $articlePaths) {
   $html = Get-Content (Join-Path $PlatformRoot $rel) -Raw

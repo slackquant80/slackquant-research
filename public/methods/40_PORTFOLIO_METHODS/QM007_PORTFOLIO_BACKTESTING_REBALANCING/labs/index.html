@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Quantitative Methods – SlackQuant Research</title>
+<title>QM007 Hands-on Lab – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,21 +26,56 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5bb00137787fb61b6cc7a5bfc122228d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-5bb00137787fb61b6cc7a5bfc122228d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -70,14 +105,26 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#goal" id="toc-goal" class="nav-link active" data-scroll-target="#goal">Goal</a></li>
+  <li><a href="#run-the-python-version" id="toc-run-the-python-version" class="nav-link" data-scroll-target="#run-the-python-version">Run the Python version</a></li>
+  <li><a href="#what-to-inspect" id="toc-what-to-inspect" class="nav-link" data-scroll-target="#what-to-inspect">What to inspect</a></li>
+  <li><a href="#try-one-change" id="toc-try-one-change" class="nav-link" data-scroll-target="#try-one-change">Try one change</a></li>
+  <li><a href="#r-version" id="toc-r-version" class="nav-link" data-scroll-target="#r-version">R version</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
@@ -107,8 +154,8 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Quantitative Methods</h1>
-<p class="subtitle lead">A practical methods library for applied quantitative research and investment practice</p>
+<h1 class="title">QM007 Hands-on Lab</h1>
+<p class="subtitle lead">Change the rebalancing frequency without changing the information timeline</p>
 </div>
 
 
@@ -125,89 +172,38 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </header>
 
 
-<div class="sq-index-intro">
-<p>This library explains the statistical, econometric, portfolio, and machine-learning methods used across the research platform. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice.</p>
-</div>
-<section id="current-articles" class="level2">
-<h2 class="anchored" data-anchor-id="current-articles">Current articles</h2>
-<section id="core-methods" class="level3">
-<h3 class="anchored" data-anchor-id="core-methods">Core Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM001 · Forecast Evaluation · Foundation
-</div>
-<section id="out-of-sample-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="out-of-sample-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">Out-of-Sample Forecast Evaluation</a></h3>
-<p>Can a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.</p>
+<section id="goal" class="level1">
+<h1>Goal</h1>
+<p>This lab uses the same four-period synthetic return path as QM007. It changes only the <strong>rebalancing frequency</strong> so that you can see how a trading rule changes the weight path, terminal wealth, and turnover.</p>
+<p>The example is a numerical illustration, not evidence that one rebalancing frequency is better than another.</p>
 </section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM002 · Forecast Evaluation · Foundation
-</div>
-<section id="rolling-vs-expanding-windows" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-vs-expanding-windows"><a href="./10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">Rolling vs Expanding Windows</a></h3>
-<p>How much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.</p>
+<section id="run-the-python-version" class="level1">
+<h1>Run the Python version</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm007_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The script compares:</p>
+<ul>
+<li>rebalancing to 50/50 every period;</li>
+<li>rebalancing every two periods; and</li>
+<li>buy-and-hold after the initial 50/50 allocation.</li>
+</ul>
 </section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM003 · DATA &amp; RESEARCH DESIGN · FOUNDATION
-</div>
-<section id="look-ahead-bias-and-data-leakage" class="level3">
-<h3 class="anchored" data-anchor-id="look-ahead-bias-and-data-leakage"><a href="./80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">Look-Ahead Bias and Data Leakage</a></h3>
-<p>When can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.</p>
+<section id="what-to-inspect" class="level1">
+<h1>What to inspect</h1>
+<ol type="1">
+<li>A non-rebalance date carries the <strong>drifted</strong> weights forward.</li>
+<li>A rebalance changes the weights used in the <strong>next</strong> period; it does not change the return already earned.</li>
+<li>More frequent rebalancing can increase turnover, but this four-period path does not establish a general performance ranking.</li>
+</ol>
 </section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM004 · FORECAST EVALUATION · INTERMEDIATE
-</div>
-<section id="dieboldmariano-test" class="level3">
-<h3 class="anchored" data-anchor-id="dieboldmariano-test"><a href="./10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">Diebold–Mariano Test</a></h3>
-<p>Does a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.</p>
+<section id="try-one-change" class="level1">
+<h1>Try one change</h1>
+<p>Edit the return path in <code>data/qm007_two_asset_returns.csv</code>, or change the target weights in the script. Keep the timing contract unchanged: start-of-period weights earn the current period’s returns, then weights drift, then an optional rebalance sets the next period’s starting weights.</p>
 </section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM005 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="model-confidence-set" class="level3">
-<h3 class="anchored" data-anchor-id="model-confidence-set"><a href="./10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">Model Confidence Set</a></h3>
-<p>When does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM006 · STATISTICAL INFERENCE · INTERMEDIATE
-</div>
-<section id="block-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="block-bootstrap"><a href="./20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">Block Bootstrap</a></h3>
-<p>How should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.</p>
-</section>
-</div>
-</section>
-<section id="investment-methods" class="level3">
-<h3 class="anchored" data-anchor-id="investment-methods">Investment Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM007 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="portfolio-backtesting-and-rebalancing" class="level3">
-<h3 class="anchored" data-anchor-id="portfolio-backtesting-and-rebalancing"><a href="./40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">Portfolio Backtesting and Rebalancing</a></h3>
-<p>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.</p>
-</section>
-</div>
-</section>
-</section>
-<section id="library-principles" class="level2">
-<h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
-<p>The library is <strong>paper-driven rather than encyclopedic</strong>. Methods are added when they materially help readers understand a research design, empirical result, or investment decision. Articles favor plain-language intuition before unnecessary formalism, but do not simplify away assumptions that matter for validity.</p>
-<p>Each computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence.</p>
-</section>
-<section id="next-methods" class="level2">
-<h2 class="anchored" data-anchor-id="next-methods">Next methods</h2>
-<p>Future additions remain paper-driven and will be added when they materially support active SlackQuant research.</p>
+<section id="r-version" class="level1">
+<h1>R version</h1>
+<p>If base R is available:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> r/qm007_hands_on.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The Python and R files implement the same accounting convention. Runtime parity for R remains environment-dependent until it is executed in the normal local toolchain.</p>
 
 
 </section>
@@ -631,5 +627,5 @@ QM007 · PORTFOLIO METHODS · FOUNDATION
 
 
 
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

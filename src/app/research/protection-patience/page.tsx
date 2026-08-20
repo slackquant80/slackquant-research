@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
+import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -56,6 +57,7 @@ export default function ProtectionPatiencePage() {
           <a href="#portfolio">Portfolio Design</a>
           <a href="#robustness">Robustness</a>
           <a href="#scope">Scope &amp; Interpretation</a>
+          <a href="#methods">Quantitative Methods</a>
           <a href="#repro">Reproducibility</a>
           <a href="#citation">Citation</a>
         </aside>
@@ -304,6 +306,8 @@ export default function ProtectionPatiencePage() {
               </div>
             </div>
           </section>
+
+          <MethodsUsed researchSlug={item.slug} />
 
           <section className="prose-section" id="repro">
             <h2>Reproducibility</h2>

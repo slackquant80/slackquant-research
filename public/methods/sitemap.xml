@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html</loc>
+    <lastmod>2026-08-20T05:04:30.373Z</lastmod>
+  </url>
+  <url>
     <loc>https://research.slackquant.com/methods/20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html</loc>
     <lastmod>2026-08-19T22:08:10.801Z</lastmod>
   </url>
@@ -26,7 +30,7 @@
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/index.html</loc>
-    <lastmod>2026-08-20T00:34:46.443Z</lastmod>
+    <lastmod>2026-08-20T05:04:32.393Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html</loc>
@@ -42,14 +46,18 @@
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html</loc>
-    <lastmod>2026-08-19T22:14:50.153Z</lastmod>
+    <lastmod>2026-08-20T04:30:53.715Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html</loc>
-    <lastmod>2026-08-19T22:01:35.704Z</lastmod>
+    <lastmod>2026-08-20T04:30:53.828Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html</loc>
     <lastmod>2026-08-19T22:08:10.769Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html</loc>
+    <lastmod>2026-08-20T05:04:30.149Z</lastmod>
   </url>
 </urlset>
