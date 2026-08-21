@@ -95,7 +95,7 @@ div.csl-indent {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-5bb00137787fb61b6cc7a5bfc122228d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-5dffd768d4ee63ad8c6e2a0d3fb079ba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -199,11 +199,11 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
   <div class="sq-platform-shell sq-platform-nav">
-    <a class="sq-platform-brand" href="https://research.slackquant.com/">SlackQuant Research</a>
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
     <nav class="sq-platform-nav-links" aria-label="Primary">
-      <a href="https://research.slackquant.com/research/">Research</a>
-      <a href="https://research.slackquant.com/methods/">Methods</a>
-      <a href="https://research.slackquant.com/about/">About</a>
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
       <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
     </nav>
   </div>
@@ -1144,6 +1144,108 @@ Perold, André F., and William F. Sharpe. 1988. <span>“Dynamic Strategies for 
 </div>
   </div>
 </footer>
+<script id="sq-method-browser-script">
+  (() => {
+    const methods = [
+      { id: "QM001", title: "Out-of-Sample Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html", folder: "QM001_OUT_OF_SAMPLE_EVALUATION" },
+      { id: "QM002", title: "Rolling vs Expanding Windows", path: "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html", folder: "QM002_ROLLING_VS_EXPANDING_WINDOWS" },
+      { id: "QM003", title: "Look-Ahead Bias and Data Leakage", path: "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html", folder: "QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE" },
+      { id: "QM004", title: "Diebold–Mariano Test", path: "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html", folder: "QM004_DIEBOLD_MARIANO_TEST" },
+      { id: "QM005", title: "Model Confidence Set", path: "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html", folder: "QM005_MODEL_CONFIDENCE_SET" },
+      { id: "QM006", title: "Block Bootstrap", path: "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html", folder: "QM006_BLOCK_BOOTSTRAP" },
+      { id: "QM007", title: "Portfolio Backtesting and Rebalancing", path: "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html", folder: "QM007_PORTFOLIO_BACKTESTING_REBALANCING" },
+      { id: "QM008", title: "Drawdown, Underwater Duration, and Recovery", path: "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html", folder: "QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY" },
+    ];
+
+    const init = () => {
+      const currentPath = decodeURIComponent(window.location.pathname);
+      const current = methods.find((method) =>
+        currentPath.includes(`/${method.folder}/`)
+      );
+      if (!current) return;
+
+      const panel = document.createElement("nav");
+      panel.className = "sq-method-browser";
+      panel.setAttribute("aria-label", "Browse Quantitative Methods");
+
+      const label = document.createElement("label");
+      label.className = "sq-method-browser-label";
+      label.htmlFor = "sq-method-browser-select";
+      label.textContent = "Browse Methods";
+
+      const controls = document.createElement("div");
+      controls.className = "sq-method-browser-controls";
+
+      const select = document.createElement("select");
+      select.id = "sq-method-browser-select";
+      select.className = "sq-method-browser-select";
+      select.setAttribute("aria-label", "Choose another Quantitative Method");
+
+      methods.forEach((method) => {
+        const option = document.createElement("option");
+        option.value = method.path;
+        option.textContent = `${method.id} — ${method.title}`;
+        option.selected = method.id === current.id;
+        select.appendChild(option);
+      });
+
+      const methodMarker = "/methods/";
+      let base = "/";
+      const methodsIndex = currentPath.indexOf(methodMarker);
+      if (methodsIndex >= 0) {
+        base = currentPath.slice(0, methodsIndex + methodMarker.length);
+      } else {
+        const domainMarkers = [
+          "/10_FORECAST_EVALUATION/",
+          "/20_STATISTICAL_INFERENCE/",
+          "/40_PORTFOLIO_METHODS/",
+          "/80_DATA_RESEARCH_DESIGN/",
+        ];
+        for (const marker of domainMarkers) {
+          const index = currentPath.indexOf(marker);
+          if (index >= 0) {
+            base = currentPath.slice(0, index + 1);
+            break;
+          }
+        }
+      }
+
+      const resolve = (relativePath) => `${base}${relativePath}`;
+
+      select.addEventListener("change", () => {
+        window.location.assign(resolve(select.value));
+      });
+
+      const indexLink = document.createElement("a");
+      indexLink.className = "sq-method-browser-index";
+      indexLink.href = resolve("index.html");
+      indexLink.target = "_self";
+      indexLink.textContent = "All Methods";
+
+      controls.appendChild(select);
+      controls.appendChild(indexLink);
+      panel.appendChild(label);
+      panel.appendChild(controls);
+
+      const kicker = document.querySelector(".method-kicker");
+      const titleBlock = document.getElementById("title-block-header");
+      const main = document.getElementById("quarto-document-content");
+      if (kicker) {
+        kicker.insertAdjacentElement("afterend", panel);
+      } else if (titleBlock) {
+        titleBlock.insertAdjacentElement("afterend", panel);
+      } else if (main) {
+        main.prepend(panel);
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
 <script id="sq-external-link-policy">
   (() => {
     const canonicalHost = "research.slackquant.com";
@@ -1154,9 +1256,22 @@ Perold, André F., and William F. Sharpe. 1988. <span>“Dynamic Strategies for 
         let url;
         try { url = new URL(href, window.location.href); } catch { return; }
         if (url.protocol !== "http:" && url.protocol !== "https:") return;
-        if (url.hostname === canonicalHost) return;
-        anchor.target = "_blank";
+        const isFirstParty =
+          url.origin === window.location.origin ||
+          url.hostname === canonicalHost;
         const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
+        if (isFirstParty) {
+          anchor.removeAttribute("target");
+          rel.delete("noopener");
+          rel.delete("noreferrer");
+          if (rel.size) {
+            anchor.rel = Array.from(rel).join(" ");
+          } else {
+            anchor.removeAttribute("rel");
+          }
+          return;
+        }
+        anchor.target = "_blank";
         rel.add("noopener");
         rel.add("noreferrer");
         anchor.rel = Array.from(rel).join(" ");

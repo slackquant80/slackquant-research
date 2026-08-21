@@ -4,6 +4,18 @@ import { useEffect } from "react";
 
 const CANONICAL_HOST = "research.slackquant.com";
 
+function normalizeFirstPartyAnchor(anchor: HTMLAnchorElement) {
+  anchor.removeAttribute("target");
+  const rel = new Set(anchor.rel.split(/\s+/).filter(Boolean));
+  rel.delete("noopener");
+  rel.delete("noreferrer");
+  if (rel.size) {
+    anchor.rel = Array.from(rel).join(" ");
+  } else {
+    anchor.removeAttribute("rel");
+  }
+}
+
 function enforceExternalLinkPolicy() {
   document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((anchor) => {
     const href = anchor.getAttribute("href");
@@ -20,7 +32,11 @@ function enforceExternalLinkPolicy() {
 
     const isInternal =
       url.origin === window.location.origin || url.hostname === CANONICAL_HOST;
-    if (isInternal) return;
+
+    if (isInternal) {
+      normalizeFirstPartyAnchor(anchor);
+      return;
+    }
 
     anchor.target = "_blank";
     const rel = new Set(anchor.rel.split(/\s+/).filter(Boolean));

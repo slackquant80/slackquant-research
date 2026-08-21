@@ -27,6 +27,9 @@ foreach ($token in @(
 foreach ($token in @(
   'research.slackquant.com',
   'anchor.target = "_blank"',
+  'anchor.removeAttribute("target")',
+  'rel.delete("noopener")',
+  'rel.delete("noreferrer")',
   'rel.add("noopener")',
   'rel.add("noreferrer")',
   'MutationObserver'
