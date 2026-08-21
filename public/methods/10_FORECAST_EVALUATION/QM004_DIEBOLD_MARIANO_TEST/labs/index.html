@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-5dffd768d4ee63ad8c6e2a0d3fb079ba.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-76654b02cc57a8ec1b31ec5b27f05846.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -616,6 +616,121 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </div>
   </div>
 </footer>
+<script id="sq-method-index-discovery-script">
+  (() => {
+    const normalize = (value) =>
+      (value || "")
+        .toLocaleLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const categoryDisplay = (raw) => {
+      const key = normalize(raw);
+      const aliases = {
+        "forecast evaluation": "Forecast",
+        "statistical inference": "Statistical Inference",
+        "data & research design": "Data / Research Design",
+        "portfolio methods": "Portfolio",
+        "machine learning": "Machine Learning",
+        "ml methods": "Machine Learning",
+      };
+      if (aliases[key]) return aliases[key];
+      return raw
+        .toLocaleLowerCase()
+        .replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+    };
+
+    const init = () => {
+      const discovery = document.getElementById("sq-method-discovery");
+      const catalog = document.getElementById("sq-method-catalog");
+      const input = document.getElementById("sq-method-search");
+      const filterHost = document.getElementById("sq-method-filters");
+      const resultCount = document.getElementById("sq-method-result-count");
+      const empty = document.getElementById("sq-method-empty");
+      if (!discovery || !catalog || !input || !filterHost || !resultCount || !empty) return;
+
+      const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
+      const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      if (!rows.length) return;
+
+      const categories = new Map();
+      rows.forEach((row) => {
+        const meta = row.querySelector(".sq-meta")?.textContent || "";
+        const parts = meta.split("·").map((part) => part.trim());
+        const rawCategory = parts.length >= 2 ? parts[1] : "Other";
+        const category = normalize(rawCategory);
+        row.dataset.methodCategory = category;
+        row.dataset.methodSearch = normalize(row.textContent);
+        if (!categories.has(category)) {
+          categories.set(category, categoryDisplay(rawCategory));
+        }
+      });
+
+      let activeCategory = "all";
+      const buttons = new Map();
+
+      const addFilter = (key, label) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sq-method-filter";
+        button.dataset.methodFilter = key;
+        button.textContent = label;
+        button.setAttribute("aria-pressed", key === "all" ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeCategory = key;
+          buttons.forEach((item, itemKey) => {
+            item.setAttribute("aria-pressed", itemKey === activeCategory ? "true" : "false");
+          });
+          apply();
+        });
+        buttons.set(key, button);
+        filterHost.appendChild(button);
+      };
+
+      addFilter("all", "All");
+      categories.forEach((label, key) => addFilter(key, label));
+
+      const apply = () => {
+        const query = normalize(input.value);
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const queryMatch = !query || row.dataset.methodSearch.includes(query);
+          const categoryMatch =
+            activeCategory === "all" || row.dataset.methodCategory === activeCategory;
+          const show = queryMatch && categoryMatch;
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleRow = Array.from(group.querySelectorAll(".sq-method-row")).some(
+            (row) => !row.hidden
+          );
+          group.hidden = !hasVisibleRow;
+        });
+
+        resultCount.textContent = `${visible} ${visible === 1 ? "method" : "methods"}`;
+        empty.hidden = visible !== 0;
+        discovery.classList.toggle(
+          "is-filtering",
+          Boolean(query) || activeCategory !== "all"
+        );
+      };
+
+      input.addEventListener("input", apply);
+      input.addEventListener("search", apply);
+      apply();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
 <script id="sq-method-browser-script">
   (() => {
     const methods = [

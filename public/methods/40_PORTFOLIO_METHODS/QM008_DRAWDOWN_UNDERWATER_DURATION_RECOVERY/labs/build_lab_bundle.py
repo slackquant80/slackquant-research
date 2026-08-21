@@ -26,6 +26,7 @@ def build(output: Path = OUTPUT) -> Path:
             rel = src.relative_to(ROOT).as_posix()
             zi = zipfile.ZipInfo("qm008_hands_on_lab/" + rel, date_time=(2026, 8, 20, 0, 0, 0))
             zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.create_system = 3  # Canonicalize ZIP host metadata across operating systems.
             zi.external_attr = 0o100644 << 16
             z.writestr(zi, canonical_text_bytes(src), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
     return output
