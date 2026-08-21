@@ -4,7 +4,7 @@
     "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/labs/index.html",
     "title": "QM008 Hands-on Lab",
     "section": "",
-    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nQM008 · Hands-on Lab\n\n\nGoal\nUse a small wealth path to reproduce the state variables in the article:\n\nrunning high-water mark;\npeak-normalized drawdown;\nsigned underwater value;\ncurrent underwater age;\ncompleted peak-to-recovery duration; and\na right-censored unrecovered episode.\n\n\n\nData\nThe input is data/qm008_wealth_path.csv. It contains 11 regular-grid observations and is deliberately designed to include exact equality recoveries and one incomplete final episode.\n\n\nPython\npython python/qm008_hands_on.py\nThe script uses only the Python standard library.\n\n\nR\nWith base R available:\nRscript r/qm008_hands_on.R\nBoth implementations use the same QM008 convention: positive peak-normalized drawdown, equality recovery, elapsed peak-to-recovery intervals, and right-censoring when recovery has not occurred by sample end.\n\n\nTry one change\nChange the last wealth observation from 100 to 122 and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article’s convention.\nDo not change the recovery rule from &gt;= to &gt; in this exercise. That would be a different convention rather than a different observed path."
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nQM008 · Hands-on Lab\n\n\nGoal\nUse a small wealth path to reproduce the state variables in the article:\n\nrunning high-water mark;\npeak-normalized drawdown;\nsigned underwater value;\ncurrent underwater age;\ncompleted peak-to-recovery duration; and\na right-censored unrecovered episode.\n\n\n\nData\nThe input is data/qm008_wealth_path.csv. It contains 11 regular-grid observations and is deliberately designed to include exact equality recoveries and one incomplete final episode.\n\n\nPython\npython python/qm008_hands_on.py\nThe script uses only the Python standard library.\n\n\nR\nWith base R available:\nRscript r/qm008_hands_on.R\nBoth implementations use the same QM008 convention: positive peak-normalized drawdown, equality recovery, elapsed peak-to-recovery intervals, and right-censoring when recovery has not occurred by sample end.\n\n\nTry one change\nChange the last wealth observation from 100 to 122 and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article’s convention.\nDo not change the recovery condition from \\(W_q \\ge W_p\\) to \\(W_q &gt; W_p\\) in this exercise. That would be a different convention rather than a different observed path."
   },
   {
     "objectID": "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html",
@@ -553,11 +553,11 @@
     "text": "5. Fabricating recovery at the sample end\nAn unrecovered final episode is right-censored. The sample end tells us its age-to-date, not its completed recovery duration."
   },
   {
-    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-new-high-when-the-stated-rule-says-re-touch",
-    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-new-high-when-the-stated-rule-says-re-touch",
+    "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak",
+    "href": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak",
     "title": "Drawdown, Underwater Duration, and Recovery",
-    "section": "6. Requiring a new high when the stated rule says re-touch",
-    "text": "6. Requiring a new high when the stated rule says re-touch\nW_t\\ge W_p and W_t&gt;W_p are different recovery rules. A backtest or risk report should not switch between them silently."
+    "section": "6. Requiring a strict new high when recovery is defined at the prior peak",
+    "text": "6. Requiring a strict new high when recovery is defined at the prior peak\n\\(W_q \\ge W_p\\) and \\(W_q &gt; W_p\\) define different recovery rules. If the stated convention counts regaining the prior peak as recovery, a backtest or risk report should not silently replace it with a strict-new-high rule."
   },
   {
     "objectID": "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html#ignoring-sampling-frequency",

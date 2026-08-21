@@ -185,7 +185,7 @@ window.Quarto = {
   <li><a href="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart" id="toc-mixing-positive-drawdown-depth-with-a-negative-underwater-chart" class="nav-link" data-scroll-target="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart">3. Mixing positive drawdown depth with a negative underwater chart</a></li>
   <li><a href="#treating-below-peak-observations-as-peak-to-recovery-duration" id="toc-treating-below-peak-observations-as-peak-to-recovery-duration" class="nav-link" data-scroll-target="#treating-below-peak-observations-as-peak-to-recovery-duration">4. Treating below-peak observations as peak-to-recovery duration</a></li>
   <li><a href="#fabricating-recovery-at-the-sample-end" id="toc-fabricating-recovery-at-the-sample-end" class="nav-link" data-scroll-target="#fabricating-recovery-at-the-sample-end">5. Fabricating recovery at the sample end</a></li>
-  <li><a href="#requiring-a-new-high-when-the-stated-rule-says-re-touch" id="toc-requiring-a-new-high-when-the-stated-rule-says-re-touch" class="nav-link" data-scroll-target="#requiring-a-new-high-when-the-stated-rule-says-re-touch">6. Requiring a new high when the stated rule says re-touch</a></li>
+  <li><a href="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" id="toc-requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" class="nav-link" data-scroll-target="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">6. Requiring a strict new high when recovery is defined at the prior peak</a></li>
   <li><a href="#ignoring-sampling-frequency" id="toc-ignoring-sampling-frequency" class="nav-link" data-scroll-target="#ignoring-sampling-frequency">7. Ignoring sampling frequency</a></li>
   <li><a href="#reading-depth-as-a-forecast-of-recovery-time" id="toc-reading-depth-as-a-forecast-of-recovery-time" class="nav-link" data-scroll-target="#reading-depth-as-a-forecast-of-recovery-time">8. Reading depth as a forecast of recovery time</a></li>
   </ul></li>
@@ -415,7 +415,7 @@ q
 =
 \min\{t&gt;p:W_t\ge W_p\}.
 \]</span></p>
-<p><strong>Equality counts as recovery.</strong> The portfolio does not need to make a strict new all-time high. A strict-<span class="math inline">\(&gt;\)</span> rule is a different convention and can produce a later date.</p>
+<p><strong>Equality counts as recovery.</strong> The portfolio does not need to make a strict new all-time high. A strict-new-high condition, <span class="math inline">\(W_q &gt; W_p\)</span>, is a different convention and can produce a later recovery date.</p>
 <p>Within a completed episode, let <span class="math inline">\(m\)</span> be an index attaining the minimum wealth after the peak and before recovery. If the trough is tied, the example code records the <strong>earliest</strong> minimum. The elapsed times are then reported explicitly:</p>
 <p><span class="math display">\[
 \text{time to trough}=m-p,
@@ -664,7 +664,7 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </tr>
 <tr class="odd">
 <td>Recovery threshold</td>
-<td>Re-touch of prior peak (<code>&gt;=</code>) or strict new high (<code>&gt;</code>)</td>
+<td>Regain the prior peak (<span class="math inline">\(W_q \ge W_p\)</span>) or require a strict new high (<span class="math inline">\(W_q &gt; W_p\)</span>)</td>
 </tr>
 <tr class="even">
 <td>Duration unit</td>
@@ -712,9 +712,9 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <h2 class="anchored" data-anchor-id="fabricating-recovery-at-the-sample-end">5. Fabricating recovery at the sample end</h2>
 <p>An unrecovered final episode is right-censored. The sample end tells us its age-to-date, not its completed recovery duration.</p>
 </section>
-<section id="requiring-a-new-high-when-the-stated-rule-says-re-touch" class="level2">
-<h2 class="anchored" data-anchor-id="requiring-a-new-high-when-the-stated-rule-says-re-touch">6. Requiring a new high when the stated rule says re-touch</h2>
-<p><code>W_t\ge W_p</code> and <code>W_t&gt;W_p</code> are different recovery rules. A backtest or risk report should not switch between them silently.</p>
+<section id="requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" class="level2">
+<h2 class="anchored" data-anchor-id="requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">6. Requiring a strict new high when recovery is defined at the prior peak</h2>
+<p><span class="math inline">\(W_q \ge W_p\)</span> and <span class="math inline">\(W_q &gt; W_p\)</span> define different recovery rules. If the stated convention counts regaining the prior peak as recovery, a backtest or risk report should not silently replace it with a strict-new-high rule.</p>
 </section>
 <section id="ignoring-sampling-frequency" class="level2">
 <h2 class="anchored" data-anchor-id="ignoring-sampling-frequency">7. Ignoring sampling frequency</h2>

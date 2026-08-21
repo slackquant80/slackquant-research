@@ -51,4 +51,4 @@ Both implementations use the same QM008 convention: positive peak-normalized dra
 
 Change the last wealth observation from `100` to `122` and rerun the code. The final episode should switch from censored to completed because re-touching the prior peak counts as recovery under the article's convention.
 
-Do **not** change the recovery rule from `>=` to `>` in this exercise. That would be a different convention rather than a different observed path.
+Do **not** change the recovery condition from $W_q \ge W_p$ to $W_q > W_p$ in this exercise. That would be a different convention rather than a different observed path.
