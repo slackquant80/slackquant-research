@@ -282,10 +282,10 @@ window.Quarto = {
 </section>
 <section id="intuition-what-changes-at-each-forecast-origin" class="level1">
 <h1>Intuition: What Changes at Each Forecast Origin?</h1>
-<div id="fig-window-schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-window-schematic" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Schematic comparing an expanding estimation window with a fixed-length rolling window across forecast origins.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-window-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm002_window_schematic.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm002_window_schematic.svg" class="img-fluid figure-img" style="width:95.0%" alt="Schematic comparing an expanding estimation window with a fixed-length rolling window across forecast origins.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-window-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: An expanding window keeps earlier observations as the forecast origin moves forward. A rolling window keeps a fixed-length recent block.
@@ -377,10 +377,10 @@ y_t=\phi_t y_{t-1}+\varepsilon_t,
 <li><strong>Expanding:</strong> all admissible observations available by the origin.</li>
 <li><strong>Rolling:</strong> the most recent 60 estimation pairs.</li>
 </ul>
-<div id="fig-parameter-adaptation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-parameter-adaptation" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Coefficient paths showing faster adaptation of the rolling estimate after a synthetic structural break.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-parameter-adaptation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm002_parameter_adaptation.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm002_parameter_adaptation.svg" class="img-fluid figure-img" style="width:95.0%" alt="Coefficient paths showing faster adaptation of the rolling estimate after a synthetic structural break.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-parameter-adaptation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The fixed rolling window responds more quickly to the synthetic break, while the expanding estimate retains substantial influence from the earlier regime.

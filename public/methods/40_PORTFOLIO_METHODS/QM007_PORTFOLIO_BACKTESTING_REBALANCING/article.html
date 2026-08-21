@@ -177,7 +177,7 @@ window.Quarto = {
   <li><a href="#information-timing-for-signal-driven-weights" id="toc-information-timing-for-signal-driven-weights" class="nav-link" data-scroll-target="#information-timing-for-signal-driven-weights">Information Timing for Signal-Driven Weights</a></li>
   <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
   <li><a href="#hands-on-lab-change-the-rebalancing-frequency" id="toc-hands-on-lab-change-the-rebalancing-frequency" class="nav-link" data-scroll-target="#hands-on-lab-change-the-rebalancing-frequency">Hands-on Lab: Change the Rebalancing Frequency</a></li>
-  <li><a href="#what-a-backtest-must-declare" id="toc-what-a-backtest-must-declare" class="nav-link" data-scroll-target="#what-a-backtest-must-declare">What a Backtest Must Declare</a></li>
+  <li><a href="#what-a-backtest-should-state" id="toc-what-a-backtest-should-state" class="nav-link" data-scroll-target="#what-a-backtest-should-state">What a Backtest Should State</a></li>
   <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
   <ul class="collapse">
   <li><a href="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t" id="toc-letting-w_t-earn-r_t-when-w_t-uses-information-from-t" class="nav-link" data-scroll-target="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t">1. Letting <span class="math inline">\(w_t\)</span> earn <span class="math inline">\(r_t\)</span> when <span class="math inline">\(w_t\)</span> uses information from <span class="math inline">\(t\)</span></a></li>
@@ -187,7 +187,7 @@ window.Quarto = {
   <li><a href="#calling-a-gross-backtest-net-performance" id="toc-calling-a-gross-backtest-net-performance" class="nav-link" data-scroll-target="#calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</a></li>
   <li><a href="#treating-a-clean-backtest-as-proof-of-a-good-strategy" id="toc-treating-a-clean-backtest-as-proof-of-a-good-strategy" class="nav-link" data-scroll-target="#treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</a></li>
   </ul></li>
-  <li><a href="#when-not-to-use-this-base-form-directly" id="toc-when-not-to-use-this-base-form-directly" class="nav-link" data-scroll-target="#when-not-to-use-this-base-form-directly">When Not to Use This Base Form Directly</a></li>
+  <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
   <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
@@ -263,7 +263,7 @@ window.Quarto = {
 <section id="the-question" class="level1">
 <h1>The Question</h1>
 <p>A portfolio rule may sound simple: choose weights, multiply them by returns, and compound the result.</p>
-<p>The difficulty is that weights have <strong>timestamps</strong>. Suppose a portfolio begins month <span class="math inline">\(t\)</span> with 50% in each of two assets. If one asset rises and the other does not, the portfolio no longer ends the month at 50/50. If the strategy does not trade, those drifted weights must carry into the next month. If it does trade, the rebalance happens only after the return that caused the drift has already been earned.</p>
+<p>The important complication is timing: <strong>portfolio weights are dated</strong>. Suppose a portfolio begins month <span class="math inline">\(t\)</span> with 50% in each of two assets. If one asset rises and the other does not, the portfolio no longer ends the month at 50/50. If the strategy does not trade, those drifted weights must carry into the next month. If it does trade, the rebalance happens only after the return that caused the drift has already been earned.</p>
 <p>That leads to the central question:</p>
 <blockquote class="blockquote">
 <p><strong>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio?</strong></p>
@@ -279,10 +279,10 @@ window.Quarto = {
 <section id="intuition-one-period-has-four-states" class="level1">
 <h1>Intuition: One Period Has Four States</h1>
 <p>A useful way to reason about a backtest is to split every period into four states.</p>
-<div id="fig-qm007-timing" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-qm007-timing" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Portfolio timeline from start-of-period weights through returns, weight drift, and optional rebalancing for the next period.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm007_timing_flow.svg" class="img-fluid figure-img" style="width:96.0%">
+<img src="figures/rendered/qm007_timing_flow.svg" class="img-fluid figure-img" style="width:96.0%" alt="Portfolio timeline from start-of-period weights through returns, weight drift, and optional rebalancing for the next period.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Start-of-period weights earn the current period’s returns. Those returns create drifted pre-trade weights. An optional rebalance then sets the weights that enter the next period.
@@ -305,7 +305,7 @@ Figure&nbsp;1: Start-of-period weights earn the current period’s returns. Thos
 <p><span class="math display">\[
 x_{i,t}=1+r_{i,t}.
 \]</span></p>
-<p>Let <span class="math inline">\(w_{i,t-1}\)</span> be the actual weight in force <strong>before</strong> period-<span class="math inline">\(t\)</span> returns are realized. In the fully invested long-only base case,</p>
+<p>Let <span class="math inline">\(w_{i,t-1}\)</span> be the actual weight in force <strong>before</strong> period-<span class="math inline">\(t\)</span> returns are realized. In the fully invested long-only setup used here,</p>
 <p><span class="math display">\[
 \sum_i w_{i,t-1}=1,
 \qquad w_{i,t-1}\ge 0.
@@ -376,7 +376,7 @@ V_t=V_{t-1}(1+r_{p,t}).
 <li>the execution convention that determines when the new weights start earning returns.</li>
 </ul>
 <p>Perold and Sharpe describe dynamic asset-allocation strategies as explicit rules for changing portfolio exposures as asset values move <span class="citation" data-cites="peroldsharpe1988">(<a href="#ref-peroldsharpe1988" role="doc-biblioref">Perold and Sharpe 1988</a>)</span>. Buy-and-hold is the no-trade case after the initial allocation. A constant-mix strategy is different: it restores a constant fraction of wealth to the risky asset according to its stated rebalance rule.</p>
-<p>Under this article’s base convention, a rebalance at the end of period <span class="math inline">\(t\)</span> changes the portfolio from <span class="math inline">\(\widetilde{\mathbf w}_t\)</span> to <span class="math inline">\(\mathbf w_t\)</span>. The new weights earn <strong>period <span class="math inline">\(t+1\)</span></strong>, not the return that has already occurred in period <span class="math inline">\(t\)</span>.</p>
+<p>Under the convention used here, a rebalance at the end of period <span class="math inline">\(t\)</span> changes the portfolio from <span class="math inline">\(\widetilde{\mathbf w}_t\)</span> to <span class="math inline">\(\mathbf w_t\)</span>. The new weights earn <strong>period <span class="math inline">\(t+1\)</span></strong>, not the return that has already occurred in period <span class="math inline">\(t\)</span>.</p>
 </section>
 <section id="numerical-illustration-the-same-returns-different-rules" class="level1">
 <h1>Numerical Illustration: The Same Returns, Different Rules</h1>
@@ -397,29 +397,29 @@ V_t=V_{t-1}(1+r_{p,t}).
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Period</th>
+<th style="text-align: center;">Period</th>
 <th style="text-align: center;">Asset A</th>
 <th style="text-align: center;">Asset B</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>1</td>
+<td style="text-align: center;">1</td>
 <td style="text-align: center;">10%</td>
 <td style="text-align: center;">0%</td>
 </tr>
 <tr class="even">
-<td>2</td>
+<td style="text-align: center;">2</td>
 <td style="text-align: center;">-10%</td>
 <td style="text-align: center;">0%</td>
 </tr>
 <tr class="odd">
-<td>3</td>
+<td style="text-align: center;">3</td>
 <td style="text-align: center;">20%</td>
 <td style="text-align: center;">-5%</td>
 </tr>
 <tr class="even">
-<td>4</td>
+<td style="text-align: center;">4</td>
 <td style="text-align: center;">-5%</td>
 <td style="text-align: center;">10%</td>
 </tr>
@@ -449,16 +449,16 @@ V_t=V_{t-1}(1+r_{p,t}).
 <div class="qm-table-qm007-path">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 17%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Period</th>
+<th style="text-align: center;">Period</th>
 <th style="text-align: center;">Rebalanced return</th>
 <th style="text-align: center;">Rebalanced wealth</th>
 <th style="text-align: center;">Pre-trade weight in A</th>
@@ -468,7 +468,7 @@ V_t=V_{t-1}(1+r_{p,t}).
 </thead>
 <tbody>
 <tr class="odd">
-<td>1</td>
+<td style="text-align: center;">1</td>
 <td style="text-align: center;">5.000%</td>
 <td style="text-align: center;">1.050000</td>
 <td style="text-align: center;">52.381%</td>
@@ -476,7 +476,7 @@ V_t=V_{t-1}(1+r_{p,t}).
 <td style="text-align: center;">2.381%</td>
 </tr>
 <tr class="even">
-<td>2</td>
+<td style="text-align: center;">2</td>
 <td style="text-align: center;">-5.000%</td>
 <td style="text-align: center;">0.997500</td>
 <td style="text-align: center;">47.368%</td>
@@ -484,7 +484,7 @@ V_t=V_{t-1}(1+r_{p,t}).
 <td style="text-align: center;">2.632%</td>
 </tr>
 <tr class="odd">
-<td>3</td>
+<td style="text-align: center;">3</td>
 <td style="text-align: center;">7.500%</td>
 <td style="text-align: center;">1.072313</td>
 <td style="text-align: center;">55.814%</td>
@@ -492,7 +492,7 @@ V_t=V_{t-1}(1+r_{p,t}).
 <td style="text-align: center;">5.814%</td>
 </tr>
 <tr class="even">
-<td>4</td>
+<td style="text-align: center;">4</td>
 <td style="text-align: center;">2.500%</td>
 <td style="text-align: center;">1.099120</td>
 <td style="text-align: center;">46.341%</td>
@@ -503,10 +503,10 @@ V_t=V_{t-1}(1+r_{p,t}).
 </table>
 </div>
 <p>Now compare the same initial 50/50 portfolio with <strong>buy-and-hold</strong>. After period 1, the 52.381/47.619 drift is carried into period 2 because no trade occurs. That changes period-2 return and every later weight.</p>
-<div id="fig-qm007-wealth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-qm007-wealth" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Wealth paths comparing periodic 50/50 rebalancing with buy-and-hold on the same synthetic asset returns.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm007_wealth_paths.svg" class="img-fluid figure-img" style="width:92.0%">
+<img src="figures/rendered/qm007_wealth_paths.svg" class="img-fluid figure-img" style="width:92.0%" alt="Wealth paths comparing periodic 50/50 rebalancing with buy-and-hold on the same synthetic asset returns.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The two rules begin with the same 50/50 allocation and see the same asset returns. Their wealth paths diverge because periodic rebalancing resets the weights while buy-and-hold carries drift forward. The terminal difference is specific to this synthetic path.
@@ -518,45 +518,45 @@ Figure&nbsp;2: The two rules begin with the same 50/50 allocation and see the sa
 </section>
 <section id="turnover-state-the-convention" class="level1">
 <h1>Turnover: State the Convention</h1>
-<p>“Turnover” is not a convention-free scalar.</p>
+<p>There is no single universal turnover convention.</p>
 <p>DeMiguel, Garlappi, and Uppal measure the amount traded by comparing desired post-rebalance weights with the portfolio weights that exist immediately before rebalancing <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>. Following that structure, define <strong>L1 turnover</strong> as</p>
 <p><span class="math display">\[
 TO_t^{L1}
 =
 \sum_i |w_{i,t}-\widetilde w_{i,t}|.
 \]</span></p>
-<p>For the fully invested, no-external-flow base case in this article, total buys equal total sells. We therefore also report an explicitly named <strong>one-way turnover</strong> convention:</p>
+<p>For the fully invested, no-external-flow setup used here, total buys equal total sells. Under that setup, we also report an explicitly named <strong>one-way turnover</strong> convention:</p>
 <p><span class="math display">\[
 TO_t^{1w}
 =
 \frac12 TO_t^{L1}.
 \]</span></p>
-<p>The factor of one-half is an accounting consequence of the scoped base case; it is not presented as a universal naming standard.</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="Never report turnover without the equation">
+<p>The factor of one-half follows from this accounting setup; it is not presented as a universal definition of turnover.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="State the turnover formula">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Never report turnover without the equation
+<span class="screen-reader-only">Warning</span>State the turnover formula
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A statement such as “turnover is 10%” is incomplete unless the reader knows whether the number is L1, one-way, annualized, averaged across dates, or defined another way. QM009 treats the separate question of how a declared turnover measure maps into trading costs and net performance.</p>
+<p>A statement such as “turnover is 10%” is incomplete unless the reader knows whether the number is L1, one-way, annualized, averaged across dates, or defined another way. How a declared turnover measure maps into trading costs and net performance is a separate accounting question.</p>
 </div>
 </div>
 </section>
 <section id="information-timing-for-signal-driven-weights" class="level1">
 <h1>Information Timing for Signal-Driven Weights</h1>
-<p>A backtest may use fixed targets, but many investment rules estimate weights from historical information. The timing contract should then be written before any performance code is run.</p>
-<p>Under the base next-period convention:</p>
+<p>A backtest may use fixed targets, but many investment rules estimate weights from historical information. For signal-driven portfolios, write down the information-timing rule before calculating performance.</p>
+<p>Under the next-period convention used here:</p>
 <ol type="1">
 <li>information available through the end of period <span class="math inline">\(t\)</span> is used to form the target <span class="math inline">\(\mathbf w_t\)</span>;</li>
 <li>the portfolio trades, if the execution rule allows it, after that information becomes available; and</li>
 <li><span class="math inline">\(\mathbf w_t\)</span> earns the return of period <span class="math inline">\(t+1\)</span>.</li>
 </ol>
 <p>This is the same broad out-of-sample discipline used in rolling portfolio evaluation: estimates from a historical window determine subsequent holdings, and those holdings are evaluated on future returns <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
-<p>A same-close implementation is not automatically impossible. It is simply a <strong>different empirical claim</strong>. It requires timestamps and execution assumptions precise enough to show that the signal was known and tradable at the price used in the backtest. The safe rule is not “always lag by one day” or “same-close is always wrong”; it is to make the information and execution boundary explicit and internally consistent.</p>
+<p>Same-close execution can be valid, but it relies on a different information and execution assumption. The timestamps must show that the signal was known and tradable at the price used in the backtest. The requirement is not a universal one-day lag; it is an explicit and internally consistent information-and-execution boundary.</p>
 </section>
 <section id="implementation-pattern" class="level1">
 <h1>Implementation Pattern</h1>
@@ -578,7 +578,7 @@ TO_t^{1w}
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> drifted</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is Python-like pseudocode. A production implementation still needs explicit rules for the return series, missing observations, universe membership, instrument inception, corporate actions, currencies, external cash flows, transaction costs, taxes, leverage, and execution.</p>
+<p>This is Python-like pseudocode. A complete backtest also needs explicit rules for the return series, missing observations, universe membership, instrument inception, corporate actions, currencies, external cash flows, transaction costs, taxes, leverage, and execution.</p>
 </section>
 <section id="hands-on-lab-change-the-rebalancing-frequency" class="level1">
 <h1>Hands-on Lab: Change the Rebalancing Frequency</h1>
@@ -589,8 +589,8 @@ TO_t^{1w}
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm007_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The exercise is useful because it changes one design choice while preserving the accounting timeline. More frequent rebalancing will generally create more opportunities to trade, but the realized turnover and wealth effects remain path dependent.</p>
 </section>
-<section id="what-a-backtest-must-declare" class="level1">
-<h1>What a Backtest Must Declare</h1>
+<section id="what-a-backtest-should-state" class="level1">
+<h1>What a Backtest Should State</h1>
 <p>The generic formulas do not decide how an empirical dataset should be built. Before interpreting historical performance, document the choices that can change the path.</p>
 <div class="qm-table-qm007-checklist">
 <table class="caption-top table">
@@ -669,16 +669,16 @@ TO_t^{1w}
 </section>
 <section id="calling-a-gross-backtest-net-performance" class="level2">
 <h2 class="anchored" data-anchor-id="calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</h2>
-<p>No transaction costs or taxes are deducted in the base accounting shown here. A gross path should remain labeled gross until a separately specified implementation-cost model is applied.</p>
+<p>No transaction costs or taxes are deducted in the gross accounting shown here. A gross path should remain labeled gross until a separately specified implementation-cost model is applied.</p>
 </section>
 <section id="treating-a-clean-backtest-as-proof-of-a-good-strategy" class="level2">
 <h2 class="anchored" data-anchor-id="treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</h2>
 <p>A technically correct historical simulation can still be overfit, economically weak, or selected from many alternatives after inspecting the same data. Backtest overfitting is a separate model-selection problem <span class="citation" data-cites="baileyetal2017">(<a href="#ref-baileyetal2017" role="doc-biblioref">Bailey et al. 2017</a>)</span>.</p>
 </section>
 </section>
-<section id="when-not-to-use-this-base-form-directly" class="level1">
-<h1>When Not to Use This Base Form Directly</h1>
-<p>The formulas above are intentionally scoped. They should not be copied unchanged when the portfolio has material features that alter the accounting, including:</p>
+<section id="when-this-setup-needs-to-be-extended" class="level1">
+<h1>When This Setup Needs to Be Extended</h1>
+<p>The accounting above assumes a relatively simple long-only return process. Extend the state variables and accounting explicitly when the portfolio includes:</p>
 <ul>
 <li>leverage, short positions, margin, or financing costs;</li>
 <li>external deposits or withdrawals;</li>
@@ -687,13 +687,13 @@ TO_t^{1w}
 <li>changing universes whose entry and exit rules are not already encoded in the return/weight process; or</li>
 <li>an execution convention that depends on intraday information and prices.</li>
 </ul>
-<p>Those cases can still be backtested, but the state variables and accounting must be extended rather than hidden inside the base formula.</p>
+<p>Those cases can still be backtested, but the state variables and accounting need to be extended explicitly.</p>
 </section>
 <section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>
 <ul>
 <li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: the broader information-boundary framework behind the signal-timing rules used here.</li>
-<li><strong>QM009 — Turnover, Transaction Costs, and Net Performance</strong> <em>(planned)</em>: extends the declared turnover convention into explicit trading-cost and net-return accounting.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a>: measures depth, time under water, and recovery on the wealth path produced by the backtest.</li>
 </ul>
 </section>
 <section id="used-in-slackquant-research" class="level1">

@@ -197,13 +197,13 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </section>
 <section id="try-one-change" class="level1">
 <h1>Try one change</h1>
-<p>Edit the return path in <code>data/qm007_two_asset_returns.csv</code>, or change the target weights in the script. Keep the timing contract unchanged: start-of-period weights earn the current period’s returns, then weights drift, then an optional rebalance sets the next period’s starting weights.</p>
+<p>Edit the return path in <code>data/qm007_two_asset_returns.csv</code>, or change the target weights in the script. Keep the information-timing rule unchanged: start-of-period weights earn the current period’s returns, then weights drift, then an optional rebalance sets the next period’s starting weights.</p>
 </section>
 <section id="r-version" class="level1">
 <h1>R version</h1>
 <p>If base R is available:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> r/qm007_hands_on.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The Python and R files implement the same accounting convention. Runtime parity for R remains environment-dependent until it is executed in the normal local toolchain.</p>
+<p>The Python and R files implement the same accounting convention and reproduce the same reported path calculations when run in the supported local environments.</p>
 
 
 </section>

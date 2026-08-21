@@ -275,10 +275,10 @@ window.Quarto = {
 \]</span></p>
 <p>When nearby observations are positively correlated, the covariance terms can materially increase uncertainty. An IID bootstrap breaks the time ordering and therefore does not reproduce those serial covariances in its resampled series.</p>
 <p>This issue appears well beyond sample means. Forecast-loss averages, regression statistics, portfolio-performance summaries, and other time-indexed estimators can all inherit dependence from the underlying sequence.</p>
-<div id="fig-block-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-block-workflow" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Comparison of IID resampling of individual observations with block resampling of consecutive observations.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-block-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm006_block_bootstrap_workflow.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm006_block_bootstrap_workflow.svg" class="img-fluid figure-img" style="width:95.0%" alt="Comparison of IID resampling of individual observations with block resampling of consecutive observations.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-block-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: IID resampling draws individual points and breaks serial order. A block bootstrap draws consecutive stretches so that local dependence is carried into the bootstrap sample.
@@ -420,10 +420,10 @@ B_i=(X_i,X_{i+1},\ldots,X_{i+\ell-1}),
 </div>
 <p>The IID bootstrap almost eliminates the lag-1 dependence in its resamples, while the moving-block samples retain much more of it. In this positive-dependence illustration, the block designs consequently produce substantially larger standard-error estimates than IID resampling.</p>
 <p>Because this is a synthetic example, the data-generating parameters are known. They imply a large-sample standard error of about 0.231 for the sample mean. In ordinary empirical work that benchmark is unavailable; it is shown here only to make the role of positive serial dependence more concrete.</p>
-<div id="fig-block-se" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-block-se" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Bootstrap standard-error comparison across IID and moving-block designs with several block lengths.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-block-se-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm006_bootstrap_se_by_design.svg" class="img-fluid figure-img" style="width:92.0%">
+<img src="figures/rendered/qm006_bootstrap_se_by_design.svg" class="img-fluid figure-img" style="width:92.0%" alt="Bootstrap standard-error comparison across IID and moving-block designs with several block lengths.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-block-se-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this positively autocorrelated synthetic series. Changing block length changes the dependence retained by the resampling design and therefore changes the uncertainty estimate.
@@ -454,7 +454,7 @@ Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this 
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    bootstrap_statistics.append(statistic(bootstrap_series))</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>standard_error <span class="op">=</span> sd(bootstrap_statistics)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is <strong>Python-like pseudocode</strong>, not a drop-in API. In applied work, document the block definition, boundary treatment, block length, number of resamples, statistic, and any centering or studentization used by the inferential procedure.</p>
+<p>The pseudocode is schematic rather than a drop-in implementation. In applied work, document the block definition, boundary treatment, block length, number of resamples, statistic, and any centering or studentization used by the inferential procedure.</p>
 </section>
 <section id="how-to-interpret-the-result" class="level1">
 <h1>How to Interpret the Result</h1>
@@ -566,14 +566,9 @@ Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this 
 <h1>Reproducibility</h1>
 <p>The accompanying materials include the synthetic series, resampling inputs, code, figures, and a hands-on lab in Python and R. The lab lets readers compare IID and moving-block resampling and vary the block length used in the illustration.</p>
 </section>
-<section id="references" class="level1">
-
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-buhlmann2002" class="csl-entry" role="listitem">
 Bühlmann, Peter. 2002. <span>“Bootstraps for Time Series.”</span> <em>Statistical Science</em> 17 (1): 52–72. <a href="https://doi.org/10.1214/ss/1023798998">https://doi.org/10.1214/ss/1023798998</a>.
 </div>
@@ -586,7 +581,12 @@ Künsch, Hans R. 1989. <span>“The Jackknife and the Bootstrap for General Stat
 <div id="ref-politisromano1994" class="csl-entry" role="listitem">
 Politis, Dimitris N., and Joseph P. Romano. 1994. <span>“The Stationary Bootstrap.”</span> <em>Journal of the American Statistical Association</em> 89 (428): 1303–13. <a href="https://doi.org/10.1080/01621459.1994.10476870">https://doi.org/10.1080/01621459.1994.10476870</a>.
 </div>
-</div></section></div></main> <!-- /main -->
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

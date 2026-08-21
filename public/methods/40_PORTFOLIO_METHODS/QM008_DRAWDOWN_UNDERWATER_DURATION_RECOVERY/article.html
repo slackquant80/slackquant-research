@@ -168,16 +168,16 @@ window.Quarto = {
   <ul>
   <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
   <li><a href="#start-with-the-wealth-path" id="toc-start-with-the-wealth-path" class="nav-link" data-scroll-target="#start-with-the-wealth-path">Start with the Wealth Path</a></li>
-  <li><a href="#drawdown-percentage-is-not-a-universal-formula" id="toc-drawdown-percentage-is-not-a-universal-formula" class="nav-link" data-scroll-target="#drawdown-percentage-is-not-a-universal-formula">“Drawdown Percentage” Is Not a Universal Formula</a></li>
+  <li><a href="#different-drawdown-percentages-use-different-denominators" id="toc-different-drawdown-percentages-use-different-denominators" class="nav-link" data-scroll-target="#different-drawdown-percentages-use-different-denominators">Different Drawdown Percentages Use Different Denominators</a></li>
   <li><a href="#maximum-drawdown-is-a-path-statistic" id="toc-maximum-drawdown-is-a-path-statistic" class="nav-link" data-scroll-target="#maximum-drawdown-is-a-path-statistic">Maximum Drawdown Is a Path Statistic</a></li>
   <li><a href="#time-under-water-needs-more-than-one-number" id="toc-time-under-water-needs-more-than-one-number" class="nav-link" data-scroll-target="#time-under-water-needs-more-than-one-number">Time Under Water Needs More Than One Number</a></li>
   <li><a href="#a-completed-drawdown-episode" id="toc-a-completed-drawdown-episode" class="nav-link" data-scroll-target="#a-completed-drawdown-episode">A Completed Drawdown Episode</a></li>
   <li><a href="#unrecovered-episodes-are-censored" id="toc-unrecovered-episodes-are-censored" class="nav-link" data-scroll-target="#unrecovered-episodes-are-censored">Unrecovered Episodes Are Censored</a></li>
   <li><a href="#why-a-20-loss-needs-a-25-gain-to-recover" id="toc-why-a-20-loss-needs-a-25-gain-to-recover" class="nav-link" data-scroll-target="#why-a-20-loss-needs-a-25-gain-to-recover">Why a 20% Loss Needs a 25% Gain to Recover</a></li>
   <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
-  <li><a href="#deterministic-illustration" id="toc-deterministic-illustration" class="nav-link" data-scroll-target="#deterministic-illustration">Deterministic Illustration</a></li>
+  <li><a href="#worked-path-drawdown-and-recovery-states" id="toc-worked-path-drawdown-and-recovery-states" class="nav-link" data-scroll-target="#worked-path-drawdown-and-recovery-states">Worked Path: Drawdown and Recovery States</a></li>
   <li><a href="#hands-on-lab-recompute-the-episodes" id="toc-hands-on-lab-recompute-the-episodes" class="nav-link" data-scroll-target="#hands-on-lab-recompute-the-episodes">Hands-on Lab: Recompute the Episodes</a></li>
-  <li><a href="#what-a-drawdown-report-must-declare" id="toc-what-a-drawdown-report-must-declare" class="nav-link" data-scroll-target="#what-a-drawdown-report-must-declare">What a Drawdown Report Must Declare</a></li>
+  <li><a href="#what-a-drawdown-report-should-state" id="toc-what-a-drawdown-report-should-state" class="nav-link" data-scroll-target="#what-a-drawdown-report-should-state">What a Drawdown Report Should State</a></li>
   <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
   <ul class="collapse">
   <li><a href="#calling-the-worst-one-period-return-maximum-drawdown" id="toc-calling-the-worst-one-period-return-maximum-drawdown" class="nav-link" data-scroll-target="#calling-the-worst-one-period-return-maximum-drawdown">1. Calling the worst one-period return “maximum drawdown”</a></li>
@@ -189,7 +189,7 @@ window.Quarto = {
   <li><a href="#ignoring-sampling-frequency" id="toc-ignoring-sampling-frequency" class="nav-link" data-scroll-target="#ignoring-sampling-frequency">7. Ignoring sampling frequency</a></li>
   <li><a href="#reading-depth-as-a-forecast-of-recovery-time" id="toc-reading-depth-as-a-forecast-of-recovery-time" class="nav-link" data-scroll-target="#reading-depth-as-a-forecast-of-recovery-time">8. Reading depth as a forecast of recovery time</a></li>
   </ul></li>
-  <li><a href="#when-not-to-use-this-base-form-directly" id="toc-when-not-to-use-this-base-form-directly" class="nav-link" data-scroll-target="#when-not-to-use-this-base-form-directly">When Not to Use This Base Form Directly</a></li>
+  <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
   <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
@@ -227,7 +227,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Drawdown, Underwater Duration, and Recovery</h1>
-<p class="subtitle lead">Measuring how far a portfolio falls, how long it stays below its peak, and when recovery is complete</p>
+<p class="subtitle lead">Measuring how far a portfolio falls, how long it remains below its peak, and what counts as recovery</p>
   <div class="quarto-categories">
     <div class="quarto-category">Investment Methods</div>
     <div class="quarto-category">Portfolio Methods</div>
@@ -258,20 +258,20 @@ window.Quarto = {
 <p>QM008 · Investment Methods · Portfolio Methods · Foundation</p>
 </div>
 <div class="method-orientation">
-<p><strong>Core idea.</strong> Drawdown is a path statistic. It asks how far current wealth sits below a running high-water mark. Duration adds a second question: how long has the portfolio remained below that peak, and has a completed recovery actually been observed?</p>
+<p><strong>Core idea.</strong> Drawdown measures how far current wealth is below a running high-water mark. Duration adds a second question: how long has the portfolio remained below that peak, and has recovery actually been observed?</p>
 <p><strong>Use it for.</strong> Describing historical path risk, comparing the depth and persistence of losses, and reporting recovery episodes with explicit conventions.</p>
 <p><strong>It does not establish.</strong> How quickly a future drawdown will recover, whether a strategy is attractive, or whether one historical maximum drawdown is a stable population risk parameter. Measurement is descriptive; prediction and portfolio optimization are separate problems.</p>
 </div>
 <section id="the-question" class="level1">
 <h1>The Question</h1>
-<p>A portfolio can finish a year with a modest return and still have experienced a painful path along the way. A one-period loss does not tell us whether wealth is just below a recent high, 20% below a peak reached months ago, or still underwater after a long incomplete recovery.</p>
-<p>Drawdown measurement therefore needs three pieces of bookkeeping:</p>
+<p>A portfolio can finish a year with a modest return and still have experienced substantial interim losses. A one-period loss does not tell us whether wealth is just below a recent high, 20% below a peak reached months ago, or still underwater after a long incomplete recovery.</p>
+<p>Drawdown measurement therefore needs three elements:</p>
 <ol type="1">
 <li><strong>depth</strong> — how far wealth is below its running high-water mark;</li>
 <li><strong>time</strong> — how long the current or completed underwater episode lasts; and</li>
 <li><strong>recovery</strong> — the exact rule used to decide that the old peak has been regained.</li>
 </ol>
-<p>The formulas are simple. The conventions are not. Different denominators, sign conventions, recovery inequalities, duration counts, observation frequencies, and cash-flow treatments can produce different numbers from the same economic path.</p>
+<p>Although the formulas are simple, the reported values depend on several conventions. Different denominators, sign conventions, recovery inequalities, duration counts, observation frequencies, and cash-flow treatments can produce different numbers from the same economic path.</p>
 </section>
 <section id="start-with-the-wealth-path" class="level1">
 <h1>Start with the Wealth Path</h1>
@@ -298,10 +298,10 @@ u_t
 -d_t,
 \]</span></p>
 <p>so <span class="math inline">\(u_t\le0\)</span>. A 20% drawdown is therefore either <span class="math inline">\(d_t=0.20\)</span> or <span class="math inline">\(u_t=-0.20\)</span>, depending on whether the chart displays positive loss depth or a negative underwater return. The sign convention should be stated rather than inferred from the picture.</p>
-<div id="fig-qm008-wealth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-qm008-wealth" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm008-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm008_wealth_highwater.svg" class="img-fluid figure-img" style="width:94.0%">
+<img src="figures/rendered/qm008_wealth_highwater.svg" class="img-fluid figure-img" style="width:94.0%" alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm008-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: The wealth path is evaluated against its running high-water mark. The first episode peaks at 110, falls to 88, and recovers exactly to 110; the final episode remains unrecovered at the sample end.
@@ -309,38 +309,38 @@ Figure&nbsp;1: The wealth path is evaluated against its running high-water mark.
 </figure>
 </div>
 </section>
-<section id="drawdown-percentage-is-not-a-universal-formula" class="level1">
-<h1>“Drawdown Percentage” Is Not a Universal Formula</h1>
-<p>Several quantities in the literature use the drawdown label but are not numerically interchangeable. Absolute drawdown is naturally written as <span class="math inline">\(H_t-W_t\)</span> <span class="citation" data-cites="carrzhanghadjiliadis2011 goldbergmahmoud2017">(<a href="#ref-carrzhanghadjiliadis2011" role="doc-biblioref">Carr et al. 2011</a>; <a href="#ref-goldbergmahmoud2017" role="doc-biblioref">Goldberg and Mahmoud 2017</a>)</span>. QM008’s percentage convention divides that loss by the peak <span class="math inline">\(H_t\)</span>. Chekhlov, Uryasev, and Zabarankin illustrate why the denominator must be named explicitly: their introductory wealth-drop expression uses the current wealth in the denominator <span class="citation" data-cites="chekhlovuryasevzabarankin2005">(<a href="#ref-chekhlovuryasevzabarankin2005" role="doc-biblioref">Chekhlov et al. 2005</a>)</span>.</p>
+<section id="different-drawdown-percentages-use-different-denominators" class="level1">
+<h1>Different Drawdown Percentages Use Different Denominators</h1>
+<p>The literature uses several related drawdown measures that are not numerically interchangeable. Absolute drawdown is the distance <span class="math inline">\(H_t-W_t\)</span> <span class="citation" data-cites="carrzhanghadjiliadis2011 goldbergmahmoud2017">(<a href="#ref-carrzhanghadjiliadis2011" role="doc-biblioref">Carr et al. 2011</a>; <a href="#ref-goldbergmahmoud2017" role="doc-biblioref">Goldberg and Mahmoud 2017</a>)</span>. The percentage convention used here divides that loss by the peak <span class="math inline">\(H_t\)</span>. Chekhlov, Uryasev, and Zabarankin illustrate why the denominator must be named explicitly: their introductory wealth-drop expression uses current wealth in the denominator <span class="citation" data-cites="chekhlovuryasevzabarankin2005">(<a href="#ref-chekhlovuryasevzabarankin2005" role="doc-biblioref">Chekhlov et al. 2005</a>)</span>.</p>
 <p>Take a peak of 110 and current wealth of 88:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Quantity</th>
-<th style="text-align: right;">Formula</th>
-<th style="text-align: right;">Value</th>
+<th style="text-align: center;">Formula</th>
+<th style="text-align: center;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Absolute drawdown</td>
-<td style="text-align: right;"><span class="math inline">\(H-W\)</span></td>
-<td style="text-align: right;">22</td>
+<td style="text-align: center;"><span class="math inline">\(H-W\)</span></td>
+<td style="text-align: center;">22</td>
 </tr>
 <tr class="even">
 <td>Peak-normalized drawdown — QM008</td>
-<td style="text-align: right;"><span class="math inline">\((H-W)/H\)</span></td>
-<td style="text-align: right;">20.000%</td>
+<td style="text-align: center;"><span class="math inline">\((H-W)/H\)</span></td>
+<td style="text-align: center;">20.000%</td>
 </tr>
 <tr class="odd">
 <td>Current-value-normalized drop</td>
-<td style="text-align: right;"><span class="math inline">\((H-W)/W\)</span></td>
-<td style="text-align: right;">25.000%</td>
+<td style="text-align: center;"><span class="math inline">\((H-W)/W\)</span></td>
+<td style="text-align: center;">25.000%</td>
 </tr>
 <tr class="even">
 <td>Log drawdown</td>
-<td style="text-align: right;"><span class="math inline">\(\log(H/W)\)</span></td>
-<td style="text-align: right;">0.22314</td>
+<td style="text-align: center;"><span class="math inline">\(\log(H/W)\)</span></td>
+<td style="text-align: center;">0.22314</td>
 </tr>
 </tbody>
 </table>
@@ -378,10 +378,10 @@ Figure&nbsp;1: The wealth path is evaluated against its running high-water mark.
 W=(100,110,99,88,99,110,121,115,121,122,100),
 \]</span></p>
 <p>maximum drawdown is 20%, reached when wealth falls from the high-water mark 110 to 88.</p>
-<div id="fig-qm008-underwater" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-qm008-underwater" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm008-underwater-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm008_underwater.svg" class="img-fluid figure-img" style="width:92.0%">
+<img src="figures/rendered/qm008_underwater.svg" class="img-fluid figure-img" style="width:92.0%" alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm008-underwater-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The signed underwater series is zero at each high-water mark and negative while wealth is below the relevant peak. The final observation is still underwater, so its recovery duration is not yet observed.
@@ -393,7 +393,7 @@ Figure&nbsp;2: The signed underwater series is zero at each high-water mark and 
 <section id="time-under-water-needs-more-than-one-number" class="level1">
 <h1>Time Under Water Needs More Than One Number</h1>
 <p>Depth and time answer different questions. A shallow drawdown can persist for a long time; a deep drawdown can recover quickly. The literature treats drawdown duration as a distinct object, often associated with “time to recover” the historical maximum <span class="citation" data-cites="landriaultlizhang2017">(<a href="#ref-landriaultlizhang2017" role="doc-biblioref">Landriault et al. 2017</a>)</span>. Proietti likewise models elapsed time since the most recent peak as its own state process rather than as drawdown magnitude <span class="citation" data-cites="proietti2026">(<a href="#ref-proietti2026" role="doc-biblioref">Proietti 2026</a>)</span>.</p>
-<p>QM008 therefore separates <strong>current underwater age</strong> from a <strong>completed episode duration</strong>.</p>
+<p>For clarity, distinguish <strong>current underwater age</strong> from a <strong>completed episode duration</strong>.</p>
 <p>For an observation with <span class="math inline">\(d_t&gt;0\)</span>, let</p>
 <p><span class="math display">\[
 p_t
@@ -405,7 +405,7 @@ p_t
 a_t=t-p_t,
 \]</span></p>
 <p>and <span class="math inline">\(a_t=0\)</span> whenever <span class="math inline">\(d_t=0\)</span>.</p>
-<p>This is a live state: it grows while the portfolio remains underwater and resets to zero when the old peak is regained.</p>
+<p>This point-in-time state grows while the portfolio remains underwater and resets to zero when the old peak is regained.</p>
 </section>
 <section id="a-completed-drawdown-episode" class="level1">
 <h1>A Completed Drawdown Episode</h1>
@@ -416,7 +416,7 @@ q
 \min\{t&gt;p:W_t\ge W_p\}.
 \]</span></p>
 <p><strong>Equality counts as recovery.</strong> The portfolio does not need to make a strict new all-time high. A strict-<span class="math inline">\(&gt;\)</span> rule is a different convention and can produce a later date.</p>
-<p>Within a completed episode, let <span class="math inline">\(m\)</span> be an index attaining the minimum wealth after the peak and before recovery. The base code chooses the <strong>earliest</strong> minimum if the trough is tied. Then report the endpoints explicitly:</p>
+<p>Within a completed episode, let <span class="math inline">\(m\)</span> be an index attaining the minimum wealth after the peak and before recovery. If the trough is tied, the example code records the <strong>earliest</strong> minimum. The elapsed times are then reported explicitly:</p>
 <p><span class="math display">\[
 \text{time to trough}=m-p,
 \]</span></p>
@@ -438,17 +438,17 @@ q
 <li>peak-to-recovery duration: 4 intervals.</li>
 </ul>
 <p>There are only <strong>three observations strictly below 110</strong>: <span class="math inline">\(t=2,3,4\)</span>. That count is not the same thing as the four elapsed intervals from peak to recovery.</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="Do not hide an off-by-one inside the word duration">
+<div class="callout callout-style-default callout-warning callout-titled" title="Specify what duration counts">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Do not hide an off-by-one inside the word duration
+<span class="screen-reader-only">Warning</span>Specify what duration counts
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>“Underwater for three observations” and “four intervals from peak to recovery” can both describe the same episode. Report which object you mean. On irregular timestamps, an index difference is not automatically a calendar duration.</p>
+<p>“Underwater for three observations” and “four intervals from peak to recovery” can both describe the same episode. State which quantity you are reporting. On irregular timestamps, an index difference is not automatically a calendar duration.</p>
 </div>
 </div>
 </section>
@@ -459,9 +459,9 @@ q
 1-\frac{100}{122}
 \approx 18.03\%.
 \]</span></p>
-<p>But no recovery has been observed. The completed peak-to-recovery duration is therefore <strong>unknown</strong>, not one interval and not “sample end minus peak” masquerading as a completed recovery time.</p>
+<p>But no recovery has been observed. The completed peak-to-recovery duration is therefore <strong>unknown</strong>. It should not be replaced by either one interval or the elapsed time from the peak to the sample end.</p>
 <p>QM008 records such an episode as <strong>right-censored</strong>. It can report the peak, trough-to-date, depth-to-date, and age-to-date, while leaving completed recovery duration missing.</p>
-<p>This distinction matters whenever drawdown histories are summarized statistically. Treating the sample end as if it were a recovery date mechanically converts an incomplete duration into a completed observation.</p>
+<p>This distinction matters whenever drawdown histories are summarized statistically. Treating the sample end as a recovery date converts an incomplete episode into a completed observation.</p>
 </section>
 <section id="why-a-20-loss-needs-a-25-gain-to-recover" class="level1">
 <h1>Why a 20% Loss Needs a 25% Gain to Recover</h1>
@@ -494,11 +494,11 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        drawdown <span class="op">=</span> <span class="fl">1.0</span> <span class="op">-</span> value <span class="op">/</span> high</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        underwater_age <span class="op">=</span> t <span class="op">-</span> peak_index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Episode parsing then adds a recovery condition, trough selection rule, and censoring flag. The reader-facing code included with this Method serializes both the point-in-time drawdown state and the completed/incomplete episodes.</p>
+<p>To identify episodes, the implementation also records the recovery condition, trough-selection rule, and censoring status. The accompanying code returns both the point-in-time drawdown state and a table of completed and censored episodes.</p>
 </section>
-<section id="deterministic-illustration" class="level1">
-<h1>Deterministic Illustration</h1>
-<p>The full canonical path is small enough to inspect by hand:</p>
+<section id="worked-path-drawdown-and-recovery-states" class="level1">
+<h1>Worked Path: Drawdown and Recovery States</h1>
+<p>The example path is small enough to inspect by hand:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -506,120 +506,120 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <col style="width: 17%">
 <col style="width: 17%">
 <col style="width: 17%">
-<col style="width: 13%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;"><span class="math inline">\(t\)</span></th>
-<th style="text-align: right;">Wealth <span class="math inline">\(W_t\)</span></th>
-<th style="text-align: right;">HWM <span class="math inline">\(H_t\)</span></th>
-<th style="text-align: right;">Drawdown <span class="math inline">\(d_t\)</span></th>
-<th style="text-align: right;">Underwater age <span class="math inline">\(a_t\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(t\)</span></th>
+<th style="text-align: center;">Wealth <span class="math inline">\(W_t\)</span></th>
+<th style="text-align: center;">HWM <span class="math inline">\(H_t\)</span></th>
+<th style="text-align: center;">Drawdown <span class="math inline">\(d_t\)</span></th>
+<th style="text-align: center;">Underwater age <span class="math inline">\(a_t\)</span></th>
 <th>State</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>high-water mark</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>new peak</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">99</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">10.000%</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">99</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">10.000%</td>
+<td style="text-align: center;">1</td>
 <td>underwater</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">88</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">20.000%</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">20.000%</td>
+<td style="text-align: center;">2</td>
 <td>trough</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">99</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">10.000%</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">99</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">10.000%</td>
+<td style="text-align: center;">3</td>
 <td>underwater</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">110</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>equality recovery</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">121</td>
+<td style="text-align: center;">121</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>new peak</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">115</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">4.959%</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">115</td>
+<td style="text-align: center;">121</td>
+<td style="text-align: center;">4.959%</td>
+<td style="text-align: center;">1</td>
 <td>underwater</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">121</td>
+<td style="text-align: center;">121</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>equality recovery</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">122</td>
-<td style="text-align: right;">122</td>
-<td style="text-align: right;">0.000%</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">122</td>
+<td style="text-align: center;">122</td>
+<td style="text-align: center;">0.000%</td>
+<td style="text-align: center;">0</td>
 <td>new peak</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">122</td>
-<td style="text-align: right;">18.033%</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">122</td>
+<td style="text-align: center;">18.033%</td>
+<td style="text-align: center;">1</td>
 <td>underwater; censored</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-default callout-note callout-titled" title="Deterministic illustration — not empirical evidence">
+<div class="callout callout-style-default callout-note callout-titled" title="Illustrative path — not empirical evidence">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Deterministic illustration — not empirical evidence
+<span class="screen-reader-only">Note</span>Illustrative path — not empirical evidence
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The numbers are chosen to expose definition and indexing issues, including exact equality recovery and a censored final episode. They do not describe the frequency or severity of real-world drawdowns.</p>
+<p>The numbers are chosen to illustrate definition and indexing issues, including exact equality recovery and a censored final episode. They do not describe the frequency or severity of real-world drawdowns.</p>
 </div>
 </div>
 </section>
@@ -632,8 +632,8 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm008_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A useful exercise is to change the final wealth from 100 to 122. Under the same equality-recovery convention, the last episode then becomes completed instead of censored. The convention is unchanged; only the observed path changes.</p>
 </section>
-<section id="what-a-drawdown-report-must-declare" class="level1">
-<h1>What a Drawdown Report Must Declare</h1>
+<section id="what-a-drawdown-report-should-state" class="level1">
+<h1>What a Drawdown Report Should State</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -648,7 +648,7 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <tbody>
 <tr class="odd">
 <td>Wealth input</td>
-<td>Price wealth, total-return wealth, NAV, or another path; strictly positive in the QM008 base case</td>
+<td>Price wealth, total-return wealth, NAV, or another path; strictly positive in the setup used here</td>
 </tr>
 <tr class="even">
 <td>High-water-mark initialization</td>
@@ -672,7 +672,7 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </tr>
 <tr class="odd">
 <td>Trough tie rule</td>
-<td>Which trough is serialized when the minimum is tied</td>
+<td>Which trough is recorded when the minimum is tied</td>
 </tr>
 <tr class="even">
 <td>Unrecovered episode</td>
@@ -725,9 +725,9 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <p>The identity <span class="math inline">\(d/(1-d)\)</span> gives the gain required to regain the old peak. It does not say how quickly or whether that gain will occur.</p>
 </section>
 </section>
-<section id="when-not-to-use-this-base-form-directly" class="level1">
-<h1>When Not to Use This Base Form Directly</h1>
-<p>The base formulas are intentionally narrow. Extend or reopen the Method before applying them without qualification to:</p>
+<section id="when-this-setup-needs-to-be-extended" class="level1">
+<h1>When This Setup Needs to Be Extended</h1>
+<p>The formulas above are scoped to strictly positive wealth on the stated observation grid. Additional definitions or accounting are needed for:</p>
 <ul>
 <li>wealth paths that can be zero or negative;</li>
 <li>leveraged structures in which ordinary percentage-from-peak interpretation becomes unstable;</li>
@@ -737,22 +737,21 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 <li>Conditional Expected Drawdown or drawdown-constrained optimization; or</li>
 <li>empirical models that forecast time to recovery.</li>
 </ul>
-<p>These are legitimate problems, but they require additional definitions and evidence rather than a silent extension of the base convention.</p>
+<p>Each case requires additional definitions, evidence, or accounting beyond the setup used here.</p>
 </section>
 <section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>
 <ul>
-<li><strong>QM007 — Portfolio Backtesting and Rebalancing:</strong> constructs the wealth path on which drawdown is measured and makes the portfolio timeline explicit.</li>
-<li><strong>QM009 — Turnover, Transaction Costs, and Net Performance</strong> <em>(planned)</em>: extends portfolio implementation from gross path accounting to explicit trading-cost and net-performance measurement.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>: constructs the wealth path on which drawdown is measured and makes the portfolio timeline explicit.</li>
 </ul>
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p><a href="https://research.slackquant.com/research/protection-patience/"><strong>When Protection Works but the Portfolio Still Lags</strong></a> uses own-path maximum drawdown and high-water-mark path logic to separate realized downside protection from benchmark-relative path burden. QM008 supplies the general positive-wealth drawdown, underwater-age, recovery, and censoring conventions. The paper’s benchmark-relative strategy-to-equity wealth-ratio construction remains application-specific and should not be read as part of QM008’s base-case scope.</p>
+<p><a href="https://research.slackquant.com/research/protection-patience/"><strong>When Protection Works but the Portfolio Still Lags</strong></a> uses own-path maximum drawdown and high-water-mark logic to separate realized downside protection from benchmark-relative path burden. The definitions here cover the general drawdown, underwater-age, recovery, and censoring mechanics. The paper’s benchmark-relative strategy-to-equity wealth-ratio measure remains application-specific and is defined in the research paper rather than here.</p>
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
-<p>The accompanying materials include the deterministic wealth path, Python and base-R implementations, frozen expected results, reproducible figures, and a hands-on lab. The example code independently reconstructs high-water marks, drawdown depth, underwater age, completed episodes, and the right-censored terminal episode used above.</p>
+<p>The accompanying materials include the illustrative wealth path, Python and base-R implementations, reproducible figures, numerical checks, and a hands-on lab. The example code independently reconstructs high-water marks, drawdown depth, underwater age, completed episodes, and the right-censored terminal episode used above.</p>
 </section>
 <section id="references" class="level1 unnumbered">
 <h1 class="unnumbered">References</h1>

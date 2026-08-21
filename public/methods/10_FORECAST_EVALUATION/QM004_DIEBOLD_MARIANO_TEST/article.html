@@ -303,10 +303,10 @@ H_0: E[d_t]=0.
 DM=\frac{\bar d}{\sqrt{\widehat{\Omega}_d/P}},
 \]</span></p>
 <p>where <span class="math inline">\(\widehat{\Omega}_d\)</span> estimates the long-run variance of the loss differential. Under suitable regularity conditions, the statistic is asymptotically standard normal under the null <span class="citation" data-cites="dieboldmariano1995">(<a href="#ref-dieboldmariano1995" role="doc-biblioref">Diebold and Mariano 1995</a>)</span>.</p>
-<div id="fig-dm-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-dm-workflow" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Workflow from paired forecast losses to a loss-differential sequence and a Diebold–Mariano statistic.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dm-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm004_dm_workflow.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm004_dm_workflow.svg" class="img-fluid figure-img" style="width:95.0%" alt="Workflow from paired forecast losses to a loss-differential sequence and a Diebold–Mariano statistic.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dm-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: The DM workflow compares paired forecast losses, forms a loss-differential sequence, and scales its average by an estimate of long-run uncertainty.
@@ -419,10 +419,10 @@ DM
 </table>
 <p>Model B has the lower RMSE in this sample. But under the stated squared-error comparison and long-run variance estimate, the evidence is not strong enough to reject equal predictive accuracy at conventional significance levels.</p>
 <p>That is not a contradiction. <strong>“Lower realized RMSE” and “statistically distinguishable expected loss” are different statements.</strong></p>
-<div id="fig-loss-differential" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-loss-differential" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Time series of paired squared-loss differences with a positive but noisy average.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-loss-differential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm004_loss_differential.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm004_loss_differential.svg" class="img-fluid figure-img" style="width:95.0%" alt="Time series of paired squared-loss differences with a positive but noisy average.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-loss-differential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The paired squared-loss differential varies substantially across forecast dates. Its average is positive, favoring Model B, but the sequence is noisy and serially dependent.
@@ -457,7 +457,7 @@ Figure&nbsp;2: The paired squared-loss differential varies substantially across 
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>long_run_var <span class="op">=</span> estimate_long_run_variance(loss_diff)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>dm_stat <span class="op">=</span> mean_diff <span class="op">/</span> sqrt(long_run_var <span class="op">/</span> n_forecasts)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The code is schematic. A production implementation should define the sign convention, loss function, horizon, variance estimator, alternative hypothesis, and any finite-sample adjustment explicitly.</p>
+<p>The code is schematic. In an applied implementation, state the sign convention, loss function, forecast horizon, variance estimator, alternative hypothesis, and any finite-sample adjustment explicitly.</p>
 </section>
 <section id="how-to-interpret-the-result" class="level1">
 <h1>How to Interpret the Result</h1>
@@ -572,7 +572,7 @@ Figure&nbsp;2: The paired squared-loss differential varies substantially across 
 <ul>
 <li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">QM001 — Out-of-Sample Forecast Evaluation</a>: how valid forecast sequences are produced before they are compared.</li>
 <li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">QM002 — Rolling vs Expanding Windows</a>: how the estimation sample evolves across forecast origins.</li>
-<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: why a statistically polished comparison is still invalid if either pipeline uses unavailable information.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: why formal inference is still invalid if either forecasting pipeline uses unavailable information.</li>
 <li><a href="../../10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">QM005 — Model Confidence Set</a>: set-based comparison when many forecasting models are evaluated together.</li>
 <li><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>: dependence-aware resampling for time-series uncertainty assessment.</li>
 </ul>
@@ -583,16 +583,11 @@ Figure&nbsp;2: The paired squared-loss differential varies substantially across 
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
-<p>The accompanying materials include the paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. The canonical example generator reproduces both the DM and HLN results reported above; the reader-facing lab focuses on the unadjusted DM calculation under alternative loss functions and autocovariance truncation lags.</p>
+<p>The accompanying materials include paired synthetic forecast errors, code, figures, and a hands-on lab in Python and R. The full example reproduces both the DM and HLN results reported above; the lab focuses on the unadjusted DM calculation under alternative loss functions and autocovariance truncation lags.</p>
 </section>
 <section id="references" class="level1 unnumbered">
-
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-clarkwest2007" class="csl-entry" role="listitem">
 Clark, Todd E., and Kenneth D. West. 2007. <span>“Approximately Normal Tests for Equal Predictive Accuracy in Nested Models.”</span> <em>Journal of Econometrics</em> 138 (1): 291–311. <a href="https://doi.org/10.1016/j.jeconom.2006.05.023">https://doi.org/10.1016/j.jeconom.2006.05.023</a>.
 </div>
@@ -611,7 +606,12 @@ Harvey, David, Stephen Leybourne, and Paul Newbold. 1997. <span>“Testing the E
 <div id="ref-west1996" class="csl-entry" role="listitem">
 West, Kenneth D. 1996. <span>“Asymptotic Inference about Predictive Ability.”</span> <em>Econometrica</em> 64 (5): 1067–84. <a href="https://doi.org/10.2307/2171956">https://doi.org/10.2307/2171956</a>.
 </div>
-</div></section></div></main> <!-- /main -->
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

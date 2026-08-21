@@ -301,10 +301,10 @@ H_{0,\mathcal{M}}:\mu_{ij}=0 \quad \text{for all } i,j\in\mathcal{M}.
 <li>an <strong>equivalence test</strong> for the current set; and</li>
 <li>an <strong>elimination rule</strong> that identifies which model to remove if the null is rejected.</li>
 </ol>
-<div id="fig-mcs-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-mcs-workflow" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Model Confidence Set elimination workflow from the full candidate set to the surviving set.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mcs-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm005_mcs_workflow.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm005_mcs_workflow.svg" class="img-fluid figure-img" style="width:95.0%" alt="Model Confidence Set elimination workflow from the full candidate set to the surviving set.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mcs-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: The MCS begins with the full candidate set. When the equal-performance null is rejected, one model is removed according to the specified elimination rule; non-rejection stops the procedure and defines the surviving set.
@@ -339,7 +339,7 @@ T_{max,\mathcal M}=\max_{i\in\mathcal M} t_{i\cdot}.
 <p>The null distribution of the multiple-model statistic is not generally a simple textbook distribution. Forecast losses can also be dependent over time.</p>
 <p>Bootstrap resampling provides a practical way to estimate the uncertainty of the relative losses and the distribution of the set-level statistic <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>. In a time-series application, the resampling scheme should preserve dependence that matters for the loss sequence.</p>
 <p>The worked example below uses a <strong>moving-block bootstrap</strong> and resamples the same time indices jointly for every model. That joint resampling matters: the models are evaluated on the same dates, so their loss sequences should remain aligned.</p>
-<p>For its finite set of 999 bootstrap draws, the implementation reports the Monte Carlo tail probability as <span class="math inline">\((1+K)/(B+1)\)</span>, where <span class="math inline">\(K\)</span> is the number of bootstrap statistics at least as large as the observed statistic and <span class="math inline">\(B\)</span> is the number of draws. This is an explicit finite-draw convention; Hansen, Lunde, and Nason write the bootstrap empirical tail proportion with denominator <span class="math inline">\(B\)</span> in their algorithm <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>. The choice can change a reported finite-<span class="math inline">\(B\)</span> p-value slightly, so it is part of the reproducibility contract rather than a universal definition of the MCS.</p>
+<p>For its finite set of 999 bootstrap draws, the implementation reports the Monte Carlo tail probability as <span class="math inline">\((1+K)/(B+1)\)</span>, where <span class="math inline">\(K\)</span> is the number of bootstrap statistics at least as large as the observed statistic and <span class="math inline">\(B\)</span> is the number of draws. This is an explicit finite-draw convention; Hansen, Lunde, and Nason write the bootstrap empirical tail proportion with denominator <span class="math inline">\(B\)</span> in their algorithm <span class="citation" data-cites="hansenlundenason2011">(<a href="#ref-hansenlundenason2011" role="doc-biblioref">Hansen et al. 2011</a>)</span>. The choice can change a reported finite-<span class="math inline">\(B\)</span> p-value slightly, so it should be reported as an implementation convention rather than treated as part of the universal definition of the MCS.</p>
 <div class="callout callout-style-default callout-important callout-titled" title="The bootstrap design is part of the result">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -471,10 +471,10 @@ T_{max,\mathcal M}=\max_{i\in\mathcal M} t_{i\cdot}.
 \widehat{\mathcal M}^{*}_{0.90}=\{A,B\}.
 \]</span></p>
 <p>The correct interpretation is not “A and B are exactly equal.” It is that, under this candidate set, loss function, sample, bootstrap design, statistic, elimination rule, and confidence level, the procedure does not find enough evidence to remove either A or B.</p>
-<div id="fig-mcs-survivors" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-mcs-survivors" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Mean-loss ranking of five models with the two models surviving the 90 percent Model Confidence Set highlighted.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mcs-survivors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm005_mean_loss_and_survivors.svg" class="img-fluid figure-img" style="width:92.0%">
+<img src="figures/rendered/qm005_mean_loss_and_survivors.svg" class="img-fluid figure-img" style="width:92.0%" alt="Mean-loss ranking of five models with the two models surviving the 90 percent Model Confidence Set highlighted.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mcs-survivors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Mean loss ranks all five models, while the 90% MCS preserves two survivors. The set communicates uncertainty that a single ranking suppresses.
@@ -512,7 +512,7 @@ Figure&nbsp;2: Mean loss ranks all five models, while the 90% MCS preserves two 
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    active.remove(model_with_largest_t_stat)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>mcs <span class="op">=</span> active</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is <strong>Python-like pseudocode</strong>, not a drop-in API. A production implementation needs a clearly documented resampling design, statistic, elimination rule, handling of ties, and numerical treatment of degenerate standard errors.</p>
+<p>The pseudocode is schematic rather than a drop-in implementation. Applied work should document the resampling design, statistic, elimination rule, handling of ties, and numerical treatment of degenerate standard errors.</p>
 </section>
 <section id="how-to-interpret-the-result" class="level1">
 <h1>How to Interpret the Result</h1>
@@ -662,18 +662,18 @@ Figure&nbsp;2: Mean loss ranks all five models, while the 90% MCS preserves two 
 <h1>Reproducibility</h1>
 <p>The accompanying materials include the synthetic loss panel, code, figures, and a hands-on lab in Python and R. The supplied resampling draws reproduce the elimination path and final 90% Model Confidence Set shown above.</p>
 </section>
-<section id="references" class="level1">
-
-
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-hansenlundenason2011" class="csl-entry" role="listitem">
+Hansen, Peter R., Asger Lunde, and James M. Nason. 2011. <span>“The Model Confidence Set.”</span> <em>Econometrica</em> 79 (2): 453–97. <a href="https://doi.org/10.3982/ECTA5771">https://doi.org/10.3982/ECTA5771</a>.
+</div>
+</div>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-hansenlundenason2011" class="csl-entry" role="listitem">
-Hansen, Peter R., Asger Lunde, and James M. Nason. 2011. <span>“The Model Confidence Set.”</span> <em>Econometrica</em> 79 (2): 453–97. <a href="https://doi.org/10.3982/ECTA5771">https://doi.org/10.3982/ECTA5771</a>.
-</div>
-</div></section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

@@ -293,10 +293,10 @@ window.Quarto = {
 <section id="intuition-reconstruct-the-information-set" class="level1">
 <h1>Intuition: Reconstruct the Information Set</h1>
 <p>The most useful way to think about out-of-sample forecasting is to place yourself at a historical forecast origin and ask: <em>what could I actually have known at that moment?</em></p>
-<div id="fig-information-timeline" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-information-timeline" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Timeline showing that model fitting and tuning occur before each future target becomes observable.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-information-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm001_information_timeline.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm001_information_timeline.svg" class="img-fluid figure-img" style="width:95.0%" alt="Timeline showing that model fitting and tuning occur before each future target becomes observable.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-information-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: At each forecast origin, fitting and tuning may use only admissible information. The target is evaluated only after it becomes observable.
@@ -411,10 +411,10 @@ e_{t+h\mid t}=y_{t+h}-\hat{y}_{t+h\mid t}.
 </tbody>
 </table>
 <p>Model B fits the development observations better because the search procedure finds a chance relationship. On the held-out targets, that apparent advantage disappears and reverses.</p>
-<div id="fig-train-test-rmse" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-train-test-rmse" class="quarto-float quarto-figure quarto-figure-center anchored" alt="RMSE comparison in which the search-selected model improves development fit but performs worse on held-out targets.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-train-test-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm001_train_test_rmse.svg" class="img-fluid figure-img" style="width:88.0%">
+<img src="figures/rendered/qm001_train_test_rmse.svg" class="img-fluid figure-img" style="width:88.0%" alt="RMSE comparison in which the search-selected model improves development fit but performs worse on held-out targets.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-train-test-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The search-selected model improves training RMSE but performs worse on the held-out targets in this illustrative draw.

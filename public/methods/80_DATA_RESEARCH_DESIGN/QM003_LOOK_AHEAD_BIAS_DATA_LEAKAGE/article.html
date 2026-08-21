@@ -288,10 +288,10 @@ window.Quarto = {
 </section>
 <section id="the-information-boundary" class="level1">
 <h1>The Information Boundary</h1>
-<div id="fig-information-boundary" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-information-boundary" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Timeline showing a centered feature crossing the forecast-origin information boundary by using a future value.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-information-boundary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm003_information_boundary.svg" class="img-fluid figure-img" style="width:95.0%">
+<img src="figures/rendered/qm003_information_boundary.svg" class="img-fluid figure-img" style="width:95.0%" alt="Timeline showing a centered feature crossing the forecast-origin information boundary by using a future value.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-information-boundary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: A centered feature can cross the historical information boundary by using a value that lies to the right of the forecast origin.
@@ -371,7 +371,7 @@ z_t^{\text{leak}}=\frac{x_{t-1}+x_t+x_{t+1}}{3}.
 <p>The second feature looks innocuous if it is created by a generic smoothing function before the split. But it contains <span class="math inline">\(x_{t+1}\)</span>, which lies beyond the information boundary at forecast origin <span class="math inline">\(t\)</span>.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
+<col style="width: 13%">
 <col style="width: 21%">
 <col style="width: 21%">
 <col style="width: 21%">
@@ -380,40 +380,40 @@ z_t^{\text{leak}}=\frac{x_{t-1}+x_t+x_{t+1}}{3}.
 <thead>
 <tr class="header">
 <th>Evaluation sample</th>
-<th style="text-align: right;">Forecasts</th>
-<th style="text-align: right;">Clean RMSE</th>
-<th style="text-align: right;">Leaked RMSE</th>
-<th style="text-align: right;">Leaked vs.&nbsp;clean</th>
+<th style="text-align: center;">Forecasts</th>
+<th style="text-align: center;">Clean RMSE</th>
+<th style="text-align: center;">Leaked RMSE</th>
+<th style="text-align: center;">Leaked vs.&nbsp;clean</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Development</td>
-<td style="text-align: right;">219</td>
-<td style="text-align: right;">1.105</td>
-<td style="text-align: right;">0.962</td>
-<td style="text-align: right;">-13.0%</td>
+<td style="text-align: center;">219</td>
+<td style="text-align: center;">1.105</td>
+<td style="text-align: center;">0.962</td>
+<td style="text-align: center;">-13.0%</td>
 </tr>
 <tr class="even">
 <td>Held-out</td>
-<td style="text-align: right;">100</td>
-<td style="text-align: right;">1.087</td>
-<td style="text-align: right;">0.952</td>
-<td style="text-align: right;">-12.4%</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">1.087</td>
+<td style="text-align: center;">0.952</td>
+<td style="text-align: center;">-12.4%</td>
 </tr>
 </tbody>
 </table>
-<div id="fig-rmse-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-rmse-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" alt="RMSE comparison showing an apparently better future-aware feature in both development and held-out samples.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rmse-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm003_rmse_comparison.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/rendered/qm003_rmse_comparison.svg" class="img-fluid figure-img" style="width:90.0%" alt="RMSE comparison showing an apparently better future-aware feature in both development and held-out samples.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rmse-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: The future-aware centered feature appears to improve RMSE in both development and held-out samples. The held-out result is still invalid because the feature itself crosses the information boundary.
 </figcaption>
 </figure>
 </div>
-<p>The important point is not that the leaked model fits better. It is that <strong>the held-out sample does not rescue the comparison</strong>. The same future-aware feature construction is applied inside the held-out period, so the evaluation is contaminated at every origin.</p>
+<p>The important point is not that the leaked model fits better. The held-out sample does not make the comparison valid, because the same future-aware feature construction is applied at every held-out origin.</p>
 <p>This is different from ordinary overfitting. A flexible model can overfit while respecting the information boundary. Leakage means the procedure has access to information that the intended historical decision did not have.</p>
 </section>
 <section id="hands-on-lab-move-the-feature-across-the-boundary" class="level1">
@@ -567,13 +567,8 @@ Figure&nbsp;2: The future-aware centered feature appears to improve RMSE in both
 <p>The accompanying materials include the synthetic series, feature-construction code, figures, and a hands-on lab in Python and R. The clean, centered, and future-aware feature comparisons can be reproduced directly from the definitions used in the article.</p>
 </section>
 <section id="references" class="level1 unnumbered">
-
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-bailey2014" class="csl-entry" role="listitem">
 Bailey, David H., Jonathan M. Borwein, Marcos López de Prado, and Qiji Jim Zhu. 2014. <span>“Pseudo-Mathematics and Financial Charlatanism: The Effects of Backtest Overfitting on Out-of-Sample Performance.”</span> <em>Notices of the American Mathematical Society</em> 61 (5): 458–71. <a href="https://doi.org/10.1090/noti1105">https://doi.org/10.1090/noti1105</a>.
 </div>
@@ -589,7 +584,12 @@ Stark, Tom, and Dean Croushore. 2002. <span>“Forecasting with a Real-Time Data
 <div id="ref-varma2006" class="csl-entry" role="listitem">
 Varma, Sudhir, and Richard Simon. 2006. <span>“Bias in Error Estimation When Using Cross-Validation for Model Selection.”</span> <em>BMC Bioinformatics</em> 7: 91. <a href="https://doi.org/10.1186/1471-2105-7-91">https://doi.org/10.1186/1471-2105-7-91</a>.
 </div>
-</div></section></div></main> <!-- /main -->
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

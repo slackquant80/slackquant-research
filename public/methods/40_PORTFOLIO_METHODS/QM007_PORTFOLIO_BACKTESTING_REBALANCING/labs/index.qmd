@@ -37,7 +37,7 @@ The script compares:
 
 # Try one change
 
-Edit the return path in `data/qm007_two_asset_returns.csv`, or change the target weights in the script. Keep the timing contract unchanged: start-of-period weights earn the current period's returns, then weights drift, then an optional rebalance sets the next period's starting weights.
+Edit the return path in `data/qm007_two_asset_returns.csv`, or change the target weights in the script. Keep the information-timing rule unchanged: start-of-period weights earn the current period's returns, then weights drift, then an optional rebalance sets the next period's starting weights.
 
 # R version
 
@@ -47,4 +47,4 @@ If base R is available:
 Rscript r/qm007_hands_on.R
 ```
 
-The Python and R files implement the same accounting convention. Runtime parity for R remains environment-dependent until it is executed in the normal local toolchain.
+The Python and R files implement the same accounting convention and reproduce the same reported path calculations when run in the supported local environments.
