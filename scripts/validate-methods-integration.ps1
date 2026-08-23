@@ -23,7 +23,8 @@ $required = @(
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
   "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
   "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html",
-  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html"
+  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html"
 )
 
 foreach ($rel in $required) {
@@ -42,6 +43,7 @@ $methodsIndex = Get-Content (Join-Path $PlatformRoot "public\methods\index.html"
 $methodArticle = Get-Content (Join-Path $PlatformRoot "public\methods\10_FORECAST_EVALUATION\QM002_ROLLING_VS_EXPANDING_WINDOWS\article.html") -Raw
 $qm007Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html") -Raw
 $qm008Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html") -Raw
+$qm009Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html") -Raw
 
 # Main-platform surface checks.
 if ($header -notmatch '/methods/') { throw "Header Methods link missing" }
@@ -72,8 +74,9 @@ if ($qm008Article -notmatch 'https://research.slackquant.com/research/protection
 }
 if ($methodsIndex -notmatch 'Investment Methods' -or
     $methodsIndex -notmatch 'QM007' -or
-    $methodsIndex -notmatch 'QM008') {
-  throw "QM007/QM008 Investment Methods index entries missing"
+    $methodsIndex -notmatch 'QM008' -or
+    $methodsIndex -notmatch 'QM009') {
+  throw "QM007/QM008/QM009 Investment Methods index entries missing"
 }
 
 # Next.js -> Quarto boundary: use hard browser navigation, not next/link.
@@ -96,7 +99,7 @@ if ($methodsUsedSource -notmatch '<a[^>]*className="method-used-row"[^>]*href=\{
 
 # Every mapped method href must exist under public/.
 $hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
-if ($hrefMatches.Count -lt 8) { throw "Expected eight Quantitative Methods href mappings were not found" }
+if ($hrefMatches.Count -lt 9) { throw "Expected nine Quantitative Methods href mappings were not found" }
 foreach ($match in $hrefMatches) {
   $href = $match.Groups['href'].Value
   $rel = $href.TrimStart('/') -replace '/', '\'
@@ -140,7 +143,7 @@ foreach ($file in $methodsHtmlFiles) {
     throw "Obsolete Quarto navbar markup remains in rendered Methods page: $($file.FullName)"
   }
 }
-if ($sharedHeaderPagesChecked -lt 17) {
+if ($sharedHeaderPagesChecked -lt 19) {
   throw "Too few rendered Methods shared-header pages were validated: $sharedHeaderPagesChecked"
 }
 
@@ -244,7 +247,8 @@ $articlePaths = @(
   "public\methods\10_FORECAST_EVALUATION\QM005_MODEL_CONFIDENCE_SET\article.html",
   "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
   "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html",
-  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html"
+  "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html"
 )
 foreach ($rel in $articlePaths) {
   $html = Get-Content (Join-Path $PlatformRoot $rel) -Raw

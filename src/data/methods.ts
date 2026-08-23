@@ -80,6 +80,15 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains drawdown, high-water-mark, underwater-duration, recovery, and censoring conventions used to interpret path-dependent downside and recovery in this research.",
   },
+  {
+    id: "QM009",
+    title: "Turnover, Transaction Costs, and Net Performance",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html",
+    researchContext:
+      "Explains drift-aware turnover, transaction-cost conventions, and the mapping from before-cost portfolio performance to performance net of modeled transaction costs.",
+  },
 ];
 
 const researchMethodIds: Record<string, string[]> = {

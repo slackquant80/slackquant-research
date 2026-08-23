@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="A practical guide to portfolio backtest accounting, weight drift, rebalancing timing, and turnover conventions.">
+<meta name="description" content="A practical guide to drift-aware portfolio turnover, transaction-cost conventions, and how modeled trading costs translate before-cost performance into net portfolio performance.">
 
-<title>Portfolio Backtesting and Rebalancing – SlackQuant Research</title>
+<title>Turnover, Transaction Costs, and Net Performance – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -168,28 +168,32 @@ window.Quarto = {
   <ul>
   <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
   <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
-  <li><a href="#intuition-one-period-has-four-states" id="toc-intuition-one-period-has-four-states" class="nav-link" data-scroll-target="#intuition-one-period-has-four-states">Intuition: One Period Has Four States</a></li>
-  <li><a href="#portfolio-return-and-wealth" id="toc-portfolio-return-and-wealth" class="nav-link" data-scroll-target="#portfolio-return-and-wealth">Portfolio Return and Wealth</a></li>
-  <li><a href="#weight-drift-before-rebalancing" id="toc-weight-drift-before-rebalancing" class="nav-link" data-scroll-target="#weight-drift-before-rebalancing">Weight Drift Before Rebalancing</a></li>
-  <li><a href="#rebalancing-is-a-rule-not-a-label" id="toc-rebalancing-is-a-rule-not-a-label" class="nav-link" data-scroll-target="#rebalancing-is-a-rule-not-a-label">Rebalancing Is a Rule, Not a Label</a></li>
-  <li><a href="#numerical-illustration-the-same-returns-different-rules" id="toc-numerical-illustration-the-same-returns-different-rules" class="nav-link" data-scroll-target="#numerical-illustration-the-same-returns-different-rules">Numerical Illustration: The Same Returns, Different Rules</a></li>
-  <li><a href="#turnover-state-the-convention" id="toc-turnover-state-the-convention" class="nav-link" data-scroll-target="#turnover-state-the-convention">Turnover: State the Convention</a></li>
-  <li><a href="#information-timing-for-signal-driven-weights" id="toc-information-timing-for-signal-driven-weights" class="nav-link" data-scroll-target="#information-timing-for-signal-driven-weights">Information Timing for Signal-Driven Weights</a></li>
+  <li><a href="#start-from-the-drifted-portfolio" id="toc-start-from-the-drifted-portfolio" class="nav-link" data-scroll-target="#start-from-the-drifted-portfolio">Start from the Drifted Portfolio</a></li>
+  <li><a href="#full-l1-and-one-way-turnover" id="toc-full-l1-and-one-way-turnover" class="nav-link" data-scroll-target="#full-l1-and-one-way-turnover">Full-L1 and One-Way Turnover</a></li>
+  <li><a href="#match-the-cost-rate-to-the-turnover-measure" id="toc-match-the-cost-rate-to-the-turnover-measure" class="nav-link" data-scroll-target="#match-the-cost-rate-to-the-turnover-measure">Match the Cost Rate to the Turnover Measure</a></li>
+  <li><a href="#from-performance-before-costs-to-net-wealth" id="toc-from-performance-before-costs-to-net-wealth" class="nav-link" data-scroll-target="#from-performance-before-costs-to-net-wealth">From Performance Before Costs to Net Wealth</a>
+  <ul class="collapse">
+  <li><a href="#why-the-wording-before-modeled-transaction-costs-matters" id="toc-why-the-wording-before-modeled-transaction-costs-matters" class="nav-link" data-scroll-target="#why-the-wording-before-modeled-transaction-costs-matters">Why the wording “before modeled transaction costs” matters</a></li>
+  </ul></li>
+  <li><a href="#numerical-illustration-drift-turnover-and-cost" id="toc-numerical-illustration-drift-turnover-and-cost" class="nav-link" data-scroll-target="#numerical-illustration-drift-turnover-and-cost">Numerical Illustration: Drift, Turnover, and Cost</a></li>
+  <li><a href="#aggregating-turnover-and-cost-drag" id="toc-aggregating-turnover-and-cost-drag" class="nav-link" data-scroll-target="#aggregating-turnover-and-cost-drag">Aggregating Turnover and Cost Drag</a></li>
   <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
-  <li><a href="#hands-on-lab-change-the-rebalancing-frequency" id="toc-hands-on-lab-change-the-rebalancing-frequency" class="nav-link" data-scroll-target="#hands-on-lab-change-the-rebalancing-frequency">Hands-on Lab: Change the Rebalancing Frequency</a></li>
-  <li><a href="#what-a-backtest-should-state" id="toc-what-a-backtest-should-state" class="nav-link" data-scroll-target="#what-a-backtest-should-state">What a Backtest Should State</a></li>
+  <li><a href="#hands-on-lab-change-the-cost-assumption" id="toc-hands-on-lab-change-the-cost-assumption" class="nav-link" data-scroll-target="#hands-on-lab-change-the-cost-assumption">Hands-on Lab: Change the Cost Assumption</a></li>
+  <li><a href="#what-a-transaction-cost-backtest-should-state" id="toc-what-a-transaction-cost-backtest-should-state" class="nav-link" data-scroll-target="#what-a-transaction-cost-backtest-should-state">What a Transaction-Cost Backtest Should State</a></li>
   <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
   <ul class="collapse">
-  <li><a href="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t" id="toc-letting-w_t-earn-r_t-when-w_t-uses-information-from-t" class="nav-link" data-scroll-target="#letting-w_t-earn-r_t-when-w_t-uses-information-from-t">1. Letting <span class="math inline">\(w_t\)</span> earn <span class="math inline">\(r_t\)</span> when <span class="math inline">\(w_t\)</span> uses information from <span class="math inline">\(t\)</span></a></li>
-  <li><a href="#resetting-to-target-weights-on-non-rebalance-dates" id="toc-resetting-to-target-weights-on-non-rebalance-dates" class="nav-link" data-scroll-target="#resetting-to-target-weights-on-non-rebalance-dates">2. Resetting to target weights on non-rebalance dates</a></li>
-  <li><a href="#computing-turnover-from-target-to-target" id="toc-computing-turnover-from-target-to-target" class="nav-link" data-scroll-target="#computing-turnover-from-target-to-target">3. Computing turnover from target to target</a></li>
-  <li><a href="#mixing-simple-and-log-return-algebra" id="toc-mixing-simple-and-log-return-algebra" class="nav-link" data-scroll-target="#mixing-simple-and-log-return-algebra">4. Mixing simple and log-return algebra</a></li>
-  <li><a href="#calling-a-gross-backtest-net-performance" id="toc-calling-a-gross-backtest-net-performance" class="nav-link" data-scroll-target="#calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</a></li>
-  <li><a href="#treating-a-clean-backtest-as-proof-of-a-good-strategy" id="toc-treating-a-clean-backtest-as-proof-of-a-good-strategy" class="nav-link" data-scroll-target="#treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</a></li>
+  <li><a href="#computing-turnover-from-the-previous-target" id="toc-computing-turnover-from-the-previous-target" class="nav-link" data-scroll-target="#computing-turnover-from-the-previous-target">1. Computing turnover from the previous target</a></li>
+  <li><a href="#reporting-turnover-without-the-formula" id="toc-reporting-turnover-without-the-formula" class="nav-link" data-scroll-target="#reporting-turnover-without-the-formula">2. Reporting “turnover” without the formula</a></li>
+  <li><a href="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover" id="toc-applying-a-both-legs-cost-rate-directly-to-one-way-turnover" class="nav-link" data-scroll-target="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover">3. Applying a both-legs cost rate directly to one-way turnover</a></li>
+  <li><a href="#treating-passive-weight-drift-as-a-trade" id="toc-treating-passive-weight-drift-as-a-trade" class="nav-link" data-scroll-target="#treating-passive-weight-drift-as-a-trade">4. Treating passive weight drift as a trade</a></li>
+  <li><a href="#mixing-initial-formation-with-recurring-turnover" id="toc-mixing-initial-formation-with-recurring-turnover" class="nav-link" data-scroll-target="#mixing-initial-formation-with-recurring-turnover">5. Mixing initial formation with recurring turnover</a></li>
+  <li><a href="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" id="toc-calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" class="nav-link" data-scroll-target="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">6. Calling <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span> the exact cumulative drag</a></li>
+  <li><a href="#calling-a-fixed-bps-cost-model-actual-execution-cost" id="toc-calling-a-fixed-bps-cost-model-actual-execution-cost" class="nav-link" data-scroll-target="#calling-a-fixed-bps-cost-model-actual-execution-cost">7. Calling a fixed-bps cost model “actual execution cost”</a></li>
+  <li><a href="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" id="toc-assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" class="nav-link" data-scroll-target="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">8. Assuming ex-post cost deduction makes the portfolio cost-optimal</a></li>
+  <li><a href="#letting-transaction-cost-realism-hide-an-information-leak" id="toc-letting-transaction-cost-realism-hide-an-information-leak" class="nav-link" data-scroll-target="#letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</a></li>
   </ul></li>
   <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
-  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -224,18 +228,18 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Portfolio Backtesting and Rebalancing</h1>
-<p class="subtitle lead">Getting the timeline, weight drift, and turnover right before interpreting performance</p>
+<h1 class="title">Turnover, Transaction Costs, and Net Performance</h1>
+<p class="subtitle lead">Measuring portfolio turnover and how modeled transaction costs change the wealth path</p>
   <div class="quarto-categories">
     <div class="quarto-category">Investment Methods</div>
     <div class="quarto-category">Portfolio Methods</div>
-    <div class="quarto-category">Foundation</div>
+    <div class="quarto-category">Intermediate</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    A practical guide to portfolio backtest accounting, weight drift, rebalancing timing, and turnover conventions.
+    A practical guide to drift-aware portfolio turnover, transaction-cost conventions, and how modeled trading costs translate before-cost performance into net portfolio performance.
   </div>
 </div>
 
@@ -253,346 +257,400 @@ window.Quarto = {
 
 
 <div class="method-kicker">
-<p>QM007 · Investment Methods · Portfolio Methods · Foundation</p>
+<p>QM009 · Investment Methods · Portfolio Methods · Intermediate</p>
 </div>
 <div class="method-orientation">
-<p><strong>Core idea.</strong> A portfolio backtest is a timeline, not just a return formula. The weights in force at the start of a period earn that period’s asset returns. Those returns change the weights. A rebalance, if one occurs, then sets the holdings for the next period.</p>
-<p><strong>Use it for.</strong> Historical simulations of fixed-weight, periodically rebalanced, or signal-driven portfolios when you need transparent wealth accounting, weight drift, turnover, and information timing.</p>
-<p><strong>It does not establish.</strong> That a backtested strategy is economically useful, statistically reliable, investable after costs, or robust to strategy selection. Correct bookkeeping is necessary; it is not sufficient evidence of investment skill.</p>
+<p><strong>Core idea.</strong> Transaction costs in a backtest should be applied to the trades implied by the rebalance. That requires measuring turnover from the drifted pre-trade portfolio to the new target, declaring what the turnover statistic counts, and applying a cost rate to the same traded-notional convention.</p>
+<p><strong>Use it for.</strong> Turning a before-cost portfolio backtest into an explicitly cost-adjusted backtest when the trading rule, rebalance schedule, and proportional transaction-cost model are specified.</p>
+<p><strong>It does not establish.</strong> Actual implementation shortfall, market impact, capacity, or cost-optimal portfolio weights. A constant-basis-point cost model is a transparent modeling assumption, not a universal execution model.</p>
 </div>
 <section id="the-question" class="level1">
 <h1>The Question</h1>
-<p>A portfolio rule may sound simple: choose weights, multiply them by returns, and compound the result.</p>
-<p>The important complication is timing: <strong>portfolio weights are dated</strong>. Suppose a portfolio begins month <span class="math inline">\(t\)</span> with 50% in each of two assets. If one asset rises and the other does not, the portfolio no longer ends the month at 50/50. If the strategy does not trade, those drifted weights must carry into the next month. If it does trade, the rebalance happens only after the return that caused the drift has already been earned.</p>
-<p>That leads to the central question:</p>
+<p>A strategy can have attractive performance before trading frictions and still be difficult to implement. One of the first quantities to examine is <strong>turnover</strong>.</p>
+<p>But the word is not enough. A backtest needs to answer three separate questions:</p>
+<ol type="1">
+<li>What portfolio exists immediately before the trade?</li>
+<li>How much does the strategy trade to reach the new target?</li>
+<li>What cost rate is applied, and what definition of traded notional does that rate price?</li>
+</ol>
+<p>The central question is therefore:</p>
 <blockquote class="blockquote">
-<p><strong>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio?</strong></p>
+<p><strong>Given a trading rule, how much turnover does it generate, and what happens to the wealth path under a declared transaction-cost model?</strong></p>
 </blockquote>
-<p>If those three pieces are not explicit, a backtest can look numerically plausible while embedding a hidden rebalance, a one-period timing error, or a turnover measure that does not match the stated trading rule.</p>
+<p>The portfolio timeline follows <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>. Returns during the holding period change the portfolio weights before the next rebalance. The resulting <strong>drifted pre-trade portfolio</strong> is the state from which rebalancing begins. The rebalance then moves that portfolio toward the new target.</p>
 </section>
 <section id="why-it-matters" class="level1">
 <h1>Why It Matters</h1>
-<p>Historical portfolio results are path dependent. Buy-and-hold and periodic rebalancing are different dynamic rules, and they generally generate different weight and wealth paths <span class="citation" data-cites="peroldsharpe1988">(<a href="#ref-peroldsharpe1988" role="doc-biblioref">Perold and Sharpe 1988</a>)</span>. A backtest must therefore reproduce the rule that an investor could actually have followed through time.</p>
-<p>The same principle applies when weights are estimated from data. In a rolling out-of-sample portfolio exercise, information available before the holding period determines the weights used during that holding period. DeMiguel, Garlappi, and Uppal use prior observations to form portfolio weights and then evaluate the resulting portfolio out of sample <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>. A signal formed with information through the end of period <span class="math inline">\(t\)</span> should not quietly earn period-<span class="math inline">\(t\)</span> returns under a next-period implementation convention.</p>
-<p>Correct timing also matters for turnover. The trade at a rebalance date is not generally the difference between today’s target and the <strong>previous target</strong>. It is the difference between today’s target and the <strong>drifted portfolio that actually exists immediately before trading</strong>.</p>
+<p>Transaction-cost analysis can go wrong even when the cost rate itself looks reasonable.</p>
+<p>Suppose a backtest says turnover is 10% and assumes 10 basis points of transaction cost. That still does not tell us the cost deduction. The turnover figure might refer to purchases only, purchases plus sales, an annual regulatory ratio, or an average across rebalance dates. Likewise, a 10-basis-point cost assumption is meaningful only when we know which measure of traded notional it applies to.</p>
+<p>A second problem is timing. The amount traded is generally <strong>not</strong> the difference between the new target and the previous target. Asset returns have changed the portfolio weights since the previous rebalance. This is also the convention used by DeMiguel, Garlappi, and Uppal, who measure turnover relative to the portfolio weights immediately before rebalancing <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
+<p>A third problem is terminology. The U.S. Securities and Exchange Commission’s mutual-fund Portfolio Turnover Rate is a particular annual disclosure ratio based on the lesser of purchases or sales relative to the prescribed average value of portfolio securities, subject to specified exclusions <span class="citation" data-cites="secformn1a">(<a href="#ref-secformn1a" role="doc-biblioref">U.S. Securities and Exchange Commission 2025</a>)</span>. It is not interchangeable with the rebalance-date weight-space turnover used in this article.</p>
 </section>
-<section id="intuition-one-period-has-four-states" class="level1">
-<h1>Intuition: One Period Has Four States</h1>
-<p>A useful way to reason about a backtest is to split every period into four states.</p>
-<div id="fig-qm007-timing" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Portfolio timeline from start-of-period weights through returns, weight drift, and optional rebalancing for the next period.">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm007_timing_flow.svg" class="img-fluid figure-img" style="width:96.0%" alt="Portfolio timeline from start-of-period weights through returns, weight drift, and optional rebalancing for the next period.">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-timing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Start-of-period weights earn the current period’s returns. Those returns create drifted pre-trade weights. An optional rebalance then sets the weights that enter the next period.
-</figcaption>
-</figure>
-</div>
-<p>For period <span class="math inline">\(t\)</span>:</p>
-<ol type="1">
-<li><strong>Start:</strong> enter the period with actual weights <span class="math inline">\(\mathbf w_{t-1}\)</span>.</li>
-<li><strong>Return realization:</strong> those weights earn asset returns <span class="math inline">\(\mathbf r_t\)</span>.</li>
-<li><strong>Drift:</strong> relative asset performance creates pre-rebalance weights <span class="math inline">\(\widetilde{\mathbf w}_t\)</span>.</li>
-<li><strong>Trade or carry:</strong> if the date is a rebalance date, trade to target <span class="math inline">\(\mathbf w_t\)</span>; otherwise set <span class="math inline">\(\mathbf w_t=\widetilde{\mathbf w}_t\)</span>.</li>
-</ol>
-<p>The final <span class="math inline">\(\mathbf w_t\)</span> then enters period <span class="math inline">\(t+1\)</span>.</p>
-<p>This timeline is the accounting backbone of the article.</p>
-</section>
-<section id="portfolio-return-and-wealth" class="level1">
-<h1>Portfolio Return and Wealth</h1>
-<p>Let <span class="math inline">\(r_{i,t}\)</span> be the simple return of asset <span class="math inline">\(i\)</span> during period <span class="math inline">\(t\)</span>, and define its gross return or price relative as</p>
+<section id="start-from-the-drifted-portfolio" class="level1">
+<h1>Start from the Drifted Portfolio</h1>
+<p>Let <span class="math inline">\(\widetilde w_{i,t}\)</span> be asset <span class="math inline">\(i\)</span>’s weight immediately before rebalancing at date <span class="math inline">\(t\)</span>. These are the weights after returns over the preceding holding period have caused the portfolio to drift.</p>
+<p>Let <span class="math inline">\(w_{i,t}\)</span> be the desired post-rebalance target weight. Define the trade in weight space as</p>
 <p><span class="math display">\[
-x_{i,t}=1+r_{i,t}.
-\]</span></p>
-<p>Let <span class="math inline">\(w_{i,t-1}\)</span> be the actual weight in force <strong>before</strong> period-<span class="math inline">\(t\)</span> returns are realized. In the fully invested long-only setup used here,</p>
-<p><span class="math display">\[
-\sum_i w_{i,t-1}=1,
-\qquad w_{i,t-1}\ge 0.
-\]</span></p>
-<p>The portfolio gross wealth factor is</p>
-<p><span class="math display">\[
-g_{p,t}
+\Delta w_{i,t}
 =
-\mathbf w_{t-1}^{\top}\mathbf x_t,
+w_{i,t}-\widetilde w_{i,t}.
 \]</span></p>
-<p>so the simple portfolio return is</p>
+<p>A positive <span class="math inline">\(\Delta w_{i,t}\)</span> is a modeled purchase; a negative value is a modeled sale.</p>
+<p>We define <strong>full-L1 turnover</strong> as</p>
 <p><span class="math display">\[
-r_{p,t}
+TO_t^{L1}
 =
-g_{p,t}-1
+\sum_{i=1}^{N}
+\left|\Delta w_{i,t}\right|
 =
-\mathbf w_{t-1}^{\top}\mathbf r_t.
+\sum_{i=1}^{N}
+\left|w_{i,t}-\widetilde w_{i,t}\right|.
 \]</span></p>
-<p>If <span class="math inline">\(V_{t-1}\)</span> is wealth entering the period, gross-of-cost wealth evolves as</p>
-<p><span class="math display">\[
-V_t=V_{t-1}(1+r_{p,t}).
-\]</span></p>
-<p>Across <span class="math inline">\(T\)</span> periods,</p>
-<p><span class="math display">\[
-\frac{V_T}{V_0}
-=
-\prod_{t=1}^{T}(1+r_{p,t}).
-\]</span></p>
-<p>These discrete-time wealth identities are consistent with the portfolio and price-relative formulation used by Cover and Ordentlich <span class="citation" data-cites="coverordentlich1996">(<a href="#ref-coverordentlich1996" role="doc-biblioref">Cover and Ordentlich 1996</a>)</span>.</p>
-<div class="callout callout-style-default callout-important callout-titled" title="The subscript is a timing statement">
+<p>This statistic counts the absolute size of both purchase and sale legs in units of pre-cost portfolio wealth.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Do not compute turnover from target to target">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>The subscript is a timing statement
+<span class="screen-reader-only">Warning</span>Do not compute turnover from target to target
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Under the convention used here, <span class="math inline">\(\mathbf w_{t-1}\)</span> earns <span class="math inline">\(\mathbf r_t\)</span>. An end-of-period target <span class="math inline">\(\mathbf w_t\)</span> is the portfolio that enters period <span class="math inline">\(t+1\)</span>. Changing this notation is possible, but the code and prose must change together.</p>
+<p>The previous target <span class="math inline">\(\mathbf w_{t-1}\)</span> is generally not the portfolio that exists at the next rebalance. Relative asset returns move the portfolio to <span class="math inline">\(\widetilde{\mathbf w}_t\)</span>. Turnover is measured from that drifted state to the new target.</p>
 </div>
 </div>
 </section>
-<section id="weight-drift-before-rebalancing" class="level1">
-<h1>Weight Drift Before Rebalancing</h1>
-<p>Returns change the dollar value of each position. Even when no trade occurs, portfolio weights therefore move.</p>
-<p>Immediately after period-<span class="math inline">\(t\)</span> returns, but before any rebalance, asset <span class="math inline">\(i\)</span> has weight</p>
+<section id="full-l1-and-one-way-turnover" class="level1">
+<h1>Full-L1 and One-Way Turnover</h1>
+<p>For a long-only, fully invested portfolio with no external flows,</p>
 <p><span class="math display">\[
-\widetilde w_{i,t}
+\sum_i \widetilde w_{i,t}
 =
-\frac{w_{i,t-1}(1+r_{i,t})}
-{\mathbf w_{t-1}^{\top}(\mathbf 1+\mathbf r_t)}.
+\sum_i w_{i,t}
+=1.
 \]</span></p>
-<p>The denominator is the portfolio’s gross wealth factor. The numerator is asset <span class="math inline">\(i\)</span>’s contribution to end-of-period wealth.</p>
-<p>This formula can also be derived by keeping explicit share counts: let each position grow by its own gross return, add the resulting position values to obtain total wealth, and divide each position value by the total. The two calculations must agree.</p>
-<p>If there is <strong>no rebalance</strong>, the next period begins with</p>
+<p>The total weight purchased therefore equals the total weight sold. Under this specific setup,</p>
 <p><span class="math display">\[
-\mathbf w_t=\widetilde{\mathbf w}_t.
+TO_t^{1w}
+=
+\frac{1}{2}TO_t^{L1}.
 \]</span></p>
-<p>Resetting weights to the old target without recording a trade is a hidden rebalance.</p>
+<p>Under this convention, the half-L1 statistic equals both the modeled purchase weight and the modeled sale weight. We refer to this quantity as <strong>one-way turnover</strong>.</p>
+<p>The factor of one-half is not a universal definition. With external cash flows, leverage, short positions, or other changes in net exposure, purchases and sales need not be equal.</p>
+<p>For example, if full-L1 turnover is 20%, the corresponding one-way turnover is 10%. Both numbers can describe the same rebalance. Reporting only “turnover = 10%” without defining the measure leaves the underlying traded notional ambiguous.</p>
 </section>
-<section id="rebalancing-is-a-rule-not-a-label" class="level1">
-<h1>Rebalancing Is a Rule, Not a Label</h1>
-<p>A rebalanced portfolio needs at least three pieces of information:</p>
+<section id="match-the-cost-rate-to-the-turnover-measure" class="level1">
+<h1>Match the Cost Rate to the Turnover Measure</h1>
+<p>Let <span class="math inline">\(c_t\)</span> denote the assumed proportional cost <strong>per dollar of modeled trade notional, measured relative to pre-cost portfolio wealth</strong>. Under the symmetric base convention, the modeled cost fraction is</p>
+<p><span class="math display">\[
+C_t
+=
+c_t TO_t^{L1}.
+\]</span></p>
+<p>Because <span class="math inline">\(TO_t^{L1}=2TO_t^{1w}\)</span> in the fully invested/no-flow case,</p>
+<p><span class="math display">\[
+C_t
+=
+2c_tTO_t^{1w}.
+\]</span></p>
+<p>The factor of two comes from the combination of two conventions: turnover is being reported on a one-way basis, while the cost rate is charged on both modeled purchase and sale notional. It is not a universal transaction-cost adjustment.</p>
+<p>Suppose one-way turnover is 10% and the cost quote is 10 basis points per modeled buy-or-sell dollar. Since</p>
+<p><span class="math display">\[
+10\text{ bps}=0.001,
+\]</span></p>
+<p>full-L1 turnover is 20%, and</p>
+<p><span class="math display">\[
+C_t
+=
+0.001\times0.20
+=
+0.0002.
+\]</span></p>
+<p>The modeled debit is therefore <strong>2 basis points of pre-cost portfolio wealth</strong>, not 1 basis point.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="A basis-point assumption needs a denominator">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>A basis-point assumption needs a denominator
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A cost rate is not self-contained. State whether it applies to full buy-plus-sell notional, a one-way turnover measure, or another explicitly defined trading base. The formula must change when the quote convention changes.</p>
+</div>
+</div>
+</section>
+<section id="from-performance-before-costs-to-net-wealth" class="level1">
+<h1>From Performance Before Costs to Net Wealth</h1>
+<p>Let <span class="math inline">\(V_{t-1}^{+}\)</span> be wealth immediately after the previous rebalance and cost debit. Let <span class="math inline">\(R_{p,t}^{\text{pre-cost}}\)</span> be the portfolio return earned during holding period <span class="math inline">\(t\)</span> <strong>before the modeled transaction cost at the next rebalance</strong>.</p>
+<p>Pre-cost wealth is</p>
+<p><span class="math display">\[
+V_t^{-}
+=
+V_{t-1}^{+}
+(1+R_{p,t}^{\text{pre-cost}}).
+\]</span></p>
+<p>After the proportional cost debit,</p>
+<p><span class="math display">\[
+V_t^{+}
+=
+V_t^{-}(1-C_t).
+\]</span></p>
+<p>Combining the two steps gives</p>
+<p><span class="math display">\[
+V_t^{+}
+=
+V_{t-1}^{+}
+(1+R_{p,t}^{\text{pre-cost}})
+(1-c_tTO_t^{L1}).
+\]</span></p>
+<p>This multiplicative wealth accounting is consistent with the proportional transaction-cost treatment in DeMiguel, Garlappi, and Uppal <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
+<p>The corresponding return from one post-cost state to the next is</p>
+<p><span class="math display">\[
+R_{p,t}^{net}
+=
+(1+R_{p,t}^{\text{pre-cost}})(1-C_t)-1.
+\]</span></p>
+<p>Equivalently,</p>
+<p><span class="math display">\[
+R_{p,t}^{net}
+=
+R_{p,t}^{\text{pre-cost}}
+-C_t
+-R_{p,t}^{\text{pre-cost}}C_t.
+\]</span></p>
+<p>The familiar shortcut</p>
+<p><span class="math display">\[
+R_{p,t}^{\text{pre-cost}}-C_t
+\]</span></p>
+<p>omits the cross term. With small costs the numerical difference may be small, but the two accounting rules are not algebraically identical.</p>
+<section id="why-the-wording-before-modeled-transaction-costs-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-the-wording-before-modeled-transaction-costs-matters">Why the wording “before modeled transaction costs” matters</h2>
+<p><strong>Gross-of-fees</strong> should not be used as a synonym for “before transaction costs.” Under the GIPS Standards, transaction costs are reflected in both gross-of-fees and net-of-fees returns; the distinction concerns investment-management fees rather than whether trading costs are deducted <span class="citation" data-cites="gipshandbookfirms">(<a href="#ref-gipshandbookfirms" role="doc-biblioref">CFA Institute 2020</a>)</span>.</p>
+<p>For this reason, the article uses the following labels:</p>
 <ul>
-<li>the target weights or target-weight rule;</li>
-<li>the dates on which the target may be restored or changed; and</li>
-<li>the execution convention that determines when the new weights start earning returns.</li>
+<li><strong>performance before modeled transaction costs</strong>; and</li>
+<li><strong>performance net of modeled transaction costs</strong>.</li>
 </ul>
-<p>Perold and Sharpe describe dynamic asset-allocation strategies as explicit rules for changing portfolio exposures as asset values move <span class="citation" data-cites="peroldsharpe1988">(<a href="#ref-peroldsharpe1988" role="doc-biblioref">Perold and Sharpe 1988</a>)</span>. Buy-and-hold is the no-trade case after the initial allocation. A constant-mix strategy is different: it restores a constant fraction of wealth to the risky asset according to its stated rebalance rule.</p>
-<p>Under the convention used here, a rebalance at the end of period <span class="math inline">\(t\)</span> changes the portfolio from <span class="math inline">\(\widetilde{\mathbf w}_t\)</span> to <span class="math inline">\(\mathbf w_t\)</span>. The new weights earn <strong>period <span class="math inline">\(t+1\)</span></strong>, not the return that has already occurred in period <span class="math inline">\(t\)</span>.</p>
+<p>These labels also make the model boundary visible: commissions, spreads, taxes, financing, market impact, and other implementation effects are included only if the stated cost model explicitly includes them.</p>
 </section>
-<section id="numerical-illustration-the-same-returns-different-rules" class="level1">
-<h1>Numerical Illustration: The Same Returns, Different Rules</h1>
-<div class="callout callout-style-default callout-note callout-titled" title="Deterministic numerical illustration — not empirical evidence">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Deterministic numerical illustration — not empirical evidence
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The four-period path below is deliberately small. It is designed to expose the accounting mechanics. It does not show that rebalancing generally raises or lowers returns.</p>
-</div>
-</div>
-<p>Start with two assets, A and B, and an initial 50/50 allocation. Consider the following simple returns:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Period</th>
-<th style="text-align: center;">Asset A</th>
-<th style="text-align: center;">Asset B</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">10%</td>
-<td style="text-align: center;">0%</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">-10%</td>
-<td style="text-align: center;">0%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">20%</td>
-<td style="text-align: center;">-5%</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">-5%</td>
-<td style="text-align: center;">10%</td>
-</tr>
-</tbody>
-</table>
-<p>First consider a portfolio that rebalances to 50/50 after <strong>every</strong> period.</p>
-<p>After period 1, its return is</p>
+</section>
+<section id="numerical-illustration-drift-turnover-and-cost" class="level1">
+<h1>Numerical Illustration: Drift, Turnover, and Cost</h1>
+<p>Consider an already established three-asset portfolio with initial wealth 100 and weights</p>
 <p><span class="math display">\[
-0.5(0.10)+0.5(0)=0.05.
+\mathbf w_0=(0.50,0.30,0.20).
 \]</span></p>
-<p>Wealth rises from 1.000 to 1.050. But the portfolio is no longer 50/50 before trading. Asset A’s pre-rebalance weight is</p>
+<p>During the first holding period, asset returns are</p>
 <p><span class="math display">\[
-\widetilde w_{A,1}
+(10\%,0\%,-5\%).
+\]</span></p>
+<p>The portfolio return before modeled transaction costs is 4%, so pre-cost wealth becomes</p>
+<p><span class="math display">\[
+V_1^{-}=100(1.04)=104.
+\]</span></p>
+<p>After these returns, the portfolio weights drift to</p>
+<p><span class="math display">\[
+\widetilde{\mathbf w}_1
+\approx
+(0.528846,0.288462,0.182692).
+\]</span></p>
+<p>Suppose the new target is</p>
+<p><span class="math display">\[
+\mathbf w_1=(0.40,0.40,0.20).
+\]</span></p>
+<p>The correct drift-aware full-L1 turnover is</p>
+<p><span class="math display">\[
+TO_1^{L1}
+\approx
+0.257692,
+\]</span></p>
+<p>or 25.7692%. One-way turnover is 12.8846%.</p>
+<p>By contrast, comparing the new target directly with the previous target gives only</p>
+<p><span class="math display">\[
+|0.40-0.50|
++|0.40-0.30|
++|0.20-0.20|
+=0.20.
+\]</span></p>
+<p>The 20% target-to-target calculation misses the additional trading required because the portfolio has drifted.</p>
+<p>Using the 10-bps-per-traded-dollar convention defined above,</p>
+<p><span class="math display">\[
+C_1
 =
-\frac{0.5(1.10)}{1.05}
-=
-0.52381,
+0.001\times0.257692
+\approx
+0.000257692.
 \]</span></p>
-<p>and asset B’s weight is 0.47619.</p>
-<p>Trading back to 50/50 produces L1 turnover of</p>
+<p>Post-cost wealth is therefore</p>
 <p><span class="math display">\[
-|0.50-0.52381|+|0.50-0.47619|
-=0.04762.
+V_1^{+}
+=
+104(1-0.000257692)
+=103.9732.
 \]</span></p>
-<p>Under the one-way convention defined below, that is 0.02381, or 2.381% of wealth on one side of the trade.</p>
-<p>The full path is:</p>
-<div class="qm-table-qm007-path">
+<p>Under this model, the period return net of modeled transaction costs is 3.9732%.</p>
+<p>The full four-period illustration is deliberately small enough to inspect by hand:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: center;">Period</th>
-<th style="text-align: center;">Rebalanced return</th>
-<th style="text-align: center;">Rebalanced wealth</th>
-<th style="text-align: center;">Pre-trade weight in A</th>
-<th style="text-align: center;">L1 turnover</th>
+<th style="text-align: center;">Rebalance?</th>
+<th style="text-align: center;">Return before modeled costs</th>
+<th style="text-align: center;">Full-L1 turnover</th>
 <th style="text-align: center;">One-way turnover</th>
+<th style="text-align: center;">Net return</th>
+<th style="text-align: center;">Net wealth</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">1</td>
-<td style="text-align: center;">5.000%</td>
-<td style="text-align: center;">1.050000</td>
-<td style="text-align: center;">52.381%</td>
-<td style="text-align: center;">4.762%</td>
-<td style="text-align: center;">2.381%</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">4.0000%</td>
+<td style="text-align: center;">25.7692%</td>
+<td style="text-align: center;">12.8846%</td>
+<td style="text-align: center;">3.9732%</td>
+<td style="text-align: center;">103.9732</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">2</td>
-<td style="text-align: center;">-5.000%</td>
-<td style="text-align: center;">0.997500</td>
-<td style="text-align: center;">47.368%</td>
-<td style="text-align: center;">5.263%</td>
-<td style="text-align: center;">2.632%</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">1.2000%</td>
+<td style="text-align: center;">0.0000%</td>
+<td style="text-align: center;">0.0000%</td>
+<td style="text-align: center;">1.2000%</td>
+<td style="text-align: center;">105.2209</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">3</td>
-<td style="text-align: center;">7.500%</td>
-<td style="text-align: center;">1.072313</td>
-<td style="text-align: center;">55.814%</td>
-<td style="text-align: center;">11.628%</td>
-<td style="text-align: center;">5.814%</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">-0.1028%</td>
+<td style="text-align: center;">29.7658%</td>
+<td style="text-align: center;">14.8829%</td>
+<td style="text-align: center;">-0.1325%</td>
+<td style="text-align: center;">105.0815</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">4</td>
-<td style="text-align: center;">2.500%</td>
-<td style="text-align: center;">1.099120</td>
-<td style="text-align: center;">46.341%</td>
-<td style="text-align: center;">7.317%</td>
-<td style="text-align: center;">3.659%</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">0.2000%</td>
+<td style="text-align: center;">10.8982%</td>
+<td style="text-align: center;">5.4491%</td>
+<td style="text-align: center;">0.1891%</td>
+<td style="text-align: center;">105.2801</td>
 </tr>
 </tbody>
 </table>
-</div>
-<p>Now compare the same initial 50/50 portfolio with <strong>buy-and-hold</strong>. After period 1, the 52.381/47.619 drift is carried into period 2 because no trade occurs. That changes period-2 return and every later weight.</p>
-<div id="fig-qm007-wealth" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Wealth paths comparing periodic 50/50 rebalancing with buy-and-hold on the same synthetic asset returns.">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/rendered/qm007_wealth_paths.svg" class="img-fluid figure-img" style="width:92.0%" alt="Wealth paths comparing periodic 50/50 rebalancing with buy-and-hold on the same synthetic asset returns.">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm007-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: The two rules begin with the same 50/50 allocation and see the same asset returns. Their wealth paths diverge because periodic rebalancing resets the weights while buy-and-hold carries drift forward. The terminal difference is specific to this synthetic path.
-</figcaption>
-</figure>
-</div>
-<p>After the first two periods, rebalanced wealth is 0.9975 while buy-and-hold wealth is 0.9950. After all four periods, the corresponding values are approximately 1.09912 and 1.08680.</p>
-<p>Those numbers are <strong>not</strong> evidence that rebalancing is superior. Reverse the return sequence or change the path and the comparison can change. The point is narrower: two different trading rules should not be expected to generate the same backtest.</p>
-</section>
-<section id="turnover-state-the-convention" class="level1">
-<h1>Turnover: State the Convention</h1>
-<p>There is no single universal turnover convention.</p>
-<p>DeMiguel, Garlappi, and Uppal measure the amount traded by comparing desired post-rebalance weights with the portfolio weights that exist immediately before rebalancing <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>. Following that structure, define <strong>L1 turnover</strong> as</p>
-<p><span class="math display">\[
-TO_t^{L1}
-=
-\sum_i |w_{i,t}-\widetilde w_{i,t}|.
-\]</span></p>
-<p>For the fully invested, no-external-flow setup used here, total buys equal total sells. Under that setup, we also report an explicitly named <strong>one-way turnover</strong> convention:</p>
-<p><span class="math display">\[
-TO_t^{1w}
-=
-\frac12 TO_t^{L1}.
-\]</span></p>
-<p>The factor of one-half follows from this accounting setup; it is not presented as a universal definition of turnover.</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="State the turnover formula">
+<div class="callout callout-style-default callout-note callout-titled" title="Numerical illustration — not empirical evidence">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>State the turnover formula
+<span class="screen-reader-only">Note</span>Numerical illustration — not empirical evidence
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A statement such as “turnover is 10%” is incomplete unless the reader knows whether the number is L1, one-way, annualized, averaged across dates, or defined another way. How a declared turnover measure maps into trading costs and net performance is a separate accounting question.</p>
+<p>The returns, targets, and 10-basis-point cost assumption are chosen to expose accounting differences. They do not estimate the trading costs, turnover, or performance of a real strategy.</p>
 </div>
 </div>
 </section>
-<section id="information-timing-for-signal-driven-weights" class="level1">
-<h1>Information Timing for Signal-Driven Weights</h1>
-<p>A backtest may use fixed targets, but many investment rules estimate weights from historical information. For signal-driven portfolios, write down the information-timing rule before calculating performance.</p>
-<p>Under the next-period convention used here:</p>
-<ol type="1">
-<li>information available through the end of period <span class="math inline">\(t\)</span> is used to form the target <span class="math inline">\(\mathbf w_t\)</span>;</li>
-<li>the portfolio trades, if the execution rule allows it, after that information becomes available; and</li>
-<li><span class="math inline">\(\mathbf w_t\)</span> earns the return of period <span class="math inline">\(t+1\)</span>.</li>
-</ol>
-<p>This is the same broad out-of-sample discipline used in rolling portfolio evaluation: estimates from a historical window determine subsequent holdings, and those holdings are evaluated on future returns <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
-<p>Same-close execution can be valid, but it relies on a different information and execution assumption. The timestamps must show that the signal was known and tradable at the price used in the backtest. The requirement is not a universal one-day lag; it is an explicit and internally consistent information-and-execution boundary.</p>
+<section id="aggregating-turnover-and-cost-drag" class="level1">
+<h1>Aggregating Turnover and Cost Drag</h1>
+<p>Turnover statistics also need a time-aggregation convention.</p>
+<p>For a set of rebalance dates <span class="math inline">\(\mathcal T\)</span> within a chosen sample or calendar period, one transparent summary is the sum of rebalance-date turnover:</p>
+<p><span class="math display">\[
+TO_{\mathcal T}^{L1}
+=
+\sum_{t\in\mathcal T}TO_t^{L1}.
+\]</span></p>
+<p>In the four-period illustration, recurring full-L1 turnover sums to approximately</p>
+<p><span class="math display">\[
+0.664332,
+\]</span></p>
+<p>and recurring one-way turnover sums to approximately</p>
+<p><span class="math display">\[
+0.332166.
+\]</span></p>
+<p>Initial portfolio formation is excluded from these recurring-turnover summaries. If an analysis wants to charge an inception trade from cash into the initial portfolio, that transaction should be stated separately because its denominator and cash-leg convention can differ from ordinary rebalancing.</p>
+<p>Cost fractions also compound. The exact cumulative retention due solely to the sequence of modeled cost debits is</p>
+<p><span class="math display">\[
+\prod_{t\in\mathcal T}(1-C_t),
+\]</span></p>
+<p>so the exact cumulative cost drag fraction is</p>
+<p><span class="math display">\[
+1-
+\prod_{t\in\mathcal T}(1-C_t).
+\]</span></p>
+<p>It is <strong>not</strong> exactly equal to <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span>. In the illustration,</p>
+<p><span class="math display">\[
+\sum_{t\in\mathcal T}C_t
+\approx
+0.000664332,
+\]</span></p>
+<p>while the exact compounded drag is approximately</p>
+<p><span class="math display">\[
+0.000664195.
+\]</span></p>
+<p>The difference is tiny here because the modeled costs are small, but the accounting distinction is still real.</p>
 </section>
 <section id="implementation-pattern" class="level1">
 <h1>Implementation Pattern</h1>
-<p>A transparent backtest can be written as a state transition rather than as a single vectorized return expression:</p>
+<p>A transparent implementation keeps the portfolio state, turnover calculation, and cost debit separate:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> initial_weights</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wealth <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wealth <span class="op">=</span> initial_wealth</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> periods:</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># weights are known before period-t returns</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    portfolio_return <span class="op">=</span> weights <span class="op">@</span> returns[t]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    wealth <span class="op">*=</span> <span class="dv">1</span> <span class="op">+</span> portfolio_return</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># returns create the pre-trade portfolio</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    drifted <span class="op">=</span> weights <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> returns[t]) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> portfolio_return)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> is_rebalance_date(t):</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        target <span class="op">=</span> target_from_information_available_through(t)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="bu">abs</span>(target <span class="op">-</span> drifted).<span class="bu">sum</span>()</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> drifted</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is Python-like pseudocode. A complete backtest also needs explicit rules for the return series, missing observations, universe membership, instrument inception, corporate actions, currencies, external cash flows, transaction costs, taxes, leverage, and execution.</p>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    holding_growth_factor <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    pre_cost_wealth <span class="op">=</span> wealth <span class="op">*</span> holding_growth_factor</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    drifted_weights <span class="op">=</span> [</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r) <span class="op">/</span> holding_growth_factor</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> is_rebalance_date(t):</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        target <span class="op">=</span> target_weights[t]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">abs</span>(target_i <span class="op">-</span> drifted_i)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> target_i, drifted_i <span class="kw">in</span> <span class="bu">zip</span>(target, drifted_weights)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        cost_fraction <span class="op">=</span> cost_rate[t] <span class="op">*</span> turnover_l1</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> cost_fraction)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        cost_fraction <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> drifted_weights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is a <strong>reduced-form proportional-cost backtest</strong>. The trade vector is measured from the drifted pre-trade portfolio to the desired target using pre-cost wealth as the denominator. The scalar cost deduction is then applied to wealth. Because transaction costs are applied as a scalar wealth deduction, the example does not solve the more detailed self-financing execution problem in which trading costs can alter the exact post-trade holdings.</p>
 </section>
-<section id="hands-on-lab-change-the-rebalancing-frequency" class="level1">
-<h1>Hands-on Lab: Change the Rebalancing Frequency</h1>
-<p>The optional lab uses the same four-period return path and compares three rules: 50/50 rebalanced every period, 50/50 rebalanced every two periods, and buy-and-hold.</p>
+<section id="hands-on-lab-change-the-cost-assumption" class="level1">
+<h1>Hands-on Lab: Change the Cost Assumption</h1>
+<p>The lab uses the same four-period three-asset path and lets you change the proportional cost assumption while keeping the trading rule fixed.</p>
 <div class="method-action">
-<p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm007_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm007_hands_on.py">Python</a> · <a href="labs/r/qm007_hands_on.R">R</a>.</p>
+<p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm009_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm009_hands_on.py">Python</a> · <a href="labs/r/qm009_hands_on.R">R</a>.</p>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm007_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The exercise is useful because it changes one design choice while preserving the accounting timeline. More frequent rebalancing will generally create more opportunities to trade, but the realized turnover and wealth effects remain path dependent.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm009_hands_on.py 10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Try 0, 10, and 25 bps. Turnover should not change, because the targets and return path are unchanged. Terminal net wealth should change, because the same modeled trade notional is being charged at a different rate.</p>
 </section>
-<section id="what-a-backtest-should-state" class="level1">
-<h1>What a Backtest Should State</h1>
-<p>The generic formulas do not decide how an empirical dataset should be built. Before interpreting historical performance, document the choices that can change the path.</p>
-<div class="qm-table-qm007-checklist">
+<section id="what-a-transaction-cost-backtest-should-state" class="level1">
+<h1>What a Transaction-Cost Backtest Should State</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -606,118 +664,135 @@ TO_t^{1w}
 </thead>
 <tbody>
 <tr class="odd">
-<td>Return series</td>
-<td>Price return or total return; currency/FX treatment when relevant</td>
+<td>Pre-trade state</td>
+<td>Drifted pre-trade weights or another explicitly defined portfolio state</td>
 </tr>
 <tr class="even">
-<td>Start weights</td>
-<td>Initial allocation and whether it is assumed tradable at the start date</td>
-</tr>
-<tr class="odd">
-<td>Weight timing</td>
-<td>Which weights earn which period’s returns</td>
-</tr>
-<tr class="even">
-<td>Signal timing</td>
-<td>Information cutoff used to form each target</td>
-</tr>
-<tr class="odd">
-<td>Rebalance rule</td>
-<td>Frequency, trigger, target, and execution convention</td>
-</tr>
-<tr class="even">
-<td>Non-rebalance dates</td>
-<td>Drifted weights carried forward rather than silently reset</td>
+<td>Trade vector</td>
+<td>Exact formula mapping the pre-trade portfolio to the target</td>
 </tr>
 <tr class="odd">
 <td>Turnover</td>
-<td>Exact formula and aggregation convention</td>
+<td>Full-L1, one-way/half-L1, regulatory ratio, or another named convention</td>
 </tr>
 <tr class="even">
-<td>Universe</td>
-<td>Entry, exit, inception, missing-price, and delisting rules when relevant</td>
+<td>Cost quote</td>
+<td>Basis points or other rate, plus the traded-notional denominator it prices</td>
 </tr>
 <tr class="odd">
-<td>Costs and taxes</td>
-<td>Gross or net result; if net, the explicit cost/tax mapping</td>
+<td>Timing</td>
+<td>Whether the cost is charged at the rebalance, during execution, or under another convention</td>
 </tr>
 <tr class="even">
-<td>Benchmark</td>
-<td>Its own rebalancing and return conventions, not only its label</td>
+<td>Performance labels</td>
+<td>Before modeled transaction costs versus net of modeled transaction costs</td>
+</tr>
+<tr class="odd">
+<td>Inception</td>
+<td>Whether initial portfolio formation is included or reported separately</td>
+</tr>
+<tr class="even">
+<td>Aggregation</td>
+<td>Sum, average, calendar-year sum, or another explicitly defined time summary; label any frequency scaling</td>
+</tr>
+<tr class="odd">
+<td>Frictions included</td>
+<td>Commissions, bid-ask spreads, taxes, market impact, financing, or other components actually modeled</td>
+</tr>
+<tr class="even">
+<td>Frictions omitted</td>
+<td>Important costs that the reported net result does not include</td>
 </tr>
 </tbody>
 </table>
-</div>
 </section>
 <section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>
-<section id="letting-w_t-earn-r_t-when-w_t-uses-information-from-t" class="level2">
-<h2 class="anchored" data-anchor-id="letting-w_t-earn-r_t-when-w_t-uses-information-from-t">1. Letting <span class="math inline">\(w_t\)</span> earn <span class="math inline">\(r_t\)</span> when <span class="math inline">\(w_t\)</span> uses information from <span class="math inline">\(t\)</span></h2>
-<p>That is a same-period information leak under the next-period convention. Either lag the exposure or justify a different execution timeline with actual timestamps and tradability assumptions.</p>
+<section id="computing-turnover-from-the-previous-target" class="level2">
+<h2 class="anchored" data-anchor-id="computing-turnover-from-the-previous-target">1. Computing turnover from the previous target</h2>
+<p>Asset returns change portfolio weights between rebalances even when no trade occurs. The previous target is therefore not generally the portfolio that exists when the next order is placed.</p>
 </section>
-<section id="resetting-to-target-weights-on-non-rebalance-dates" class="level2">
-<h2 class="anchored" data-anchor-id="resetting-to-target-weights-on-non-rebalance-dates">2. Resetting to target weights on non-rebalance dates</h2>
-<p>If the code carries <code>target_weights</code> forward instead of the drifted holdings, it is rebalancing even when the strategy claims not to trade.</p>
+<section id="reporting-turnover-without-the-formula" class="level2">
+<h2 class="anchored" data-anchor-id="reporting-turnover-without-the-formula">2. Reporting “turnover” without the formula</h2>
+<p>Full-L1 and one-way turnover differ by a factor of two under the fully invested/no-flow convention used here. Regulatory portfolio turnover is a separate statistic <span class="citation" data-cites="secformn1a">(<a href="#ref-secformn1a" role="doc-biblioref">U.S. Securities and Exchange Commission 2025</a>)</span>.</p>
 </section>
-<section id="computing-turnover-from-target-to-target" class="level2">
-<h2 class="anchored" data-anchor-id="computing-turnover-from-target-to-target">3. Computing turnover from target to target</h2>
-<p>Trading occurs from the portfolio that exists immediately before the trade. Relative price changes can make that portfolio materially different from the previous target.</p>
+<section id="applying-a-both-legs-cost-rate-directly-to-one-way-turnover" class="level2">
+<h2 class="anchored" data-anchor-id="applying-a-both-legs-cost-rate-directly-to-one-way-turnover">3. Applying a both-legs cost rate directly to one-way turnover</h2>
+<p>If the cost rate prices each dollar bought and sold, the full-L1 traded-notional base must be used, or the factor-of-two mapping must be applied explicitly.</p>
 </section>
-<section id="mixing-simple-and-log-return-algebra" class="level2">
-<h2 class="anchored" data-anchor-id="mixing-simple-and-log-return-algebra">4. Mixing simple and log-return algebra</h2>
-<p>The weighted-return identity in this article uses simple returns. Log returns are useful in many settings, but a weighted sum of asset log returns is not generally the portfolio’s simple return.</p>
+<section id="treating-passive-weight-drift-as-a-trade" class="level2">
+<h2 class="anchored" data-anchor-id="treating-passive-weight-drift-as-a-trade">4. Treating passive weight drift as a trade</h2>
+<p>On a non-rebalance date, drift changes weights but does not create strategy-driven turnover. Cost should not appear merely because prices moved.</p>
 </section>
-<section id="calling-a-gross-backtest-net-performance" class="level2">
-<h2 class="anchored" data-anchor-id="calling-a-gross-backtest-net-performance">5. Calling a gross backtest “net performance”</h2>
-<p>No transaction costs or taxes are deducted in the gross accounting shown here. A gross path should remain labeled gross until a separately specified implementation-cost model is applied.</p>
+<section id="mixing-initial-formation-with-recurring-turnover" class="level2">
+<h2 class="anchored" data-anchor-id="mixing-initial-formation-with-recurring-turnover">5. Mixing initial formation with recurring turnover</h2>
+<p>A cash-to-portfolio inception trade is not automatically comparable with later rebalances. State the inception convention separately.</p>
 </section>
-<section id="treating-a-clean-backtest-as-proof-of-a-good-strategy" class="level2">
-<h2 class="anchored" data-anchor-id="treating-a-clean-backtest-as-proof-of-a-good-strategy">6. Treating a clean backtest as proof of a good strategy</h2>
-<p>A technically correct historical simulation can still be overfit, economically weak, or selected from many alternatives after inspecting the same data. Backtest overfitting is a separate model-selection problem <span class="citation" data-cites="baileyetal2017">(<a href="#ref-baileyetal2017" role="doc-biblioref">Bailey et al. 2017</a>)</span>.</p>
+<section id="calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" class="level2">
+<h2 class="anchored" data-anchor-id="calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">6. Calling <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span> the exact cumulative drag</h2>
+<p>The exact retention is multiplicative: <span class="math inline">\(\prod_{t\in\mathcal T}(1-C_t)\)</span>.</p>
+</section>
+<section id="calling-a-fixed-bps-cost-model-actual-execution-cost" class="level2">
+<h2 class="anchored" data-anchor-id="calling-a-fixed-bps-cost-model-actual-execution-cost">7. Calling a fixed-bps cost model “actual execution cost”</h2>
+<p>Implementation shortfall is broader than a simple turnover-linked debit <span class="citation" data-cites="perold1988 kritzmanmyrgrenpage2006">(<a href="#ref-perold1988" role="doc-biblioref">Perold 1988</a>; <a href="#ref-kritzmanmyrgrenpage2006" role="doc-biblioref">Kritzman et al. 2006</a>)</span>. Execution models can include spread, market impact, execution speed, liquidity, and risk trade-offs; Almgren and Chriss provide a classic example of that richer problem <span class="citation" data-cites="almgrenchriss2001">(<a href="#ref-almgrenchriss2001" role="doc-biblioref">Almgren and Chriss 2001</a>)</span>.</p>
+</section>
+<section id="assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" class="level2">
+<h2 class="anchored" data-anchor-id="assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">8. Assuming ex-post cost deduction makes the portfolio cost-optimal</h2>
+<p>An ex-post cost adjustment evaluates a target that has already been chosen. A cost-aware optimizer would place turnover, transaction-cost terms, or trading constraints inside the portfolio-choice problem and may choose a different target.</p>
+</section>
+<section id="letting-transaction-cost-realism-hide-an-information-leak" class="level2">
+<h2 class="anchored" data-anchor-id="letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</h2>
+<p>Charging a cost does not repair a timing error. If a target uses information that would not have been available before the trade generating the subsequent return, the backtest still has an information-timing problem. The timing discipline described in QM007 still applies.</p>
 </section>
 </section>
 <section id="when-this-setup-needs-to-be-extended" class="level1">
 <h1>When This Setup Needs to Be Extended</h1>
-<p>The accounting above assumes a relatively simple long-only return process. Extend the state variables and accounting explicitly when the portfolio includes:</p>
+<p>The proportional-cost model is most useful when the goal is transparent sensitivity analysis under a simple, declared cost assumption. Extend the model when the implementation problem materially depends on:</p>
 <ul>
-<li>leverage, short positions, margin, or financing costs;</li>
-<li>external deposits or withdrawals;</li>
-<li>transaction costs, taxes, or nonlinear market impact;</li>
-<li>derivatives with cash flows or changing notionals that are not represented by a simple asset-return vector;</li>
-<li>changing universes whose entry and exit rules are not already encoded in the return/weight process; or</li>
-<li>an execution convention that depends on intraday information and prices.</li>
+<li>bid-ask spreads or commissions that vary by asset and date;</li>
+<li>nonlinear market impact or trade size relative to liquidity;</li>
+<li>execution delay, partial fills, or opportunity cost from unexecuted orders;</li>
+<li>asymmetric buy and sell costs;</li>
+<li>taxes or tax-lot constraints and realization rules;</li>
+<li>leverage, shorting, margin, or financing costs;</li>
+<li>derivatives, contract rolls, or changing notionals;</li>
+<li>external deposits and withdrawals;</li>
+<li>changing universes and forced exits; or</li>
+<li>optimization that chooses targets jointly with trading costs.</li>
 </ul>
-<p>Those cases can still be backtested, but the state variables and accounting need to be extended explicitly.</p>
+<p>Perold’s implementation-shortfall framework and later transaction-cost analysis emphasize the gap between a paper portfolio and the implemented outcome <span class="citation" data-cites="perold1988 kritzmanmyrgrenpage2006">(<a href="#ref-perold1988" role="doc-biblioref">Perold 1988</a>; <a href="#ref-kritzmanmyrgrenpage2006" role="doc-biblioref">Kritzman et al. 2006</a>)</span>. Almgren and Chriss show why market impact and execution risk can make optimal trading a separate problem from portfolio-weight accounting <span class="citation" data-cites="almgrenchriss2001">(<a href="#ref-almgrenchriss2001" role="doc-biblioref">Almgren and Chriss 2001</a>)</span>.</p>
 </section>
 <section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>
 <ul>
-<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: the broader information-boundary framework behind the signal-timing rules used here.</li>
-<li><a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a>: measures depth, time under water, and recovery on the wealth path produced by the backtest.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>: provides the timeline, drifted pre-trade weights, and rebalance-state accounting used here before transaction costs are applied.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a>: measures path-dependent downside on the resulting wealth path; whether that path is before or net of modeled costs should be stated explicitly.</li>
 </ul>
-</section>
-<section id="used-in-slackquant-research" class="level1">
-<h1>Used in SlackQuant Research</h1>
-<p><a href="https://research.slackquant.com/research/protection-patience/"><strong>When Protection Works but the Portfolio Still Lags</strong></a> uses historical portfolio paths with explicit monthly rebalancing and signal timing. QM007 explains the general portfolio-accounting mechanics; the research paper contains the application-specific defensive rule, long-horizon evidence, benchmarks, and implementation details.</p>
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
-<p>The accompanying materials include the synthetic return path, Python and base-R implementations, expected numerical results, two reproducible figures, and the hands-on rebalancing-frequency lab. The example code reproduces the weight drift, turnover, and wealth paths reported above.</p>
+<p>The article, Python example, base-R implementation, and hands-on lab all use the same deterministic three-asset path. Their outputs are cross-checked for drift-aware turnover, the one-way/full-L1 conversion, zero turnover on non-rebalance dates, multiplicative cost accounting, and cumulative modeled cost drag.</p>
 </section>
 <section id="references" class="level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-baileyetal2017" class="csl-entry" role="listitem">
-Bailey, David H., Jonathan M. Borwein, Marcos López de Prado, and Qiji Jim Zhu. 2017. <span>“The Probability of Backtest Overfitting.”</span> <em>The Journal of Computational Finance</em> 20 (4): 39–69. <a href="https://doi.org/10.21314/JCF.2016.322">https://doi.org/10.21314/JCF.2016.322</a>.
+<div id="ref-almgrenchriss2001" class="csl-entry" role="listitem">
+Almgren, Robert, and Neil Chriss. 2001. <span>“Optimal Execution of Portfolio Transactions.”</span> <em>The Journal of Risk</em> 3 (2): 5–39. <a href="https://doi.org/10.21314/JOR.2001.041">https://doi.org/10.21314/JOR.2001.041</a>.
 </div>
-<div id="ref-coverordentlich1996" class="csl-entry" role="listitem">
-Cover, Thomas M., and Erik Ordentlich. 1996. <span>“Universal Portfolios with Side Information.”</span> <em>IEEE Transactions on Information Theory</em> 42 (2): 348–63. <a href="https://doi.org/10.1109/18.485708">https://doi.org/10.1109/18.485708</a>.
+<div id="ref-gipshandbookfirms" class="csl-entry" role="listitem">
+CFA Institute. 2020. <em>GIPS Standards Handbook for Firms</em>. <a href="https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/">https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/</a>.
 </div>
 <div id="ref-demiguelgarlappiuppal2009" class="csl-entry" role="listitem">
 DeMiguel, Victor, Lorenzo Garlappi, and Raman Uppal. 2009. <span>“Optimal Versus Naive Diversification: How Inefficient Is the 1/n Portfolio Strategy?”</span> <em>The Review of Financial Studies</em> 22 (5): 1915–53. <a href="https://doi.org/10.1093/rfs/hhm075">https://doi.org/10.1093/rfs/hhm075</a>.
 </div>
-<div id="ref-peroldsharpe1988" class="csl-entry" role="listitem">
-Perold, André F., and William F. Sharpe. 1988. <span>“Dynamic Strategies for Asset Allocation.”</span> <em>Financial Analysts Journal</em> 44 (1): 16–27. <a href="https://doi.org/10.2469/faj.v44.n1.16">https://doi.org/10.2469/faj.v44.n1.16</a>.
+<div id="ref-kritzmanmyrgrenpage2006" class="csl-entry" role="listitem">
+Kritzman, Mark, Simon Myrgren, and Sébastien Page. 2006. <span>“Implementation Shortfall.”</span> <em>The Journal of Portfolio Management</em> 33 (1): 25–30. <a href="https://doi.org/10.3905/jpm.2006.661367">https://doi.org/10.3905/jpm.2006.661367</a>.
+</div>
+<div id="ref-perold1988" class="csl-entry" role="listitem">
+Perold, André F. 1988. <span>“The Implementation Shortfall: Paper Versus Reality.”</span> <em>The Journal of Portfolio Management</em> 14 (3): 4–9. <a href="https://doi.org/10.3905/jpm.1988.409150">https://doi.org/10.3905/jpm.1988.409150</a>.
+</div>
+<div id="ref-secformn1a" class="csl-entry" role="listitem">
+U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration Statement Under the Securities Act of 1933 and/or the Investment Company Act of 1940</em>. <a href="https://www.sec.gov/files/form-n-1a.pdf">https://www.sec.gov/files/form-n-1a.pdf</a>.
 </div>
 </div>
 

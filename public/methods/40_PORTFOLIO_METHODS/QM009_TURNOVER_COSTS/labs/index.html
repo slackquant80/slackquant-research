@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>QM007 Hands-on Lab – SlackQuant Research</title>
+<title>QM009 Hands-on Lab – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -154,8 +154,8 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">QM007 Hands-on Lab</h1>
-<p class="subtitle lead">Change the rebalancing frequency without changing the information timeline</p>
+<h1 class="title">QM009 Hands-on Lab</h1>
+<p class="subtitle lead">Change the transaction-cost assumption without changing the trading rule</p>
 </div>
 
 
@@ -174,36 +174,36 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 <section id="goal" class="level1">
 <h1>Goal</h1>
-<p>This lab uses the same four-period synthetic return path as QM007. It changes only the <strong>rebalancing frequency</strong> so that you can see how a trading rule changes the weight path, terminal wealth, and turnover.</p>
-<p>The example is a numerical illustration, not evidence that one rebalancing frequency is better than another.</p>
+<p>This lab uses the same four-period synthetic three-asset path as QM009. The portfolio targets and rebalance dates stay fixed. You change only the proportional transaction-cost rate.</p>
+<p>The example is a numerical illustration, not an estimate of real execution cost.</p>
 </section>
 <section id="run-the-python-version" class="level1">
 <h1>Run the Python version</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm007_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The script compares:</p>
-<ul>
-<li>rebalancing to 50/50 every period;</li>
-<li>rebalancing every two periods; and</li>
-<li>buy-and-hold after the initial 50/50 allocation.</li>
-</ul>
+<p>From the lab folder:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm009_hands_on.py 10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The final argument is the cost assumption in basis points per dollar of <strong>modeled pre-cost absolute trade notional</strong>. Try:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm009_hands_on.py 0</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm009_hands_on.py 10</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm009_hands_on.py 25</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="what-to-inspect" class="level1">
 <h1>What to inspect</h1>
 <ol type="1">
-<li>A non-rebalance date carries the <strong>drifted</strong> weights forward.</li>
-<li>A rebalance changes the weights used in the <strong>next</strong> period; it does not change the return already earned.</li>
-<li>More frequent rebalancing can increase turnover, but this four-period path does not establish a general performance ranking.</li>
+<li>Cumulative full-L1 and one-way turnover do not change when only the cost rate changes.</li>
+<li>Terminal net wealth falls as the declared cost rate increases.</li>
+<li>The non-rebalance period still has no strategy-driven turnover.</li>
+<li>The 10-bps case uses full buy-plus-sell modeled notional, not the half-L1 one-way statistic as the direct cost base.</li>
 </ol>
 </section>
 <section id="try-one-change" class="level1">
 <h1>Try one change</h1>
-<p>Edit the return path in <code>data/qm007_two_asset_returns.csv</code>, or change the target weights in the script. Keep the information-timing rule unchanged: start-of-period weights earn the current period’s returns, then weights drift, then an optional rebalance sets the next period’s starting weights.</p>
+<p>Change one of the target weights in <code>data/qm009_three_asset_case.csv</code> while keeping each target fully invested. Turnover should change because the required trade changes. Keep the cost denominator convention unchanged so that the effect is interpretable.</p>
 </section>
 <section id="r-version" class="level1">
 <h1>R version</h1>
 <p>If base R is available:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> r/qm007_hands_on.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The Python and R files implement the same accounting convention and reproduce the same reported path calculations when run in the supported local environments.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> r/qm009_hands_on.R 10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The Python and R scripts implement the same reduced-form proportional-cost convention.</p>
 
 
 </section>
