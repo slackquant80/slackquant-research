@@ -23,7 +23,12 @@ export default function AdaaPage() {
     <main>
       <section className="paper-hero">
         <div className="shell">
-          <div className="eyebrow">{item.streamLabel}</div>
+          <div className="paper-track-row">
+            <div className="eyebrow">{item.streamLabel}</div>
+            {item.investmentTrackLabel ? (
+              <span className="track-chip">{item.investmentTrackLabel}</span>
+            ) : null}
+          </div>
           <h1 className="paper-title">{item.title}</h1>
           <div className="paper-subtitle">{item.subtitle}</div>
           <div className="paper-meta">

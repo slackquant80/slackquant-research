@@ -8,6 +8,7 @@ The site presents practitioner-oriented investment research and academic/technic
 
 - **Diversify the Decisions, Not Just the Assets**
 - **When Protection Works but the Portfolio Still Lags**
+- **The Decision Value of Price and Macro Information**
 - **Beyond Average Accuracy**
 
 ## Local development

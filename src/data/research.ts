@@ -8,6 +8,8 @@ export const researchItems: ResearchItem[] = [
       "A Practical Architecture for Dynamic Asset Allocation When Strategy Choice Is Uncertain",
     stream: "investment",
     streamLabel: "Investment Research Series",
+    investmentTrack: "empirical",
+    investmentTrackLabel: "Empirical Research",
     status: "Public Working Paper",
     publicVersion: "v1.34",
     ssrnId: "7251518",
@@ -85,6 +87,8 @@ export const researchItems: ResearchItem[] = [
       "Long-Horizon Evidence on Downside Protection, Benchmark-Relative Drawdowns, and Persistent Equity Exposure",
     stream: "investment",
     streamLabel: "Investment Research Series",
+    investmentTrack: "empirical",
+    investmentTrackLabel: "Empirical Research",
     status: "Public Working Paper",
     ssrnId: "7291898",
     dateLabel: "August 2026",
@@ -163,6 +167,81 @@ export const researchItems: ResearchItem[] = [
         "https://doi.org/10.5281/zenodo.21991470",
       doi:
         "https://doi.org/10.5281/zenodo.21991470"
+    }
+  },
+  {
+    slug: "price-macro-decision",
+    title: "The Decision Value of Price and Macro Information",
+    subtitle:
+      "Benchmark-Relative Evidence in Multi-Asset Allocation Using Historical-Vintage FRED-MD Data",
+    stream: "investment",
+    streamLabel: "Investment Research Series",
+    investmentTrack: "empirical",
+    investmentTrackLabel: "Empirical Research",
+    status: "Public Working Paper",
+    ssrnId: "7340100",
+    dateLabel: "August 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation: "Graduate School of Computing, Yonsei University",
+    shortSummary:
+      "Adding historical-vintage macro information to a matched price-based forecasting and ranking process does not produce a robust incremental portfolio benefit in this multi-asset setting. The paper evaluates that question relative to investable benchmarks and under explicit information-timing checks.",
+    researchQuestion:
+      "Does historical-vintage macro information add decision value beyond price information in benchmark-relative multi-asset allocation when the forecasting, ranking, portfolio, and timing rules are held as comparable as possible?",
+    findings: [
+      "The primary comparison uses 112 monthly out-of-sample allocation decisions from March 2017 through June 2026 across 11 U.S.-listed ETFs, with price-only and Macro+Price portfolios evaluated under matched ranking and portfolio rules.",
+      "Historical-vintage macro information does not deliver a robust incremental improvement over the price-based process in the main benchmark-relative evidence and robustness checks.",
+      "A prespecified conservative information-timing check leaves the incremental-macro conclusion unchanged even though the realized Macro+Price Top-4 selection changes in about 52.7% of months.",
+      "Later-snapshot comparisons can change both revision state and historical series membership, so they are treated as a broader information-set robustness exercise rather than as a pure numerical-revision test."
+    ],
+    tags: [
+      "Multi-Asset Allocation",
+      "Macro Information",
+      "Price Signals",
+      "Benchmark-Relative Evaluation",
+      "FRED-MD"
+    ],
+    selectedEvidence: [
+      {
+        id: "price-active-value",
+        title: "Price Signals Generate Benchmark-Relative Active Value",
+        description:
+          "Relative to the same-universe EW11 benchmark, the price-only ML portfolio records an information ratio of 0.71 and 5.0% annualized active return. The exhibit also places that result beside standard momentum variants under the same benchmark-relative lens.",
+        imageUrl:
+          "https://raw.githubusercontent.com/slackquant80/price-macro-decision-replication/main/reference/figures/Figure_2_Active_Value_vs_EW11_HOUSE_v0.5.svg",
+        alt:
+          "Cumulative wealth relative to EW11 and benchmark-relative information ratios for the price-only ML portfolio and momentum variants.",
+        sourceLabel: "Public replication · Figure 2"
+      },
+      {
+        id: "incremental-macro-value",
+        title: "The Incremental Macro Contribution Is Not Robustly Positive",
+        description:
+          "The matched Macro+Price versus Price-only comparisons do not show a stable positive Sharpe increment across the main robustness checks. The exhibit focuses on the incremental contribution of macro information rather than on standalone portfolio returns.",
+        imageUrl:
+          "https://raw.githubusercontent.com/slackquant80/price-macro-decision-replication/main/reference/figures/Figure_3_Incremental_Macro_Value_with_RAW_HOUSE_v0.7.svg",
+        alt:
+          "Incremental Sharpe differences for macro-augmented versus price-only portfolio comparisons across the main robustness specifications.",
+        sourceLabel: "Public replication · Figure 3"
+      },
+      {
+        id: "information-timing",
+        title: "Timing Changes Portfolio Choices Without Reversing the Result",
+        description:
+          "Under the conservative prior-month macro information clock, the Macro+Price minus Price-only Sharpe difference is −0.192 with a 95% moving-block bootstrap interval of [−0.659, 0.175]. The Macro+Price Top-4 selection changes in 52.7% of months relative to the primary timing design.",
+        imageUrl:
+          "https://raw.githubusercontent.com/slackquant80/price-macro-decision-replication/main/reference/figures/Figure_4_Information_Timing_Robustness_HOUSE_v0.1.svg",
+        alt:
+          "Information-timing robustness exhibit comparing the primary and conservative macro timing specifications and their portfolio implications.",
+        sourceLabel: "Public replication · Figure 4"
+      }
+    ],
+    links: {
+      ssrn: "https://papers.ssrn.com/abstract=7340100",
+      github: "https://github.com/slackquant80/price-macro-decision-replication",
+      replication:
+        "https://github.com/slackquant80/price-macro-decision-replication/releases/tag/v1.1",
+      archivalRelease: "https://doi.org/10.5281/zenodo.22069742",
+      doi: "https://doi.org/10.5281/zenodo.22069742"
     }
   },
   {

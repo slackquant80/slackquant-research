@@ -1,4 +1,5 @@
 export type ResearchStream = "investment" | "academic";
+export type InvestmentTrack = "foundation" | "empirical";
 
 export type PublicLinks = {
   paper?: string;
@@ -26,6 +27,8 @@ export type ResearchItem = {
   subtitle?: string;
   stream: ResearchStream;
   streamLabel: string;
+  investmentTrack?: InvestmentTrack;
+  investmentTrackLabel?: "Foundation Research" | "Empirical Research";
   status: string;
   publicVersion?: string;
   ssrnId?: string;
