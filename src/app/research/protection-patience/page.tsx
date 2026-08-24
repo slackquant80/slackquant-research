@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
+import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
@@ -379,10 +380,7 @@ export default function ProtectionPatiencePage() {
 
           <section className="prose-section" id="citation">
             <h2>Citation</h2>
-            <div className="citation-box">
-              Lee, S. (2026). {item.title}: {item.subtitle}. Public Working
-              Paper. SSRN {item.ssrnId}.
-            </div>
+            <CitationBox item={item} />
           </section>
         </div>
       </div>

@@ -1,0 +1,25 @@
+---
+title: "QM010 Hands-On Lab"
+subtitle: "Momentum and Trend Signals"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Reproduce the numerical illustration from [QM010 — Momentum and Trend Signals](../article.qmd) and inspect the convention that carries the main interpretation risk.
+
+# Run
+
+```bash
+python python/qm010_momentum_example.py
+```
+
+# Check
+
+Compare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes.

@@ -233,8 +233,56 @@ QM009 · PORTFOLIO METHODS · INTERMEDIATE
 <p>How much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.</p>
 </section>
 </div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM010 · PORTFOLIO METHODS · INTERMEDIATE
+</div>
+<section id="momentum-and-trend-signals" class="level3">
+<h3 class="anchored" data-anchor-id="momentum-and-trend-signals"><a href="./40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html">Momentum and Trend Signals</a></h3>
+<p>How should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.</p>
 </section>
 </div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM011 · PORTFOLIO METHODS · INTERMEDIATE
+</div>
+<section id="strategy-similarity-and-decision-diversification" class="level3">
+<h3 class="anchored" data-anchor-id="strategy-similarity-and-decision-diversification"><a href="./40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html">Strategy Similarity and Decision Diversification</a></h3>
+<p>Do multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM012 · PORTFOLIO METHODS · INTERMEDIATE
+</div>
+<section id="rolling-holding-period-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="rolling-holding-period-analysis"><a href="./40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html">Rolling Holding-Period Analysis</a></h3>
+<p>What do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM013 · PORTFOLIO METHODS · INTERMEDIATE
+</div>
+<section id="benchmark-relative-portfolio-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="benchmark-relative-portfolio-evaluation"><a href="./40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html">Benchmark-Relative Portfolio Evaluation</a></h3>
+<p>How should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.</p>
+</section>
+</div>
+</section>
+</div>
+<section id="research-systems-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
+<h3 class="anchored" data-anchor-id="research-systems-technical-methods">Research Systems / Technical Methods</h3>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
+</div>
+<section id="information-timing-data-vintages-and-real-time-macro-data" class="level3">
+<h3 class="anchored" data-anchor-id="information-timing-data-vintages-and-real-time-macro-data"><a href="./80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">Information Timing, Data Vintages, and Real-Time Macro Data</a></h3>
+<p>Which macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.</p>
+</section>
+</div>
+</section>
 </section>
 <section id="library-principles" class="level2">
 <h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
@@ -795,6 +843,11 @@ QM009 · PORTFOLIO METHODS · INTERMEDIATE
       { id: "QM007", title: "Portfolio Backtesting and Rebalancing", path: "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html", folder: "QM007_PORTFOLIO_BACKTESTING_REBALANCING" },
       { id: "QM008", title: "Drawdown, Underwater Duration, and Recovery", path: "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html", folder: "QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY" },
       { id: "QM009", title: "Turnover, Transaction Costs, and Net Performance", path: "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html", folder: "QM009_TURNOVER_COSTS" },
+      { id: "QM010", title: "Momentum and Trend Signals", path: "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html", folder: "QM010_MOMENTUM_TREND" },
+      { id: "QM011", title: "Strategy Similarity and Decision Diversification", path: "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html", folder: "QM011_DECISION_DIVERSIFICATION" },
+      { id: "QM012", title: "Rolling Holding-Period Analysis", path: "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html", folder: "QM012_ROLLING_HOLDING_PERIODS" },
+      { id: "QM013", title: "Benchmark-Relative Portfolio Evaluation", path: "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html", folder: "QM013_BENCHMARK_RELATIVE" },
+      { id: "QM014", title: "Information Timing, Data Vintages, and Real-Time Macro Data", path: "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html", folder: "QM014_MACRO_INFORMATION_TIMING" },
     ];
 
     const init = () => {

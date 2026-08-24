@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
+import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
+import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -64,6 +66,7 @@ export default function AdaaPage() {
           <a href="#findings">Key Findings</a>
           <a href="#evidence">Selected Evidence</a>
           <a href="#method">Methodology</a>
+          <a href="#methods">Quantitative Methods</a>
           <a href="#repro">Reproducibility</a>
           <a href="#dashboards">Research &amp; Implementation</a>
           <a href="#citation">Citation</a>
@@ -184,6 +187,8 @@ export default function AdaaPage() {
             </div>
           </section>
 
+          <MethodsUsed researchSlug={item.slug} />
+
           <section className="prose-section" id="repro">
             <h2>Reproducibility</h2>
             <p>
@@ -298,10 +303,7 @@ export default function AdaaPage() {
 
           <section className="prose-section" id="citation">
             <h2>Citation</h2>
-            <div className="citation-box">
-              Lee, S. (2026). {item.title}: {item.subtitle}. Public Working
-              Paper {item.publicVersion}. SSRN {item.ssrnId}.
-            </div>
+            <CitationBox item={item} />
           </section>
         </div>
       </div>

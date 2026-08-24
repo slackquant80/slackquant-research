@@ -1,0 +1,25 @@
+---
+title: "QM014 Hands-On Lab"
+subtitle: "Information Timing, Data Vintages, and Real-Time Macro Data"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Reproduce the numerical illustration from [QM014 — Information Timing, Data Vintages, and Real-Time Macro Data](../article.qmd) and inspect the convention that carries the main interpretation risk.
+
+# Run
+
+```bash
+python python/qm014_information_timing.py
+```
+
+# Check
+
+Compare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes.

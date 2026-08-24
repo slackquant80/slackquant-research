@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = (Get-Location).Path
 )
 
@@ -46,13 +46,17 @@ $qm008Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLI
 $qm009Article = Get-Content (Join-Path $PlatformRoot "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html") -Raw
 
 # Main-platform surface checks.
-if ($header -notmatch '/methods/') { throw "Header Methods link missing" }
+if ($header -notmatch 'methodsRootHref' -or $header -notmatch 'href=\{methodsRootHref\}') { throw "Header Methods link missing" }
 # Integration must not depend on one frozen marketing sentence. v1.0.8-v1.0.9
 # deliberately refined the public Methods copy while preserving the bridge.
-if ($homePage -notmatch 'Quantitative Methods' -or $homePage -notmatch 'href="/methods/"') {
+if ($homePage -notmatch 'Quantitative Methods' -or
+    $homePage -notmatch 'methodsRootHref' -or
+    $homePage -notmatch 'href=\{methodsRootHref\}') {
   throw "Home Methods bridge missing"
 }
-if ($research -notmatch 'Quantitative Methods' -or $research -notmatch 'href="/methods/"') {
+if ($research -notmatch 'Quantitative Methods' -or
+    $research -notmatch 'methodsRootHref' -or
+    $research -notmatch 'href=\{methodsRootHref\}') {
   throw "Research-page Methods bridge missing"
 }
 if ($beyond -notmatch 'MethodsUsed') { throw "Beyond Average Accuracy Methods bridge missing" }
@@ -62,9 +66,10 @@ if ($protection -notmatch 'MethodsUsed' -or $protection -notmatch 'href="#method
 foreach ($id in @('QM001','QM002','QM003','QM004','QM005')) {
   if ($methodsData -notmatch $id) { throw "Research-method mapping missing: $id" }
 }
-if ($methodsData -notmatch 'QM007' -or $methodsData -notmatch 'QM008' -or
-    $methodsData -notmatch '"protection-patience"\s*:\s*\["QM007",\s*"QM008"\]') {
-  throw "Protection / Patience -> QM007/QM008 mapping missing"
+if ($methodsData -notmatch '"protection-patience"' -or
+    $methodsData -notmatch 'QM007' -or
+    $methodsData -notmatch 'QM008') {
+  throw "Protection / Patience Methods mapping missing"
 }
 if ($qm007Article -notmatch 'https://research.slackquant.com/research/protection-patience/') {
   throw "QM007 -> Protection / Patience research link missing"
@@ -99,7 +104,7 @@ if ($methodsUsedSource -notmatch '<a[^>]*className="method-used-row"[^>]*href=\{
 
 # Every mapped method href must exist under public/.
 $hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
-if ($hrefMatches.Count -lt 9) { throw "Expected nine Quantitative Methods href mappings were not found" }
+if ($hrefMatches.Count -lt 14) { throw "Expected Quantitative Methods href mappings were not found" }
 foreach ($match in $hrefMatches) {
   $href = $match.Groups['href'].Value
   $rel = $href.TrimStart('/') -replace '/', '\'

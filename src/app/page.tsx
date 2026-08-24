@@ -2,6 +2,7 @@ import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
+import { methodsRootHref } from "@/lib/methodsHref";
 
 export default function HomePage() {
   const investmentFeatured =
@@ -33,7 +34,7 @@ export default function HomePage() {
             <Link className="btn primary" href="/research/">
               Explore Research
             </Link>
-            <a className="btn soft" href="/methods/">
+            <a className="btn soft" href={methodsRootHref}>
               Quantitative Methods
             </a>
             <a className="btn soft ext" href={site.github} target="_blank" rel="noopener noreferrer">
@@ -148,7 +149,7 @@ export default function HomePage() {
         <div className="shell">
           <div className="section-head">
             <div className="section-title">Quantitative Methods</div>
-            <a className="section-link" href="/methods/">
+            <a className="section-link" href={methodsRootHref}>
               Open methods library &#8594;
             </a>
           </div>
@@ -162,7 +163,7 @@ export default function HomePage() {
                 article connects intuition, formal definitions, implementation,
                 common failure modes, and reproducible examples.
               </p>
-              <a className="section-link strong-link" href="/methods/">
+              <a className="section-link strong-link" href={methodsRootHref}>
                 Explore Quantitative Methods &#8594;
               </a>
             </article>

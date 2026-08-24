@@ -1,79 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://research.slackquant.com/methods/80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/labs/index.html</loc>
+    <lastmod>2026-08-24T01:11:55.640Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/labs/index.html</loc>
+    <lastmod>2026-08-24T01:11:54.963Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/labs/index.html</loc>
+    <lastmod>2026-08-24T01:11:54.772Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/labs/index.html</loc>
+    <lastmod>2026-08-24T01:11:54.576Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/labs/index.html</loc>
+    <lastmod>2026-08-24T01:11:54.305Z</lastmod>
+  </url>
+  <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/labs/index.html</loc>
-    <lastmod>2026-08-22T13:42:10.287Z</lastmod>
+    <lastmod>2026-08-24T01:11:53.820Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:59.166Z</lastmod>
+    <lastmod>2026-08-24T01:11:53.134Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:58.807Z</lastmod>
+    <lastmod>2026-08-24T01:11:52.715Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:58.492Z</lastmod>
+    <lastmod>2026-08-24T01:11:52.183Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:58.137Z</lastmod>
+    <lastmod>2026-08-24T01:11:51.659Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:57.792Z</lastmod>
+    <lastmod>2026-08-24T01:11:51.248Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:59.531Z</lastmod>
+    <lastmod>2026-08-24T01:11:55.394Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:57.484Z</lastmod>
+    <lastmod>2026-08-24T01:11:50.691Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/labs/index.html</loc>
-    <lastmod>2026-08-21T07:00:57.134Z</lastmod>
+    <lastmod>2026-08-24T01:11:50.248Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/index.html</loc>
-    <lastmod>2026-08-23T01:13:59.706Z</lastmod>
+    <lastmod>2026-08-24T01:11:49.683Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html</loc>
-    <lastmod>2026-08-21T07:00:56.902Z</lastmod>
+    <lastmod>2026-08-24T01:11:49.992Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html</loc>
-    <lastmod>2026-08-21T07:00:57.250Z</lastmod>
+    <lastmod>2026-08-24T01:11:50.425Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html</loc>
-    <lastmod>2026-08-21T07:00:59.300Z</lastmod>
+    <lastmod>2026-08-24T01:11:55.076Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html</loc>
-    <lastmod>2026-08-21T07:00:57.588Z</lastmod>
+    <lastmod>2026-08-24T01:11:50.812Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html</loc>
-    <lastmod>2026-08-21T07:00:57.895Z</lastmod>
+    <lastmod>2026-08-24T01:11:51.378Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html</loc>
-    <lastmod>2026-08-21T07:00:58.226Z</lastmod>
+    <lastmod>2026-08-24T01:11:51.771Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html</loc>
-    <lastmod>2026-08-21T07:00:58.584Z</lastmod>
+    <lastmod>2026-08-24T01:11:52.415Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html</loc>
-    <lastmod>2026-08-21T07:00:58.928Z</lastmod>
+    <lastmod>2026-08-24T01:11:52.856Z</lastmod>
   </url>
   <url>
     <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html</loc>
-    <lastmod>2026-08-23T01:13:59.764Z</lastmod>
+    <lastmod>2026-08-24T01:11:53.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html</loc>
+    <lastmod>2026-08-24T01:11:54.182Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html</loc>
+    <lastmod>2026-08-24T01:11:54.373Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html</loc>
+    <lastmod>2026-08-24T01:11:54.650Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html</loc>
+    <lastmod>2026-08-24T01:11:54.840Z</lastmod>
+  </url>
+  <url>
+    <loc>https://research.slackquant.com/methods/80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html</loc>
+    <lastmod>2026-08-24T01:11:55.521Z</lastmod>
   </url>
 </urlset>

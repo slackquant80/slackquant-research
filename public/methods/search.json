@@ -1,5 +1,40 @@
 [
   {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/labs/index.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/labs/index.html",
+    "title": "QM014 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nReproduce the numerical illustration from QM014 — Information Timing, Data Vintages, and Real-Time Macro Data and inspect the convention that carries the main interpretation risk.\n\n\nRun\npython python/qm014_information_timing.py\n\n\nCheck\nCompare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/labs/index.html",
+    "title": "QM013 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nReproduce the numerical illustration from QM013 — Benchmark-Relative Portfolio Evaluation and inspect the convention that carries the main interpretation risk.\n\n\nRun\npython python/qm013_benchmark_relative.py\n\n\nCheck\nCompare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/labs/index.html",
+    "title": "QM012 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nReproduce the numerical illustration from QM012 — Rolling Holding-Period Analysis and inspect the convention that carries the main interpretation risk.\n\n\nRun\npython python/qm012_rolling_holding_periods.py\n\n\nCheck\nCompare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/labs/index.html",
+    "title": "QM011 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nReproduce the numerical illustration from QM011 — Strategy Similarity and Decision Diversification and inspect the convention that carries the main interpretation risk.\n\n\nRun\npython python/qm011_decision_similarity.py\n\n\nCheck\nCompare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/labs/index.html",
+    "title": "QM010 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nReproduce the numerical illustration from QM010 — Momentum and Trend Signals and inspect the convention that carries the main interpretation risk.\n\n\nRun\npython python/qm010_momentum_example.py\n\n\nCheck\nCompare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes."
+  },
+  {
     "objectID": "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/labs/index.html",
     "href": "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/labs/index.html",
     "title": "QM009 Hands-on Lab",
@@ -95,7 +130,7 @@
     "href": "index.html#current-articles",
     "title": "Quantitative Methods",
     "section": "Current articles",
-    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path."
+    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.\n\n\n\n\nQM010 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nMomentum and Trend Signals\nHow should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.\n\n\n\n\nQM011 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nStrategy Similarity and Decision Diversification\nDo multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.\n\n\n\n\nQM012 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nRolling Holding-Period Analysis\nWhat do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.\n\n\n\n\nQM013 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nBenchmark-Relative Portfolio Evaluation\nHow should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.\n\n\n\n\n\nResearch Systems / Technical Methods\n\n\nQM014 · DATA & RESEARCH DESIGN · INTERMEDIATE\n\n\nInformation Timing, Data Vintages, and Real-Time Macro Data\nWhich macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable."
   },
   {
     "objectID": "index.html#library-principles",
@@ -656,5 +691,222 @@
     "title": "Turnover, Transaction Costs, and Net Performance",
     "section": "9. Letting transaction-cost realism hide an information leak",
     "text": "9. Letting transaction-cost realism hide an information leak\nCharging a cost does not repair a timing error. If a target uses information that would not have been available before the trade generating the subsequent return, the backtest still has an information-timing problem. The timing discipline described in QM007 still applies."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html",
+    "title": "Momentum and Trend Signals",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#a-basic-lookback-return",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#a-basic-lookback-return",
+    "title": "Momentum and Trend Signals",
+    "section": "A basic lookback return",
+    "text": "A basic lookback return\nLet \\(P_t\\) be an adjusted price or total-return index observed at decision date \\(t\\). For a lookback of \\(h\\) periods, define\n\\[\nm_t^{(h)}=\\frac{P_t}{P_{t-h}}-1.\n\\]\nEquivalently, if \\(r_j\\) denotes simple return,\n\\[\n1+m_t^{(h)}=\\prod_{j=t-h+1}^{t}(1+r_j).\n\\]\nA simple absolute-momentum rule with threshold \\(\\theta\\) is\n\\[\ns_t=\\mathbf 1\\{m_t^{(h)}&gt;\\theta\\}.\n\\]\nFor a long/cash mandate, \\(s_t=1\\) might mean hold the risky asset and \\(s_t=0\\) hold cash. For a long/short mandate, a sign rule might instead map positive momentum to \\(+1\\) and negative momentum to \\(-1\\). The mapping is a portfolio-design choice and must be stated."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#optional-skip-month-convention",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#optional-skip-month-convention",
+    "title": "Momentum and Trend Signals",
+    "section": "Optional skip-month convention",
+    "text": "Optional skip-month convention\nSometimes the most recent period is deliberately omitted. Let \\(s\\ge 0\\) be the number of skipped periods. A convenient definition is\n\\[\nm_t^{(h,s)}=\\frac{P_{t-s}}{P_{t-s-h}}-1.\n\\]\nWith monthly data, \\(s=1\\) omits the most recent month from the formation window. The familiar cross-sectional momentum convention based on prior months 2–12 is an example of a skipped-recent-month construction in the Fama–French momentum portfolios (French, n.d.).\n\n\n\n\n\n\nImportantA skip month is a convention, not a law of momentum\n\n\n\nSome momentum designs include the most recent month; others intentionally skip it. The article or code should state the exact endpoints. Do not infer a 12–1 construction merely because a paper says “12-month momentum.”"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#time-series-versus-cross-sectional-decisions",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#time-series-versus-cross-sectional-decisions",
+    "title": "Momentum and Trend Signals",
+    "section": "Time-series versus cross-sectional decisions",
+    "text": "Time-series versus cross-sectional decisions\nFor \\(N\\) assets, an own-history signal can be computed asset by asset:\n\\[\nm_{i,t}^{(h)}=\\frac{P_{i,t}}{P_{i,t-h}}-1.\n\\]\nAn absolute rule compares \\(m_{i,t}^{(h)}\\) with a fixed threshold. A cross-sectional rule ranks \\(m_{i,t}^{(h)}\\) across \\(i\\) and selects, for example, the top \\(K\\) assets. The same return measurement can therefore support different portfolio decisions."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#signal-to-portfolio-timing",
+    "href": "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html#signal-to-portfolio-timing",
+    "title": "Momentum and Trend Signals",
+    "section": "Signal-to-portfolio timing",
+    "text": "Signal-to-portfolio timing\nA minimal monthly clock is\n\\[\n\\text{prices through }t\n\\rightarrow\n\\text{signal at }t\n\\rightarrow\n\\text{target weights}\n\\rightarrow\n\\text{execution after signal formation}\n\\rightarrow\n\\text{return over }t+1.\n\\]\nThe exact execution timestamp depends on the data and trading convention. What matters is that the return credited to the strategy was not already embedded in the signal. See QM003 — Look-Ahead Bias and Data Leakage for the broader information-set problem."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#return-similarity-is-not-decision-similarity",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#return-similarity-is-not-decision-similarity",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "Return Similarity Is Not Decision Similarity",
+    "text": "Return Similarity Is Not Decision Similarity\nFor two strategy returns \\(r_{A,t}\\) and \\(r_{B,t}\\), the familiar return correlation is\n\\[\n\\rho_{AB}=\\operatorname{Corr}(r_A,r_B).\n\\]\nThis tells us how the realized payoffs co-moved. It does not tell us whether the strategies held the same assets or changed positions together.\nDecision diagnostics operate on portfolio states or actions. Let \\(\\mathbf w_{A,t}\\) and \\(\\mathbf w_{B,t}\\) denote target-weight vectors at decision date \\(t\\)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-what-dimension-holdings-or-exposure-similarity",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-what-dimension-holdings-or-exposure-similarity",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "The What Dimension: Holdings or Exposure Similarity",
+    "text": "The What Dimension: Holdings or Exposure Similarity\nFor long-only, fully invested portfolios, a particularly interpretable overlap measure is\n\\[\nO_t=\\sum_{i=1}^{N}\\min(w_{A,i,t},w_{B,i,t}).\n\\]\nBecause both weight vectors sum to one,\n\\[\nO_t=1-\\frac{1}{2}\\|\\mathbf w_{A,t}-\\mathbf w_{B,t}\\|_1.\n\\]\nThe value ranges from 0 to 1:\n\n\\(O_t=1\\) means identical holdings weights;\n\\(O_t=0\\) means no overlap under the long-only fully invested convention.\n\nThe half-\\(L_1\\) distance resembles the logic used by Active Share to quantify portfolio-weight differences relative to a benchmark (Cremers and Petajisto 2009), although here it is used symmetrically between two strategies rather than as the Active Share statistic itself.\nFor long/short, leveraged, or factor-exposure vectors, the long-only overlap formula may no longer be appropriate. Cosine similarity, normalized \\(L_1\\) distance, or category-specific exposure comparisons may be better choices."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-when-dimension-decision-timing-disagreement",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-when-dimension-decision-timing-disagreement",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "The When Dimension: Decision-Timing Disagreement",
+    "text": "The When Dimension: Decision-Timing Disagreement\nA strategy should not be classified as “acting” merely because its weights drifted with market returns. The timing diagnostic should be based on intended target changes or another explicit action variable.\nDefine\n\\[\nI_{k,t}=\\mathbf 1\\{\\|\\mathbf w_{k,t}-\\mathbf w_{k,t-1}\\|_1&gt;\\tau\\},\n\\]\nwhere \\(k\\in\\{A,B\\}\\) and \\(\\tau\\) is a pre-declared materiality threshold. A simple timing disagreement rate is\n\\[\nD_{when}=\\frac{1}{T}\\sum_{t=1}^{T}\\mathbf 1\\{I_{A,t}\\ne I_{B,t}\\}.\n\\]\nThis statistic asks how often one strategy makes a material target change while the other does not.\nIt can be refined. For example, when both strategies act, a researcher may separately test whether the direction of risk change agrees. The key is to avoid mixing action timing with weight drift, which belongs to portfolio accounting rather than the decision rule itself."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-how-much-dimension-magnitude-disagreement",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#the-how-much-dimension-magnitude-disagreement",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "The How-Much Dimension: Magnitude Disagreement",
+    "text": "The How-Much Dimension: Magnitude Disagreement\nSuppose \\(x_{k,t}\\) is a scalar risk-exposure measure, such as equity weight, risky-asset share, duration target, or gross exposure. A simple average absolute disagreement is\n\\[\nD_{mag}=\\frac{1}{T}\\sum_{t=1}^{T}|x_{A,t}-x_{B,t}|.\n\\]\nFor multi-asset target weights, an analogous measure is the average half-\\(L_1\\) distance:\n\\[\nD_{w}=\\frac{1}{T}\\sum_{t=1}^{T}\\frac{1}{2}\\|\\mathbf w_{A,t}-\\mathbf w_{B,t}\\|_1.\n\\]\nThe normalization should match the portfolio domain. A 20-percentage-point exposure difference is interpretable only if the exposure scale itself is meaningful."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#keep-a-decision-fingerprint-not-a-forced-composite",
+    "href": "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html#keep-a-decision-fingerprint-not-a-forced-composite",
+    "title": "Strategy Similarity and Decision Diversification",
+    "section": "Keep a Decision Fingerprint, Not a Forced Composite",
+    "text": "Keep a Decision Fingerprint, Not a Forced Composite\nA useful summary is a vector such as\n\\[\n\\mathcal F_{AB}=\n(\\overline O, D_{when}, D_{mag}),\n\\]\nwhere \\(\\overline O\\) is average holdings overlap.\nA high-overlap, low-timing-disagreement, low-magnitude-disagreement pair is strongly redundant at the decision layer. A low-overlap pair with frequent timing disagreement is making visibly different choices.\nThere is no need to combine the three numbers into a single index unless the research question supplies defensible weights. A scalar composite can create an arbitrary trade-off—for example, treating 10 percentage points of holdings difference as equivalent to one additional timing disagreement."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html",
+    "title": "Rolling Holding-Period Analysis",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html#relative-endpoint-outcomes",
+    "href": "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html#relative-endpoint-outcomes",
+    "title": "Rolling Holding-Period Analysis",
+    "section": "Relative endpoint outcomes",
+    "text": "Relative endpoint outcomes\nFor portfolio return \\(r_{p,t}\\) and benchmark return \\(r_{b,t}\\), define portfolio and benchmark growth inside the same window:\n\\[\nG^p_{s,H}=\\prod(1+r_{p,t}),\\qquad\nG^b_{s,H}=\\prod(1+r_{b,t}).\n\\]\nThe terminal relative-wealth ratio is\n\\[\nQ_{s,H}=\\frac{G^p_{s,H}}{G^b_{s,H}}.\n\\]\nThen \\(Q_{s,H}&lt;1\\) means the portfolio ended the holding period with less wealth than the benchmark, even though the portfolio itself may have made money in absolute terms."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#active-return",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#active-return",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Active Return",
+    "text": "Active Return\nLet portfolio return be \\(r_{p,t}\\) and benchmark return be \\(r_{b,t}\\). The periodic active return is\n\\[\na_t=r_{p,t}-r_{b,t}.\n\\]\nFor monthly observations, an arithmetic annualized mean active return can be written as\n\\[\n\\overline a_{ann}=12\\,\\overline a.\n\\]\nThis is not the same object as the annualized compound growth rate of the relative-wealth ratio. Arithmetic active return is convenient for tracking-error and information-ratio calculations; geometric relative wealth answers a path-compounding question."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#tracking-error",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#tracking-error",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Tracking Error",
+    "text": "Tracking Error\nWith monthly active returns and sample standard deviation \\(s(a)\\),\n\\[\nTE_{ann}=\\sqrt{12}\\,s(a).\n\\]\nTracking error is often called active risk. It measures the dispersion of portfolio returns around benchmark returns, not the volatility of the portfolio in isolation (MSCI 2013)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#information-ratio",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#information-ratio",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Information Ratio",
+    "text": "Information Ratio\nUsing the arithmetic convention above,\n\\[\nIR=\\frac{\\overline a_{ann}}{TE_{ann}}\n=\\sqrt{12}\\frac{\\overline a}{s(a)}.\n\\]\nIf tracking error is zero, the information ratio is undefined. A portfolio that exactly replicates the benchmark has no active-risk denominator; assigning it an infinite or zero information ratio would be misleading."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#benchmark-relative-wealth",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#benchmark-relative-wealth",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Benchmark-Relative Wealth",
+    "text": "Benchmark-Relative Wealth\nActive returns do not compound by simple summation. To follow the economic value of one dollar invested in the portfolio relative to one dollar invested in the benchmark, define\n\\[\nW^p_t=\\prod_{j=1}^{t}(1+r_{p,j}),\\qquad\nW^b_t=\\prod_{j=1}^{t}(1+r_{b,j}),\n\\]\nand the relative-wealth ratio\n\\[\nQ_t=\\frac{W^p_t}{W^b_t}\n=\\prod_{j=1}^{t}\\frac{1+r_{p,j}}{1+r_{b,j}}.\n\\]\nThen:\n\n\\(Q_t&gt;1\\): the portfolio has compounded to more wealth than the benchmark since the common start;\n\\(Q_t&lt;1\\): it has compounded to less.\n\nThis ratio is different from \\(1+\\sum a_t\\)."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#benchmark-relative-drawdown",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#benchmark-relative-drawdown",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Benchmark-Relative Drawdown",
+    "text": "Benchmark-Relative Drawdown\nDefine the running peak of relative wealth as\n\\[\nH^Q_t=\\max_{u\\le t} Q_u.\n\\]\nThe benchmark-relative drawdown is\n\\[\nD^{rel}_t=\\frac{Q_t}{H^Q_t}-1.\n\\]\nThe maximum benchmark-relative drawdown is the minimum of this path.\n\n\n\n\n\n\nImportantRelative drawdown is not portfolio loss\n\n\n\nA portfolio can have a negative benchmark-relative drawdown while its own wealth is rising. The statistic means the portfolio has fallen from a previous relative-performance peak versus the benchmark, not necessarily from an absolute wealth peak.\n\n\nFor clarity, avoid the phrase “active drawdown” unless the exact construction is defined. A drawdown of the relative-wealth ratio is economically different from taking a running peak of a cumulative arithmetic active-return series."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#sharpe-ratio-versus-information-ratio",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#sharpe-ratio-versus-information-ratio",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Sharpe Ratio versus Information Ratio",
+    "text": "Sharpe Ratio versus Information Ratio\nA Sharpe ratio and an information ratio are not competing versions of the same metric.\nA simplified annualized Sharpe ratio is\n\\[\nSR=\\frac{\\overline{r_p-r_f}_{ann}}{\\sigma_{p,ann}},\n\\]\nwhere \\(r_f\\) is the chosen risk-free or cash return. It asks about absolute risk-adjusted performance.\nThe information ratio is\n\\[\nIR=\\frac{\\overline{r_p-r_b}_{ann}}{TE_{ann}}.\n\\]\nIt asks about benchmark-relative efficiency.\nA portfolio can score well on one and poorly on the other. For example, a defensive allocation may have attractive absolute Sharpe but persistently lag a strong equity benchmark."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#same-universe-versus-external-benchmarks",
+    "href": "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html#same-universe-versus-external-benchmarks",
+    "title": "Benchmark-Relative Portfolio Evaluation",
+    "section": "Same-Universe versus External Benchmarks",
+    "text": "Same-Universe versus External Benchmarks\nBenchmark choice changes the estimand.\n\nSame-universe benchmark\nSuppose a strategy ranks and selects among 11 ETFs. An equal-weight portfolio of those same 11 assets can be a useful benchmark because it holds the opportunity set largely fixed. Relative performance then speaks more directly to the value of selection, ranking, or weighting inside that universe.\n\n\nExternal benchmark\nA 60/40 portfolio, broad equity index, or institutional policy benchmark can be useful for practitioner relevance. But it changes the exposure mix and possibly the asset universe. Outperformance versus that benchmark is therefore a broader portfolio comparison, not a clean attribution of the selection rule alone.\n\n\n\n\n\n\nNoteBenchmark choice is part of the research design\n\n\n\nA same-universe benchmark often sharpens method attribution. An external benchmark often sharpens economic relevance. Neither is automatically superior; the article should state what each comparison can and cannot isolate."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#six-clocks-to-keep-separate",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#six-clocks-to-keep-separate",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Six Clocks to Keep Separate",
+    "text": "Six Clocks to Keep Separate\nFor each macro feature, distinguish at least the following fields.\n\n\n\n\n\n\n\n\nClock\nMeaning\nExample question\n\n\n\n\nReference period\nEconomic period the observation describes\nIs this CPI for May or June?\n\n\nRelease date/time\nWhen the source officially published the release\nWas the release before the portfolio cutoff?\n\n\nDatabase vintage / snapshot label\nVersion date or file label used to reconstruct history\nWhich historical snapshot was downloaded?\n\n\nActual availability\nWhen the exact value/file/API response was demonstrably accessible to the decision process\nCould this value truly have been ingested by the cutoff?\n\n\nRevision / backfill state\nInitial, revised, benchmark-revised, or later backfilled value\nIs the backtest using a value that changed later?\n\n\nForecast-origin cutoff\nLast instant at which information may enter the decision\nWhat was known before the signal was finalized?\n\n\n\nThese clocks can coincide, but the research design should not assume they do."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#reference-period-is-not-availability",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#reference-period-is-not-availability",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Reference Period Is Not Availability",
+    "text": "Reference Period Is Not Availability\nSuppose an observation is labeled “June industrial production.” The label identifies the economic reference period. It does not say when June industrial production was published.\nUsing June’s reference label inside a June month-end forecast may be impossible if the release occurs in July. The admissibility question is not “Does the observation belong to June?” but “Was the exact value available by the forecast cutoff?”"
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#historical-vintage-is-not-automatically-exact-point-in-time-availability",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#historical-vintage-is-not-automatically-exact-point-in-time-availability",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Historical Vintage Is Not Automatically Exact Point-in-Time Availability",
+    "text": "Historical Vintage Is Not Automatically Exact Point-in-Time Availability\nFRED defines a real-time period as the interval during which facts were true or information was known until it changed (Federal Reserve Bank of St. Louis, n.d.-e). The API also allows vintage_dates to download data as it existed on specified dates in history (Federal Reserve Bank of St. Louis, n.d.-c). These features are valuable for reconstructing historical information sets.\nHowever, a monthly research dataset labeled “2020-06 vintage” may provide only a snapshot convention rather than a timestamp-level proof that every component series was available before a particular June decision cutoff.\nTherefore:\n\\[\n\\text{historical vintage evidence}\n\\not\\Rightarrow\n\\text{exact within-period availability certification}.\n\\]\nThe stronger claim requires stronger evidence."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#same-month-vintage-labels",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#same-month-vintage-labels",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Same-Month Vintage Labels",
+    "text": "Same-Month Vintage Labels\nA common shortcut is\n\\[\n\\text{forecast month }t\n\\leftarrow\n\\text{vintage labeled }t.\n\\]\nThat can be defensible if the dataset’s construction and timing contract prove that all included values were available before the forecast origin. Without that proof, the same-month label alone is insufficient.\n\n\n\n\n\n\nWarningDo not certify ‘real-time’ from a same-month label alone\n\n\n\nIf exact availability is unresolved, describe the design as historical-vintage or another accurate weaker term. Do not upgrade it to exact point-in-time or real-time simply because the file and forecast share the same month label."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#a-fail-closed-admissibility-rule",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#a-fail-closed-admissibility-rule",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "A Fail-Closed Admissibility Rule",
+    "text": "A Fail-Closed Admissibility Rule\nLet \\(c_t\\) be the forecast-origin cutoff and let \\(A_{j,v}\\) be the documented availability time of feature \\(j\\) in revision state \\(v\\).\nThe exact point-in-time admissibility condition is\n\\[\nA_{j,v}\\le c_t.\n\\]\nIf \\(A_{j,v}\\) cannot be established from the retained evidence, the audit should not silently replace it with a reference date or snapshot label. Under a fail-closed standard, the claim becomes:\n\nexact absence of timing leakage cannot be certified from the available evidence.\n\nThis is not the same as proving leakage occurred. It means the stronger timing claim has not been established."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#conservative-lag-or-buffer-robustness",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#conservative-lag-or-buffer-robustness",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Conservative Lag or Buffer Robustness",
+    "text": "Conservative Lag or Buffer Robustness\nWhen exact within-period availability cannot be certified, a conservative robustness specification can deliberately move the information set backward.\nFor monthly macro data, examples include:\n\nuse a prior-month database vintage rather than the same-month vintage;\ncap the latest admissible macro reference period one additional month earlier; or\nimpose a fixed release buffer that is known to exceed the uncertain availability interval.\n\nThe exact rule should be pre-specified and applied uniformly rather than tailored series by series after seeing performance.\nThe robustness result answers a narrower but valuable question:\n\nDoes the research conclusion survive when the macro information clock is made deliberately conservative?\n\nIt does not retroactively certify the primary specification as exact real-time."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#market-price-clock-versus-macro-information-clock",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#market-price-clock-versus-macro-information-clock",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Market-Price Clock versus Macro-Information Clock",
+    "text": "Market-Price Clock versus Macro-Information Clock\nMarket prices and macro data should not be forced onto the same clock.\nA month-end asset price may be observable at the market close on date \\(t\\). A monthly macro series carrying reference month \\(t\\) may not be released until later. The admissible information set can therefore contain current market-price history while using an older macro reference period.\nA clean decision timeline is\n\\[\n\\text{market data available by }c_t\n+\n\\text{macro data proven available by }c_t\n\\rightarrow\n\\text{model / signal}\n\\rightarrow\n\\text{portfolio decision}\n\\rightarrow\n\\text{future holding-period return}.\n\\]\nThis separation prevents an overly conservative macro lag from being mechanically imposed on market prices that were actually observable."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#revisions-and-backfills",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#revisions-and-backfills",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "Revisions and Backfills",
+    "text": "Revisions and Backfills\nVintage-aware research must also record which version of a value was used.\nThe FRED series/vintagedates endpoint identifies dates when a series value was revised or new values were released (Federal Reserve Bank of St. Louis, n.d.-d). A later snapshot can differ from an earlier one because of:\n\nroutine revisions;\nbenchmark or seasonal-adjustment revisions;\nhistorical backfills;\nsource methodology changes; or\nchanges in the set of available series.\n\nA reproducible pipeline should retain enough metadata to distinguish these possibilities rather than merely store the final numeric matrix."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#fred-md-and-monthly-vintages",
+    "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html#fred-md-and-monthly-vintages",
+    "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
+    "section": "FRED-MD and Monthly Vintages",
+    "text": "FRED-MD and Monthly Vintages\nFRED-MD provides a large monthly macroeconomic database for empirical research (McCracken and Ng 2016). Historical-vintage use materially improves realism relative to a single current revised panel. But a project still needs its own decision-time contract: which vintage file was selected, which reference periods were allowed, and whether that selection is sufficient to certify actual availability before each forecast origin.\nThe database is an input. The information-timing proof belongs to the research design."
   }
 ]

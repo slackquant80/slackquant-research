@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to time-series and absolute momentum, lookback and skip-month conventions, signal-to-trade timing, and parameter sensitivity.">
+
+<title>Momentum and Trend Signals – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-76654b02cc57a8ec1b31ec5b27f05846.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
+  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
+  <ul class="collapse">
+  <li><a href="#a-basic-lookback-return" id="toc-a-basic-lookback-return" class="nav-link" data-scroll-target="#a-basic-lookback-return">A basic lookback return</a></li>
+  <li><a href="#optional-skip-month-convention" id="toc-optional-skip-month-convention" class="nav-link" data-scroll-target="#optional-skip-month-convention">Optional skip-month convention</a></li>
+  <li><a href="#time-series-versus-cross-sectional-decisions" id="toc-time-series-versus-cross-sectional-decisions" class="nav-link" data-scroll-target="#time-series-versus-cross-sectional-decisions">Time-series versus cross-sectional decisions</a></li>
+  <li><a href="#signal-to-portfolio-timing" id="toc-signal-to-portfolio-timing" class="nav-link" data-scroll-target="#signal-to-portfolio-timing">Signal-to-portfolio timing</a></li>
+  </ul></li>
+  <li><a href="#momentum-and-trend-following" id="toc-momentum-and-trend-following" class="nav-link" data-scroll-target="#momentum-and-trend-following">Momentum and Trend Following</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#parameter-sensitivity" id="toc-parameter-sensitivity" class="nav-link" data-scroll-target="#parameter-sensitivity">Parameter Sensitivity</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<header class="sq-platform-header">
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
+</header>
+<script id="sq-header-relocator">
+  (() => {
+    const script = document.currentScript;
+    const header = script?.previousElementSibling;
+    const quartoContent = document.getElementById("quarto-content");
+    if (
+      header?.classList.contains("sq-platform-header") &&
+      quartoContent?.parentNode
+    ) {
+      quartoContent.parentNode.insertBefore(header, quartoContent);
+    }
+  })();
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Momentum and Trend Signals</h1>
+<p class="subtitle lead">From past-return signals to implementable portfolio decisions</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Portfolio Methods</div>
+    <div class="quarto-category">Intermediate</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical guide to time-series and absolute momentum, lookback and skip-month conventions, signal-to-trade timing, and parameter sensitivity.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM010 · Portfolio Methods · Intermediate</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> A momentum or trend signal converts an asset’s past price path into a rule for its next portfolio decision; the lookback, optional skip period, and execution clock are part of the method, not implementation trivia.</p>
+<p><strong>Use it for.</strong> Designing and auditing time-series or absolute-momentum rules, trend filters, and momentum-based allocation signals.</p>
+<p><strong>It does not establish.</strong> That momentum is universally profitable, that one lookback horizon is optimal, or that a signal observed at a period-end could have been traded at the same period-end price.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A rule such as “hold the asset when its 12-month return is positive” sounds simple. In a reproducible backtest, however, that sentence is incomplete.</p>
+<p>A reviewer still needs to know:</p>
+<ol type="1">
+<li>which return history is included in the signal;</li>
+<li>whether the most recent month is included or skipped;</li>
+<li>whether the rule uses an asset’s <strong>own</strong> history or its rank relative to other assets;</li>
+<li>when the signal becomes observable; and</li>
+<li>which subsequent return the signal is allowed to earn.</li>
+</ol>
+<p>Momentum methods are therefore best defined as a <strong>signal plus an information clock plus a portfolio rule</strong>.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Time-series momentum is based on an instrument’s own past return rather than its relative rank within a cross-section <span class="citation" data-cites="moskowitz2012">(<a href="#ref-moskowitz2012" role="doc-biblioref">Moskowitz et al. 2012</a>)</span>. A basic trend-following implementation often uses the same sign logic: positive recent return implies a long or risk-on position, while negative recent return implies a short, cash, or defensive position depending on the mandate <span class="citation" data-cites="hurst2017">(<a href="#ref-hurst2017" role="doc-biblioref">Hurst et al. 2017</a>)</span>.</p>
+<p>Those ideas are related, but the labels are not interchangeable in every implementation. Trend following is a broader family that can also use moving-average crossovers, breakouts, filtered slopes, or other rules. Time-series momentum is one particularly transparent trend signal.</p>
+<p>A second distinction is between <strong>absolute/time-series momentum</strong> and <strong>cross-sectional momentum</strong>. Absolute momentum asks whether an asset’s own signal clears a threshold. Cross-sectional momentum asks which assets have stronger signals than their peers. A strategy can use either rule, or combine them.</p>
+</section>
+<section id="intuition" class="level1">
+<h1>Intuition</h1>
+<p>Think of a momentum signal as a measurement taken at a decision date. The measurement looks backward; the portfolio acts forward.</p>
+<p>If the measurement uses data through month <span class="math inline">\(t\)</span>, the portfolio should generally earn returns <strong>after</strong> the signal has been formed. Using the month-<span class="math inline">\(t\)</span> closing price both to compute the signal and to claim an execution at that same closing price requires a separate timestamp-level justification. In monthly research, the clean default is to form the signal at the end of <span class="math inline">\(t\)</span> and apply the resulting target to the next tradable holding period. This timing convention is developed more fully in <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>.</p>
+</section>
+<section id="the-method" class="level1">
+<h1>The Method</h1>
+<section id="a-basic-lookback-return" class="level2">
+<h2 class="anchored" data-anchor-id="a-basic-lookback-return">A basic lookback return</h2>
+<p>Let <span class="math inline">\(P_t\)</span> be an adjusted price or total-return index observed at decision date <span class="math inline">\(t\)</span>. For a lookback of <span class="math inline">\(h\)</span> periods, define</p>
+<p><span class="math display">\[
+m_t^{(h)}=\frac{P_t}{P_{t-h}}-1.
+\]</span></p>
+<p>Equivalently, if <span class="math inline">\(r_j\)</span> denotes simple return,</p>
+<p><span class="math display">\[
+1+m_t^{(h)}=\prod_{j=t-h+1}^{t}(1+r_j).
+\]</span></p>
+<p>A simple absolute-momentum rule with threshold <span class="math inline">\(\theta\)</span> is</p>
+<p><span class="math display">\[
+s_t=\mathbf 1\{m_t^{(h)}&gt;\theta\}.
+\]</span></p>
+<p>For a long/cash mandate, <span class="math inline">\(s_t=1\)</span> might mean hold the risky asset and <span class="math inline">\(s_t=0\)</span> hold cash. For a long/short mandate, a sign rule might instead map positive momentum to <span class="math inline">\(+1\)</span> and negative momentum to <span class="math inline">\(-1\)</span>. The mapping is a portfolio-design choice and must be stated.</p>
+</section>
+<section id="optional-skip-month-convention" class="level2">
+<h2 class="anchored" data-anchor-id="optional-skip-month-convention">Optional skip-month convention</h2>
+<p>Sometimes the most recent period is deliberately omitted. Let <span class="math inline">\(s\ge 0\)</span> be the number of skipped periods. A convenient definition is</p>
+<p><span class="math display">\[
+m_t^{(h,s)}=\frac{P_{t-s}}{P_{t-s-h}}-1.
+\]</span></p>
+<p>With monthly data, <span class="math inline">\(s=1\)</span> omits the most recent month from the formation window. The familiar cross-sectional momentum convention based on prior months 2–12 is an example of a skipped-recent-month construction in the Fama–French momentum portfolios <span class="citation" data-cites="frenchmomentum">(<a href="#ref-frenchmomentum" role="doc-biblioref">French, n.d.</a>)</span>.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="A skip month is a convention, not a law of momentum">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>A skip month is a convention, not a law of momentum
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Some momentum designs include the most recent month; others intentionally skip it. The article or code should state the exact endpoints. Do not infer a 12–1 construction merely because a paper says “12-month momentum.”</p>
+</div>
+</div>
+</section>
+<section id="time-series-versus-cross-sectional-decisions" class="level2">
+<h2 class="anchored" data-anchor-id="time-series-versus-cross-sectional-decisions">Time-series versus cross-sectional decisions</h2>
+<p>For <span class="math inline">\(N\)</span> assets, an own-history signal can be computed asset by asset:</p>
+<p><span class="math display">\[
+m_{i,t}^{(h)}=\frac{P_{i,t}}{P_{i,t-h}}-1.
+\]</span></p>
+<p>An <strong>absolute</strong> rule compares <span class="math inline">\(m_{i,t}^{(h)}\)</span> with a fixed threshold. A <strong>cross-sectional</strong> rule ranks <span class="math inline">\(m_{i,t}^{(h)}\)</span> across <span class="math inline">\(i\)</span> and selects, for example, the top <span class="math inline">\(K\)</span> assets. The same return measurement can therefore support different portfolio decisions.</p>
+</section>
+<section id="signal-to-portfolio-timing" class="level2">
+<h2 class="anchored" data-anchor-id="signal-to-portfolio-timing">Signal-to-portfolio timing</h2>
+<p>A minimal monthly clock is</p>
+<p><span class="math display">\[
+\text{prices through }t
+\rightarrow
+\text{signal at }t
+\rightarrow
+\text{target weights}
+\rightarrow
+\text{execution after signal formation}
+\rightarrow
+\text{return over }t+1.
+\]</span></p>
+<p>The exact execution timestamp depends on the data and trading convention. What matters is that the return credited to the strategy was not already embedded in the signal. See <a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a> for the broader information-set problem.</p>
+</section>
+</section>
+<section id="momentum-and-trend-following" class="level1">
+<h1>Momentum and Trend Following</h1>
+<p>Time-series momentum and trend following overlap substantially but should not be collapsed into a single universal definition. Moskowitz, Ooi, and Pedersen document return continuation based on each instrument’s own past return <span class="citation" data-cites="moskowitz2012">(<a href="#ref-moskowitz2012" role="doc-biblioref">Moskowitz et al. 2012</a>)</span>. Hurst, Ooi, and Pedersen describe basic trend following as time-series momentum while also placing it within the broader historical trend-following family <span class="citation" data-cites="hurst2017">(<a href="#ref-hurst2017" role="doc-biblioref">Hurst et al. 2017</a>)</span>.</p>
+<p>For applied work, a useful hierarchy is:</p>
+<ul>
+<li><strong>trend following</strong>: the broad family of rules that respond to persistent directional price movement;</li>
+<li><strong>time-series / absolute momentum</strong>: a trend rule driven by an asset’s own past return or excess return;</li>
+<li><strong>cross-sectional momentum</strong>: a relative rule that ranks assets by past performance.</li>
+</ul>
+<p>The taxonomy is useful only if the exact signal equation and portfolio mapping are also given.</p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>A momentum backtest answers a conditional question: <strong>what happened under this particular signal definition, timing rule, universe, portfolio map, and cost assumption?</strong></p>
+<p>It does not establish that the chosen horizon is uniquely optimal. If 6-, 9-, and 12-month lookbacks all produce similar conclusions, the result is less dependent on one arbitrary parameter than if only one horizon works. Parameter sensitivity should therefore be treated as part of the evidence.</p>
+<p>A good robustness table separates:</p>
+<ul>
+<li>signal horizon <span class="math inline">\(h\)</span>;</li>
+<li>skip period <span class="math inline">\(s\)</span>;</li>
+<li>threshold or ranking rule;</li>
+<li>rebalance frequency;</li>
+<li>execution convention; and</li>
+<li>portfolio sizing.</li>
+</ul>
+<p>Changing several at once makes it difficult to identify why the result changed.</p>
+</section>
+<section id="financial-economic-example" class="level1">
+<h1>Financial / Economic Example</h1>
+<p>Suppose monthly prices are</p>
+<p><span class="math display">\[
+(100, 102, 101, 105, 107, 106, 110).
+\]</span></p>
+<p>At the final date, a three-month lookback that includes the most recent month gives</p>
+<p><span class="math display">\[
+m^{(3,0)}=\frac{110}{105}-1\approx 4.76\%.
+\]</span></p>
+<p>A three-month lookback with one skipped month gives</p>
+<p><span class="math display">\[
+m^{(3,1)}=\frac{106}{101}-1\approx 4.95\%.
+\]</span></p>
+<p>Both are positive, but they are not the same signal. With a longer or more volatile series, the skip convention can change the sign and therefore the portfolio decision.</p>
+<p>The included Python example computes both versions and demonstrates the next-period timing map.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Numerical illustration — not empirical evidence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Numerical illustration — not empirical evidence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The price path is synthetic. It is used only to make signal endpoints and timing auditable.</p>
+</div>
+</div>
+</section>
+<section id="implementation" class="level1">
+<h1>Implementation</h1>
+<p>A minimal implementation should expose lookback and skip parameters explicitly rather than hide them inside index offsets.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> momentum(prices, lookback, skip<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    prices <span class="op">=</span> np.asarray(prices, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> <span class="bu">len</span>(prices) <span class="op">-</span> <span class="dv">1</span> <span class="op">-</span> skip</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> end <span class="op">-</span> lookback</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> start <span class="op">&lt;</span> <span class="dv">0</span>:</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"not enough history"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prices[end] <span class="op">/</span> prices[start] <span class="op">-</span> <span class="fl">1.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For a panel of assets, compute the signal using only information available at the decision date, then map the signal to target weights. Portfolio accounting, drift, and turnover belong to the next stage rather than to the signal definition itself.</p>
+</section>
+<section id="parameter-sensitivity" class="level1">
+<h1>Parameter Sensitivity</h1>
+<p>Momentum results can be sensitive to formation horizon and execution choices. That sensitivity should be shown rather than optimized away.</p>
+<p>A disciplined workflow is:</p>
+<ol type="1">
+<li>pre-specify a primary lookback and timing convention;</li>
+<li>define a small economically motivated sensitivity grid;</li>
+<li>hold the rest of the backtest fixed while varying one dimension;</li>
+<li>report whether the economic conclusion survives; and</li>
+<li>avoid selecting the winning horizon after inspecting the same test sample.</li>
+</ol>
+<p>When many alternatives are searched, the problem becomes a broader model-selection and multiple-testing issue, not just a momentum implementation detail.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<p><strong>Confusing own-history and relative momentum.</strong> A top-<span class="math inline">\(K\)</span> ranking is cross-sectional even if the score itself is an own-history return.</p>
+<p><strong>Leaving signal endpoints implicit.</strong> “12-month momentum” does not reveal whether the most recent month is included.</p>
+<p><strong>Using same-close execution without evidence.</strong> A close used to form the signal cannot automatically be assumed available before an order filled at that same close.</p>
+<p><strong>Treating trend following as one formula.</strong> Moving-average, breakout, sign-of-return, and regression-slope signals may belong to the same family but are not numerically equivalent.</p>
+<p><strong>Optimizing the lookback on the reported test sample.</strong> This converts a simple rule into a data-mined model-selection exercise.</p>
+</section>
+<section id="when-not-to-use-it" class="level1">
+<h1>When Not to Use It</h1>
+<p>Momentum is not appropriate merely because a price history exists. Avoid treating it as a default when the research question is fundamentally valuation-, carry-, macro-, or event-driven. It is also a poor diagnostic if the available history is too short to support the intended formation window or if the tradability clock is unknown.</p>
+<p>If the goal is to evaluate an entire portfolio path rather than define the signal, use <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007</a> and <a href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">QM009 — Turnover, Transaction Costs, and Net Performance</a> as complementary methods.</p>
+</section>
+<section id="related-methods" class="level1 related-methods">
+<h1 class="related-methods">Related Methods</h1>
+<ul>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a>: information-set boundaries.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>: signal-to-weight and rebalance timing.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">QM009 — Turnover, Transaction Costs, and Net Performance</a>: implementation consequences of changing positions.</li>
+<li><a href="../../40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html">QM011 — Strategy Similarity and Decision Diversification</a>: whether strategies built from similar signals actually make distinct decisions.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<ul>
+<li><a href="https://research.slackquant.com/research/adaa/">Diversify the Decisions, Not Just the Assets</a>: momentum/trend logic is part of the dynamic allocation sleeve architecture.</li>
+<li><a href="https://research.slackquant.com/research/protection-patience/">When Protection Works but the Portfolio Still Lags</a>: the defensive rule uses a 12-month trend signal whose timing and horizon are central to interpretation.</li>
+</ul>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The article includes a deterministic Python example and a compact hands-on lab. The validation script checks lookback endpoints, skipped-period indexing, and that a signal is mapped to the subsequent holding period rather than retroactively to the formation return.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-frenchmomentum" class="csl-entry" role="listitem">
+French, Kenneth R. n.d. <em>Detail for Monthly Momentum Factor (Mom)</em>. Kenneth R. French Data Library. <a href="https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/det_mom_factor.html">https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/det_mom_factor.html</a>.
+</div>
+<div id="ref-hurst2017" class="csl-entry" role="listitem">
+Hurst, Brian, Yao Hua Ooi, and Lasse Heje Pedersen. 2017. <span>“A Century of Evidence on Trend-Following Investing.”</span> <em>The Journal of Portfolio Management</em> 44 (1): 15–29. <a href="https://www.aqr.com/-/media/AQR/Documents/Insights/Journal-Article/AQR-JPM-Fall-2017.pdf">https://www.aqr.com/-/media/AQR/Documents/Insights/Journal-Article/AQR-JPM-Fall-2017.pdf</a>.
+</div>
+<div id="ref-moskowitz2012" class="csl-entry" role="listitem">
+Moskowitz, Tobias J., Yao Hua Ooi, and Lasse Heje Pedersen. 2012. <span>“Time Series Momentum.”</span> <em>Journal of Financial Economics</em> 104 (2): 228–50. <a href="https://doi.org/10.1016/j.jfineco.2011.11.003">https://doi.org/10.1016/j.jfineco.2011.11.003</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+<script id="sq-method-index-discovery-script">
+  (() => {
+    const normalize = (value) =>
+      (value || "")
+        .toLocaleLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const categoryDisplay = (raw) => {
+      const key = normalize(raw);
+      const aliases = {
+        "forecast evaluation": "Forecast",
+        "statistical inference": "Statistical Inference",
+        "data & research design": "Data / Research Design",
+        "portfolio methods": "Portfolio",
+        "machine learning": "Machine Learning",
+        "ml methods": "Machine Learning",
+      };
+      if (aliases[key]) return aliases[key];
+      return raw
+        .toLocaleLowerCase()
+        .replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+    };
+
+    const init = () => {
+      const discovery = document.getElementById("sq-method-discovery");
+      const catalog = document.getElementById("sq-method-catalog");
+      const input = document.getElementById("sq-method-search");
+      const filterHost = document.getElementById("sq-method-filters");
+      const resultCount = document.getElementById("sq-method-result-count");
+      const empty = document.getElementById("sq-method-empty");
+      if (!discovery || !catalog || !input || !filterHost || !resultCount || !empty) return;
+
+      const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
+      const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      if (!rows.length) return;
+
+      const categories = new Map();
+      rows.forEach((row) => {
+        const meta = row.querySelector(".sq-meta")?.textContent || "";
+        const parts = meta.split("·").map((part) => part.trim());
+        const rawCategory = parts.length >= 2 ? parts[1] : "Other";
+        const category = normalize(rawCategory);
+        row.dataset.methodCategory = category;
+        row.dataset.methodSearch = normalize(row.textContent);
+        if (!categories.has(category)) {
+          categories.set(category, categoryDisplay(rawCategory));
+        }
+      });
+
+      let activeCategory = "all";
+      const buttons = new Map();
+
+      const addFilter = (key, label) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sq-method-filter";
+        button.dataset.methodFilter = key;
+        button.textContent = label;
+        button.setAttribute("aria-pressed", key === "all" ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeCategory = key;
+          buttons.forEach((item, itemKey) => {
+            item.setAttribute("aria-pressed", itemKey === activeCategory ? "true" : "false");
+          });
+          apply();
+        });
+        buttons.set(key, button);
+        filterHost.appendChild(button);
+      };
+
+      addFilter("all", "All");
+      categories.forEach((label, key) => addFilter(key, label));
+
+      const apply = () => {
+        const query = normalize(input.value);
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const queryMatch = !query || row.dataset.methodSearch.includes(query);
+          const categoryMatch =
+            activeCategory === "all" || row.dataset.methodCategory === activeCategory;
+          const show = queryMatch && categoryMatch;
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleRow = Array.from(group.querySelectorAll(".sq-method-row")).some(
+            (row) => !row.hidden
+          );
+          group.hidden = !hasVisibleRow;
+        });
+
+        resultCount.textContent = `${visible} ${visible === 1 ? "method" : "methods"}`;
+        empty.hidden = visible !== 0;
+        discovery.classList.toggle(
+          "is-filtering",
+          Boolean(query) || activeCategory !== "all"
+        );
+      };
+
+      input.addEventListener("input", apply);
+      input.addEventListener("search", apply);
+      apply();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-method-browser-script">
+  (() => {
+    const methods = [
+      { id: "QM001", title: "Out-of-Sample Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html", folder: "QM001_OUT_OF_SAMPLE_EVALUATION" },
+      { id: "QM002", title: "Rolling vs Expanding Windows", path: "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html", folder: "QM002_ROLLING_VS_EXPANDING_WINDOWS" },
+      { id: "QM003", title: "Look-Ahead Bias and Data Leakage", path: "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html", folder: "QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE" },
+      { id: "QM004", title: "Diebold–Mariano Test", path: "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html", folder: "QM004_DIEBOLD_MARIANO_TEST" },
+      { id: "QM005", title: "Model Confidence Set", path: "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html", folder: "QM005_MODEL_CONFIDENCE_SET" },
+      { id: "QM006", title: "Block Bootstrap", path: "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html", folder: "QM006_BLOCK_BOOTSTRAP" },
+      { id: "QM007", title: "Portfolio Backtesting and Rebalancing", path: "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html", folder: "QM007_PORTFOLIO_BACKTESTING_REBALANCING" },
+      { id: "QM008", title: "Drawdown, Underwater Duration, and Recovery", path: "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html", folder: "QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY" },
+      { id: "QM009", title: "Turnover, Transaction Costs, and Net Performance", path: "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html", folder: "QM009_TURNOVER_COSTS" },
+      { id: "QM010", title: "Momentum and Trend Signals", path: "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html", folder: "QM010_MOMENTUM_TREND" },
+      { id: "QM011", title: "Strategy Similarity and Decision Diversification", path: "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html", folder: "QM011_DECISION_DIVERSIFICATION" },
+      { id: "QM012", title: "Rolling Holding-Period Analysis", path: "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html", folder: "QM012_ROLLING_HOLDING_PERIODS" },
+      { id: "QM013", title: "Benchmark-Relative Portfolio Evaluation", path: "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html", folder: "QM013_BENCHMARK_RELATIVE" },
+      { id: "QM014", title: "Information Timing, Data Vintages, and Real-Time Macro Data", path: "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html", folder: "QM014_MACRO_INFORMATION_TIMING" },
+    ];
+
+    const init = () => {
+      const currentPath = decodeURIComponent(window.location.pathname);
+      const current = methods.find((method) =>
+        currentPath.includes(`/${method.folder}/`)
+      );
+      if (!current) return;
+
+      const panel = document.createElement("nav");
+      panel.className = "sq-method-browser";
+      panel.setAttribute("aria-label", "Browse Quantitative Methods");
+
+      const label = document.createElement("label");
+      label.className = "sq-method-browser-label";
+      label.htmlFor = "sq-method-browser-select";
+      label.textContent = "Browse Methods";
+
+      const controls = document.createElement("div");
+      controls.className = "sq-method-browser-controls";
+
+      const select = document.createElement("select");
+      select.id = "sq-method-browser-select";
+      select.className = "sq-method-browser-select";
+      select.setAttribute("aria-label", "Choose another Quantitative Method");
+
+      methods.forEach((method) => {
+        const option = document.createElement("option");
+        option.value = method.path;
+        option.textContent = `${method.id} — ${method.title}`;
+        option.selected = method.id === current.id;
+        select.appendChild(option);
+      });
+
+      const methodMarker = "/methods/";
+      let base = "/";
+      const methodsIndex = currentPath.indexOf(methodMarker);
+      if (methodsIndex >= 0) {
+        base = currentPath.slice(0, methodsIndex + methodMarker.length);
+      } else {
+        const domainMarkers = [
+          "/10_FORECAST_EVALUATION/",
+          "/20_STATISTICAL_INFERENCE/",
+          "/40_PORTFOLIO_METHODS/",
+          "/80_DATA_RESEARCH_DESIGN/",
+        ];
+        for (const marker of domainMarkers) {
+          const index = currentPath.indexOf(marker);
+          if (index >= 0) {
+            base = currentPath.slice(0, index + 1);
+            break;
+          }
+        }
+      }
+
+      const resolve = (relativePath) => `${base}${relativePath}`;
+
+      select.addEventListener("change", () => {
+        window.location.assign(resolve(select.value));
+      });
+
+      const indexLink = document.createElement("a");
+      indexLink.className = "sq-method-browser-index";
+      indexLink.href = resolve("index.html");
+      indexLink.target = "_self";
+      indexLink.textContent = "All Methods";
+
+      controls.appendChild(select);
+      controls.appendChild(indexLink);
+      panel.appendChild(label);
+      panel.appendChild(controls);
+
+      const kicker = document.querySelector(".method-kicker");
+      const titleBlock = document.getElementById("title-block-header");
+      const main = document.getElementById("quarto-document-content");
+      if (kicker) {
+        kicker.insertAdjacentElement("afterend", panel);
+      } else if (titleBlock) {
+        titleBlock.insertAdjacentElement("afterend", panel);
+      } else if (main) {
+        main.prepend(panel);
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-external-link-policy">
+  (() => {
+    const canonicalHost = "research.slackquant.com";
+    const apply = () => {
+      document.querySelectorAll("a[href]").forEach((anchor) => {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        let url;
+        try { url = new URL(href, window.location.href); } catch { return; }
+        if (url.protocol !== "http:" && url.protocol !== "https:") return;
+        const isFirstParty =
+          url.origin === window.location.origin ||
+          url.hostname === canonicalHost;
+        const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
+        if (isFirstParty) {
+          anchor.removeAttribute("target");
+          rel.delete("noopener");
+          rel.delete("noreferrer");
+          if (rel.size) {
+            anchor.rel = Array.from(rel).join(" ");
+          } else {
+            anchor.removeAttribute("rel");
+          }
+          return;
+        }
+        anchor.target = "_blank";
+        rel.add("noopener");
+        rel.add("noreferrer");
+        anchor.rel = Array.from(rel).join(" ");
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+      apply();
+    }
+    new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

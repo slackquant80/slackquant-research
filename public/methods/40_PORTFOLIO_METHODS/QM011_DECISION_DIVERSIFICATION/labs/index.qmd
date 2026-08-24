@@ -1,0 +1,25 @@
+---
+title: "QM011 Hands-On Lab"
+subtitle: "Strategy Similarity and Decision Diversification"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Reproduce the numerical illustration from [QM011 — Strategy Similarity and Decision Diversification](../article.qmd) and inspect the convention that carries the main interpretation risk.
+
+# Run
+
+```bash
+python python/qm011_decision_similarity.py
+```
+
+# Check
+
+Compare the printed values with the definitions in the article. Change one parameter or boundary condition and explain which interpretation changes.

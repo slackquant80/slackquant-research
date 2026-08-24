@@ -1,4 +1,5 @@
 import { getMethodsForResearch } from "@/data/methods";
+import { methodsRootHref } from "@/lib/methodsHref";
 
 type MethodsUsedProps = {
   researchSlug: string;
@@ -36,7 +37,7 @@ export function MethodsUsed({ researchSlug }: MethodsUsedProps) {
         ))}
       </div>
 
-      <a className="section-link methods-library-link" href="/methods/">
+      <a className="section-link methods-library-link" href={methodsRootHref}>
         Browse the Quantitative Methods library &#8594;
       </a>
     </section>

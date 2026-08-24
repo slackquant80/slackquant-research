@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
+import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
+import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
 
 const designFacts = [
@@ -74,6 +76,7 @@ export default function PriceMacroDecisionPage() {
           <a href="#evidence">Selected Evidence</a>
           <a href="#design">Research Design</a>
           <a href="#timing">Information Timing</a>
+          <a href="#methods">Quantitative Methods</a>
           <a href="#repro">Reproducibility</a>
           <a href="#citation">Citation</a>
         </aside>
@@ -230,6 +233,8 @@ export default function PriceMacroDecisionPage() {
             </p>
           </section>
 
+          <MethodsUsed researchSlug={item.slug} />
+
           <section className="prose-section" id="repro">
             <h2>Reproducibility</h2>
             <p>
@@ -270,11 +275,7 @@ export default function PriceMacroDecisionPage() {
 
           <section className="prose-section" id="citation">
             <h2>Citation</h2>
-            <div className="citation-box">
-              Lee, Sungkyu. “The Decision Value of Price and Macro Information:
-              Benchmark-Relative Evidence in Multi-Asset Allocation Using
-              Historical-Vintage FRED-MD Data.” SSRN 7340100, August 2026.
-            </div>
+            <CitationBox item={item} />
           </section>
         </div>
       </div>

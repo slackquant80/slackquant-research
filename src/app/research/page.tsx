@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ResearchCard } from "@/components/ResearchCard";
 import { researchItems } from "@/data/research";
+import { methodsRootHref } from "@/lib/methodsHref";
 
 export const metadata: Metadata = {
   title: "Research",
@@ -68,7 +69,7 @@ export default function ResearchPage() {
               focuses on how a method works, how to implement it, and where it can
               fail, with hands-on examples where useful.
             </p>
-            <a className="section-link strong-link" href="/methods/">
+            <a className="section-link strong-link" href={methodsRootHref}>
               Explore Quantitative Methods &#8594;
             </a>
           </article>

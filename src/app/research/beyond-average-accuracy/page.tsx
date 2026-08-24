@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
+import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { getResearch } from "@/data/research";
@@ -367,10 +368,7 @@ export default function BeyondAverageAccuracyPage() {
 
           <section className="prose-section" id="citation">
             <h2>Citation</h2>
-            <div className="citation-box">
-              Lee, S. (2026). {item.title}: {item.subtitle}. SSRN Working Paper
-              {" "}{item.ssrnId}. DOI: 10.2139/ssrn.7164118.
-            </div>
+            <CitationBox item={item} />
           </section>
         </div>
       </div>

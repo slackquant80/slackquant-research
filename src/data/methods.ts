@@ -37,7 +37,7 @@ export const quantitativeMethods: QuantitativeMethod[] = [
   },
   {
     id: "QM004",
-    title: "Diebold–Mariano Test",
+    title: "Diebold?밠ariano Test",
     category: "Forecast Evaluation",
     level: "Intermediate",
     href: "/methods/10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html",
@@ -89,11 +89,58 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains drift-aware turnover, transaction-cost conventions, and the mapping from before-cost portfolio performance to performance net of modeled transaction costs.",
   },
+  {
+    id: "QM010",
+    title: "Momentum and Trend Signals",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html",
+    researchContext:
+      "Explains how momentum and trend signals are defined, timed, and stress-tested across lookback choices before they are translated into portfolio decisions.",
+  },
+  {
+    id: "QM011",
+    title: "Strategy Similarity and Decision Diversification",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html",
+    researchContext:
+      "Explains how return similarity differs from similarity in what strategies hold, when they change, and how strongly they change risk exposure.",
+  },
+  {
+    id: "QM012",
+    title: "Rolling Holding-Period Analysis",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html",
+    researchContext:
+      "Explains rolling long-horizon outcome analysis, overlapping-window dependence, and the distinction between endpoint outcomes and the path experienced while reaching them.",
+  },
+  {
+    id: "QM013",
+    title: "Benchmark-Relative Portfolio Evaluation",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html",
+    researchContext:
+      "Explains active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown as distinct portfolio-evaluation quantities.",
+  },
+  {
+    id: "QM014",
+    title: "Information Timing, Data Vintages, and Real-Time Macro Data",
+    category: "Data & Research Design",
+    level: "Intermediate",
+    href: "/methods/80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html",
+    researchContext:
+      "Explains why reference periods, release dates, vintage labels, actual availability, revisions, and forecast cutoffs must be kept distinct in macroeconomic research.",
+  },
 ];
 
 const researchMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
-  "protection-patience": ["QM007", "QM008"],
+  "adaa": ["QM007", "QM010", "QM011"],
+  "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
+  "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014"],
 };
 
 export function getMethodsForResearch(slug: string) {
