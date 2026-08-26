@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical framework for revaluing portfolios on a common joint scenario cloud and separating portfolio-weight effects from scenario-generation effects.">
+
+<title>Scenario-Based Portfolio Stress Testing – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-76654b02cc57a8ec1b31ec5b27f05846.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
+  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
+  <ul class="collapse">
+  <li><a href="#joint-scenario-paths" id="toc-joint-scenario-paths" class="nav-link" data-scroll-target="#joint-scenario-paths">Joint scenario paths</a></li>
+  <li><a href="#asset-price-paths" id="toc-asset-price-paths" class="nav-link" data-scroll-target="#asset-price-paths">Asset price paths</a></li>
+  <li><a href="#portfolio-revaluation" id="toc-portfolio-revaluation" class="nav-link" data-scroll-target="#portfolio-revaluation">Portfolio revaluation</a></li>
+  <li><a href="#horizon-return-and-loss" id="toc-horizon-return-and-loss" class="nav-link" data-scroll-target="#horizon-return-and-loss">Horizon return and loss</a></li>
+  <li><a href="#maximum-drawdown" id="toc-maximum-drawdown" class="nav-link" data-scroll-target="#maximum-drawdown">Maximum drawdown</a></li>
+  <li><a href="#value-at-risk" id="toc-value-at-risk" class="nav-link" data-scroll-target="#value-at-risk">Value at Risk</a></li>
+  <li><a href="#expected-shortfall" id="toc-expected-shortfall" class="nav-link" data-scroll-target="#expected-shortfall">Expected Shortfall</a></li>
+  <li><a href="#worst-window-return" id="toc-worst-window-return" class="nav-link" data-scroll-target="#worst-window-return">Worst-window return</a></li>
+  </ul></li>
+  <li><a href="#same-cloud-portfolio-comparison" id="toc-same-cloud-portfolio-comparison" class="nav-link" data-scroll-target="#same-cloud-portfolio-comparison">Same-Cloud Portfolio Comparison</a>
+  <ul class="collapse">
+  <li><a href="#why-the-same-cloud-matters" id="toc-why-the-same-cloud-matters" class="nav-link" data-scroll-target="#why-the-same-cloud-matters">Why the same cloud matters</a></li>
+  <li><a href="#when-same-cloud-comparison-is-not-enough" id="toc-when-same-cloud-comparison-is-not-enough" class="nav-link" data-scroll-target="#when-same-cloud-comparison-is-not-enough">When same-cloud comparison is not enough</a></li>
+  </ul></li>
+  <li><a href="#weight-effect-versus-scenario-generation-effect" id="toc-weight-effect-versus-scenario-generation-effect" class="nav-link" data-scroll-target="#weight-effect-versus-scenario-generation-effect">Weight Effect versus Scenario-Generation Effect</a>
+  <ul class="collapse">
+  <li><a href="#experiment-a-portfolio-effect" id="toc-experiment-a-portfolio-effect" class="nav-link" data-scroll-target="#experiment-a-portfolio-effect">Experiment A — portfolio effect</a></li>
+  <li><a href="#experiment-b-model-effect" id="toc-experiment-b-model-effect" class="nav-link" data-scroll-target="#experiment-b-model-effect">Experiment B — model effect</a></li>
+  </ul></li>
+  <li><a href="#scenario-conditioned-what-if-versus-portfolio-optimization" id="toc-scenario-conditioned-what-if-versus-portfolio-optimization" class="nav-link" data-scroll-target="#scenario-conditioned-what-if-versus-portfolio-optimization">Scenario-Conditioned What-If versus Portfolio Optimization</a></li>
+  <li><a href="#model-implied-risk-versus-realized-loss-forecast-claim" id="toc-model-implied-risk-versus-realized-loss-forecast-claim" class="nav-link" data-scroll-target="#model-implied-risk-versus-realized-loss-forecast-claim">Model-Implied Risk versus Realized-Loss Forecast Claim</a></li>
+  <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
+  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<header class="sq-platform-header">
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
+</header>
+<script id="sq-header-relocator">
+  (() => {
+    const script = document.currentScript;
+    const header = script?.previousElementSibling;
+    const quartoContent = document.getElementById("quarto-content");
+    if (
+      header?.classList.contains("sq-platform-header") &&
+      quartoContent?.parentNode
+    ) {
+      quartoContent.parentNode.insertBefore(header, quartoContent);
+    }
+  })();
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Scenario-Based Portfolio Stress Testing</h1>
+<p class="subtitle lead">Turning joint simulated paths into portfolio loss, drawdown, tail, and what-if diagnostics</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Portfolio Methods</div>
+    <div class="quarto-category">Intermediate</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical framework for revaluing portfolios on a common joint scenario cloud and separating portfolio-weight effects from scenario-generation effects.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM017 · Portfolio Methods · Intermediate</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> Hold the scenario generator fixed, revalue one or more portfolios through the same joint future paths, and compare endpoint and path-dependent stress outcomes on a paired basis.</p>
+<p><strong>Use it for.</strong> Portfolio what-if analysis, candidate-versus-baseline stress comparison, model-implied VaR/Expected Shortfall, drawdown analysis, and human-in-the-loop risk decisions.</p>
+<p><strong>It does not establish.</strong> That the scenario distribution is calibrated, that the candidate portfolio is optimal, or that a model-implied tail loss is a guaranteed realized-loss forecast.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A multi-asset scenario model produces a cloud of possible joint future paths. The portfolio question is different:</p>
+<blockquote class="blockquote">
+<p><strong>What happens to this specific portfolio if those joint paths occur?</strong></p>
+</blockquote>
+<p>The bridge from scenarios to portfolio decisions is a revaluation map. Once the map is defined, the same scenario cloud can be used to compare a baseline portfolio with a candidate portfolio while keeping the modeled market environment fixed.</p>
+<p>This distinction matters because otherwise two effects become mixed:</p>
+<ol type="1">
+<li>the <strong>scenario-generation effect</strong> — which future market paths the model produced; and</li>
+<li>the <strong>portfolio-weight effect</strong> — how a particular portfolio responds to those paths.</li>
+</ol>
+<p>Scenario-based portfolio stress testing is designed to separate them.</p>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Stress testing is useful when the decision depends on severe, joint, and path-dependent outcomes that are poorly summarized by average return or volatility. Basel stress-testing principles emphasize material risks, internally consistent scenarios, severity, relevance, and explicit documentation of scenario design <span class="citation" data-cites="bcbs2018">(<a href="#ref-bcbs2018" role="doc-biblioref">Basel Committee on Banking Supervision 2018</a>)</span>.</p>
+<p>For portfolios, a joint scenario path preserves cross-asset interaction. That is essential when diversification can weaken during stress or when a loss depends on the order of returns rather than only the final endpoint.</p>
+<p>The scenario cloud is therefore an input to the portfolio analysis—not the portfolio result itself.</p>
+</section>
+<section id="intuition" class="level1">
+<h1>Intuition</h1>
+<p>Imagine one future path in which equities fall sharply during the first week, bonds rally, and commodities then decline in the second week.</p>
+<p>A 60/40 portfolio and a 30/70 portfolio experience the <strong>same market path</strong>, but not the same wealth path. If they are evaluated on different random scenario draws, part of the apparent difference may simply be Monte Carlo noise.</p>
+<p>Using the same cloud creates a paired experiment:</p>
+<p><span class="math display">\[
+\text{same market scenario}
+\rightarrow
+\begin{cases}
+\text{baseline portfolio outcome}\\
+\text{candidate portfolio outcome}
+\end{cases}
+\]</span></p>
+<p>The difference is then attributable to the portfolio mapping, conditional on the scenario model.</p>
+</section>
+<section id="the-method" class="level1">
+<h1>The Method</h1>
+<section id="joint-scenario-paths" class="level2">
+<h2 class="anchored" data-anchor-id="joint-scenario-paths">Joint scenario paths</h2>
+<p>Let</p>
+<p><span class="math display">\[
+r_{i,m,h}
+\]</span></p>
+<p>be the simple return of asset <span class="math inline">\(i=1,\ldots,d\)</span> in scenario <span class="math inline">\(m=1,\ldots,M\)</span> on future day <span class="math inline">\(h=1,\ldots,H\)</span>.</p>
+<p>The full scenario object is a tensor of joint returns. The key requirement is that all assets in one scenario share the same scenario index <span class="math inline">\(m\)</span>; independently shuffling assets would destroy the joint dependence structure.</p>
+</section>
+<section id="asset-price-paths" class="level2">
+<h2 class="anchored" data-anchor-id="asset-price-paths">Asset price paths</h2>
+<p>Normalize each asset price to one at the stress origin:</p>
+<p><span class="math display">\[
+P_{i,m,0}=1.
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+P_{i,m,h}
+=
+\prod_{u=1}^{h}(1+r_{i,m,u}).
+\]</span></p>
+<p>This converts daily returns into cumulative asset paths.</p>
+</section>
+<section id="portfolio-revaluation" class="level2">
+<h2 class="anchored" data-anchor-id="portfolio-revaluation">Portfolio revaluation</h2>
+<p>Suppose the initial portfolio has weights <span class="math inline">\(w_i\)</span> with</p>
+<p><span class="math display">\[
+\sum_{i=1}^d w_i=1.
+\]</span></p>
+<p>For a simple <strong>buy-and-hold through the stress horizon</strong> illustration, set normalized initial holdings <span class="math inline">\(q_i=w_i\)</span> and define</p>
+<p><span class="math display">\[
+W_{m,h}
+=
+\sum_{i=1}^d q_iP_{i,m,h}.
+\]</span></p>
+<p>Then <span class="math inline">\(W_{m,0}=1\)</span>.</p>
+<p>This convention allows weights to drift as assets move. If the actual mandate rebalances daily, monthly, or when thresholds are crossed, that rebalancing rule must be applied inside each scenario path instead. The stress engine should reproduce the portfolio rule being evaluated rather than silently impose daily constant weights.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="State the intrahorizon portfolio rule">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>State the intrahorizon portfolio rule
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Buy-and-hold, constant-mix rebalancing, derivative delta revaluation, and rule-based dynamic allocation can produce different stress outcomes on the same asset path. Portfolio revaluation is part of the method specification.</p>
+</div>
+</div>
+</section>
+<section id="horizon-return-and-loss" class="level2">
+<h2 class="anchored" data-anchor-id="horizon-return-and-loss">Horizon return and loss</h2>
+<p>For scenario <span class="math inline">\(m\)</span>, horizon portfolio return is</p>
+<p><span class="math display">\[
+R_{m,H}=W_{m,H}-1,
+\]</span></p>
+<p>and the corresponding loss can be written</p>
+<p><span class="math display">\[
+L_{m,H}=1-W_{m,H}=-R_{m,H}.
+\]</span></p>
+<p>The loss orientation is convenient for VaR and Expected Shortfall because larger <span class="math inline">\(L\)</span> means worse outcomes.</p>
+</section>
+<section id="maximum-drawdown" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-drawdown">Maximum drawdown</h2>
+<p>Path risk depends on the route, not only the endpoint. Define the running wealth peak</p>
+<p><span class="math display">\[
+M_{m,h}=\max_{0\le u\le h}W_{m,u}.
+\]</span></p>
+<p>The drawdown depth at day <span class="math inline">\(h\)</span> is</p>
+<p><span class="math display">\[
+D_{m,h}=1-\frac{W_{m,h}}{M_{m,h}},
+\]</span></p>
+<p>and scenario maximum drawdown is</p>
+<p><span class="math display">\[
+\operatorname{MDD}_m=\max_{1\le h\le H}D_{m,h}.
+\]</span></p>
+<p>Two scenarios can have the same terminal return but very different maximum drawdowns. <a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a> develops the broader drawdown accounting conventions.</p>
+</section>
+<section id="value-at-risk" class="level2">
+<h2 class="anchored" data-anchor-id="value-at-risk">Value at Risk</h2>
+<p>At confidence level <span class="math inline">\(\alpha\)</span>, model-implied horizon VaR is the <span class="math inline">\(\alpha\)</span> quantile of the scenario loss distribution:</p>
+<p><span class="math display">\[
+\operatorname{VaR}_{\alpha}
+=Q_{\alpha}(L_H).
+\]</span></p>
+<p>For example, 95% VaR is a loss threshold exceeded by roughly the worst 5% of the modeled loss distribution under a continuous idealization.</p>
+<p>The exact empirical quantile interpolation convention should be reported because different software libraries can differ slightly in finite samples.</p>
+</section>
+<section id="expected-shortfall" class="level2">
+<h2 class="anchored" data-anchor-id="expected-shortfall">Expected Shortfall</h2>
+<p>Expected Shortfall focuses on severity beyond the VaR threshold. For a continuous loss distribution,</p>
+<p><span class="math display">\[
+\operatorname{ES}_{\alpha}
+=
+\mathbb E[L_H\mid L_H\ge \operatorname{VaR}_{\alpha}].
+\]</span></p>
+<p>Expected Shortfall is designed to use information in the tail beyond a single quantile and has well-known coherence properties under appropriate definitions <span class="citation" data-cites="acerbitasche2002">(<a href="#ref-acerbitasche2002" role="doc-biblioref">Acerbi and Tasche 2002</a>)</span>.</p>
+<p>For a finite scenario cloud, a practical estimator averages the worst tail fraction. The treatment of a fractional boundary observation should be fixed if exact reproducibility matters.</p>
+</section>
+<section id="worst-window-return" class="level2">
+<h2 class="anchored" data-anchor-id="worst-window-return">Worst-window return</h2>
+<p>A multi-day stress path can contain a short, sharp loss even if the full-horizon result recovers.</p>
+<p>For a <span class="math inline">\(k\)</span>-day window, define</p>
+<p><span class="math display">\[
+R^{(k)}_{m,s}
+=
+\frac{W_{m,s+k}}{W_{m,s}}-1,
+\]</span></p>
+<p>where <span class="math inline">\(s=0,\ldots,H-k\)</span>.</p>
+<p>Then</p>
+<p><span class="math display">\[
+\operatorname{WorstK}_m
+=
+\min_s R^{(k)}_{m,s}.
+\]</span></p>
+<p>For <span class="math inline">\(k=5\)</span>, this is a worst-5-day return diagnostic. It is path-dependent and can reveal concentrated short-window losses that horizon VaR misses.</p>
+</section>
+</section>
+<section id="same-cloud-portfolio-comparison" class="level1">
+<h1>Same-Cloud Portfolio Comparison</h1>
+<p>Suppose baseline weights are <span class="math inline">\(\mathbf w^{(A)}\)</span> and candidate weights are <span class="math inline">\(\mathbf w^{(B)}\)</span>.</p>
+<p>For each scenario <span class="math inline">\(m\)</span>, compute</p>
+<p><span class="math display">\[
+L_m^{(A)},\qquad L_m^{(B)}
+\]</span></p>
+<p>from the <strong>same underlying asset path</strong>. The paired scenario difference is</p>
+<p><span class="math display">\[
+\Delta L_m=L_m^{(B)}-L_m^{(A)}.
+\]</span></p>
+<p>The same idea applies to maximum drawdown, worst-5-day return, and other stress statistics.</p>
+<p>This is closely related to the common-random-numbers principle in simulation: reusing the same underlying random scenario can reduce noise in comparisons because the market draw is held common <span class="citation" data-cites="glasserman2003">(<a href="#ref-glasserman2003" role="doc-biblioref">Glasserman 2003</a>)</span>.</p>
+<section id="why-the-same-cloud-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-the-same-cloud-matters">Why the same cloud matters</h2>
+<p>If Portfolio A is evaluated on cloud A and Portfolio B on independently generated cloud B, then</p>
+<p><span class="math display">\[
+\text{observed difference}
+=
+\text{portfolio effect}
++
+\text{Monte Carlo cloud difference}.
+\]</span></p>
+<p>Using the same cloud removes the second component from the direct what-if comparison, conditional on the scenario generator.</p>
+</section>
+<section id="when-same-cloud-comparison-is-not-enough" class="level2">
+<h2 class="anchored" data-anchor-id="when-same-cloud-comparison-is-not-enough">When same-cloud comparison is not enough</h2>
+<p>A same-cloud comparison does not solve every comparability problem. If a candidate introduces assets, derivatives, nonlinear payoffs, or risk factors not represented in the original scenario cloud, the scenario generator must first support those exposures.</p>
+</section>
+</section>
+<section id="weight-effect-versus-scenario-generation-effect" class="level1">
+<h1>Weight Effect versus Scenario-Generation Effect</h1>
+<p>A clean evaluation can use two separate experiments.</p>
+<section id="experiment-a-portfolio-effect" class="level3">
+<h3 class="anchored" data-anchor-id="experiment-a-portfolio-effect">Experiment A — portfolio effect</h3>
+<p>Hold the scenario cloud fixed and change only portfolio weights or holdings.</p>
+<p>This answers:</p>
+<blockquote class="blockquote">
+<p>Given the same modeled future states, how does the candidate portfolio alter risk?</p>
+</blockquote>
+</section>
+<section id="experiment-b-model-effect" class="level3">
+<h3 class="anchored" data-anchor-id="experiment-b-model-effect">Experiment B — model effect</h3>
+<p>Hold the portfolio fixed and change the scenario generator.</p>
+<p>This answers:</p>
+<blockquote class="blockquote">
+<p>For the same portfolio, how does the risk view change when the predictive model changes?</p>
+</blockquote>
+<p>Changing both at once makes attribution ambiguous.</p>
+</section>
+</section>
+<section id="scenario-conditioned-what-if-versus-portfolio-optimization" class="level1">
+<h1>Scenario-Conditioned What-If versus Portfolio Optimization</h1>
+<p>Scenario-based stress testing and optimization are not the same task.</p>
+<p>A <strong>what-if</strong> asks:</p>
+<blockquote class="blockquote">
+<p>What would happen to this pre-specified candidate portfolio under the current scenario cloud?</p>
+</blockquote>
+<p>An <strong>optimization</strong> asks:</p>
+<blockquote class="blockquote">
+<p>Which portfolio weights maximize or minimize an objective computed from the scenario cloud?</p>
+</blockquote>
+<p>The second problem introduces objective-function choice, constraints, estimation error, and overfitting risk. A stress dashboard can support candidate comparison without claiming to have optimized the portfolio.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Decision support can remain deliberately non-optimizing">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Decision support can remain deliberately non-optimizing
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A human portfolio manager may use the stress distribution to reject, modify, or accept a candidate allocation. The scenario engine can provide disciplined evidence without autonomously choosing the final weights.</p>
+</div>
+</div>
+</section>
+<section id="model-implied-risk-versus-realized-loss-forecast-claim" class="level1">
+<h1>Model-Implied Risk versus Realized-Loss Forecast Claim</h1>
+<p>A scenario-derived VaR, ES, or MDD distribution is conditional on the scenario model:</p>
+<p><span class="math display">\[
+\text{risk measure}
+=
+\text{functional of }F_t^{\text{model}}.
+\]</span></p>
+<p>This supports language such as:</p>
+<ul>
+<li>“model-implied 95% 20-day VaR”;</li>
+<li>“scenario-implied drawdown distribution”; or</li>
+<li>“candidate reduces tail loss under the current scenario cloud.”</li>
+</ul>
+<p>It does <strong>not</strong> by itself support the stronger claim that the reported number is a calibrated forecast of realized loss. That requires out-of-sample evaluation of the predictive distribution and tail calibration; see <a href="../../10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">QM015 — Multivariate Probabilistic Forecast Evaluation</a>.</p>
+</section>
+<section id="how-to-interpret-the-result" class="level1">
+<h1>How to Interpret the Result</h1>
+<p>A candidate portfolio can be considered more robust under the current modeled environment if, for example, it reduces model-implied ES and MDD without introducing an unacceptable loss elsewhere in the distribution.</p>
+<p>But interpretation should remain conditional:</p>
+<ul>
+<li><strong>conditional on the scenario generator</strong>;</li>
+<li><strong>conditional on the portfolio revaluation rule</strong>;</li>
+<li><strong>conditional on the horizon</strong>;</li>
+<li><strong>conditional on the scenario count and tail estimator</strong>; and</li>
+<li><strong>conditional on the candidate weights being fixed before the comparison</strong>.</li>
+</ul>
+<p>A portfolio that looks safer under one scenario model can look different under another. Model disagreement is useful information rather than a reason to hide the conditional nature of the stress result.</p>
+</section>
+<section id="financial-economic-example" class="level1">
+<h1>Financial / Economic Example</h1>
+<p>Consider two assets with a 20-day joint scenario cloud. Compare:</p>
+<ul>
+<li>baseline: 60% risky asset, 40% defensive asset;</li>
+<li>candidate: 45% risky asset, 55% defensive asset.</li>
+</ul>
+<p>Both portfolios are revalued on every identical scenario path. Suppose the candidate has lower 95% ES and lower 90th-percentile maximum drawdown, but also a lower median terminal wealth.</p>
+<p>The result is not “the candidate is optimal.” It is:</p>
+<blockquote class="blockquote">
+<p>Under the same modeled future states, the candidate trades some central outcome for lower modeled downside.</p>
+</blockquote>
+<p>That trade-off is a portfolio decision, not a scoring-rule verdict.</p>
+</section>
+<section id="implementation" class="level1">
+<h1>Implementation</h1>
+<p>The included Python example generates a synthetic three-asset scenario cloud and revalues two buy-and-hold portfolios on exactly the same paths.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> revalue_buy_and_hold(asset_returns, weights):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    prices <span class="op">=</span> np.concatenate(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        [np.ones((asset_returns.shape[<span class="dv">0</span>], <span class="dv">1</span>, asset_returns.shape[<span class="dv">2</span>])),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>         np.cumprod(<span class="fl">1.0</span> <span class="op">+</span> asset_returns, axis<span class="op">=</span><span class="dv">1</span>)],</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        axis<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prices <span class="op">@</span> np.asarray(weights, dtype<span class="op">=</span><span class="bu">float</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The code then computes horizon loss, MDD, VaR, ES, and worst-5-day return.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<p><strong>Generating a new cloud for every candidate portfolio.</strong> This confounds portfolio effects with Monte Carlo variation.</p>
+<p><strong>Treating joint scenarios as independent marginal draws.</strong> Asset-wise reshuffling destroys the dependence structure the stress test is meant to preserve.</p>
+<p><strong>Leaving the intrahorizon rebalancing rule unspecified.</strong> Buy-and-hold and constant-mix portfolios can have different path outcomes.</p>
+<p><strong>Computing MDD from terminal return only.</strong> Maximum drawdown requires the full wealth path.</p>
+<p><strong>Calling scenario VaR or ES realized truth.</strong> They are model-implied risk measures until calibration is independently established.</p>
+<p><strong>Optimizing weights on the same cloud and then describing the result as an unbiased what-if.</strong> Optimization introduces selection and overfitting risk.</p>
+<p><strong>Comparing portfolios whose risk factors are not represented by the cloud.</strong> The scenario state space must cover the instruments being revalued.</p>
+</section>
+<section id="when-not-to-use-it" class="level1">
+<h1>When Not to Use It</h1>
+<p>Scenario-based stress testing is not a substitute for historical performance backtesting, transaction-cost analysis, liquidity modeling, counterparty stress, or structural balance-sheet stress when those are the actual questions.</p>
+<p>It is also not enough when the portfolio contains materially nonlinear instruments that cannot be revalued from the simulated risk factors.</p>
+</section>
+<section id="related-methods" class="level1 related-methods">
+<h1 class="related-methods">Related Methods</h1>
+<ul>
+<li><a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a>: defines drawdown paths and recovery conventions in detail.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">QM015 — Multivariate Probabilistic Forecast Evaluation</a>: evaluates the predictive distribution before treating its risk measures as calibrated forecasts.</li>
+<li><a href="../../30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html">QM016 — EWMA-t Scenario Simulation</a>: provides one transparent way to generate a joint conditional scenario cloud.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<ul>
+<li><em>Multi-Asset Scenario Stress Lab — Technical White Paper</em> (SSRN 7354238): uses common-cloud portfolio revaluation to compare current or candidate portfolios under the same modeled multi-asset future states.</li>
+</ul>
+</section>
+<section id="reproducibility" class="level1">
+<h1>Reproducibility</h1>
+<p>The synthetic Python lab verifies that identical portfolios have exactly identical same-cloud outputs, that different weights produce paired scenario differences, and that MDD and worst-window statistics use the full path rather than only terminal wealth.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-acerbitasche2002" class="csl-entry" role="listitem">
+Acerbi, Carlo, and Dirk Tasche. 2002. <span>“On the Coherence of Expected Shortfall.”</span> <em>Journal of Banking &amp; Finance</em> 26 (7): 1487–503. <a href="https://doi.org/10.1016/S0378-4266(02)00283-2">https://doi.org/10.1016/S0378-4266(02)00283-2</a>.
+</div>
+<div id="ref-bcbs2018" class="csl-entry" role="listitem">
+Basel Committee on Banking Supervision. 2018. <em>Stress Testing Principles</em>. BCBS d450. Bank for International Settlements. <a href="https://www.bis.org/bcbs/publ/d450.htm">https://www.bis.org/bcbs/publ/d450.htm</a>.
+</div>
+<div id="ref-glasserman2003" class="csl-entry" role="listitem">
+Glasserman, Paul. 2003. <em>Monte Carlo Methods in Financial Engineering</em>. Springer. <a href="https://doi.org/10.1007/978-0-387-21617-1">https://doi.org/10.1007/978-0-387-21617-1</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+<script id="sq-method-index-discovery-script">
+  (() => {
+    const normalize = (value) =>
+      (value || "")
+        .toLocaleLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const categoryDisplay = (raw) => {
+      const key = normalize(raw);
+      const aliases = {
+        "forecast evaluation": "Forecast",
+        "statistical inference": "Statistical Inference",
+        "time-series methods": "Time Series",
+        "data & research design": "Data / Research Design",
+        "portfolio methods": "Portfolio",
+        "machine learning": "Machine Learning",
+        "ml methods": "Machine Learning",
+      };
+      if (aliases[key]) return aliases[key];
+      return raw
+        .toLocaleLowerCase()
+        .replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+    };
+
+    const init = () => {
+      const discovery = document.getElementById("sq-method-discovery");
+      const catalog = document.getElementById("sq-method-catalog");
+      const input = document.getElementById("sq-method-search");
+      const filterHost = document.getElementById("sq-method-filters");
+      const resultCount = document.getElementById("sq-method-result-count");
+      const empty = document.getElementById("sq-method-empty");
+      if (!discovery || !catalog || !input || !filterHost || !resultCount || !empty) return;
+
+      const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
+      const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      if (!rows.length) return;
+
+      const categories = new Map();
+      rows.forEach((row) => {
+        const meta = row.querySelector(".sq-meta")?.textContent || "";
+        const parts = meta.split("·").map((part) => part.trim());
+        const rawCategory = parts.length >= 2 ? parts[1] : "Other";
+        const category = normalize(rawCategory);
+        row.dataset.methodCategory = category;
+        row.dataset.methodSearch = normalize(row.textContent);
+        if (!categories.has(category)) {
+          categories.set(category, categoryDisplay(rawCategory));
+        }
+      });
+
+      let activeCategory = "all";
+      const buttons = new Map();
+
+      const addFilter = (key, label) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sq-method-filter";
+        button.dataset.methodFilter = key;
+        button.textContent = label;
+        button.setAttribute("aria-pressed", key === "all" ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeCategory = key;
+          buttons.forEach((item, itemKey) => {
+            item.setAttribute("aria-pressed", itemKey === activeCategory ? "true" : "false");
+          });
+          apply();
+        });
+        buttons.set(key, button);
+        filterHost.appendChild(button);
+      };
+
+      addFilter("all", "All");
+      categories.forEach((label, key) => addFilter(key, label));
+
+      const apply = () => {
+        const query = normalize(input.value);
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const queryMatch = !query || row.dataset.methodSearch.includes(query);
+          const categoryMatch =
+            activeCategory === "all" || row.dataset.methodCategory === activeCategory;
+          const show = queryMatch && categoryMatch;
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleRow = Array.from(group.querySelectorAll(".sq-method-row")).some(
+            (row) => !row.hidden
+          );
+          group.hidden = !hasVisibleRow;
+        });
+
+        resultCount.textContent = `${visible} ${visible === 1 ? "method" : "methods"}`;
+        empty.hidden = visible !== 0;
+        discovery.classList.toggle(
+          "is-filtering",
+          Boolean(query) || activeCategory !== "all"
+        );
+      };
+
+      input.addEventListener("input", apply);
+      input.addEventListener("search", apply);
+      apply();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-method-browser-script">
+  (() => {
+    const methods = [
+      { id: "QM001", title: "Out-of-Sample Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html", folder: "QM001_OUT_OF_SAMPLE_EVALUATION" },
+      { id: "QM002", title: "Rolling vs Expanding Windows", path: "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html", folder: "QM002_ROLLING_VS_EXPANDING_WINDOWS" },
+      { id: "QM003", title: "Look-Ahead Bias and Data Leakage", path: "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html", folder: "QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE" },
+      { id: "QM004", title: "Diebold–Mariano Test", path: "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html", folder: "QM004_DIEBOLD_MARIANO_TEST" },
+      { id: "QM005", title: "Model Confidence Set", path: "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html", folder: "QM005_MODEL_CONFIDENCE_SET" },
+      { id: "QM006", title: "Block Bootstrap", path: "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html", folder: "QM006_BLOCK_BOOTSTRAP" },
+      { id: "QM007", title: "Portfolio Backtesting and Rebalancing", path: "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html", folder: "QM007_PORTFOLIO_BACKTESTING_REBALANCING" },
+      { id: "QM008", title: "Drawdown, Underwater Duration, and Recovery", path: "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html", folder: "QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY" },
+      { id: "QM009", title: "Turnover, Transaction Costs, and Net Performance", path: "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html", folder: "QM009_TURNOVER_COSTS" },
+      { id: "QM010", title: "Momentum and Trend Signals", path: "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html", folder: "QM010_MOMENTUM_TREND" },
+      { id: "QM011", title: "Strategy Similarity and Decision Diversification", path: "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html", folder: "QM011_DECISION_DIVERSIFICATION" },
+      { id: "QM012", title: "Rolling Holding-Period Analysis", path: "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html", folder: "QM012_ROLLING_HOLDING_PERIODS" },
+      { id: "QM013", title: "Benchmark-Relative Portfolio Evaluation", path: "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html", folder: "QM013_BENCHMARK_RELATIVE" },
+      { id: "QM014", title: "Information Timing, Data Vintages, and Real-Time Macro Data", path: "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html", folder: "QM014_MACRO_INFORMATION_TIMING" },
+      { id: "QM015", title: "Multivariate Probabilistic Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html", folder: "QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION" },
+      { id: "QM016", title: "EWMA-t Scenario Simulation", path: "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html", folder: "QM016_EWMA_T_SCENARIO_SIMULATION" },
+      { id: "QM017", title: "Scenario-Based Portfolio Stress Testing", path: "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html", folder: "QM017_SCENARIO_STRESS_TESTING" },
+      { id: "QM018", title: "Stress Archetypes and Representative Scenario Geometry", path: "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html", folder: "QM018_STRESS_ARCHETYPES_GEOMETRY" },
+    ];
+
+    const init = () => {
+      const currentPath = decodeURIComponent(window.location.pathname);
+      const current = methods.find((method) =>
+        currentPath.includes(`/${method.folder}/`)
+      );
+      if (!current) return;
+
+      const panel = document.createElement("nav");
+      panel.className = "sq-method-browser";
+      panel.setAttribute("aria-label", "Browse Quantitative Methods");
+
+      const label = document.createElement("label");
+      label.className = "sq-method-browser-label";
+      label.htmlFor = "sq-method-browser-select";
+      label.textContent = "Browse Methods";
+
+      const controls = document.createElement("div");
+      controls.className = "sq-method-browser-controls";
+
+      const select = document.createElement("select");
+      select.id = "sq-method-browser-select";
+      select.className = "sq-method-browser-select";
+      select.setAttribute("aria-label", "Choose another Quantitative Method");
+
+      methods.forEach((method) => {
+        const option = document.createElement("option");
+        option.value = method.path;
+        option.textContent = `${method.id} — ${method.title}`;
+        option.selected = method.id === current.id;
+        select.appendChild(option);
+      });
+
+      const methodMarker = "/methods/";
+      let base = "/";
+      const methodsIndex = currentPath.indexOf(methodMarker);
+      if (methodsIndex >= 0) {
+        base = currentPath.slice(0, methodsIndex + methodMarker.length);
+      } else {
+        const domainMarkers = [
+          "/10_FORECAST_EVALUATION/",
+          "/20_STATISTICAL_INFERENCE/",
+          "/30_TIME_SERIES/",
+          "/40_PORTFOLIO_METHODS/",
+          "/80_DATA_RESEARCH_DESIGN/",
+        ];
+        for (const marker of domainMarkers) {
+          const index = currentPath.indexOf(marker);
+          if (index >= 0) {
+            base = currentPath.slice(0, index + 1);
+            break;
+          }
+        }
+      }
+
+      const resolve = (relativePath) => `${base}${relativePath}`;
+
+      select.addEventListener("change", () => {
+        window.location.assign(resolve(select.value));
+      });
+
+      const indexLink = document.createElement("a");
+      indexLink.className = "sq-method-browser-index";
+      indexLink.href = resolve("index.html");
+      indexLink.target = "_self";
+      indexLink.textContent = "All Methods";
+
+      controls.appendChild(select);
+      controls.appendChild(indexLink);
+      panel.appendChild(label);
+      panel.appendChild(controls);
+
+      const kicker = document.querySelector(".method-kicker");
+      const titleBlock = document.getElementById("title-block-header");
+      const main = document.getElementById("quarto-document-content");
+      if (kicker) {
+        kicker.insertAdjacentElement("afterend", panel);
+      } else if (titleBlock) {
+        titleBlock.insertAdjacentElement("afterend", panel);
+      } else if (main) {
+        main.prepend(panel);
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-external-link-policy">
+  (() => {
+    const canonicalHost = "research.slackquant.com";
+    const apply = () => {
+      document.querySelectorAll("a[href]").forEach((anchor) => {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        let url;
+        try { url = new URL(href, window.location.href); } catch { return; }
+        if (url.protocol !== "http:" && url.protocol !== "https:") return;
+        const isFirstParty =
+          url.origin === window.location.origin ||
+          url.hostname === canonicalHost;
+        const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
+        if (isFirstParty) {
+          anchor.removeAttribute("target");
+          rel.delete("noopener");
+          rel.delete("noreferrer");
+          if (rel.size) {
+            anchor.rel = Array.from(rel).join(" ");
+          } else {
+            anchor.removeAttribute("rel");
+          }
+          return;
+        }
+        anchor.target = "_blank";
+        rel.add("noopener");
+        rel.add("noreferrer");
+        anchor.rel = Array.from(rel).join(" ");
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+      apply();
+    }
+    new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

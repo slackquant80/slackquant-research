@@ -203,6 +203,15 @@ QM006 · STATISTICAL INFERENCE · INTERMEDIATE
 <p>How should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.</p>
 </section>
 </div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM015 · FORECAST EVALUATION · ADVANCED
+</div>
+<section id="multivariate-probabilistic-forecast-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="multivariate-probabilistic-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">Multivariate Probabilistic Forecast Evaluation</a></h3>
+<p>How should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.</p>
+</section>
+</div>
 </section>
 <section id="investment-methods" class="level3 sq-method-group" data-method-group="investment">
 <h3 class="anchored" data-anchor-id="investment-methods">Investment Methods</h3>
@@ -269,6 +278,24 @@ QM013 · PORTFOLIO METHODS · INTERMEDIATE
 <p>How should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.</p>
 </section>
 </div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM016 · TIME-SERIES METHODS · INTERMEDIATE
+</div>
+<section id="ewma-t-scenario-simulation" class="level3">
+<h3 class="anchored" data-anchor-id="ewma-t-scenario-simulation"><a href="./30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html">EWMA-t Scenario Simulation</a></h3>
+<p>How can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM017 · PORTFOLIO METHODS · INTERMEDIATE
+</div>
+<section id="scenario-based-portfolio-stress-testing" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-based-portfolio-stress-testing"><a href="./40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html">Scenario-Based Portfolio Stress Testing</a></h3>
+<p>How should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.</p>
+</section>
+</div>
 </section>
 </div>
 <section id="research-systems-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
@@ -280,6 +307,15 @@ QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
 <section id="information-timing-data-vintages-and-real-time-macro-data" class="level3">
 <h3 class="anchored" data-anchor-id="information-timing-data-vintages-and-real-time-macro-data"><a href="./80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">Information Timing, Data Vintages, and Real-Time Macro Data</a></h3>
 <p>Which macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
+</div>
+<section id="stress-archetypes-and-representative-scenario-geometry" class="level3">
+<h3 class="anchored" data-anchor-id="stress-archetypes-and-representative-scenario-geometry"><a href="./80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html">Stress Archetypes and Representative Scenario Geometry</a></h3>
+<p>How can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks.</p>
 </section>
 </div>
 </section>
@@ -730,6 +766,7 @@ QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
       const aliases = {
         "forecast evaluation": "Forecast",
         "statistical inference": "Statistical Inference",
+        "time-series methods": "Time Series",
         "data & research design": "Data / Research Design",
         "portfolio methods": "Portfolio",
         "machine learning": "Machine Learning",
@@ -848,6 +885,10 @@ QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
       { id: "QM012", title: "Rolling Holding-Period Analysis", path: "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html", folder: "QM012_ROLLING_HOLDING_PERIODS" },
       { id: "QM013", title: "Benchmark-Relative Portfolio Evaluation", path: "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html", folder: "QM013_BENCHMARK_RELATIVE" },
       { id: "QM014", title: "Information Timing, Data Vintages, and Real-Time Macro Data", path: "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html", folder: "QM014_MACRO_INFORMATION_TIMING" },
+      { id: "QM015", title: "Multivariate Probabilistic Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html", folder: "QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION" },
+      { id: "QM016", title: "EWMA-t Scenario Simulation", path: "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html", folder: "QM016_EWMA_T_SCENARIO_SIMULATION" },
+      { id: "QM017", title: "Scenario-Based Portfolio Stress Testing", path: "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html", folder: "QM017_SCENARIO_STRESS_TESTING" },
+      { id: "QM018", title: "Stress Archetypes and Representative Scenario Geometry", path: "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html", folder: "QM018_STRESS_ARCHETYPES_GEOMETRY" },
     ];
 
     const init = () => {
@@ -891,6 +932,7 @@ QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
         const domainMarkers = [
           "/10_FORECAST_EVALUATION/",
           "/20_STATISTICAL_INFERENCE/",
+          "/30_TIME_SERIES/",
           "/40_PORTFOLIO_METHODS/",
           "/80_DATA_RESEARCH_DESIGN/",
         ];

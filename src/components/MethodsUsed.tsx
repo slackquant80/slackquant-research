@@ -1,22 +1,31 @@
-import { getMethodsForResearch } from "@/data/methods";
+import { getMethodsForArtifact } from "@/data/methods";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 type MethodsUsedProps = {
   researchSlug: string;
+  context?: "research" | "system";
 };
 
-export function MethodsUsed({ researchSlug }: MethodsUsedProps) {
-  const methods = getMethodsForResearch(researchSlug);
+export function MethodsUsed({
+  researchSlug,
+  context = "research",
+}: MethodsUsedProps) {
+  const methods = getMethodsForArtifact(researchSlug);
   if (!methods.length) return null;
+
+  const isSystem = context === "system";
 
   return (
     <section className="prose-section" id="methods">
       <div className="methods-used-head">
         <div className="kicker">Quantitative Methods</div>
-        <h2>Methods used in this research</h2>
+        <h2>
+          {isSystem ? "Methods used in this system" : "Methods used in this research"}
+        </h2>
         <p>
-          These companion articles explain methods that are used directly in,
-          or are central to interpreting, the research design and evidence.
+          {isSystem
+            ? "These companion articles explain methods that are load-bearing for the system contract, validation evidence, and scenario-based decision support."
+            : "These companion articles explain methods that are used directly in, or are central to interpreting, the research design and evidence."}
         </p>
       </div>
 

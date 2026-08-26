@@ -1,0 +1,31 @@
+---
+title: "QM017 Hands-On Lab"
+subtitle: "Scenario-Based Portfolio Stress Testing"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Revalue a baseline and a candidate portfolio on exactly the same synthetic joint scenario cloud and compare terminal loss, VaR, Expected Shortfall, maximum drawdown, and worst-5-day return.
+
+# Run
+
+```bash
+python python/qm017_scenario_stress.py
+```
+
+# Check
+
+The two summaries are produced from one shared scenario tensor. Any portfolio difference is therefore a same-cloud weight/holding effect, conditional on the generator.
+
+# Experiment
+
+Replace the candidate with the baseline weights. Every path-level portfolio outcome should become identical. Then change only one weight and inspect the paired terminal-wealth differences.
+
+The simulation is synthetic and is not a claim about expected portfolio performance.

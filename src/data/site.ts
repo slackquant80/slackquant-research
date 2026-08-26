@@ -2,7 +2,7 @@ export const site = {
   name: "SlackQuant Research",
   baseName: "SlackQuant",
   description:
-    "Systematic investing, forecasting, financial data science, and AI/ML research.",
+    "Systematic investing, forecasting, financial data science, AI/ML research, and operational decision systems.",
   researcher: {
     name: "Sungkyu Lee",
     nameKo: "이성규",

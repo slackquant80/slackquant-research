@@ -14,9 +14,9 @@ export default function AboutPage() {
           <div className="eyebrow">About</div>
           <h1>SlackQuant Research</h1>
           <p className="hero-copy">
-            A public research platform focused on systematic investing, asset
-            allocation, forecasting, financial data science, AI/ML, and the
-            quantitative methods that support applied research.
+            A public research and systems platform focused on systematic investing,
+            asset allocation, forecasting, financial data science, AI/ML, and
+            evidence-constrained operational decision support.
           </p>
         </div>
       </section>
@@ -36,8 +36,9 @@ export default function AboutPage() {
               SlackQuant Research brings practitioner-oriented investment
               research and academic research into one coherent public platform.
               The Quantitative Methods library explains methods used across that
-              research, while papers, evidence, code, and tools
-              remain connected without blurring their different roles.
+              research. Public Systems remain distinct operational artifacts, while
+              papers, evidence, code, tools, and documentation stay connected without
+              blurring ownership or claim boundaries.
             </p>
             <div className="person-card">
               <div className="person-kicker">Researcher</div>
@@ -67,6 +68,25 @@ export default function AboutPage() {
               Forecasting, financial data science, AI/ML, empirical methods,
               and related technical research.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell about-columns">
+          <div>
+            <div className="section-title">Systems</div>
+            <h3>Operational decision systems</h3>
+          </div>
+          <div>
+            <p>
+              Public operational systems are maintained as distinct parent artifacts
+              with explicit evidence and authority boundaries. Research and white papers
+              support those systems rather than owning their runtime logic.
+            </p>
+            <Link className="section-link strong-link" href="/systems/">
+              Explore Systems &#8594;
+            </Link>
           </div>
         </div>
       </section>

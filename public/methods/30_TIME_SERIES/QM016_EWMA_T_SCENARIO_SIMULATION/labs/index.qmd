@@ -1,0 +1,31 @@
+---
+title: "QM016 Hands-On Lab"
+subtitle: "EWMA-t Scenario Simulation"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Estimate a current EWMA covariance state from synthetic returns, simulate multivariate Student-$t$ shocks with the **same target covariance**, and compare tail frequency with a Gaussian baseline.
+
+# Run
+
+```bash
+python python/qm016_ewma_t_simulation.py
+```
+
+# Check
+
+The Student-$t$ sample covariance should be close to the EWMA target when the scale conversion is correct. Its large standardized shocks should occur more often than under the Gaussian baseline.
+
+# Experiment
+
+Change `df` from 5 to 8 and 20. Then change `lam` from 0.94 to 0.97. Separate the effect of tail thickness from the effect of the current covariance state.
+
+The data are synthetic and are not evidence for any empirical parameter choice.

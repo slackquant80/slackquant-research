@@ -1,0 +1,31 @@
+---
+title: "QM015 Hands-On Lab"
+subtitle: "Multivariate Probabilistic Forecast Evaluation"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Compare two synthetic two-asset predictive clouds with Energy Score, Variogram Score, marginal CRPS, PIT rank, and interval coverage.
+
+# Run
+
+```bash
+python python/qm015_probabilistic_evaluation.py
+```
+
+# Check
+
+The script prints one line per model. The point is not that one model must dominate every metric; inspect which diagnostics disagree and explain what dimension each one is measuring.
+
+# Experiment
+
+Change the off-diagonal covariance in Model B while keeping its marginal variances fixed. Observe how the Variogram Score reacts relative to the componentwise CRPS.
+
+The data are synthetic and carry no empirical performance claim.

@@ -1,0 +1,31 @@
+---
+title: "QM018 Hands-On Lab — Stress Archetypes and Representative Scenario Geometry"
+subtitle: "Classify a synthetic adverse tail and select feasible representative scenarios"
+lang: en
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Use a small synthetic multi-asset scenario cloud to see how a fixed tail rule, mutually exclusive taxonomy, volatility normalization, family shares, and medoid-style representatives fit together.
+
+# Run
+
+```bash
+python python/qm018_stress_archetypes.py
+```
+
+The output deliberately labels family shares as **generated scenario-cloud composition**, not event probabilities.
+
+# What to inspect
+
+1. Change only the RNG seed and compare family shares.
+2. Increase the simulation count and see whether dominant-family rankings stabilize.
+3. Change the normalization scale and observe how representative geometry can change.
+4. Add a new named rule and check whether the residual Other share falls for an economically defensible reason rather than by construction alone.

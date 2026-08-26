@@ -1,34 +1,50 @@
-# SlackQuant Research
+# SlackQuant Research Dashboard — Application
 
-Public research portfolio for SlackQuant Research.
+## Status
 
-The site presents practitioner-oriented investment research and academic/technical research, with links to public papers, evidence, code, replication materials, and research tools where available.
+**Public application source — current**
 
-## Current public research
+This application implements the approved public research direction using:
+- Next.js App Router
+- React
+- TypeScript
+- static export
+- plain CSS
 
-- **Diversify the Decisions, Not Just the Assets**
-- **When Protection Works but the Portfolio Still Lags**
-- **The Decision Value of Price and Macro Information**
-- **Beyond Average Accuracy**
+## Current routes
 
-## Local development
-
-```bash
-npm install
-npm run dev
+```text
+/
+/research/
+/research/adaa/
+/research/protection-patience/
+/research/price-macro-decision/
+/research/beyond-average-accuracy/
+/systems/
+/systems/scenario-stress-lab/
+/about/
 ```
 
-## Quality checks
+## Important boundaries
 
-```bash
-npm run typecheck
-npm run build
-```
+- GitHub remains the public code destination.
+- This app does not implement a second code portal.
+- Public system surfaces may document operational products, but live/operator runtimes remain separate unless a public-safe runtime is explicitly released.
+- No placeholder public link is rendered as a real artifact.
+- No database / CMS / authentication / API layer is included.
 
-The site uses Next.js static export. Production output is generated in `out/`.
+## Development
 
-## GitHub Pages
+See:
 
-Deployment is handled by `.github/workflows/deploy-pages.yml`.
+`SETUP_AND_RUN_WINDOWS.md`
 
-In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**. A push to `main` then runs typecheck, builds the static site, and deploys it to GitHub Pages.
+## Build output
+
+`npm run build`
+
+creates a static export in:
+
+`out/`
+
+That folder is a deployment artifact and should not be treated as canonical source.

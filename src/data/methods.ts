@@ -37,7 +37,7 @@ export const quantitativeMethods: QuantitativeMethod[] = [
   },
   {
     id: "QM004",
-    title: "Diebold?밠ariano Test",
+    title: "Diebold–Mariano Test",
     category: "Forecast Evaluation",
     level: "Intermediate",
     href: "/methods/10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html",
@@ -134,20 +134,61 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains why reference periods, release dates, vintage labels, actual availability, revisions, and forecast cutoffs must be kept distinct in macroeconomic research.",
   },
+  {
+    id: "QM015",
+    title: "Multivariate Probabilistic Forecast Evaluation",
+    category: "Forecast Evaluation",
+    level: "Advanced",
+    href: "/methods/10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html",
+    researchContext:
+      "Explains how multivariate probabilistic forecasts are evaluated with complementary proper scores, calibration, tail, dependence, and inference diagnostics rather than a single winner metric.",
+  },
+  {
+    id: "QM016",
+    title: "EWMA-t Scenario Simulation",
+    category: "Time-Series Methods",
+    level: "Intermediate",
+    href: "/methods/30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html",
+    researchContext:
+      "Explains exponentially weighted covariance estimation, multivariate Student-t innovations, heavy-tailed joint path simulation, and the limits of a fixed conditional state over the scenario horizon.",
+  },
+  {
+    id: "QM017",
+    title: "Scenario-Based Portfolio Stress Testing",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html",
+    researchContext:
+      "Explains portfolio revaluation on a common forward scenario cloud, path-dependent stress measures, VaR and Expected Shortfall, and same-cloud what-if comparisons without turning the exercise into optimization.",
+  },
+  {
+    id: "QM018",
+    title: "Stress Archetypes and Representative Scenario Geometry",
+    category: "Data & Research Design",
+    level: "Advanced",
+    href: "/methods/80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html",
+    researchContext:
+      "Explains how adverse scenario tails can be organized into interpretable stress archetypes, represented by feasible scenarios, and assessed for stability, taxonomy adequacy, and external relevance.",
+  },
 ];
 
-const researchMethodIds: Record<string, string[]> = {
+const artifactMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014"],
+  "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 };
 
-export function getMethodsForResearch(slug: string) {
-  const ids = researchMethodIds[slug] ?? [];
+export function getMethodsForArtifact(slug: string) {
+  const ids = artifactMethodIds[slug] ?? [];
   const byId = new Map(quantitativeMethods.map((method) => [method.id, method]));
   return ids.flatMap((id) => {
     const method = byId.get(id);
     return method ? [method] : [];
   });
+}
+
+export function getMethodsForResearch(slug: string) {
+  return getMethodsForArtifact(slug);
 }

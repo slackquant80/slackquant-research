@@ -2,6 +2,7 @@ import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
+import { systemItems } from "@/data/systems";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
   const reproducibleRepositoryCount = new Set(
     researchItems.map((item) => item.links.github).filter(Boolean),
   ).size;
+  const featuredSystem = systemItems[0];
   const versionedReleaseCount = new Set(
     researchItems.map((item) => item.links.replication).filter(Boolean),
   ).size;
@@ -142,6 +144,30 @@ export default function HomePage() {
               </Link>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell">
+          <div className="section-head">
+            <div className="section-title">Systems</div>
+            <Link className="section-link" href="/systems/">
+              Explore Systems &#8594;
+            </Link>
+          </div>
+          {featuredSystem ? (
+            <article className="stream home-system-card">
+              <div className="card-kicker-row">
+                <div className="kicker">SlackQuant Systems</div>
+                <span className="track-chip">{featuredSystem.category}</span>
+              </div>
+              <h3>{featuredSystem.title}</h3>
+              <p>{featuredSystem.shortSummary}</p>
+              <Link className="section-link strong-link" href={`/systems/${featuredSystem.slug}/`}>
+                View System &#8594;
+              </Link>
+            </article>
+          ) : null}
         </div>
       </section>
 

@@ -104,7 +104,7 @@ if ($methodsUsedSource -notmatch '<a[^>]*className="method-used-row"[^>]*href=\{
 
 # Every mapped method href must exist under public/.
 $hrefMatches = [regex]::Matches($methodsData, 'href:\s*"(?<href>/methods/[^"]+)"')
-if ($hrefMatches.Count -lt 14) { throw "Expected Quantitative Methods href mappings were not found" }
+if ($hrefMatches.Count -lt 18) { throw "Expected Quantitative Methods href mappings were not found" }
 foreach ($match in $hrefMatches) {
   $href = $match.Groups['href'].Value
   $rel = $href.TrimStart('/') -replace '/', '\'
@@ -253,7 +253,16 @@ $articlePaths = @(
   "public\methods\20_STATISTICAL_INFERENCE\QM006_BLOCK_BOOTSTRAP\article.html",
   "public\methods\40_PORTFOLIO_METHODS\QM007_PORTFOLIO_BACKTESTING_REBALANCING\article.html",
   "public\methods\40_PORTFOLIO_METHODS\QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY\article.html",
-  "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html"
+  "public\methods\40_PORTFOLIO_METHODS\QM009_TURNOVER_COSTS\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM010_MOMENTUM_TREND\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM011_DECISION_DIVERSIFICATION\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM012_ROLLING_HOLDING_PERIODS\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM013_BENCHMARK_RELATIVE\article.html",
+  "public\methods\80_DATA_RESEARCH_DESIGN\QM014_MACRO_INFORMATION_TIMING\article.html",
+  "public\methods\10_FORECAST_EVALUATION\QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION\article.html",
+  "public\methods\30_TIME_SERIES\QM016_EWMA_T_SCENARIO_SIMULATION\article.html",
+  "public\methods\40_PORTFOLIO_METHODS\QM017_SCENARIO_STRESS_TESTING\article.html",
+  "public\methods\80_DATA_RESEARCH_DESIGN\QM018_STRESS_ARCHETYPES_GEOMETRY\article.html"
 )
 foreach ($rel in $articlePaths) {
   $html = Get-Content (Join-Path $PlatformRoot $rel) -Raw

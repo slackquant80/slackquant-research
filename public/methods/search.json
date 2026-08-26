@@ -1,5 +1,33 @@
 [
   {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/labs/index.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/labs/index.html",
+    "title": "QM018 Hands-On Lab — Stress Archetypes and Representative Scenario Geometry",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nUse a small synthetic multi-asset scenario cloud to see how a fixed tail rule, mutually exclusive taxonomy, volatility normalization, family shares, and medoid-style representatives fit together.\n\n\nRun\npython python/qm018_stress_archetypes.py\nThe output deliberately labels family shares as generated scenario-cloud composition, not event probabilities.\n\n\nWhat to inspect\n\nChange only the RNG seed and compare family shares.\nIncrease the simulation count and see whether dominant-family rankings stabilize.\nChange the normalization scale and observe how representative geometry can change.\nAdd a new named rule and check whether the residual Other share falls for an economically defensible reason rather than by construction alone."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/labs/index.html",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/labs/index.html",
+    "title": "QM017 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nRevalue a baseline and a candidate portfolio on exactly the same synthetic joint scenario cloud and compare terminal loss, VaR, Expected Shortfall, maximum drawdown, and worst-5-day return.\n\n\nRun\npython python/qm017_scenario_stress.py\n\n\nCheck\nThe two summaries are produced from one shared scenario tensor. Any portfolio difference is therefore a same-cloud weight/holding effect, conditional on the generator.\n\n\nExperiment\nReplace the candidate with the baseline weights. Every path-level portfolio outcome should become identical. Then change only one weight and inspect the paired terminal-wealth differences.\nThe simulation is synthetic and is not a claim about expected portfolio performance."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/labs/index.html",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/labs/index.html",
+    "title": "QM016 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nEstimate a current EWMA covariance state from synthetic returns, simulate multivariate Student-\\(t\\) shocks with the same target covariance, and compare tail frequency with a Gaussian baseline.\n\n\nRun\npython python/qm016_ewma_t_simulation.py\n\n\nCheck\nThe Student-\\(t\\) sample covariance should be close to the EWMA target when the scale conversion is correct. Its large standardized shocks should occur more often than under the Gaussian baseline.\n\n\nExperiment\nChange df from 5 to 8 and 20. Then change lam from 0.94 to 0.97. Separate the effect of tail thickness from the effect of the current covariance state.\nThe data are synthetic and are not evidence for any empirical parameter choice."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/labs/index.html",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/labs/index.html",
+    "title": "QM015 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nCompare two synthetic two-asset predictive clouds with Energy Score, Variogram Score, marginal CRPS, PIT rank, and interval coverage.\n\n\nRun\npython python/qm015_probabilistic_evaluation.py\n\n\nCheck\nThe script prints one line per model. The point is not that one model must dominate every metric; inspect which diagnostics disagree and explain what dimension each one is measuring.\n\n\nExperiment\nChange the off-diagonal covariance in Model B while keeping its marginal variances fixed. Observe how the Variogram Score reacts relative to the componentwise CRPS.\nThe data are synthetic and carry no empirical performance claim."
+  },
+  {
     "objectID": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/labs/index.html",
     "href": "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/labs/index.html",
     "title": "QM014 Hands-On Lab",
@@ -130,7 +158,7 @@
     "href": "index.html#current-articles",
     "title": "Quantitative Methods",
     "section": "Current articles",
-    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.\n\n\n\n\nQM010 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nMomentum and Trend Signals\nHow should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.\n\n\n\n\nQM011 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nStrategy Similarity and Decision Diversification\nDo multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.\n\n\n\n\nQM012 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nRolling Holding-Period Analysis\nWhat do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.\n\n\n\n\nQM013 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nBenchmark-Relative Portfolio Evaluation\nHow should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.\n\n\n\n\n\nResearch Systems / Technical Methods\n\n\nQM014 · DATA & RESEARCH DESIGN · INTERMEDIATE\n\n\nInformation Timing, Data Vintages, and Real-Time Macro Data\nWhich macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable."
+    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nQM015 · FORECAST EVALUATION · ADVANCED\n\n\nMultivariate Probabilistic Forecast Evaluation\nHow should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.\n\n\n\n\nQM010 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nMomentum and Trend Signals\nHow should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.\n\n\n\n\nQM011 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nStrategy Similarity and Decision Diversification\nDo multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.\n\n\n\n\nQM012 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nRolling Holding-Period Analysis\nWhat do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.\n\n\n\n\nQM013 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nBenchmark-Relative Portfolio Evaluation\nHow should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.\n\n\n\n\nQM016 · TIME-SERIES METHODS · INTERMEDIATE\n\n\nEWMA-t Scenario Simulation\nHow can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.\n\n\n\n\nQM017 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nScenario-Based Portfolio Stress Testing\nHow should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.\n\n\n\n\n\nResearch Systems / Technical Methods\n\n\nQM014 · DATA & RESEARCH DESIGN · INTERMEDIATE\n\n\nInformation Timing, Data Vintages, and Real-Time Macro Data\nWhich macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.\n\n\n\n\nQM018 · DATA & RESEARCH DESIGN · ADVANCED\n\n\nStress Archetypes and Representative Scenario Geometry\nHow can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks."
   },
   {
     "objectID": "index.html#library-principles",
@@ -908,5 +936,313 @@
     "title": "Information Timing, Data Vintages, and Real-Time Macro Data",
     "section": "FRED-MD and Monthly Vintages",
     "text": "FRED-MD and Monthly Vintages\nFRED-MD provides a large monthly macroeconomic database for empirical research (McCracken and Ng 2016). Historical-vintage use materially improves realism relative to a single current revised panel. But a project still needs its own decision-time contract: which vintage file was selected, which reference periods were allowed, and whether that selection is sufficient to certify actual availability before each forecast origin.\nThe database is an input. The information-timing proof belongs to the research design."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#point-forecast-versus-probabilistic-forecast",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#point-forecast-versus-probabilistic-forecast",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Point forecast versus probabilistic forecast",
+    "text": "Point forecast versus probabilistic forecast\nFor a point forecast \\(\\hat{\\mathbf y}_t\\), evaluation typically applies a loss such as squared error:\n\\[\nL_t^{\\mathrm{MSE}}=\\|\\mathbf y_t-\\hat{\\mathbf y}_t\\|_2^2.\n\\]\nFor a probabilistic forecast \\(F_t\\), the input to the evaluator is the entire predictive distribution. In simulation-based work, \\(F_t\\) is often represented by an ensemble\n\\[\n\\mathbf X_t^{(1)},\\ldots,\\mathbf X_t^{(M)}\\sim F_t.\n\\]\nThe realized outcome \\(\\mathbf y_t\\) is then compared with the predictive cloud."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#proper-scoring-rules",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#proper-scoring-rules",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Proper scoring rules",
+    "text": "Proper scoring rules\nA scoring rule is proper when, in expectation, a forecaster does not improve the score by reporting a distribution different from the distribution it actually believes. Strict propriety strengthens this condition so that the truthful distribution is uniquely optimal under the score (Gneiting and Raftery 2007).\nThis article uses the common loss orientation:\n\nlower score = better forecast.\n\nSome literature writes scores as rewards to maximize. The orientation must be checked before comparing values across implementations."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#energy-score",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#energy-score",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Energy Score",
+    "text": "Energy Score\nFor a \\(d\\)-dimensional predictive distribution \\(F\\) and realization \\(\\mathbf y\\), the Energy Score is\n\\[\n\\operatorname{ES}(F,\\mathbf y)\n=\n\\mathbb E\\|\\mathbf X-\\mathbf y\\|_2\n-\n\\frac12\\mathbb E\\|\\mathbf X-\\mathbf X'\\|_2,\n\\]\nwhere \\(\\mathbf X\\) and \\(\\mathbf X'\\) are independent draws from \\(F\\) (Gneiting and Raftery 2007).\nFor an ensemble of \\(M\\) draws, a direct empirical approximation is\n\\[\n\\widehat{\\operatorname{ES}}\n=\n\\frac1M\\sum_{m=1}^M\\|\\mathbf X^{(m)}-\\mathbf y\\|_2\n-\n\\frac{1}{2M^2}\\sum_{m=1}^M\\sum_{\\ell=1}^M\n\\|\\mathbf X^{(m)}-\\mathbf X^{(\\ell)}\\|_2.\n\\]\nA finite-ensemble implementation may instead use a leave-diagonal-out or “fair” estimator. The chosen estimator should be stated rather than silently mixed across models.\nThe Energy Score rewards a predictive cloud that is close to the realization without being needlessly dispersed. It is a useful multivariate generalization of the CRPS, but it should not be treated as a complete dependence diagnostic (Scheuerer and Hamill 2015)."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#variogram-score",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#variogram-score",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Variogram Score",
+    "text": "Variogram Score\nFor order \\(p&gt;0\\), one form of the Variogram Score is\n\\[\n\\operatorname{VS}_p(F,\\mathbf y)\n=\n\\sum_{i=1}^d\\sum_{j=1}^d w_{ij}\n\\left(\n|y_i-y_j|^p\n-\n\\mathbb E_F|X_i-X_j|^p\n\\right)^2,\n\\]\nwith nonnegative pair weights \\(w_{ij}\\) (Scheuerer and Hamill 2015).\nThe score targets pairwise structure directly. In an ensemble, the expectation is estimated by averaging \\(|X_i^{(m)}-X_j^{(m)}|^p\\) across draws. The choice of \\(p\\) and \\(w_{ij}\\) is part of the specification.\nThe Variogram Score is especially useful when dependence or relative movement across components is important, but it is not a universal substitute for marginal calibration or tail diagnostics."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#crps-and-standardized-crps",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#crps-and-standardized-crps",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "CRPS and standardized CRPS",
+    "text": "CRPS and standardized CRPS\nFor a univariate predictive CDF \\(F_j\\) and realization \\(y_j\\), the continuous ranked probability score can be written as\n\\[\n\\operatorname{CRPS}(F_j,y_j)\n=\n\\int_{-\\infty}^{\\infty}\n\\left(F_j(z)-\\mathbf 1\\{y_j\\le z\\}\\right)^2dz.\n\\]\nIt is also a proper score and has the same units as the variable (Gneiting and Raftery 2007; Hersbach 2000).\nIn a multi-asset problem, raw CRPS values can be dominated by components with larger natural scales. A standardized CRPS can therefore be defined as\n\\[\n\\operatorname{sCRPS}_{j,t}\n=\n\\frac{\\operatorname{CRPS}_{j,t}}{s_j},\n\\]\nwhere \\(s_j&gt;0\\) is a pre-specified scale such as a training-sample standard deviation or another fixed robust scale.\n\n\n\n\n\n\nImportantStandardized CRPS is a convention, not one universal formula\n\n\n\nThe normalization scale must be fixed from admissible information and reported explicitly. Re-estimating the denominator with future data or choosing a denominator after inspecting the results changes the evaluation target.\n\n\nMarginal CRPS is useful even in a multivariate model because it reveals which individual variables are poorly calibrated or excessively diffuse. It does not verify the cross-variable dependence structure."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#pit-and-calibration",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#pit-and-calibration",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "PIT and calibration",
+    "text": "PIT and calibration\nFor a continuous univariate predictive CDF \\(F_t\\), the probability integral transform is\n\\[\nu_t=F_t(y_t).\n\\]\nUnder a correctly specified conditional density forecast, PIT values have a Uniform\\((0,1)\\) benchmark, with stronger sequential conditions relevant to independence as well (Diebold et al. 1998; Gneiting et al. 2007).\nA PIT histogram can therefore detect systematic U-shapes, humps, or asymmetry consistent with under-dispersion, over-dispersion, or location bias. But a nearly flat histogram does not prove correct multivariate dependence.\nFor ensemble forecasts, randomized or rank-based PIT variants may be required because the empirical predictive distribution is discrete."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#interval-coverage",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#interval-coverage",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Interval coverage",
+    "text": "Interval coverage\nFor a nominal \\((1-\\alpha)\\) prediction interval \\([L_t,U_t]\\), empirical coverage is\n\\[\n\\widehat C_{1-\\alpha}\n=\n\\frac1T\\sum_{t=1}^T\n\\mathbf 1\\{L_t\\le y_t\\le U_t\\}.\n\\]\nCalibration suggests that empirical coverage should be close to nominal coverage over an appropriate evaluation sample. Coverage should be inspected at more than one nominal level, because a model may look reasonable at 80% but fail in the 95% tail.\nCoverage alone is incomplete. Extremely wide intervals can attain high coverage while being uninformative. Proper scores help balance calibration and sharpness (Gneiting et al. 2007)."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#portfolio-tail-calibration",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#portfolio-tail-calibration",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Portfolio-tail calibration",
+    "text": "Portfolio-tail calibration\nWhen scenarios are ultimately used for portfolio risk, the joint predictive cloud can be projected through a pre-specified portfolio map. Let \\(R_{p,t}^{(m)}\\) be the portfolio return implied by scenario \\(m\\) and let \\(R_{p,t}^{\\mathrm{real}}\\) be the realized return.\nExamples of portfolio-tail calibration diagnostics include:\n\nempirical exceedance frequency of a model-implied VaR threshold;\nrealized severity conditional on tail exceedance;\ncoverage of model-implied portfolio intervals; and\ncalibration of path-based events such as maximum drawdown exceeding a threshold.\n\nThese checks test whether the joint model is useful after being mapped into a decision-relevant quantity. They are not substitutes for asset-level marginal and dependence diagnostics."
+  },
+  {
+    "objectID": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#dependence-diagnostics",
+    "href": "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html#dependence-diagnostics",
+    "title": "Multivariate Probabilistic Forecast Evaluation",
+    "section": "Dependence diagnostics",
+    "text": "Dependence diagnostics\nA multivariate forecast should also be challenged on the structure connecting its components. Useful diagnostics include:\n\nVariogram Score;\nforecast-versus-realized covariance or correlation patterns;\nrank correlation;\nco-exceedance frequencies in adverse tails;\nconditional cross-asset behavior during large moves; and\nportfolio projections that are sensitive to diversification breakdown.\n\nSome of these are descriptive diagnostics rather than proper scores. That distinction should be stated."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#return-innovations-and-mean-vector",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#return-innovations-and-mean-vector",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Return innovations and mean vector",
+    "text": "Return innovations and mean vector\nLet \\(\\mathbf r_t\\in\\mathbb R^d\\) be the vector of daily returns and let \\(\\boldsymbol\\mu_t\\) denote the conditional mean used by the simulator. Define the innovation\n\\[\n\\boldsymbol\\varepsilon_t=\\mathbf r_t-\\boldsymbol\\mu_t.\n\\]\nFor short-horizon risk simulation, \\(\\boldsymbol\\mu_t\\) is often small relative to daily volatility and may be fixed at zero or estimated separately. That is a modeling choice, not an implication of EWMA."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#ewma-covariance-recursion",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#ewma-covariance-recursion",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "EWMA covariance recursion",
+    "text": "EWMA covariance recursion\nA standard exponentially weighted covariance update is\n\\[\n\\mathbf H_{t+1}\n=\n\\lambda\\mathbf H_t\n+\n(1-\\lambda)\\boldsymbol\\varepsilon_t\\boldsymbol\\varepsilon_t',\n\\]\nwhere \\(0&lt;\\lambda&lt;1\\) is the decay factor (J.P. Morgan and Reuters 1996).\nThe weights decline geometrically. A shock \\(k\\) periods in the past receives weight proportional to\n\\[\n(1-\\lambda)\\lambda^k.\n\\]\nA higher \\(\\lambda\\) produces slower decay and a longer effective memory. A lower \\(\\lambda\\) responds faster to recent observations but can also make the covariance estimate more variable.\nRiskMetrics reported \\(\\lambda=0.94\\) as a widely used daily reference value, but that value is a convention from a specific risk-modeling framework rather than a universal optimum (J.P. Morgan and Reuters 1996). Sensitivity to \\(\\lambda\\) should be shown when the result depends materially on it."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#current-covariance-environment",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#current-covariance-environment",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Current covariance environment",
+    "text": "Current covariance environment\nCalling \\(\\mathbf H_t\\) the current covariance environment means that the predictive shock scale is conditioned on the latest estimated covariance state. It does not mean the method has inferred a structural market regime.\nTwo points are important:\n\nthe state is backward-looking and estimated from observed history; and\nif \\(\\mathbf H_t\\) is held fixed through a simulated horizon, the simulator assumes that this current state remains the conditional covariance for every future day in that path.\n\nThe second point is a deliberate simplification, not an automatic property of EWMA."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#multivariate-student-t-innovations",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#multivariate-student-t-innovations",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Multivariate Student-\\(t\\) innovations",
+    "text": "Multivariate Student-\\(t\\) innovations\nLet\n\\[\n\\mathbf x\\sim t_\\nu(\\boldsymbol\\mu,\\mathbf S),\n\\]\nwhere \\(\\nu\\) is the degrees of freedom and \\(\\mathbf S\\) is the Student-\\(t\\) scale/scatter matrix.\nFor \\(\\nu&gt;2\\),\n\\[\n\\operatorname{Cov}(\\mathbf x)\n=\n\\frac{\\nu}{\\nu-2}\\mathbf S.\n\\]\nTherefore, if the desired covariance state is \\(\\mathbf H_t\\), the scale matrix must be\n\\[\n\\mathbf S_t\n=\n\\frac{\\nu-2}{\\nu}\\mathbf H_t.\n\\]\n\n\n\n\n\n\nWarningScale matrix is not covariance\n\n\n\nMany software libraries parameterize the multivariate Student-\\(t\\) with a shape, scale, or scatter matrix. For finite \\(\\nu&gt;2\\), that matrix is not equal to the covariance. Passing the EWMA covariance directly as the Student-\\(t\\) scale inflates the actual covariance by \\(\\nu/(\\nu-2)\\).\n\n\nThe smaller \\(\\nu\\) is, the heavier the tails. As \\(\\nu\\rightarrow\\infty\\), the multivariate Student-\\(t\\) approaches the multivariate Gaussian (Demarta and McNeil 2005)."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#a-useful-simulation-representation",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#a-useful-simulation-representation",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "A useful simulation representation",
+    "text": "A useful simulation representation\nA multivariate Student-\\(t\\) draw can be generated as\n\\[\n\\mathbf x\n=\n\\boldsymbol\\mu\n+\n\\frac{\\mathbf L\\mathbf z}{\\sqrt{u/\\nu}},\n\\]\nwhere\n\n\\(\\mathbf z\\sim\\mathcal N(\\mathbf 0,\\mathbf I)\\),\n\\(u\\sim\\chi^2_\\nu\\),\n\\(\\mathbf L\\mathbf L'=\\mathbf S\\), and\n\\(\\mathbf z\\) and \\(u\\) are independent.\n\nThe common random scale \\(1/\\sqrt{u/\\nu}\\) affects all components in the same joint draw, which helps create simultaneous large moves."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#from-daily-joint-draws-to-multi-day-paths",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#from-daily-joint-draws-to-multi-day-paths",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "From daily joint draws to multi-day paths",
+    "text": "From daily joint draws to multi-day paths\nSuppose the horizon is \\(H=20\\) trading days and the simulator generates \\(M\\) paths.\nFor path \\(m\\) and day \\(h\\):\n\\[\n\\mathbf r_{m,h}\n=\n\\boldsymbol\\mu_t+\n\\boldsymbol\\eta_{m,h},\n\\qquad\n\\boldsymbol\\eta_{m,h}\\sim t_\\nu(\\mathbf 0,\\mathbf S_t).\n\\]\nIf the state is held fixed, the daily innovations are conditionally iid given \\(\\mathbf H_t\\), and the path is formed by chaining the draws:\n\\[\nP_{i,m,h}\n=\nP_{i,0}\\prod_{u=1}^{h}(1+r_{i,m,u}).\n\\]\nThe output is a joint scenario tensor with shape approximately\n\\[\nM\\times H\\times d.\n\\]\nEach path keeps the assets linked through the same multivariate draw at each day."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#estimation-history-versus-short-conditioning-window",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#estimation-history-versus-short-conditioning-window",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Estimation history versus short conditioning window",
+    "text": "Estimation history versus short conditioning window\nAn EWMA covariance state and a neural generative model can use very different histories.\n\nEWMA estimation history may recursively incorporate hundreds or thousands of past observations, with exponentially declining influence.\nShort neural conditioning window may feed only the most recent 20, 40, or 60 days directly into a trained model at inference time.\n\nThese are different concepts. A long EWMA history does not mean every old observation receives equal weight, and a short neural conditioning window does not imply the neural model was trained only on that short period.\nWhen comparing model families, report both the training/estimation history and the current conditioning window rather than collapsing them into one number."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#scenario-count",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#scenario-count",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Scenario count",
+    "text": "Scenario count\nIncreasing \\(M\\) reduces Monte Carlo noise but increases computation. Tail quantities such as a 99% quantile require more scenarios than means or medians because only a small fraction of draws populate the relevant tail."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#rng-seed",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#rng-seed",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "RNG seed",
+    "text": "RNG seed\nA fixed random-number-generator seed makes an illustration reproducible. It does not make a result more statistically accurate."
+  },
+  {
+    "objectID": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#stability-checks",
+    "href": "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html#stability-checks",
+    "title": "EWMA-t Scenario Simulation",
+    "section": "Stability checks",
+    "text": "Stability checks\nA useful stability audit repeats the simulation across:\n\nseveral seeds;\nlarger scenario counts;\nnearby \\(\\lambda\\) values; and\nnearby degrees of freedom.\n\nIf a reported risk metric changes materially under modest simulation changes, Monte Carlo or parameter uncertainty is part of the substantive result."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#joint-scenario-paths",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#joint-scenario-paths",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Joint scenario paths",
+    "text": "Joint scenario paths\nLet\n\\[\nr_{i,m,h}\n\\]\nbe the simple return of asset \\(i=1,\\ldots,d\\) in scenario \\(m=1,\\ldots,M\\) on future day \\(h=1,\\ldots,H\\).\nThe full scenario object is a tensor of joint returns. The key requirement is that all assets in one scenario share the same scenario index \\(m\\); independently shuffling assets would destroy the joint dependence structure."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#asset-price-paths",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#asset-price-paths",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Asset price paths",
+    "text": "Asset price paths\nNormalize each asset price to one at the stress origin:\n\\[\nP_{i,m,0}=1.\n\\]\nThen\n\\[\nP_{i,m,h}\n=\n\\prod_{u=1}^{h}(1+r_{i,m,u}).\n\\]\nThis converts daily returns into cumulative asset paths."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#portfolio-revaluation",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#portfolio-revaluation",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Portfolio revaluation",
+    "text": "Portfolio revaluation\nSuppose the initial portfolio has weights \\(w_i\\) with\n\\[\n\\sum_{i=1}^d w_i=1.\n\\]\nFor a simple buy-and-hold through the stress horizon illustration, set normalized initial holdings \\(q_i=w_i\\) and define\n\\[\nW_{m,h}\n=\n\\sum_{i=1}^d q_iP_{i,m,h}.\n\\]\nThen \\(W_{m,0}=1\\).\nThis convention allows weights to drift as assets move. If the actual mandate rebalances daily, monthly, or when thresholds are crossed, that rebalancing rule must be applied inside each scenario path instead. The stress engine should reproduce the portfolio rule being evaluated rather than silently impose daily constant weights.\n\n\n\n\n\n\nImportantState the intrahorizon portfolio rule\n\n\n\nBuy-and-hold, constant-mix rebalancing, derivative delta revaluation, and rule-based dynamic allocation can produce different stress outcomes on the same asset path. Portfolio revaluation is part of the method specification."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#horizon-return-and-loss",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#horizon-return-and-loss",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Horizon return and loss",
+    "text": "Horizon return and loss\nFor scenario \\(m\\), horizon portfolio return is\n\\[\nR_{m,H}=W_{m,H}-1,\n\\]\nand the corresponding loss can be written\n\\[\nL_{m,H}=1-W_{m,H}=-R_{m,H}.\n\\]\nThe loss orientation is convenient for VaR and Expected Shortfall because larger \\(L\\) means worse outcomes."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#maximum-drawdown",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#maximum-drawdown",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Maximum drawdown",
+    "text": "Maximum drawdown\nPath risk depends on the route, not only the endpoint. Define the running wealth peak\n\\[\nM_{m,h}=\\max_{0\\le u\\le h}W_{m,u}.\n\\]\nThe drawdown depth at day \\(h\\) is\n\\[\nD_{m,h}=1-\\frac{W_{m,h}}{M_{m,h}},\n\\]\nand scenario maximum drawdown is\n\\[\n\\operatorname{MDD}_m=\\max_{1\\le h\\le H}D_{m,h}.\n\\]\nTwo scenarios can have the same terminal return but very different maximum drawdowns. QM008 — Drawdown, Underwater Duration, and Recovery develops the broader drawdown accounting conventions."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#value-at-risk",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#value-at-risk",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Value at Risk",
+    "text": "Value at Risk\nAt confidence level \\(\\alpha\\), model-implied horizon VaR is the \\(\\alpha\\) quantile of the scenario loss distribution:\n\\[\n\\operatorname{VaR}_{\\alpha}\n=Q_{\\alpha}(L_H).\n\\]\nFor example, 95% VaR is a loss threshold exceeded by roughly the worst 5% of the modeled loss distribution under a continuous idealization.\nThe exact empirical quantile interpolation convention should be reported because different software libraries can differ slightly in finite samples."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#expected-shortfall",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#expected-shortfall",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Expected Shortfall",
+    "text": "Expected Shortfall\nExpected Shortfall focuses on severity beyond the VaR threshold. For a continuous loss distribution,\n\\[\n\\operatorname{ES}_{\\alpha}\n=\n\\mathbb E[L_H\\mid L_H\\ge \\operatorname{VaR}_{\\alpha}].\n\\]\nExpected Shortfall is designed to use information in the tail beyond a single quantile and has well-known coherence properties under appropriate definitions (Acerbi and Tasche 2002).\nFor a finite scenario cloud, a practical estimator averages the worst tail fraction. The treatment of a fractional boundary observation should be fixed if exact reproducibility matters."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#worst-window-return",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#worst-window-return",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Worst-window return",
+    "text": "Worst-window return\nA multi-day stress path can contain a short, sharp loss even if the full-horizon result recovers.\nFor a \\(k\\)-day window, define\n\\[\nR^{(k)}_{m,s}\n=\n\\frac{W_{m,s+k}}{W_{m,s}}-1,\n\\]\nwhere \\(s=0,\\ldots,H-k\\).\nThen\n\\[\n\\operatorname{WorstK}_m\n=\n\\min_s R^{(k)}_{m,s}.\n\\]\nFor \\(k=5\\), this is a worst-5-day return diagnostic. It is path-dependent and can reveal concentrated short-window losses that horizon VaR misses."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#why-the-same-cloud-matters",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#why-the-same-cloud-matters",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "Why the same cloud matters",
+    "text": "Why the same cloud matters\nIf Portfolio A is evaluated on cloud A and Portfolio B on independently generated cloud B, then\n\\[\n\\text{observed difference}\n=\n\\text{portfolio effect}\n+\n\\text{Monte Carlo cloud difference}.\n\\]\nUsing the same cloud removes the second component from the direct what-if comparison, conditional on the scenario generator."
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#when-same-cloud-comparison-is-not-enough",
+    "href": "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html#when-same-cloud-comparison-is-not-enough",
+    "title": "Scenario-Based Portfolio Stress Testing",
+    "section": "When same-cloud comparison is not enough",
+    "text": "When same-cloud comparison is not enough\nA same-cloud comparison does not solve every comparability problem. If a candidate introduces assets, derivatives, nonlinear payoffs, or risk factors not represented in the original scenario cloud, the scenario generator must first support those exposures."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#define-the-adverse-scenario-tail",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#define-the-adverse-scenario-tail",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "1. Define the adverse scenario tail",
+    "text": "1. Define the adverse scenario tail\nLet \\(X_m\\) denote complete joint scenario \\(m=1,\\ldots,M\\). Define a pre-specified severity functional\n\\[\nS(X_m),\n\\]\nsuch as portfolio loss, maximum drawdown, a worst-window return transformed to a loss orientation, or another application-specific stress statistic.\nFor a quantile-based tail with threshold \\(q_\\tau\\), define\n\\[\n\\mathcal T_\\tau\n=\n\\{m:S(X_m)\\ge q_\\tau\\}.\n\\]\nThe tail definition is part of the method specification. Changing the severity variable, quantile, portfolio, or tie rule can change the selected scenarios and therefore the apparent stress-family composition.\n\n\n\n\n\n\nImportantTail selection is not neutral\n\n\n\nIf the tail is selected using an equity-heavy portfolio, the selected cloud may naturally overrepresent equity-led stress. A taxonomy should therefore be interpreted conditional on the declared tail-selection rule."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#specify-rule-based-stress-archetypes",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#specify-rule-based-stress-archetypes",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "2. Specify rule-based stress archetypes",
+    "text": "2. Specify rule-based stress archetypes\nLet \\(A_1,\\ldots,A_K\\) be named stress families defined by observable scenario features. For example, a rule might use standardized terminal asset moves, peak-to-trough losses, or cross-asset sign patterns.\nThe public classification rule should be mutually exclusive and collectively exhaustive after adding a residual category. One transparent implementation is an ordered rule system:\n\\[\nc(X_m)=\n\\begin{cases}\n1,&A_1(X_m)=1,\\\\\n2,&A_1(X_m)=0,\\ A_2(X_m)=1,\\\\\n\\vdots\\\\\nK,&A_1(X_m)=\\cdots=A_{K-1}(X_m)=0,\\ A_K(X_m)=1,\\\\\n\\text{Other},&\\text{otherwise.}\n\\end{cases}\n\\]\nIf multiple raw rules can overlap, the precedence order must be fixed before examining which ordering produces more attractive results. Better still, design the predicates as explicitly disjoint when feasible.\nThe residual Other category is a diagnostic. A large or unstable Other share may indicate that the named taxonomy does not adequately span the generated stress shapes."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#compute-scenario-family-shares",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#compute-scenario-family-shares",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "3. Compute scenario-family shares",
+    "text": "3. Compute scenario-family shares\nFor tail set \\(\\mathcal T\\) of size \\(N_T\\), the generated share of family \\(k\\) is\n\\[\n\\widehat s_k\n=\n\\frac{1}{N_T}\n\\sum_{m\\in\\mathcal T}\n\\mathbf 1\\{c(X_m)=k\\}.\n\\]\nThe family shares, including Other, should sum to one.\n\n\n\n\n\n\nWarningGenerated frequency is not calibrated event probability\n\n\n\n\\(\\widehat s_k\\) is a Monte Carlo frequency conditional on the scenario generator, forecast origin, tail-selection rule, and taxonomy. It is not automatically an estimate of the real-world probability that stress family \\(k\\) will occur. A probability claim requires separate calibration evidence linking generated frequencies to realized event frequencies."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#build-a-standardized-cross-asset-geometry",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#build-a-standardized-cross-asset-geometry",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "4. Build a standardized cross-asset geometry",
+    "text": "4. Build a standardized cross-asset geometry\nChoose a feature map\n\\[\ng(X_m)\\in\\mathbb R^d\n\\]\nthat represents the cross-asset stress geometry. A simple choice is the vector of cumulative asset returns over the horizon. Richer designs can append path features such as maximum drawdown, timing of trough, or worst-window return.\nFor asset or feature \\(i\\), define a location \\(a_i\\) and positive scale \\(s_i&gt;0\\) using an admissible pre-specified estimation sample. The standardized geometry is\n\\[\nz_{m,i}\n=\n\\frac{g_i(X_m)-a_i}{s_i}.\n\\]\nA common stress interpretation uses \\(a_i=0\\) and \\(s_i\\) equal to an ex-ante volatility scale, so a unit move means approximately one volatility unit.\nVolatility normalization prevents naturally high-volatility assets from dominating every distance calculation. It does not create a unique geometry: current-state volatility, long-run volatility, robust scale estimates, and covariance-whitened distances answer different questions. The chosen metric should therefore be documented and sensitivity-tested."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#select-a-representative-feasible-scenario",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#select-a-representative-feasible-scenario",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "5. Select a representative feasible scenario",
+    "text": "5. Select a representative feasible scenario\nWithin family \\(k\\), let \\(\\mathcal T_k\\) be its set of selected scenario indices. A representative scenario can be chosen as the medoid under distance \\(d(\\cdot,\\cdot)\\):\n\\[\nm_k^*\n=\n\\arg\\min_{m\\in\\mathcal T_k}\n\\sum_{\\ell\\in\\mathcal T_k}\nd(\\mathbf z_m,\\mathbf z_\\ell).\n\\]\nThe representative is\n\\[\nX_{m_k^*},\n\\]\nan actual member of the generated scenario cloud. This is analogous to medoid-based representation, where the representative object is one of the observed objects rather than a synthetic centroid (Kaufman and Rousseeuw 1990).\nScenario reduction similarly formalizes the idea of approximating a large scenario distribution with a smaller representative subset while controlling a distributional distance (Dupačová et al. 2003)."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#representative-actual-scenario-versus-synthetic-average-path",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#representative-actual-scenario-versus-synthetic-average-path",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Representative actual scenario versus synthetic average path",
+    "text": "Representative actual scenario versus synthetic average path\nA coordinate-wise average\n\\[\n\\bar X_k\n=\n\\frac{1}{|\\mathcal T_k|}\\sum_{m\\in\\mathcal T_k}X_m\n\\]\nneed not be an actual generated path. It may combine a day-one shock from one scenario with a recovery pattern from another and therefore describe no feasible joint realization in the cloud.\nA medoid-style representative preserves feasibility. The trade-off is that it may not look as smooth or central in every coordinate as the average."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#simulation-stability",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#simulation-stability",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Simulation stability",
+    "text": "Simulation stability\nA taxonomy that changes dramatically when only the random-number seed or simulation count changes may be too noisy for stable interpretation.\nUseful checks include:\n\nfamily-share dispersion across independent RNG seeds;\nrepresentative-scenario distance across seeds;\nranking stability of dominant families;\nconvergence as the number of simulated paths \\(M\\) increases; and\nsensitivity to reasonable tail thresholds.\n\nA fixed seed is useful for reproducibility, but seed reproducibility is not Monte Carlo stability. Stability requires repeating the analysis across seeds or larger simulation clouds."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#taxonomy-adequacy",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#taxonomy-adequacy",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Taxonomy adequacy",
+    "text": "Taxonomy adequacy\nA rule set should be audited for more than label completeness. Useful diagnostics include:\n\nraw rule overlap before exclusivity is imposed;\nresidual Other share;\nvery small named families that cannot be estimated stably;\nwithin-family dispersion in standardized geometry; and\nsensitivity of family assignments to small threshold changes.\n\nA taxonomy can be exhaustive by construction yet economically poor if most scenarios fall into Other or if named families contain highly heterogeneous geometries."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#realized-family-share",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#realized-family-share",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Realized-family share",
+    "text": "Realized-family share\nIf historical realized stress windows are available, apply the same fixed taxonomy to those realized windows. For realized adverse windows \\(Y_1,\\ldots,Y_N\\), define\n\\[\n\\widehat r_k\n=\n\\frac1N\\sum_{j=1}^N\\mathbf 1\\{c(Y_j)=k\\}.\n\\]\nComparing \\(\\widehat r_k\\) with generated \\(\\widehat s_k\\) can reveal obvious composition mismatch. But this comparison should not be overinterpreted when the realized sample is small, overlapping, regime-concentrated, or selected by a different stress rule."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#top-k-realized-family-coverage",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#top-k-realized-family-coverage",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Top-k realized-family coverage",
+    "text": "Top-k realized-family coverage\nLet \\(\\mathcal K_k\\) be the \\(k\\) most common named, non-residual families in the generated tail. A simple realized-family coverage statistic is\n\\[\n\\operatorname{Coverage}_k\n=\n\\frac1N\\sum_{j=1}^N\n\\mathbf 1\\{c(Y_j)\\in\\mathcal K_k\\}.\n\\]\nThis asks whether the generator’s dominant named stress families cover the taxonomy labels observed in historical adverse windows. It is a relevance diagnostic, not a test that those families have the correct probabilities."
+  },
+  {
+    "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#representative-geometry-distance",
+    "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html#representative-geometry-distance",
+    "title": "Stress Archetypes and Representative Scenario Geometry",
+    "section": "Representative-geometry distance",
+    "text": "Representative-geometry distance\nLet \\(\\mathbf z_j^{\\mathrm{real}}\\) be a standardized geometry for realized stress window \\(j\\), using the same normalization convention as the simulated scenarios. Define distance to the closest generated representative as\n\\[\nD_j\n=\n\\min_k d(\\mathbf z_j^{\\mathrm{real}},\\mathbf z_{m_k^*}).\n\\]\nLarge distances indicate that the named representatives do not closely resemble that realized joint stress geometry under the chosen feature map and metric.\nThe absolute magnitude of \\(D_j\\) has no universal interpretation. It depends on the normalization, feature set, and distance metric, so comparisons should be made under a fixed design."
   }
 ]
