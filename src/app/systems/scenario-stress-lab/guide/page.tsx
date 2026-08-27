@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default function StressLabDashboardGuidePage() {
           <div className="paper-subtitle">화면을 켰을 때 무엇을 먼저 보고, 어떻게 읽을 것인가</div>
           <div className="actions">
             <a className="btn primary ext" href="https://multi-asset-scenario-stress-lab.streamlit.app" target="_blank" rel="noopener noreferrer">Open Live Dashboard</a>
-            <a className="btn soft" href="/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf">Guide PDF</a>
+            <a className="btn soft ext" href="/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf" target="_blank" rel="noopener noreferrer">Guide PDF</a>
             <Link className="btn soft" href="/systems/scenario-stress-lab/">Back to System Page</Link>
           </div>
         </div>

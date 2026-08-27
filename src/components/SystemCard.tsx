@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
 export function SystemCard({ item }: { item: SystemItem }) {
@@ -22,12 +22,12 @@ export function SystemCard({ item }: { item: SystemItem }) {
         </Link>
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
           {item.links.liveDashboard ? (
-            <a href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+            <a className="strong-link" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
               Live Dashboard ↗
             </a>
           ) : null}
           {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
-          {item.links.whitePaper ? <a href={item.links.whitePaper}>White Paper PDF</a> : null}
+          {item.links.whitePaper ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}
         </div>
       </div>
     </article>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
@@ -59,7 +59,7 @@ export default function ScenarioStressLabPage() {
                 Dashboard Guide
               </Link>
             ) : null}
-            <a className="btn soft" href={item.links.whitePaper}>
+            <a className="btn soft ext" href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">
               White Paper PDF
             </a>
           </div>
@@ -251,7 +251,7 @@ export default function ScenarioStressLabPage() {
             <h2>Documentation & Access</h2>
             <div className="repro-links documentation-artifacts">
               {item.links.liveDashboard ? (
-                <a className="artifact" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                <a className="artifact artifact-primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">LIVE</span><strong>Public Dashboard</strong>
                   <small>Current approved public-safe scenario/stress interface</small><span className="artifact-action">Open Dashboard ↗</span>
                 </a>
@@ -263,12 +263,12 @@ export default function ScenarioStressLabPage() {
                 </Link>
               ) : null}
               {item.links.fullManual ? (
-                <a className="artifact" href={item.links.fullManual}>
+                <a className="artifact" href={item.links.fullManual} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">MANUAL · v1.1</span><strong>Full Manual</strong>
                   <small>Comprehensive Korean concept, operation, interpretation, and workflow manual</small><span className="artifact-action">Open PDF →</span>
                 </a>
               ) : null}
-              <a className="artifact" href={item.links.whitePaper}>
+              <a className="artifact" href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">
                 <span className="artifact-kicker">PDF</span><strong>Technical White Paper</strong>
                 <small>System architecture, validation evidence, and operating boundaries</small><span className="artifact-action">Open PDF →</span>
               </a>
@@ -280,7 +280,7 @@ export default function ScenarioStressLabPage() {
             <p className="body-copy documentation-note">
               The Korean Full Manual v1.1 remains the comprehensive concept, operating, interpretation, and workflow document.
               Dashboard Guide v2.0 is intentionally shorter: it explains what to look at and how to read the public screens without duplicating the full manual.
-              {item.links.dashboardGuidePdf ? <> A printable <a href={item.links.dashboardGuidePdf}>Dashboard Guide PDF</a> is also available.</> : null}
+              {item.links.dashboardGuidePdf ? <> A printable <a className="ext" href={item.links.dashboardGuidePdf} target="_blank" rel="noopener noreferrer">Dashboard Guide PDF</a> is also available.</> : null}
             </p>
             {item.links.deploymentRepository ? (
               <p className="body-copy documentation-note">

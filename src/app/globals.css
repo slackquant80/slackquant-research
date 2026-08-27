@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --bg:#f7f7f3;
   --paper:#fff;
   --ink:#121416;
@@ -751,3 +751,13 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .documentation-artifacts .artifact-action{margin-top:auto;padding-top:10px;font-size:12px;font-weight:700;color:var(--accent)}
 .documentation-note{max-width:760px;margin-top:18px}
 @media(max-width:760px){.documentation-artifacts{grid-template-columns:1fr}.documentation-artifacts .artifact{min-height:0}}
+/* Stress Lab access hierarchy */
+.documentation-artifacts .artifact-primary{
+  border-color:#9fa9ad;
+  box-shadow:inset 4px 0 0 var(--ink);
+}
+.documentation-artifacts .artifact-primary .artifact-kicker,
+.documentation-artifacts .artifact-primary .artifact-action{
+  color:var(--ink);
+  font-weight:750;
+}
