@@ -21,12 +21,13 @@ export function SystemCard({ item }: { item: SystemItem }) {
           View System →
         </Link>
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
-          {item.links.ssrn ? (
-            <a href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
-              SSRN White Paper ↗
+          {item.links.liveDashboard ? (
+            <a href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+              Live Dashboard ↗
             </a>
           ) : null}
-          {item.links.whitePaper ? <a href={item.links.whitePaper}>PDF</a> : null}
+          {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
+          {item.links.whitePaper ? <a href={item.links.whitePaper}>White Paper PDF</a> : null}
         </div>
       </div>
     </article>
