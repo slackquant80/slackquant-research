@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
@@ -27,14 +27,17 @@ export default function HomePage() {
           <div className="eyebrow">Research platform</div>
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
-            Investment and academic research across systematic investing, asset
-            allocation, forecasting, financial data science, and AI/ML &#8212;
-            with direct paths to papers, evidence, code, tools, and the
-            quantitative methods behind them.
+            Investment and academic research plus operational decision systems
+            across systematic investing, asset allocation, forecasting, financial
+            data science, and AI/ML &#8212; with direct paths to papers, evidence,
+            code, tools, live systems, and the quantitative methods behind them.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
               Explore Research
+            </Link>
+            <Link className="btn soft" href="/systems/">
+              Explore Systems
             </Link>
             <a className="btn soft" href={methodsRootHref}>
               Quantitative Methods

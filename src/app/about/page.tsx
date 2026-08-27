@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { site } from "@/data/site";
 
@@ -76,7 +76,7 @@ export default function AboutPage() {
         <div className="shell about-columns">
           <div>
             <div className="section-title">Systems</div>
-            <h3>Operational decision systems</h3>
+            <h3>Operational Decision Systems</h3>
           </div>
           <div>
             <p>
