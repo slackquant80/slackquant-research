@@ -57,6 +57,16 @@ $targetIndex = Join-Path $target "index.html"
 if (-not (Test-Path $targetIndex)) {
   throw "Sync failed: $targetIndex is missing"
 }
+$normalizer = Join-Path $PlatformRoot "scripts\normalize-methods-navigation.ps1"
+if (-not (Test-Path $normalizer)) {
+  throw "Methods navigation normalizer is missing: $normalizer"
+}
+
+Write-Host "Normalizing Methods platform navigation..." -ForegroundColor Cyan
+& powershell -ExecutionPolicy Bypass -File $normalizer -PlatformRoot $PlatformRoot
+if ($LASTEXITCODE -ne 0) {
+  throw "Methods navigation normalization failed with exit code $LASTEXITCODE"
+}
 
 $articleChecks = @(
   "10_FORECAST_EVALUATION\QM001_OUT_OF_SAMPLE_EVALUATION\article.html",
