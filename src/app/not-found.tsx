@@ -6,13 +6,13 @@ export default function NotFound() {
       <section className="index-hero">
         <div className="shell">
           <div className="eyebrow">Not found</div>
-          <h1>This research page is not available.</h1>
+          <h1>This page is not available.</h1>
           <p className="hero-copy">
-            The requested public research artifact may not exist or may not yet
-            be released.
+            The requested resource may have moved, may not exist, or may not yet
+            be publicly available.
           </p>
-          <Link className="btn primary" href="/research/">
-            Return to Research
+          <Link className="btn primary" href="/">
+            Return Home
           </Link>
         </div>
       </section>

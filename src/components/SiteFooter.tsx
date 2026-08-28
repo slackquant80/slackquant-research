@@ -9,7 +9,7 @@ export function SiteFooter() {
           <span className="footer-sep">·</span>
           Research by {site.researcher.displayName}
         </div>
-        <div className="footer-meta">Public research & systems platform</div>
+        <div className="footer-meta">Public research, methods & systems platform</div>
       </div>
     </footer>
   );

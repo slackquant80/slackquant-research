@@ -5,7 +5,7 @@ import { systemItems } from "@/data/systems";
 export const metadata: Metadata = {
   title: "Systems",
   description:
-    "Operational investment and decision systems published by SlackQuant.",
+    "Operational investment, portfolio, and decision-support systems published by SlackQuant Research.",
 };
 
 export default function SystemsPage() {
@@ -14,11 +14,11 @@ export default function SystemsPage() {
       <section className="index-hero systems-index-hero">
         <div className="shell">
           <div className="eyebrow">Systems</div>
-          <h1>Operational investment and decision systems.</h1>
+          <h1>Operational systems for portfolio analysis and decision support.</h1>
           <p className="hero-copy">
-            Operational tools that translate validated research into bounded portfolio
-            decision support. Research remains separate from the systems it supports,
-            with each public system carrying its own evidence and operating boundaries.
+            Public tools that apply research in live or on-demand workflows.
+            Each system states what it does, what evidence supports it, and how its
+            outputs should be interpreted; related research remains separately versioned.
           </p>
         </div>
       </section>
@@ -27,11 +27,11 @@ export default function SystemsPage() {
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
             <div className="kicker">Public systems</div>
-            <h2>Operational systems with explicit evidence boundaries</h2>
+            <h2>Public systems with clear roles and evidence</h2>
             <p>
-              Each system is published as a distinct operational artifact with its own
-              role, authority, evidence lineage, and public interface. Related research
-              remains separately versioned under Research.
+              Each system has a defined purpose, operating model, and public
+              interface. Supporting papers and validation material are linked without
+              treating live system updates as new research results.
             </p>
           </div>
           <div className="research-list">
@@ -40,8 +40,8 @@ export default function SystemsPage() {
             ))}
           </div>
           <p className="systems-rollout-note">
-            Systems are listed as peer public artifacts for navigation; that listing does
-            not imply identical internal roles or force them into a common document stack.
+            Systems are listed together for navigation, but they may serve different
+            portfolio roles and use different operating and documentation structures.
           </p>
         </div>
       </section>

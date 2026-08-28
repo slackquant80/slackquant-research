@@ -17,10 +17,10 @@ export default function ResearchPage() {
       <section className="index-hero">
         <div className="shell">
           <div className="eyebrow">Research</div>
-          <h1>A public research portfolio spanning investment research and academic research.</h1>
+          <h1>A public portfolio of investment and academic research.</h1>
           <p className="hero-copy">
-            Browse public working papers and research releases, with links to
-            supporting code, evidence, research tools, and companion quantitative
+            Browse working papers and research releases with direct links to
+            supporting evidence, code, research tools, and companion quantitative
             methods where available.
           </p>
         </div>

@@ -61,7 +61,7 @@ export default function PriceMacroDecisionPage() {
               Open SSRN Record
             </ArtifactLink>
             <ArtifactLink href={item.links.github} external>
-              Replication GitHub
+              Replication Repository
             </ArtifactLink>
           </div>
         </div>
@@ -215,9 +215,8 @@ export default function PriceMacroDecisionPage() {
               ))}
             </div>
             <div className="evidence-note">
-              The dashboard reports public paper and replication information. It
-              does not expose internal manuscript-development version labels as
-              reader-facing metadata.
+              Dates, portfolio rules, and release labels shown here correspond to
+              the public paper and its replication materials.
             </div>
           </section>
 
@@ -239,9 +238,8 @@ export default function PriceMacroDecisionPage() {
             <h2>Reproducibility</h2>
             <p>
               Public code, the tagged replication release, and the archived
-              Zenodo record are presented here as reproducibility artifacts,
-              separate from the primary paper-access actions at the top of the
-              page.
+              Zenodo record provide the reproducibility trail for the published
+              analysis.
             </p>
             <div className="repro-links">
               <div className="artifact">

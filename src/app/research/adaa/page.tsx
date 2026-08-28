@@ -47,7 +47,7 @@ export default function AdaaPage() {
             </ArtifactLink>
             {item.links.github ? (
               <ArtifactLink href={item.links.github} external>
-                Replication GitHub
+                Replication Repository
               </ArtifactLink>
             ) : null}
             {item.links.researchDashboard ? (
@@ -126,8 +126,8 @@ export default function AdaaPage() {
               ))}
             </div>
             <div className="evidence-note">
-              These statistics and figures correspond to the cited public research version. Live
-              implementation views are separate and may change over time.
+              These statistics and figures are tied to the cited public paper version. The live
+              system is a separate, current implementation and may change over time.
             </div>
 
             {item.selectedEvidence?.length ? (
@@ -254,15 +254,15 @@ export default function AdaaPage() {
           <section className="prose-section" id="dashboards">
             <h2>Research and Implementation</h2>
             <p>
-              This page remains the paper-aligned Investment Research record. The separate
-              <Link href="/systems/adaa/"> ADAA System page</Link> is the canonical operational
-              landing page and cross-links the live implementation back to this frozen research evidence.
+              This page is the Investment Research record aligned to the cited paper. The separate
+              <Link href="/systems/adaa/"> ADAA System page</Link> covers current operation and links
+              back to this versioned research evidence.
             </p>
 
             <div className="boundary-note">
-              <b>System / research boundary:</b> the live ADAA system may refresh current
-              data and operational views; the findings on this page remain tied to Public
-              Working Paper {item.publicVersion}. <Link href="/systems/adaa/">Open the ADAA System →</Link>
+              <b>Research vs. live system:</b> the ADAA system may refresh current data and
+              operational views, while the findings on this page remain tied to Public Working
+              Paper {item.publicVersion}. <Link href="/systems/adaa/">Open the ADAA System →</Link>
             </div>
 
             <div className="dual">
@@ -286,10 +286,10 @@ export default function AdaaPage() {
 
               <div className="dual-card operational">
                 <div className="kicker">Implementation</div>
-                <h3>ADAA Live / Operational Dashboard</h3>
+                <h3>ADAA Live Dashboard</h3>
                 <p>
-                  Current implementation and monitoring context. This interface
-                  can change with live conditions and is not the versioned
+                  Current implementation and portfolio-monitoring views. This interface
+                  can change with live conditions and is separate from the versioned
                   research record.
                 </p>
                 {item.links.operationalDashboard ? (
@@ -298,16 +298,15 @@ export default function AdaaPage() {
                     external
                     variant="inverse"
                   >
-                    Open Live / Operational Dashboard
+                    Open Live Dashboard
                   </ArtifactLink>
                 ) : null}
               </div>
             </div>
 
             <div className="boundary-note">
-              <b>Version boundary:</b> research results on this page correspond
-              to the cited public paper version; live operational views may
-              change independently.
+              <b>Version note:</b> research results on this page correspond to
+              the cited public paper version; live system views may change independently.
             </div>
           </section>
 

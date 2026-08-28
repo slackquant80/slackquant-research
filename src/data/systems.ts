@@ -35,7 +35,7 @@ export const systemItems: SystemItem[] = [
     status: "Operational baseline v1",
     dateLabel: "Updated August 27, 2026",
     shortSummary:
-      "A human-in-the-loop multi-asset stress system centered on B1 EWMA-t conditional scenarios, with B0 historical block resampling kept visible as the transparent comparator. The validated v1 public universe contains eight ETFs. The retained public use is scenario-archetype stress representation and same-cloud portfolio what-if analysis, not market timing or automated allocation.",
+      "A human-in-the-loop multi-asset stress system built around B1 EWMA-t conditional scenarios, with B0 historical block resampling as a transparent comparator. The validated public v1 covers eight ETFs and supports scenario-archetype analysis and same-scenario portfolio what-if comparisons—not market timing or automated allocation.",
     role: "Scenario-Based Portfolio Stress Decision Support",
     ssrnId: "7354238",
     evidenceLabel: "Technical White Paper",
@@ -58,10 +58,10 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Updated August 2026",
     shortSummary:
-      "An open rules-based multi-asset portfolio strategy that combines five complementary allocation sleeves. The live interface separates the official month-end decision, current portfolio drift, and a provisional intramonth preview, while the research record remains separately frozen.",
+      "An open, rules-based multi-asset portfolio strategy combining five complementary allocation sleeves. The live interface separates the official month-end target, current portfolio drift, and a provisional intramonth preview, while the supporting research evidence remains separately versioned.",
     role: "Rule-Governed Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
-    evidenceLabel: "Research anchor",
+    evidenceLabel: "Related Research",
     methodsKey: "adaa-system",
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",

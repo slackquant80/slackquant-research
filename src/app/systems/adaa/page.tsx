@@ -9,7 +9,7 @@ const item = getSystem("adaa");
 export const metadata: Metadata = {
   title: "ADAA — Portfolio Strategy System",
   description:
-    "Open operational Autonomous Dynamic Asset Allocation system with live portfolio monitoring, explicit decision-state separation, frozen research evidence, and linked quantitative methods.",
+    "Open Autonomous Dynamic Asset Allocation system with live portfolio monitoring, clearly separated decision states, versioned research evidence, and linked quantitative methods.",
 };
 
 const sleeves = [
@@ -37,7 +37,7 @@ export default function AdaaSystemPage() {
             <span>{item.status}</span>
             <span>{item.role}</span>
             <span>Monthly official decision cycle</span>
-            <span>Research anchor · SSRN {item.ssrnId}</span>
+            <span>Related research · SSRN {item.ssrnId}</span>
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (
@@ -52,7 +52,7 @@ export default function AdaaSystemPage() {
             ) : null}
             {item.links.ssrn ? (
               <a className="btn soft ext" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
-                SSRN Paper
+                Open SSRN Record
               </a>
             ) : null}
           </div>
@@ -63,11 +63,11 @@ export default function AdaaSystemPage() {
         <aside className="toc">
           <strong>On this page</strong>
           <a href="#overview">Overview</a>
-          <a href="#operating-state">Operating State</a>
+          <a href="#operating-state">Decision States</a>
           <a href="#architecture">Strategy Architecture</a>
-          <a href="#evidence">Evidence & Versioning</a>
+          <a href="#evidence">Research & Live System</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#access">Access & Documentation</a>
+          <a href="#access">Resources & Documentation</a>
         </aside>
 
         <article>
@@ -81,7 +81,7 @@ export default function AdaaSystemPage() {
             <p className="body-copy">
               The current implementation blends five complementary sleeves across an 18-ETF opportunity set. The live
               dashboard exposes the official monthly decision, current portfolio drift, and a provisional intramonth
-              preview, while the research record remains separately frozen and versioned.
+              preview, while the supporting research evidence remains separately versioned.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">5</div><div className="label">Top-level sleeves</div></div>
@@ -92,12 +92,12 @@ export default function AdaaSystemPage() {
           </section>
 
           <section className="prose-section" id="operating-state">
-            <div className="kicker">Operational contract</div>
-            <h2>Official decision, current drift, and preview are separate states</h2>
+            <div className="kicker">Decision states</div>
+            <h2>Official target, current drift, and preview are shown separately</h2>
             <p className="body-copy">
-              The live dashboard deliberately separates the completed month-end decision from mark-to-market drift and
-              from a provisional estimate of the next target. A partial-month estimate therefore cannot be mistaken
-              for an executable portfolio decision.
+              The live dashboard separates the completed month-end target from mark-to-market drift and from a
+              provisional estimate of the next target. This keeps a partial-month preview from being mistaken for
+              an official portfolio decision.
             </p>
             <div className="system-role-grid adaa-state-grid">
               <div className="system-role-card adaa-state-card official">
@@ -113,11 +113,11 @@ export default function AdaaSystemPage() {
               <div className="system-role-card adaa-state-card preview">
                 <div className="kicker">03 · Provisional</div>
                 <h3>Intramonth Preview</h3>
-                <p>A provisional next-target estimate using the latest available month-to-date data. It may change before month-end and has no execution authority.</p>
+                <p>A provisional next-target estimate using the latest available month-to-date data. It may change before month-end and is not an official target.</p>
               </div>
             </div>
             <div className="boundary-note">
-              <b>Authority boundary:</b> the dashboard is a portfolio-monitoring and decision-support interface. It does not place trades or convert the intramonth preview into an official target.
+              <b>Operational note:</b> the dashboard supports portfolio monitoring and decision review. It does not place trades or convert the intramonth preview into an official target.
             </div>
           </section>
 
@@ -125,9 +125,9 @@ export default function AdaaSystemPage() {
             <div className="kicker">Portfolio architecture</div>
             <h2>Five complementary allocation sleeves</h2>
             <p className="body-copy">
-              The current canonical top-level weights are HAA 25%, BAA 15%, ADM 17.5%, FAA 17.5%, and LAA 25%.
+              The current top-level weights are HAA 25%, BAA 15%, ADM 17.5%, FAA 17.5%, and LAA 25%.
               The design objective is decision diversification: each sleeve should contribute a meaningfully different
-              allocation role rather than simply duplicate the same market view under a different label.
+              allocation role rather than duplicate the same market view under a different label.
             </p>
             <div className="adaa-sleeve-list">
               {sleeves.map(([code, title, description]) => (
@@ -141,16 +141,16 @@ export default function AdaaSystemPage() {
               ))}
             </div>
             <div className="evidence-note">
-              The five-sleeve configuration is the current operational implementation, not a claim that five components or these exact weights are uniquely optimal.
+              These are the current implementation choices; the system does not claim that five sleeves or these exact weights are uniquely optimal.
             </div>
           </section>
 
           <section className="prose-section" id="evidence">
-            <div className="kicker">Evidence lineage</div>
-            <h2>Live operation and frozen research remain distinct</h2>
+            <div className="kicker">Research and live system</div>
+            <h2>Live operation and versioned research remain distinct</h2>
             <div className="dual adaa-evidence-dual">
               <div className="dual-card operational">
-                <div className="kicker">Current operational artifact</div>
+                <div className="kicker">Live system</div>
                 <h3>ADAA Live System</h3>
                 <p>
                   The live implementation refreshes current data and monitoring views, including portfolio state,
@@ -163,11 +163,11 @@ export default function AdaaSystemPage() {
                 ) : null}
               </div>
               <div className="dual-card">
-                <div className="kicker">Frozen public evidence</div>
+                <div className="kicker">Versioned research evidence</div>
                 <h3>Diversify the Decisions, Not Just the Assets</h3>
                 <p>
                   Public Working Paper v1.34 documents the research question, historical evidence, robustness,
-                  implementation analysis, and Decision Diversification framework. It is not silently revised when
+                  implementation analysis, and Decision Diversification framework. The paper remains fixed even as
                   the live system changes.
                 </p>
                 {item.links.relatedResearch ? (
@@ -176,24 +176,24 @@ export default function AdaaSystemPage() {
               </div>
             </div>
             <div className="system-operating-list adaa-evidence-list">
-              <div><strong>Research anchor.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable evidence record for the published study.</span></div>
-              <div><strong>Operational updates.</strong><span> Current data and implementation views may evolve under change control without being re-labeled as new research findings.</span></div>
-              <div><strong>Claim boundary.</strong><span> Historical validation does not establish guaranteed future outperformance, unique optimality, or predictive validity of the intramonth preview.</span></div>
+              <div><strong>Citable research.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable evidence record for the published study.</span></div>
+              <div><strong>Live updates.</strong><span> Current data and implementation views may evolve without being presented as new research findings.</span></div>
+              <div><strong>Interpretation.</strong><span> Historical validation does not establish guaranteed future outperformance, unique optimality, or predictive validity of the intramonth preview.</span></div>
             </div>
             <div className="boundary-note">
-              <b>Scope boundary:</b> later research extensions and downstream portfolio systems remain separate artifacts and are not treated as validation of the public ADAA strategy. The platform links to derived outputs rather than redistributing source market or macroeconomic datasets.
+              <b>Scope:</b> later research extensions and downstream portfolio systems are separate projects and do not retroactively validate ADAA. The platform links to derived outputs rather than redistributing source market or macroeconomic datasets.
             </div>
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="access">
-            <div className="kicker">Public artifacts</div>
-            <h2>Access & documentation</h2>
+            <div className="kicker">Public resources</div>
+            <h2>Resources & documentation</h2>
             <p className="body-copy">
-              Public documentation is intentionally split by purpose: the live dashboard for current operation, the
-              Investment Research and SSRN record for frozen evidence, the replication release and DOI for reproducibility,
-              and the Quantitative Methods library for reusable methodology.
+              Public resources are separated by purpose: the live dashboard for current operation, the Investment
+              Research page and SSRN paper for versioned evidence, the replication release and DOI for reproducibility,
+              and Quantitative Methods for reusable methodology.
             </p>
             <div className="repro-links documentation-artifacts adaa-artifact-grid">
               {item.links.liveDashboard ? (
@@ -205,13 +205,13 @@ export default function AdaaSystemPage() {
               {item.links.relatedResearch ? (
                 <Link className="artifact" href={item.links.relatedResearch}>
                   <span className="artifact-kicker">RESEARCH</span><strong>Investment Research</strong>
-                  <small>Paper-aligned evidence page for the frozen public research version.</small><span className="artifact-action">View Research →</span>
+                  <small>Research page aligned to the cited public paper.</small><span className="artifact-action">View Research →</span>
                 </Link>
               ) : null}
               {item.links.ssrn ? (
                 <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">SSRN</span><strong>Public Working Paper v1.34</strong>
-                  <small>Citable research anchor for Decision Diversification and the documented historical implementation.</small><span className="artifact-action">Open SSRN ↗</span>
+                  <small>Citable study of Decision Diversification and the documented historical implementation.</small><span className="artifact-action">Open SSRN ↗</span>
                 </a>
               ) : null}
               {item.links.researchDashboard ? (
@@ -223,7 +223,7 @@ export default function AdaaSystemPage() {
               {item.links.replication ? (
                 <a className="artifact" href={item.links.replication} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">REPLICATION</span><strong>Public Release v1.1.4</strong>
-                  <small>Tagged reproducibility package synchronized to the public research record.</small><span className="artifact-action">Open Release ↗</span>
+                  <small>Tagged reproducibility package aligned to the public research record.</small><span className="artifact-action">Open Release ↗</span>
                 </a>
               ) : null}
               {item.links.archivalRelease ? (

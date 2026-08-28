@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
@@ -27,10 +27,10 @@ export default function HomePage() {
           <div className="eyebrow">Research platform</div>
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
-            Investment and academic research plus operational decision systems
-            across systematic investing, asset allocation, forecasting, financial
-            data science, and AI/ML &#8212; with direct paths to papers, evidence,
-            code, tools, live systems, and the quantitative methods behind them.
+            Investment and academic research, operational systems, and quantitative
+            methods across systematic investing, asset allocation, forecasting,
+            financial data science, and AI/ML. Each project links directly to its
+            papers, evidence, code, tools, and live interfaces.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -129,7 +129,7 @@ export default function HomePage() {
               <h3>Investment Research Series</h3>
               <p>
                 Practitioner-oriented research on systematic investing, asset
-                allocation, decision architecture, robustness, and implementation.
+                allocation, portfolio decision design, robustness, and implementation.
               </p>
               <Link className="section-link" href="/research/#investment-research-heading">
                 Explore Investment Research &#8594;
@@ -197,12 +197,12 @@ export default function HomePage() {
               </a>
             </article>
             <article className="stream">
-              <div className="kicker">Purpose</div>
-              <h3>A shared methods resource across the research portfolio.</h3>
+              <div className="kicker">Shared foundation</div>
+              <h3>A common language for recurring quantitative work.</h3>
               <p>
-                Quantitative Methods supports Investment Research and Academic
-                Research with reusable explanations, implementation guidance,
-                reproducible examples, and failure-mode checks.
+                Quantitative Methods provides reusable explanations, implementation
+                guidance, reproducible examples, and failure-mode checks for methods
+                that recur across Investment Research, Academic Research, and Systems.
               </p>
             </article>
           </div>
@@ -270,17 +270,16 @@ export default function HomePage() {
           <div>
             <div className="section-title identity-label">About</div>
             <h2>
-              One research identity.
+              One research platform.
               <br />
-              Distinct research purposes.
+              Clear roles.
             </h2>
           </div>
           <div className="about-copy">
             <p>
-              SlackQuant Research brings practitioner-oriented investment
-              research and academic research into one coherent public platform,
-              with a shared Quantitative Methods library that explains the tools
-              used across the research.
+              SlackQuant Research brings investment research, academic research,
+              operational systems, and a shared Quantitative Methods library into one
+              public platform while keeping the role of each resource clear.
             </p>
             <div className="researcher-line">
               <span className="researcher-prefix">Research by</span>

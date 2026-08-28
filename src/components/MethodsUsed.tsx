@@ -24,8 +24,8 @@ export function MethodsUsed({
         </h2>
         <p>
           {isSystem
-            ? "These companion articles explain methods that are load-bearing for the system logic, validation evidence, and operational interpretation."
-            : "These companion articles explain methods that are used directly in, or are central to interpreting, the research design and evidence."}
+            ? "These companion articles explain methods used directly in the system or needed to interpret its validation and outputs."
+            : "These companion articles explain methods used directly in the study or needed to interpret its design and evidence."}
         </p>
       </div>
 

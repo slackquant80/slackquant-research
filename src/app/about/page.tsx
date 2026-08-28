@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { site } from "@/data/site";
 
@@ -14,9 +14,9 @@ export default function AboutPage() {
           <div className="eyebrow">About</div>
           <h1>SlackQuant Research</h1>
           <p className="hero-copy">
-            A public research and systems platform focused on systematic investing,
-            asset allocation, forecasting, financial data science, AI/ML, and
-            evidence-constrained operational decision support.
+            A public platform for systematic investing, asset allocation,
+            forecasting, financial data science, AI/ML, quantitative methods, and
+            operational portfolio systems.
           </p>
         </div>
       </section>
@@ -28,17 +28,18 @@ export default function AboutPage() {
             <h2 className="about-title">
               Research first.
               <br />
-              Clear ownership.
+              Clear roles.
             </h2>
           </div>
           <div className="identity-copy">
             <p>
               SlackQuant Research brings practitioner-oriented investment
-              research and academic research into one coherent public platform.
-              The Quantitative Methods library explains methods used across that
-              research. Public Systems remain distinct operational artifacts, while
-              papers, evidence, code, tools, and documentation stay connected without
-              blurring ownership or claim boundaries.
+              research and academic research into one public platform. Quantitative
+              Methods provides reusable explanations of recurring methods, while
+              Systems presents operational tools separately from the versioned research
+              that supports them. Papers, evidence, code, dashboards, and documentation
+              stay connected without collapsing research and live operation into the
+              same record.
             </p>
             <div className="person-card">
               <div className="person-kicker">Researcher</div>
@@ -57,7 +58,7 @@ export default function AboutPage() {
             <div className="section-title">Research scope</div>
             <h3>Investment Research</h3>
             <p>
-              Systematic investing, asset allocation, decision architecture,
+              Systematic investing, asset allocation, portfolio decision design,
               robustness, and implementation-oriented research.
             </p>
           </div>
@@ -80,9 +81,10 @@ export default function AboutPage() {
           </div>
           <div>
             <p>
-              Public operational systems are maintained as distinct parent artifacts
-              with explicit evidence and authority boundaries. Research and white papers
-              support those systems rather than owning their runtime logic.
+              Public systems are presented as operational tools with clearly
+              defined roles and interpretation limits. Supporting research and white
+              papers remain separately versioned, so live updates do not rewrite the
+              underlying evidence.
             </p>
             <Link className="section-link strong-link" href="/systems/">
               Explore Systems &#8594;

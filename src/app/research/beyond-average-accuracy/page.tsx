@@ -40,7 +40,7 @@ export default function BeyondAverageAccuracyPage() {
               Open SSRN Record
             </ArtifactLink>
             <ArtifactLink href={item.links.github} external>
-              Replication GitHub
+              Replication Repository
             </ArtifactLink>
             <ArtifactLink href={item.links.researchDashboard} external>
               Interactive Dashboard
@@ -60,7 +60,7 @@ export default function BeyondAverageAccuracyPage() {
           <a href="#inference">Inference &amp; Uncertainty</a>
           <a href="#temporal">Temporal Stability</a>
           <a href="#scope">Scope &amp; Limitations</a>
-          <a href="#methods">Related Methods</a>
+          <a href="#methods">Quantitative Methods</a>
           <a href="#repro">Reproducibility</a>
           <a href="#dashboard">Research Dashboard</a>
           <a href="#citation">Citation</a>
@@ -293,10 +293,9 @@ export default function BeyondAverageAccuracyPage() {
             <h2>Reproducibility</h2>
             <p>
               The public replication repository contains forecasting and
-              statistical-analysis code, frozen outputs, paper table and figure
-              data exports, the locked R environment, data-acquisition guidance,
-              and release validation tools. The source FRED-MD CSV is not
-              redistributed.
+              statistical-analysis code, versioned outputs, table and figure data
+              exports, the locked R environment, data-acquisition guidance, and
+              release validation tools. The source FRED-MD CSV is not redistributed.
             </p>
 
             <div className="repro-links">
@@ -304,7 +303,7 @@ export default function BeyondAverageAccuracyPage() {
                 <div className="type">Public code</div>
                 <h3>Replication Repository</h3>
                 <p>
-                  Research code, reproducibility documentation, frozen outputs,
+                  Research code, reproducibility documentation, versioned outputs,
                   and paper exports.
                 </p>
                 <a
@@ -320,9 +319,8 @@ export default function BeyondAverageAccuracyPage() {
                 <div className="type">Replication</div>
                 <h3>Replication Package</h3>
                 <p>
-                  Latest tagged public package: v1.0.0. Frozen public software
-                  and replication snapshot for the reported research design
-                  and outputs.
+                  Latest tagged public package: v1.0.0. Versioned software and
+                  replication snapshot for the reported research design and outputs.
                 </p>
                 <a
                   href={item.links.replication}
@@ -353,11 +351,10 @@ export default function BeyondAverageAccuracyPage() {
           <section className="prose-section" id="dashboard">
             <h2>Research Dashboard</h2>
             <p>
-              The interactive forecasting dashboard provides a reader-facing
-              interface to explore model performance and related forecasting
-              evidence. It is a research companion to the versioned paper and
-              replication materials, not a substitute for the paper&apos;s fixed
-              empirical record.
+              The interactive forecasting dashboard lets readers explore model
+              performance and related forecasting evidence. It complements the
+              versioned paper and replication materials; it does not replace the
+              paper&apos;s fixed empirical record.
             </p>
             <div className="actions">
               <ArtifactLink href={item.links.researchDashboard} primary external>

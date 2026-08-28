@@ -45,7 +45,7 @@ export default function ProtectionPatiencePage() {
               Open SSRN Record
             </ArtifactLink>
             <ArtifactLink href={item.links.github} external>
-              Replication GitHub
+              Replication Repository
             </ArtifactLink>
           </div>
         </div>
@@ -131,10 +131,10 @@ export default function ProtectionPatiencePage() {
                 <div className="selected-exhibits-head">
                   <div className="section-title">Selected Exhibits</div>
                   <p>
-                    Four selected working-paper figures capture the core
-                    protection, path-burden, representative-path, and
-                    persistent-equity results. Click any figure to inspect the
-                    full-resolution public image.
+                    Four selected working-paper figures summarize downside
+                    protection, the benchmark-relative path, an illustrative
+                    20-year episode, and the role of persistent equity exposure.
+                    Click any figure to inspect the full-resolution public image.
                   </p>
                 </div>
 

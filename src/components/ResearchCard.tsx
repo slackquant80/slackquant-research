@@ -34,7 +34,7 @@ export function ResearchCard({ item }: { item: ResearchItem }) {
           ) : null}
           {item.links.github ? (
             <a href={item.links.github} target="_blank" rel="noopener noreferrer">
-              Replication ↗
+              GitHub ↗
             </a>
           ) : null}
           {item.links.archivalRelease ? (
