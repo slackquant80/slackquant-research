@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArtifactLink } from "@/components/ArtifactLink";
 import { CitationBox } from "@/components/CitationBox";
@@ -54,6 +55,9 @@ export default function AdaaPage() {
                 Research Dashboard
               </ArtifactLink>
             ) : null}
+            <ArtifactLink href="/systems/adaa/" primary>
+              ADAA System
+            </ArtifactLink>
           </div>
         </div>
       </section>
@@ -250,10 +254,16 @@ export default function AdaaPage() {
           <section className="prose-section" id="dashboards">
             <h2>Research and Implementation</h2>
             <p>
-              ADAA can be viewed through two interfaces with distinct purposes:
-              one documents versioned research evidence, while the other
-              supports live implementation and monitoring.
+              This page remains the paper-aligned Investment Research record. The separate
+              <Link href="/systems/adaa/"> ADAA System page</Link> is the canonical operational
+              landing page and cross-links the live implementation back to this frozen research evidence.
             </p>
+
+            <div className="boundary-note">
+              <b>System / research boundary:</b> the live ADAA system may refresh current
+              data and operational views; the findings on this page remain tied to Public
+              Working Paper {item.publicVersion}. <Link href="/systems/adaa/">Open the ADAA System →</Link>
+            </div>
 
             <div className="dual">
               <div className="dual-card">

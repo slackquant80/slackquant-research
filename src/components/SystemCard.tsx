@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
 export function SystemCard({ item }: { item: SystemItem }) {
@@ -13,7 +13,7 @@ export function SystemCard({ item }: { item: SystemItem }) {
       <p>{item.shortSummary}</p>
       <div className="card-meta">
         <span>{item.status}</span>
-        {item.ssrnId ? <span>Technical White Paper · SSRN {item.ssrnId}</span> : null}
+        {item.ssrnId ? <span>{item.evidenceLabel ?? "SSRN"} · SSRN {item.ssrnId}</span> : null}
         <span>{item.dateLabel}</span>
       </div>
       <div className="card-action-row">

@@ -26,11 +26,12 @@ export default function SystemsPage() {
       <section className="section">
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
-            <div className="kicker">Public system</div>
-            <h2>Scenario &amp; risk decision support</h2>
+            <div className="kicker">Public systems</div>
+            <h2>Operational systems with explicit evidence boundaries</h2>
             <p>
-              A validated scenario-stress system whose operational scope is deliberately
-              limited to uses supported by the evidence.
+              Each system is published as a distinct operational artifact with its own
+              role, authority, evidence lineage, and public interface. Related research
+              remains separately versioned under Research.
             </p>
           </div>
           <div className="research-list">
@@ -39,8 +40,8 @@ export default function SystemsPage() {
             ))}
           </div>
           <p className="systems-rollout-note">
-            Additional systems will be added as their public interfaces and supporting
-            documentation become available.
+            Systems are listed as peer public artifacts for navigation; that listing does
+            not imply identical internal roles or force them into a common document stack.
           </p>
         </div>
       </section>
