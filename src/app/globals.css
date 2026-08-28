@@ -1,4 +1,4 @@
-﻿:root{
+:root{
   --bg:#f7f7f3;
   --paper:#fff;
   --ink:#121416;
@@ -775,7 +775,6 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .adaa-sleeve-row p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
 .adaa-evidence-dual{margin-top:26px}
 .adaa-evidence-list{margin-top:24px}
-.adaa-rights-note{margin-top:24px}
 .adaa-artifact-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}
 @media(max-width:760px){
   .adaa-sleeve-row{grid-template-columns:62px 1fr;gap:14px}

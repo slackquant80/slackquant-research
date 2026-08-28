@@ -55,13 +55,13 @@ export const systemItems: SystemItem[] = [
     title: "ADAA",
     subtitle: "Autonomous Dynamic Asset Allocation",
     category: "Portfolio Strategy System",
-    status: "PUBLIC_LIVE",
-    dateLabel: "System page added August 28, 2026",
+    status: "Public live",
+    dateLabel: "Updated August 2026",
     shortSummary:
-      "An open operational multi-asset strategy system that combines complementary dynamic-allocation sleeves, exposes current portfolio monitoring and a clearly separated intramonth preview, and links the live implementation back to the frozen public research evidence without treating the live system as the paper itself.",
+      "An open rules-based multi-asset portfolio strategy that combines five complementary allocation sleeves. The live interface separates the official month-end decision, current portfolio drift, and a provisional intramonth preview, while the research record remains separately frozen.",
     role: "Rule-Governed Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
-    evidenceLabel: "Related Research",
+    evidenceLabel: "Research anchor",
     methodsKey: "adaa-system",
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",

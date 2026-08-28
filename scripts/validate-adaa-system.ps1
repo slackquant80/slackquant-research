@@ -21,7 +21,7 @@ $systemCard = [System.IO.File]::ReadAllText((Need "src\components\SystemCard.tsx
 foreach ($token in @(
   'slug: "adaa"',
   'category: "Portfolio Strategy System"',
-  'status: "PUBLIC_LIVE"',
+  'status: "Public live"',
   'https://slackquant.shinyapps.io/adaa_strategy_main/',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518',
   'relatedResearch: "/research/adaa/"'
@@ -51,9 +51,7 @@ foreach ($token in @(
 }
 
 if ($systemPage -match 'Technical White Paper') {
-  if ($systemPage -notmatch 'does not require a new Technical White Paper') {
-    throw "ADAA system page must not present a Technical White Paper as a required artifact"
-  }
+  throw "ADAA system page should not expose a Technical White Paper layer"
 }
 
 if ($researchPage -notmatch '/systems/adaa/') {
@@ -72,7 +70,7 @@ if ($systemCard -notmatch 'evidenceLabel') {
 }
 
 Write-Host "ADAA_SYSTEM_PUBLICATION_GATE_PASS" -ForegroundColor Green
-Write-Host "System  : /systems/adaa/ · Portfolio Strategy System · PUBLIC_LIVE"
+Write-Host "System  : /systems/adaa/ | Portfolio Strategy System | Public live"
 Write-Host "Links   : live dashboard / Research / SSRN / replication / DOI"
 Write-Host "Methods : QM007 / QM009 / QM010 / QM011 / QM014"
 Write-Host "Boundary: official / MTD / preview separation preserved"
