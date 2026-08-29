@@ -699,6 +699,19 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .system-card{background:var(--paper);border:1px solid var(--line);padding:38px}
 .system-card h2{font-family:Georgia,"Times New Roman",serif;font-size:36px;font-weight:500;line-height:1.12;margin:0 0 8px}
 .system-card>p{max-width:820px;color:#555b60}
+.system-card-flagship{background:#171b1e;color:#fff;border-color:#171b1e;border-top:3px solid var(--accent);padding:50px}
+.system-card-flagship h2{font-size:44px}
+.system-card-flagship>p,.system-card-flagship .card-subtitle,.system-card-flagship .card-meta{color:#c5cbcf}
+.system-card-flagship .track-chip{border-color:#465057;background:#20262a;color:#d7dde0}
+.system-card-flagship .strong-link{color:#fff}
+.system-card-flagship .card-artifact-links{color:#b9c1c6}
+.systems-group-stack{display:grid;gap:54px}
+.systems-group{padding-top:2px}
+.systems-group+.systems-group{padding-top:54px;border-top:1px solid var(--line)}
+.systems-group-head{max-width:780px;margin-bottom:22px}
+.systems-group-head .kicker{margin-bottom:10px}
+.systems-group-head h2{font-family:Georgia,"Times New Roman",serif;font-size:32px;font-weight:500;line-height:1.16;letter-spacing:-.02em;margin:0 0 10px}
+.systems-group-head p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
 .home-system-card{min-height:0}
 .home-system-card p{max-width:820px}
 .system-detail-layout{align-items:start}
@@ -768,16 +781,10 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .adaa-state-card.official{border-top:3px solid var(--accent)}
 .adaa-state-card.current{border-top:3px solid #68737a}
 .adaa-state-card.preview{border-top:3px solid #a98345}
-.adaa-sleeve-list{margin-top:26px;border-top:1px solid var(--line)}
-.adaa-sleeve-row{display:grid;grid-template-columns:92px 1fr;gap:22px;padding:22px 0;border-bottom:1px solid var(--line);align-items:start}
-.adaa-sleeve-code{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1;color:var(--accent)}
-.adaa-sleeve-row h3{font-size:17px;margin:0 0 5px}
-.adaa-sleeve-row p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+.adaa-architecture-grid{margin-top:26px}
 .adaa-evidence-dual{margin-top:26px}
 .adaa-evidence-list{margin-top:24px}
 .adaa-artifact-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}
 @media(max-width:760px){
-  .adaa-sleeve-row{grid-template-columns:62px 1fr;gap:14px}
-  .adaa-sleeve-code{font-size:23px}
   .adaa-artifact-grid{grid-template-columns:1fr}
 }

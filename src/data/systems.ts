@@ -1,8 +1,12 @@
+export type SystemGroupKey = "portfolio-decision" | "portfolio-strategy" | "risk-scenario";
+
 export type SystemItem = {
   slug: string;
   title: string;
   subtitle: string;
   category: string;
+  systemGroup: SystemGroupKey;
+  prominence?: "flagship" | "standard";
   status: string;
   dateLabel: string;
   shortSummary: string;
@@ -32,10 +36,12 @@ export const systemItems: SystemItem[] = [
     subtitle:
       "Evidence-Constrained Scenario Analysis for Portfolio Stress Decision Support",
     category: "Risk & Scenario System",
+    systemGroup: "risk-scenario",
+    prominence: "standard",
     status: "Operational baseline v1",
     dateLabel: "Updated August 27, 2026",
     shortSummary:
-      "A human-in-the-loop multi-asset stress system built around B1 EWMA-t conditional scenarios, with B0 historical block resampling as a transparent comparator. The validated public v1 covers eight ETFs and supports scenario-archetype analysis and same-scenario portfolio what-if comparisons—not market timing or automated allocation.",
+      "A human-in-the-loop multi-asset stress system centered on B1 EWMA-t conditional scenarios, with B0 historical block resampling kept visible as the transparent comparator. The validated v1 public universe contains eight ETFs. The retained public use is scenario-archetype stress representation and same-cloud portfolio what-if analysis, not market timing or automated allocation.",
     role: "Scenario-Based Portfolio Stress Decision Support",
     ssrnId: "7354238",
     evidenceLabel: "Technical White Paper",
@@ -55,13 +61,15 @@ export const systemItems: SystemItem[] = [
     title: "ADAA",
     subtitle: "Autonomous Dynamic Asset Allocation",
     category: "Portfolio Strategy System",
+    systemGroup: "portfolio-strategy",
+    prominence: "standard",
     status: "Public live",
     dateLabel: "Updated August 2026",
     shortSummary:
-      "An open, rules-based multi-asset portfolio strategy combining five complementary allocation sleeves. The live interface separates the official month-end target, current portfolio drift, and a provisional intramonth preview, while the supporting research evidence remains separately versioned.",
-    role: "Rule-Governed Multi-Asset Portfolio Strategy",
+      "An open rules-based multi-asset portfolio strategy built around Decision Diversification. The live interface separates the official month-end decision, current portfolio drift, and a provisional intramonth preview, while the research record remains separately frozen.",
+    role: "Decision-Diversified Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
-    evidenceLabel: "Related Research",
+    evidenceLabel: "Research anchor",
     methodsKey: "adaa-system",
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",
@@ -72,6 +80,35 @@ export const systemItems: SystemItem[] = [
       replication: "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.4",
       archivalRelease: "https://doi.org/10.5281/zenodo.22006841",
     },
+  },
+];
+
+export const systemGroupDefinitions: Array<{
+  key: SystemGroupKey;
+  kicker: string;
+  title: string;
+  description: string;
+}> = [
+  {
+    key: "portfolio-decision",
+    kicker: "Operating layer",
+    title: "Portfolio Decision & Operating Systems",
+    description:
+      "Systems that qualify, combine, monitor, and govern multiple strategy or forecasting inputs at the portfolio-management level.",
+  },
+  {
+    key: "portfolio-strategy",
+    kicker: "Strategy layer",
+    title: "Portfolio Strategy Systems",
+    description:
+      "Standalone portfolio strategies that generate implementable allocation decisions under a defined operating contract.",
+  },
+  {
+    key: "risk-scenario",
+    kicker: "Risk & analytics layer",
+    title: "Risk & Scenario Systems",
+    description:
+      "Decision-support systems that diagnose portfolio risk, stress structure, and scenario behavior without becoming a portfolio strategy by themselves.",
   },
 ];
 

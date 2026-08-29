@@ -3,7 +3,7 @@ import type { SystemItem } from "@/data/systems";
 
 export function SystemCard({ item }: { item: SystemItem }) {
   return (
-    <article className="system-card">
+    <article className={`system-card ${item.prominence === "flagship" ? "system-card-flagship" : ""}`}>
       <div className="card-kicker-row">
         <div className="kicker">SlackQuant Systems</div>
         <span className="track-chip">{item.category}</span>

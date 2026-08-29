@@ -21,6 +21,7 @@ $systemCard = [System.IO.File]::ReadAllText((Need "src\components\SystemCard.tsx
 foreach ($token in @(
   'slug: "adaa"',
   'category: "Portfolio Strategy System"',
+  'systemGroup: "portfolio-strategy"',
   'status: "Public live"',
   'https://slackquant.shinyapps.io/adaa_strategy_main/',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518',
@@ -42,6 +43,7 @@ foreach ($token in @(
   'Intramonth Preview',
   'no execution authority',
   'Public Working Paper v1.34',
+  'Diversify decision logic, not just asset exposure',
   'MethodsUsed',
   'context="system"'
 )) {
@@ -54,6 +56,21 @@ if ($systemPage -match 'Technical White Paper') {
   throw "ADAA system page should not expose a Technical White Paper layer"
 }
 
+foreach ($token in @(
+  'const sleeves =',
+  'HAA 25%',
+  'BAA 15%',
+  'ADM 17.5%',
+  'FAA 17.5%',
+  'LAA 25%',
+  'Top-level sleeves',
+  'ETF opportunity set'
+)) {
+  if ($systemPage -match [regex]::Escape($token)) {
+    throw "ADAA System page exposes recipe-level detail that belongs in the research layer: $token"
+  }
+}
+
 if ($researchPage -notmatch '/systems/adaa/') {
   throw "ADAA research page reciprocal system cross-link missing"
 }
@@ -62,8 +79,8 @@ if ($researchPage -notmatch '/systems/adaa/') {
 if ($systemPage -notmatch [regex]::Escape('item.links.relatedResearch')) {
   throw "ADAA system page does not consume the registry-owned relatedResearch cross-link"
 }
-if ($systemsIndex -notmatch 'Operational systems with explicit evidence boundaries') {
-  throw "Systems index remains scenario-specific"
+if ($systemsIndex -notmatch 'Operational systems organized by decision role') {
+  throw "Systems index does not expose the role-based hierarchy"
 }
 if ($systemCard -notmatch 'evidenceLabel') {
   throw "SystemCard evidence label generalization missing"

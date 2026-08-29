@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { SystemCard } from "@/components/SystemCard";
-import { systemItems } from "@/data/systems";
+import { systemGroupDefinitions, systemItems } from "@/data/systems";
 
 export const metadata: Metadata = {
   title: "Systems",
   description:
-    "Operational investment, portfolio, and decision-support systems published by SlackQuant Research.",
+    "Operational investment and decision systems published by SlackQuant, organized by their role in the portfolio decision process.",
 };
 
 export default function SystemsPage() {
@@ -14,11 +14,11 @@ export default function SystemsPage() {
       <section className="index-hero systems-index-hero">
         <div className="shell">
           <div className="eyebrow">Systems</div>
-          <h1>Operational systems for portfolio analysis and decision support.</h1>
+          <h1>Operational systems organized by decision role.</h1>
           <p className="hero-copy">
-            Public tools that apply research in live or on-demand workflows.
-            Each system states what it does, what evidence supports it, and how its
-            outputs should be interpreted; related research remains separately versioned.
+            SlackQuant Systems is not a flat catalog of models. Each public system occupies a distinct
+            layer of the investment process, from portfolio strategy and risk analysis to portfolio-level
+            decision orchestration. Related research remains separately versioned under Research.
           </p>
         </div>
       </section>
@@ -27,21 +27,39 @@ export default function SystemsPage() {
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
             <div className="kicker">Public systems</div>
-            <h2>Public systems with clear roles and evidence</h2>
+            <h2>Different systems, different operating authority</h2>
             <p>
-              Each system has a defined purpose, operating model, and public
-              interface. Supporting papers and validation material are linked without
-              treating live system updates as new research results.
+              Systems are grouped by the job they perform in the investment process. A portfolio strategy,
+              a risk-analysis system, and a portfolio operating system are not presented as interchangeable
+              models simply because they share the same public library.
             </p>
           </div>
-          <div className="research-list">
-            {systemItems.map((item) => (
-              <SystemCard key={item.slug} item={item} />
-            ))}
+
+          <div className="systems-group-stack">
+            {systemGroupDefinitions.map((group) => {
+              const items = systemItems.filter((item) => item.systemGroup === group.key);
+              if (!items.length) return null;
+
+              return (
+                <section className="systems-group" key={group.key}>
+                  <div className="systems-group-head">
+                    <div className="kicker">{group.kicker}</div>
+                    <h2>{group.title}</h2>
+                    <p>{group.description}</p>
+                  </div>
+                  <div className="research-list">
+                    {items.map((item) => (
+                      <SystemCard key={item.slug} item={item} />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
           </div>
+
           <p className="systems-rollout-note">
-            Systems are listed together for navigation, but they may serve different
-            portfolio roles and use different operating and documentation structures.
+            Empty operating layers are not shown before a public system is ready. New systems enter the
+            hierarchy only after their role, authority, evidence, and disclosure contract are defined.
           </p>
         </div>
       </section>
