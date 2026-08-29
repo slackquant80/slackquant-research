@@ -57,6 +57,7 @@ export default function PriceMacroDecisionPage() {
             <span>{item.dateLabel}</span>
           </div>
           <div className="actions">
+            <ArtifactLink href="/systems/f2r/">View F2R System</ArtifactLink>
             <ArtifactLink href={item.links.ssrn} primary external>
               Open SSRN Record
             </ArtifactLink>

@@ -1,0 +1,28 @@
+{
+  "active_core": {
+    "compact_label": "ADAA + F2R"
+  },
+  "identity_contract": "F2R_PUBLIC_NAMING_LOCK_V1",
+  "naming_rule": "Public/display alias only; internal scientific/runtime/provenance identifiers are unchanged.",
+  "pds": {
+    "formal_name": "Portfolio Decision System",
+    "public_role": "Portfolio Decision & Operating System"
+  },
+  "portfolio_strategy_systems": [
+    {
+      "first_substantive_mention": "Forecast-to-Rank Allocation (F2R)",
+      "formal_public_name": "Forecast-to-Rank Allocation",
+      "public_role_phrase": "Forecast-Ranked Multi-Asset Portfolio Strategy",
+      "public_shorthand": "F2R",
+      "public_strategy_id": "F2R",
+      "subtitle": "Machine-Learning Cross-Asset Portfolio Strategy",
+      "system_class": "Portfolio Strategy System"
+    },
+    {
+      "formal_public_name": "ADAA",
+      "public_shorthand": "ADAA",
+      "public_strategy_id": "ADAA",
+      "system_class": "Portfolio Strategy System"
+    }
+  ]
+}

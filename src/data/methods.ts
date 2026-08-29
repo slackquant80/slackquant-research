@@ -176,6 +176,8 @@ const artifactMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014"],
+  "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013"],
+  "pds-system": ["QM007", "QM009", "QM011", "QM013", "QM014"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014"],
   "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],

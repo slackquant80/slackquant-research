@@ -788,3 +788,38 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 @media(max-width:760px){
   .adaa-artifact-grid{grid-template-columns:1fr}
 }
+
+/* PDS flagship and F2R system pages */
+.pds-system-hero{background:linear-gradient(180deg,#f4f6f2 0%,#fff 100%)}
+.pds-state-band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:30px 0}
+.pds-state-band>div{border:1px solid var(--line);background:var(--paper);padding:24px;display:flex;flex-direction:column;gap:8px;min-height:178px}
+.pds-state-label{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:750}
+.pds-state-band strong{font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:500;line-height:1.16}
+.pds-state-band small{color:var(--muted);font-size:12px;line-height:1.55}
+.pds-role-grid{margin-top:26px}
+.pds-architecture-flow{display:grid;gap:0;border-top:1px solid var(--line);margin-top:28px}
+.pds-architecture-stage{display:grid;grid-template-columns:54px minmax(0,1fr);gap:18px;padding:21px 0;border-bottom:1px solid var(--line);align-items:start}
+.pds-architecture-stage>span{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:750;padding-top:3px}
+.pds-architecture-stage strong{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:500}
+.pds-architecture-stage p{margin:6px 0 0;color:var(--muted);font-size:14px;line-height:1.62;max-width:760px}
+.pds-gate-dual,.pds-provider-dual{margin-top:26px}
+.pds-released-allocation{border:1px solid var(--line);background:var(--paper);padding:28px;margin-top:26px}
+.pds-release-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.pds-release-head h3{font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:500;margin:4px 0 0}
+.pds-config-note{margin:18px 0 0}
+.pds-weight-metrics{margin-top:18px;margin-bottom:0}
+.pds-snapshot-pending{border:1px dashed #9da2a6;background:#f7f8f6;padding:26px;margin-top:24px}
+.pds-snapshot-pending strong{font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:500}
+.pds-snapshot-pending p{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.65}
+.pds-public-table td:not(:first-child),.pds-public-table th:not(:first-child){text-align:center}
+.pds-data-links{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.pds-data-links a{font-weight:650}
+.f2r-process-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px}
+.f2r-relationship-dual{margin-top:26px}
+.adaa-pds-relationship{margin-top:26px}
+.adaa-pds-relationship a{font-weight:700}
+
+@media(max-width:900px){
+  .pds-state-band,.f2r-process-grid{grid-template-columns:1fr}
+  .pds-state-band>div{min-height:0}
+}

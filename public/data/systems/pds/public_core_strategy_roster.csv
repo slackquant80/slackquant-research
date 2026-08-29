@@ -1,0 +1,3 @@
+public_strategy_id,display_name,subtitle,public_role_phrase,system_class,economic_role,native_universe_count,native_instruments,bil_investable,bil_role_within_strategy
+F2R,Forecast-to-Rank Allocation (F2R),Machine-Learning Cross-Asset Portfolio Strategy,Forecast-Ranked Multi-Asset Portfolio Strategy,Portfolio Strategy System,FORECAST_RANKING_CORE,11,SPY|QQQ|IWM|EFA|EEM|VNQ|DBC|IEF|TLT|EWY|GLD,false,EXTERNAL_REFERENCE_ONLY
+ADAA,ADAA,,,Portfolio Strategy System,DECISION_DIVERSIFICATION_COMPOSITE,18,AGG|BIL|DBC|EEM|EFA|EWY|GLD|HYG|IEF|IWM|LQD|QQQ|SHY|SPY|TIP|TLT|VGK|VNQ,true,INTERNAL_INVESTABLE_CASH_SAFE

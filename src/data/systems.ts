@@ -31,6 +31,63 @@ export type SystemItem = {
 
 export const systemItems: SystemItem[] = [
   {
+    slug: "pds",
+    title: "Portfolio Decision System",
+    subtitle: "A Governed Multi-Strategy Portfolio Operating System",
+    category: "Portfolio Decision & Operating System",
+    systemGroup: "portfolio-decision",
+    prominence: "flagship",
+    status: "Public architecture · protected current decision state",
+    dateLabel: "Updated August 29, 2026",
+    shortSummary:
+      "SlackQuant's portfolio-level operating system for provider qualification, portfolio admission, integration, decision formation, and ongoing monitoring. PDS is provider-agnostic: ADAA and F2R are the current Active Core providers, not the definition of the system. The architecture and delayed historical evidence are public while the current decision state remains protected.",
+    role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
+    methodsKey: "pds-system",
+    links: {},
+  },
+  {
+    slug: "adaa",
+    title: "ADAA",
+    subtitle: "Autonomous Dynamic Asset Allocation",
+    category: "Portfolio Strategy System",
+    systemGroup: "portfolio-strategy",
+    prominence: "standard",
+    status: "Public live",
+    dateLabel: "Updated August 2026",
+    shortSummary:
+      "A live rules-based multi-asset portfolio strategy system built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
+    role: "Decision-Diversified Multi-Asset Portfolio Strategy",
+    ssrnId: "7251518",
+    evidenceLabel: "Research anchor",
+    methodsKey: "adaa-system",
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",
+      liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/",
+      relatedResearch: "/research/adaa/",
+      researchDashboard: "https://slackquant80.github.io/adaa-slackquant/",
+      deploymentRepository: "https://github.com/slackquant80/adaa-decision-diversification",
+      replication: "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.4",
+      archivalRelease: "https://doi.org/10.5281/zenodo.22006841",
+    },
+  },
+  {
+    slug: "f2r",
+    title: "Forecast-to-Rank Allocation",
+    subtitle: "Machine-Learning Cross-Asset Portfolio Strategy",
+    category: "Portfolio Strategy System",
+    systemGroup: "portfolio-strategy",
+    prominence: "standard",
+    status: "Public system profile",
+    dateLabel: "Updated August 29, 2026",
+    shortSummary:
+      "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains independently owned while serving as one of the strategy providers currently admitted to the PDS Active Core.",
+    role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
+    methodsKey: "f2r-system",
+    links: {
+      relatedResearch: "/research/price-macro-decision/",
+    },
+  },
+  {
     slug: "scenario-stress-lab",
     title: "Multi-Asset Scenario Stress Lab",
     subtitle:
@@ -45,6 +102,7 @@ export const systemItems: SystemItem[] = [
     role: "Scenario-Based Portfolio Stress Decision Support",
     ssrnId: "7354238",
     evidenceLabel: "Technical White Paper",
+    methodsKey: "scenario-stress-lab",
     links: {
       ssrn: "https://papers.ssrn.com/abstract=7354238",
       whitePaper:
@@ -54,31 +112,6 @@ export const systemItems: SystemItem[] = [
       dashboardGuidePdf: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf",
       fullManual: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Full_Manual.pdf",
       deploymentRepository: "https://github.com/slackquant80/multi-asset-scenario-stress-lab",
-    },
-  },
-  {
-    slug: "adaa",
-    title: "ADAA",
-    subtitle: "Autonomous Dynamic Asset Allocation",
-    category: "Portfolio Strategy System",
-    systemGroup: "portfolio-strategy",
-    prominence: "standard",
-    status: "Public live",
-    dateLabel: "Updated August 2026",
-    shortSummary:
-      "A live rules-based multi-asset Portfolio Strategy System built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
-    role: "Decision-Diversified Multi-Asset Portfolio Strategy",
-    ssrnId: "7251518",
-    evidenceLabel: "Research anchor",
-    methodsKey: "adaa-system",
-    links: {
-      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",
-      liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/",
-      relatedResearch: "/research/adaa/",
-      researchDashboard: "https://slackquant80.github.io/adaa-slackquant/",
-      deploymentRepository: "https://github.com/slackquant80/adaa-decision-diversification",
-      replication: "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.4",
-      archivalRelease: "https://doi.org/10.5281/zenodo.22006841",
     },
   },
 ];
@@ -94,14 +127,14 @@ export const systemGroupDefinitions: Array<{
     kicker: "Operating layer",
     title: "Portfolio Decision & Operating Systems",
     description:
-      "Systems that qualify, combine, monitor, and govern multiple strategy or forecasting inputs at the portfolio-management level.",
+      "Portfolio-level systems that qualify providers, govern portfolio admission and integration, form portfolio decisions, and monitor those decisions over time.",
   },
   {
     key: "portfolio-strategy",
     kicker: "Strategy layer",
     title: "Portfolio Strategy Systems",
     description:
-      "Standalone portfolio strategies that generate implementable allocation decisions under a defined operating contract.",
+      "Independent portfolio strategies that generate allocation decisions under their own defined decision rules and evidence standards.",
   },
   {
     key: "risk-scenario",

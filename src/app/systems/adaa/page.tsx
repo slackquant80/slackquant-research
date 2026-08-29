@@ -144,6 +144,9 @@ export default function AdaaSystemPage() {
               This System page focuses on operating architecture and decision roles. Detailed construction, historical
               tests, and reproducibility materials are maintained in the related research record.
             </div>
+            <div className="system-operating-list adaa-pds-relationship">
+              <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System and source owner while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>
+            </div>
           </section>
 
           <section className="prose-section" id="evidence">

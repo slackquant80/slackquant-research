@@ -79,7 +79,7 @@ if ($researchPage -notmatch '/systems/adaa/') {
 if ($systemPage -notmatch [regex]::Escape('item.links.relatedResearch')) {
   throw "ADAA system page does not consume the registry-owned relatedResearch cross-link"
 }
-if ($systemsIndex -notmatch 'Operational systems organized by decision role') {
+if ($systemsIndex -notmatch 'Operational systems organized by role in the investment process') {
   throw "Systems index does not expose the role-based hierarchy"
 }
 if ($systemCard -notmatch 'evidenceLabel') {

@@ -1,0 +1,16 @@
+{
+  "account_holdings": "PRIVATE_NOT_EXPORTED",
+  "completed_holding_month_cutoff": "2026-07",
+  "contract_id": "PDS_PUBLIC_EXPORT_CONTRACT_V1_1",
+  "current_decision_state": "WITHHELD_BY_POLICY",
+  "current_fx_overlay": "PRIVATE_NOT_EXPORTED",
+  "delay_policy_id": "PDS_COMPLETED_HOLDING_MONTH_DELAY_POLICY_V1_0",
+  "f2r_public_naming_lock": "PASS",
+  "intramonth_preview": "PRIVATE_NOT_EXPORTED",
+  "latest_eligible_signal_period": "2026-06",
+  "latest_released_signal_period": "2026-06",
+  "public_as_of_date": "2026-08-29",
+  "public_component_identity": "ADAA + F2R",
+  "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_1",
+  "shadow_monitor_state": "PRIVATE_NOT_EXPORTED"
+}

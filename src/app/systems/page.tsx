@@ -14,11 +14,11 @@ export default function SystemsPage() {
       <section className="index-hero systems-index-hero">
         <div className="shell">
           <div className="eyebrow">Systems</div>
-          <h1>Operational systems organized by decision role.</h1>
+          <h1>Operational systems organized by role in the investment process.</h1>
           <p className="hero-copy">
-            SlackQuant Systems is not a flat catalog of models. Each public system occupies a distinct
-            layer of the investment process, from portfolio strategy and risk analysis to portfolio-level
-            decision orchestration. Related research remains separately versioned under Research.
+            SlackQuant publishes distinct operational systems across portfolio strategy, risk analysis, and portfolio-level
+            decision governance. Each system retains its own role, evidence boundary, and operating authority; related
+            research remains separately versioned under Research.
           </p>
         </div>
       </section>
@@ -26,12 +26,13 @@ export default function SystemsPage() {
       <section className="section">
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
-            <div className="kicker">Public systems</div>
-            <h2>Different systems, different operating authority</h2>
+            <div className="kicker">Role-based system architecture</div>
+            <h2>From strategy engines to portfolio operating systems</h2>
             <p>
-              Systems are grouped by the job they perform in the investment process. A portfolio strategy,
-              a risk-analysis system, and a portfolio operating system are not presented as interchangeable
-              models simply because they share the same public library.
+              Systems are grouped by the function they perform in the investment process. Strategy systems generate
+              portfolio decisions, risk systems support diagnosis and stress analysis, and portfolio operating systems
+              govern how independently owned providers are evaluated, admitted, integrated, and monitored at the
+              portfolio level.
             </p>
           </div>
 
@@ -58,8 +59,8 @@ export default function SystemsPage() {
           </div>
 
           <p className="systems-rollout-note">
-            Empty operating layers are not shown before a public system is ready. New systems enter the
-            hierarchy only after their role, authority, evidence, and disclosure contract are defined.
+            Presentation hierarchy reflects operating scope, not performance ranking. PDS occupies the portfolio-level
+            operating layer; ADAA, F2R, and the Stress Lab retain independent system identities and source ownership.
           </p>
         </div>
       </section>
