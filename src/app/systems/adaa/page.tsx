@@ -69,7 +69,7 @@ export default function AdaaSystemPage() {
             <p className="lede">
               ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification. Rather than
               depending on a single allocation rule, it combines complementary decision perspectives so portfolio
-              behavior is not tied to one market-response path.
+              behavior is not tied to a single decision path.
             </p>
             <p className="body-copy">
               The public interface is designed around operating clarity: the latest official monthly decision, current
