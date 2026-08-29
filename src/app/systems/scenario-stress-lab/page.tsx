@@ -44,8 +44,8 @@ export default function ScenarioStressLabPage() {
           <div className="paper-meta">
             <span>{item.status}</span>
             <span>{item.role}</span>
-            <span>Validated v1 · 8 ETFs</span>
-            <span>SSRN {item.ssrnId}</span>
+            <span>20-day joint scenario horizon</span>
+            <span>Research anchor · SSRN {item.ssrnId}</span>
             <span>{item.dateLabel}</span>
           </div>
           <div className="actions">
@@ -85,10 +85,10 @@ export default function ScenarioStressLabPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              The Multi-Asset Scenario Stress Lab is a human-in-the-loop portfolio stress system for
-              20-trading-day multi-asset analysis. It generates conditional joint return paths, organizes
-              adverse scenarios into transparent stress archetypes, compares them with historical
-              block-bootstrap resampling, and revalues portfolios on a common scenario set.
+              The Multi-Asset Scenario Stress Lab is a human-in-the-loop system for exploring how portfolios behave
+              under plausible joint market stress. It generates conditional multi-asset return paths, organizes
+              adverse scenarios into interpretable stress archetypes, and revalues portfolios on a common scenario
+              set. A transparent historical resampling benchmark remains visible throughout the analysis.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">8</div><div className="label">ETFs in validated v1</div></div>
@@ -116,9 +116,9 @@ export default function ScenarioStressLabPage() {
                 <p>Eight-ETF baseline tied to the existing Stage-D evidence, Technical White Paper, and current public dashboard.</p>
               </div>
               <div className="system-role-card">
-                <div className="kicker">Future expansion</div>
-                <h3>18-ETF universe · revalidation required</h3>
-                <p>The ADAA 18-ETF universe is a planned extension. It will not replace v1 unless it passes a separate revalidation.</p>
+                <div className="kicker">Portfolio what-if</div>
+                <h3>Same-scenario comparison</h3>
+                <p>Baseline and candidate portfolios are revalued on the same scenario cloud so allocation effects can be interpreted separately from scenario-generation effects.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Use case</div>

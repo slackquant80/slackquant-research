@@ -41,7 +41,7 @@ export const systemItems: SystemItem[] = [
     status: "Operational baseline v1",
     dateLabel: "Updated August 27, 2026",
     shortSummary:
-      "A human-in-the-loop multi-asset stress system centered on B1 EWMA-t conditional scenarios, with B0 historical block resampling kept visible as the transparent comparator. The validated v1 public universe contains eight ETFs. The retained public use is scenario-archetype stress representation and same-cloud portfolio what-if analysis, not market timing or automated allocation.",
+      "A human-in-the-loop multi-asset system for exploring portfolio behavior under plausible joint market stress. It organizes conditional scenarios into interpretable stress archetypes and revalues portfolios on a common scenario set, with a transparent historical comparator retained for context. Designed for portfolio stress decision support, not market timing or automated allocation.",
     role: "Scenario-Based Portfolio Stress Decision Support",
     ssrnId: "7354238",
     evidenceLabel: "Technical White Paper",
