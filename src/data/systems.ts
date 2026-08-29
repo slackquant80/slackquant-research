@@ -66,7 +66,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Updated August 2026",
     shortSummary:
-      "An open rules-based multi-asset portfolio strategy built around Decision Diversification. The live interface separates the official month-end decision, current portfolio drift, and a provisional intramonth preview, while the research record remains separately frozen.",
+      "A live rules-based multi-asset Portfolio Strategy System built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
     evidenceLabel: "Research anchor",

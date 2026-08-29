@@ -9,7 +9,7 @@ const item = getSystem("adaa");
 export const metadata: Metadata = {
   title: "ADAA — Portfolio Strategy System",
   description:
-    "Open operational Autonomous Dynamic Asset Allocation system with live portfolio monitoring, explicit decision-state separation, frozen research evidence, and linked quantitative methods.",
+    "Live multi-asset Portfolio Strategy System built around Decision Diversification, with distinct official, mark-to-market, and intramonth preview states.",
 };
 
 
@@ -67,14 +67,14 @@ export default function AdaaSystemPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              ADAA is an open, rules-based multi-asset portfolio strategy that combines several dynamic allocation
-              rules into one operational portfolio. The design diversifies portfolio decisions, not only the assets
-              those decisions ultimately hold.
+              ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification. Rather than
+              depending on a single allocation rule, it combines complementary decision perspectives so portfolio
+              behavior is not tied to one market-response path.
             </p>
             <p className="body-copy">
-              The implementation combines complementary decision rules within a broad multi-asset opportunity set.
-              The live dashboard exposes the official monthly decision, current portfolio drift, and a provisional
-              intramonth preview, while the research record remains separately frozen and versioned.
+              The public interface is designed around operating clarity: the latest official monthly decision, current
+              mark-to-market drift, and a provisional intramonth preview are shown as distinct states. Detailed
+              historical implementation, robustness tests, and replication remain in the linked research record.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">Monthly</div><div className="label">Official decision cycle</div></div>
@@ -86,11 +86,11 @@ export default function AdaaSystemPage() {
 
           <section className="prose-section" id="operating-state">
             <div className="kicker">Operational contract</div>
-            <h2>Official decision, current drift, and preview are separate states</h2>
+            <h2>Three operating states, one decision authority</h2>
             <p className="body-copy">
-              The live dashboard deliberately separates the completed month-end decision from mark-to-market drift and
-              from a provisional estimate of the next target. A partial-month estimate therefore cannot be mistaken
-              for an executable portfolio decision.
+              The official month-end decision is the portfolio target. Current MTD shows how that portfolio has drifted
+              since execution, while Intramonth Preview estimates a possible next target from partial-month data. Keeping
+              these states separate makes the live interface useful for monitoring without blurring what is actionable.
             </p>
             <div className="system-role-grid adaa-state-grid">
               <div className="system-role-card adaa-state-card official">
@@ -110,7 +110,7 @@ export default function AdaaSystemPage() {
               </div>
             </div>
             <div className="boundary-note">
-              <b>Authority boundary:</b> the dashboard is a portfolio-monitoring and decision-support interface. It does not place trades or convert the intramonth preview into an official target.
+              <b>Decision authority:</b> only the Official Decision carries portfolio-target authority. Current MTD and Intramonth Preview are monitoring states; the dashboard itself does not place trades.
             </div>
           </section>
 
@@ -118,15 +118,16 @@ export default function AdaaSystemPage() {
             <div className="kicker">Portfolio architecture</div>
             <h2>Diversify decision logic, not just asset exposure</h2>
             <p className="body-copy">
-              ADAA combines multiple allocation rules that respond to changing markets through different information
-              horizons, selection logic, defensive behavior, and persistence. The objective is to reduce dependence on
-              one decision path while keeping the combined portfolio operationally interpretable.
+              ADAA is designed as an ensemble of complementary allocation perspectives. They differ in market
+              sensitivity, information horizon, cross-asset selection, defensive behavior, and persistence. The aim is
+              not to average similar signals, but to reduce dependence on any single decision path while preserving a
+              portfolio that remains interpretable and implementable.
             </p>
             <div className="system-role-grid adaa-architecture-grid">
               <div className="system-role-card">
                 <div className="kicker">State adaptation</div>
                 <h3>Different responses to changing regimes</h3>
-                <p>Complementary rules vary in how quickly and how strongly they adjust risk exposure as market conditions change.</p>
+                <p>Complementary decision rules react at different speeds and with different risk responses as market conditions change.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Opportunity selection</div>
@@ -135,22 +136,22 @@ export default function AdaaSystemPage() {
               </div>
               <div className="system-role-card">
                 <div className="kicker">Persistence & risk control</div>
-                <h3>Reduce synchronized portfolio transitions</h3>
-                <p>Risk-aware inputs and more persistent allocation behavior help moderate common reversals and concentrated decision timing.</p>
+                <h3>Moderate synchronized portfolio transitions</h3>
+                <p>More persistent decision components and risk-aware inputs help avoid having the entire portfolio transition on the same signal or at the same time.</p>
               </div>
             </div>
             <div className="evidence-note">
-              This System page focuses on operating architecture and decision roles. Detailed historical implementation,
-              robustness evidence, and reproducibility materials remain available through the related research record.
+              This System page focuses on operating architecture and decision roles. Detailed construction, historical
+              tests, and reproducibility materials are maintained in the related research record.
             </div>
           </section>
 
           <section className="prose-section" id="evidence">
-            <div className="kicker">Evidence lineage</div>
-            <h2>Live operation and frozen research remain distinct</h2>
+            <div className="kicker">Evidence & versioning</div>
+            <h2>Live operation evolves; published evidence stays versioned</h2>
             <div className="dual adaa-evidence-dual">
               <div className="dual-card operational">
-                <div className="kicker">Current operational artifact</div>
+                <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
                   The live implementation refreshes current data and monitoring views, including portfolio state,
@@ -163,12 +164,12 @@ export default function AdaaSystemPage() {
                 ) : null}
               </div>
               <div className="dual-card">
-                <div className="kicker">Frozen public evidence</div>
+                <div className="kicker">Published research record</div>
                 <h3>Diversify the Decisions, Not Just the Assets</h3>
                 <p>
                   Public Working Paper v1.34 documents the research question, historical evidence, robustness,
-                  implementation analysis, and Decision Diversification framework. It is not silently revised when
-                  the live system changes.
+                  implementation analysis, and Decision Diversification framework. That version remains citable as
+                  published while the live system continues to refresh.
                 </p>
                 {item.links.relatedResearch ? (
                   <Link className="btn soft" href={item.links.relatedResearch}>Open Research Page</Link>
@@ -176,13 +177,11 @@ export default function AdaaSystemPage() {
               </div>
             </div>
             <div className="system-operating-list adaa-evidence-list">
-              <div><strong>Research anchor.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable evidence record for the published study.</span></div>
-              <div><strong>Operational updates.</strong><span> Current data and implementation views may evolve under change control without being re-labeled as new research findings.</span></div>
-              <div><strong>Claim boundary.</strong><span> Historical validation does not establish guaranteed future outperformance, unique optimality, or predictive validity of the intramonth preview.</span></div>
+              <div><strong>Published evidence.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable record for the published study.</span></div>
+              <div><strong>Live operation.</strong><span> Current data, monitoring, and implementation views can update under change control without rewriting published findings.</span></div>
+              <div><strong>Interpretation.</strong><span> The dashboard reports current strategy state and research-linked evidence; it is not a claim of guaranteed future performance.</span></div>
             </div>
-            <div className="boundary-note">
-              <b>Scope boundary:</b> later research extensions and downstream portfolio systems remain separate artifacts and are not treated as validation of the public ADAA strategy. The platform links to derived outputs rather than redistributing source market or macroeconomic datasets.
-            </div>
+
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
@@ -191,9 +190,9 @@ export default function AdaaSystemPage() {
             <div className="kicker">Public artifacts</div>
             <h2>Access & documentation</h2>
             <p className="body-copy">
-              Public documentation is intentionally split by purpose: the live dashboard for current operation, the
-              Investment Research and SSRN record for frozen evidence, the replication release and DOI for reproducibility,
-              and the Quantitative Methods library for reusable methodology.
+              Use the live dashboard for current operation, the Investment Research and SSRN record for published
+              evidence, the replication release and DOI for reproducibility, and Quantitative Methods for reusable
+              methodology.
             </p>
             <div className="repro-links documentation-artifacts adaa-artifact-grid">
               {item.links.liveDashboard ? (
