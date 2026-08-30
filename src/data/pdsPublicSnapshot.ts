@@ -136,8 +136,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
   "completedHoldingMonthCutoff": "2026-07",
   "latestEligibleSignalPeriod": "2026-06",
   "latestReleasedSignalPeriod": "2026-06",
-  "sourceProgramVersion": "v0.3.125",
-  "sourceRs03Version": "v0.20.82",
+  "sourceProgramVersion": "v0.3.126",
+  "sourceRs03Version": "v0.20.83",
   "publicComponentIdentity": "ADAA + F2R",
   "latestStrategyWeights": {
     "signalPeriod": "2026-06",

@@ -19,14 +19,14 @@
     "public_fx_performance_summary.csv": "60120943745de4002f1b74bbd5c719dcbb04b9c41eba4cd2820fc6a268fe100e",
     "public_system_identity.json": "0e4c1a2c0b2f4beb9c2b7eeeb84ec5ce1de9a341ddb6c48afa88bc3be4c27bbf"
   },
-  "generated_at": "2026-08-31T00:43:52.765861+09:00",
+  "generated_at": "2026-08-31T01:01:58.173099+09:00",
   "historical_fx_layer_status": "HISTORICAL_DELAYED_NON_CANONICAL_SPOT_SENSITIVITY",
   "latest_eligible_signal_period": "2026-06",
   "latest_released_signal_period": "2026-06",
   "no_private_leakage_scan": "PASS",
   "performance_clock": "REALIZED_HOLDING_MONTH",
   "platform_deployment_authorized": false,
-  "private_dashboard_sha256": "cb78833069f7f43eb58273da05c9d06dc5dec616b1fa22aa6fed40cb8e6fa91d",
+  "private_dashboard_sha256": "e45b0731bed02879c0d807f526965ed72c5509fbed81dca3ffb8da49951fd841",
   "public_as_of_date": "2026-08-31",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_5",
   "public_naming_lock": "F2R_PUBLIC_NAMING_LOCK_V1_PASS",
@@ -43,7 +43,7 @@
     "strategy_roster": 2,
     "strategy_weights": 112
   },
-  "source_program_version": "v0.3.125",
-  "source_rs03_version": "v0.20.82",
+  "source_program_version": "v0.3.126",
+  "source_rs03_version": "v0.20.83",
   "status": "PASS_PUBLIC_SAFE_EXPORT_PENDING_PLATFORM_QA"
 }
