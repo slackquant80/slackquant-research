@@ -338,7 +338,7 @@ export default function PdsSystemPage() {
                   <li>System architecture, role, governance, and provider relationships</li>
                   <li>ADAA and F2R as independent Portfolio Strategy Systems</li>
                   <li>Released historical portfolio targets and returns after the delay gate</li>
-                  <li>Methods and supporting research where separately public</li>
+                  <li>Public methods and supporting research, where available</li>
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
