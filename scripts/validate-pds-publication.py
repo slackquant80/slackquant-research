@@ -34,7 +34,9 @@ def main() -> int:
     for token in [
         'slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"',
         'Portfolio Decision & Operating System',
-        'slug: "f2r"', 'Forecast-to-Rank Allocation', 'systemGroup: "portfolio-strategy"',
+        'slug: "f2r"', 'Forecast-to-Rank Allocation',
+        'Machine-Learning Cross-Asset Portfolio Strategy',
+        'systemGroup: "portfolio-strategy"',
     ]:
         require(systems, token, 'systems registry')
 
@@ -60,10 +62,16 @@ def main() -> int:
 
     require(binder, '"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"', 'PDS binder')
 
+    # F2R public identity is split intentionally across the registry and page:
+    # the registry owns the formal subtitle, while the page uses reader-facing prose.
+    # Do not force the registry subtitle to be duplicated verbatim in page copy.
     for token in [
-        'Forecast-to-Rank Allocation (F2R)', 'Machine-Learning Cross-Asset Portfolio Strategy',
-        'Independent strategy system', 'current PDS Active Core provider',
-        'current operating state, not the definition of PDS', '/systems/pds/',
+        'Forecast-to-Rank Allocation (F2R)',
+        'live machine-learning cross-asset Portfolio Strategy System',
+        'Independent strategy system',
+        'current PDS Active Core provider',
+        'current operating state, not the definition of PDS',
+        '/systems/pds/',
     ]:
         require(f2r, token, 'F2R page')
 

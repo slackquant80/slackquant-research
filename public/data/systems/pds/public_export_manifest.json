@@ -9,16 +9,16 @@
     "public_active_core_strategy_weights.csv": "1c9a065bede6d5d022f51c9509c95be42328e2183378e44fa3f4318a607fb9a9",
     "public_core_monthly_returns.csv": "5cae24ddda120fb25239f881978c9cb38d23e5d98e5fb338f1ac7f47a39947af",
     "public_core_strategy_roster.csv": "3ec316c74da06e5661c0066d03c1b6e097819d0fb1387031716230dea1d016d3",
-    "public_disclosure_state.json": "218d2280e6a28d681052d3383f0488006fa583b86cf11c96f9ddb352598bfcbc",
+    "public_disclosure_state.json": "0a4dea52996bcfb9f81a9aea3918a782b4bbf756acf422bc1d23f2be4fa6cd89",
     "public_system_identity.json": "0e4c1a2c0b2f4beb9c2b7eeeb84ec5ce1de9a341ddb6c48afa88bc3be4c27bbf"
   },
-  "generated_at": "2026-08-29T18:37:47.069165+09:00",
+  "generated_at": "2026-08-30T14:34:08.143212+09:00",
   "latest_eligible_signal_period": "2026-06",
   "latest_released_signal_period": "2026-06",
   "no_private_leakage_scan": "PASS",
   "platform_deployment_authorized": false,
-  "private_dashboard_sha256": "95eb638c93632b00e39e2ac225658efd4953a4490346d526bbe7c9dd3cc17d45",
-  "public_as_of_date": "2026-08-29",
+  "private_dashboard_sha256": "7508c9aa80819ca3987816b4b4fa6fa2b35b2e611d5582d54f1e20ad7cd80782",
+  "public_as_of_date": "2026-08-30",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_1",
   "public_naming_lock": "F2R_PUBLIC_NAMING_LOCK_V1_PASS",
   "row_counts": {
@@ -27,7 +27,7 @@
     "strategy_roster": 2,
     "strategy_weights": 112
   },
-  "source_program_version": "v0.3.117",
-  "source_rs03_version": "v0.20.74",
+  "source_program_version": "v0.3.118",
+  "source_rs03_version": "v0.20.75",
   "status": "PASS_PUBLIC_SAFE_EXPORT_PENDING_PLATFORM_QA"
 }
