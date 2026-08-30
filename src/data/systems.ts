@@ -77,13 +77,15 @@ export const systemItems: SystemItem[] = [
     category: "Portfolio Strategy System",
     systemGroup: "portfolio-strategy",
     prominence: "standard",
-    status: "Public system profile",
-    dateLabel: "Updated August 29, 2026",
+    status: "Public live",
+    dateLabel: "Updated August 30, 2026",
     shortSummary:
       "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains independently owned while serving as one of the strategy providers currently admitted to the PDS Active Core.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
     methodsKey: "f2r-system",
     links: {
+      liveDashboard: "https://f2r-forecast-to-rank-allocation.streamlit.app",
+      deploymentRepository: "https://github.com/slackquant80/f2r-forecast-to-rank-allocation",
       relatedResearch: "/research/price-macro-decision/",
     },
   },

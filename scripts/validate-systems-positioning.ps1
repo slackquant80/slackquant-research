@@ -69,8 +69,14 @@ foreach ($token in @('ADAA + F2R','Protected until release gate','PDS is provide
 foreach ($forbidden in @('Active Core architecture','Latest released strategy mix','Two independent Portfolio Strategy Systems')) {
   if ($pdsPage -match [regex]::Escape($forbidden)) { throw "PDS fixed-blend narrative regression: $forbidden" }
 }
-foreach ($token in @('Forecast-to-Rank Allocation (F2R)','Independent strategy system','current PDS Active Core provider','current operating state, not the definition of PDS','/systems/pds/')) {
-  if ($f2rPage -notmatch [regex]::Escape($token)) { throw "F2R relationship contract missing: $token" }
+foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Live Dashboard','GitHub Repository','one public-safe deployment surface','/systems/pds/')) {
+  if ($f2rPage -notmatch [regex]::Escape($token)) { throw "F2R relationship/live-system contract missing: $token" }
+}
+foreach ($token in @('status: "Public live"','https://f2r-forecast-to-rank-allocation.streamlit.app','https://github.com/slackquant80/f2r-forecast-to-rank-allocation')) {
+  if ($systemsData -notmatch [regex]::Escape($token)) { throw "F2R public-live registry contract missing: $token" }
+}
+foreach ($forbidden in @('MFA_','_LOCAL_PRIVATE_DATA','MACRO_FORECAST_ALLOCATION','provider_preview','runtime_decisions')) {
+  if ($f2rPage -match [regex]::Escape($forbidden)) { throw "F2R public page leaks internal identifier/path token: $forbidden" }
 }
 
 Write-Host "SYSTEMS_POSITIONING_GATE_PASS" -ForegroundColor Green

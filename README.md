@@ -4,12 +4,7 @@
 
 **Public application source — current**
 
-This application implements the approved public research direction using:
-- Next.js App Router
-- React
-- TypeScript
-- static export
-- plain CSS
+Next.js App Router + React + TypeScript static export.
 
 ## Current routes
 
@@ -21,30 +16,38 @@ This application implements the approved public research direction using:
 /research/price-macro-decision/
 /research/beyond-average-accuracy/
 /systems/
+/systems/pds/
+/systems/adaa/
+/systems/f2r/
 /systems/scenario-stress-lab/
+/systems/scenario-stress-lab/guide/
+/methods/
 /about/
 ```
+
+## PDS publication boundary
+
+The public PDS page does not read or copy the private operator dashboard. `scripts/sync-pds-public.ps1` invokes the source-owned PDS whitelist exporter and binds only its approved delayed outputs.
+
+Use the project-root `00_PUBLISH_PDS_PUBLIC.cmd` for the governed sync + local release QA workflow.
+
+## F2R standalone public deployment
+
+The F2R System page links the independently deployed public dashboard at `https://f2r-forecast-to-rank-allocation.streamlit.app` and its public deployment repository at `slackquant80/f2r-forecast-to-rank-allocation`.
+
+The deployment repository is a public-safe artifact generated from the source-owned F2R operational system. It is not a second canonical calculation or state source. The SlackQuant platform links the live surface and related evidence; it does not recalculate F2R.
 
 ## Important boundaries
 
 - GitHub remains the public code destination.
-- This app does not implement a second code portal.
-- Public system surfaces may document operational products, but live/operator runtimes remain separate unless a public-safe runtime is explicitly released.
+- Public system pages document operational products, but private/operator runtimes remain separate unless a governed public output is explicitly released.
+- No database, CMS, authentication, or public calculation API is included.
 - No placeholder public link is rendered as a real artifact.
-- No database / CMS / authentication / API layer is included.
 
 ## Development
 
-See:
-
-`SETUP_AND_RUN_WINDOWS.md`
+See `SETUP_AND_RUN_WINDOWS.md`.
 
 ## Build output
 
-`npm run build`
-
-creates a static export in:
-
-`out/`
-
-That folder is a deployment artifact and should not be treated as canonical source.
+`npm run build` creates a static export in `out/`. That directory is reconstructible deployment output and is not canonical source.
