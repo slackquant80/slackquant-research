@@ -12,22 +12,22 @@
     "public_core_performance_path.csv": "ebb1bff1fa68844a9f1735e8c67386f4021487c86a003db29fc9d65e98b99ff8",
     "public_core_performance_summary.csv": "c445a2cedcbbd8bfde45710ad3f2c8497b1d1973a00053e55b1aeb61f6770127",
     "public_core_strategy_roster.csv": "3ec316c74da06e5661c0066d03c1b6e097819d0fb1387031716230dea1d016d3",
-    "public_disclosure_state.json": "7de073c32304ed7d91da3d7e40cafeaefd14cf48160f29f5f1b9cc10641df21a",
+    "public_disclosure_state.json": "737de8ba226c860ee9693f2c6ee366a5cc40c0638ba5e05e6948ddc699632fb7",
     "public_fx_calendar_returns.csv": "e96ae50a2c8c2e3c90bf85c56eb8f7d3d68591b8e89fe461a508731f009081e7",
     "public_fx_hedge_history.csv": "d4e44bd9a57ad4bcc5c59df3bd5c0bc85e5b4a68b9626b8e0f46ae131acf5b65",
     "public_fx_performance_path.csv": "fed7274c45bfe78afbfc2766c1e90231088d7b826842fee9f31264fef3037f0c",
     "public_fx_performance_summary.csv": "60120943745de4002f1b74bbd5c719dcbb04b9c41eba4cd2820fc6a268fe100e",
     "public_system_identity.json": "0e4c1a2c0b2f4beb9c2b7eeeb84ec5ce1de9a341ddb6c48afa88bc3be4c27bbf"
   },
-  "generated_at": "2026-08-30T22:52:01.750630+09:00",
+  "generated_at": "2026-08-31T00:43:52.765861+09:00",
   "historical_fx_layer_status": "HISTORICAL_DELAYED_NON_CANONICAL_SPOT_SENSITIVITY",
   "latest_eligible_signal_period": "2026-06",
   "latest_released_signal_period": "2026-06",
   "no_private_leakage_scan": "PASS",
   "performance_clock": "REALIZED_HOLDING_MONTH",
   "platform_deployment_authorized": false,
-  "private_dashboard_sha256": "7508c9aa80819ca3987816b4b4fa6fa2b35b2e611d5582d54f1e20ad7cd80782",
-  "public_as_of_date": "2026-08-30",
+  "private_dashboard_sha256": "cb78833069f7f43eb58273da05c9d06dc5dec616b1fa22aa6fed40cb8e6fa91d",
+  "public_as_of_date": "2026-08-31",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_5",
   "public_naming_lock": "F2R_PUBLIC_NAMING_LOCK_V1_PASS",
   "row_counts": {
@@ -43,7 +43,7 @@
     "strategy_roster": 2,
     "strategy_weights": 112
   },
-  "source_program_version": "v0.3.122",
-  "source_rs03_version": "v0.20.79",
+  "source_program_version": "v0.3.125",
+  "source_rs03_version": "v0.20.82",
   "status": "PASS_PUBLIC_SAFE_EXPORT_PENDING_PLATFORM_QA"
 }

@@ -132,12 +132,12 @@ export type PdsPublicSnapshot = {
 // PDS_PUBLIC_BINDING_START
 export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
   "exportStatus": "BOUND_PUBLIC_SAFE_EXPORT",
-  "publicAsOfDate": "2026-08-30",
+  "publicAsOfDate": "2026-08-31",
   "completedHoldingMonthCutoff": "2026-07",
   "latestEligibleSignalPeriod": "2026-06",
   "latestReleasedSignalPeriod": "2026-06",
-  "sourceProgramVersion": "v0.3.122",
-  "sourceRs03Version": "v0.20.79",
+  "sourceProgramVersion": "v0.3.125",
+  "sourceRs03Version": "v0.20.82",
   "publicComponentIdentity": "ADAA + F2R",
   "latestStrategyWeights": {
     "signalPeriod": "2026-06",
