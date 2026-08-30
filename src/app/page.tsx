@@ -140,10 +140,10 @@ export default function HomePage() {
                   <div className="home-system-feature-subtitle">{featuredSystem.subtitle}</div>
                   <p>{featuredSystem.shortSummary}</p>
                   <div className="actions">
-                    <Link className="btn primary" href={`/systems/${featuredSystem.slug}/`}>
-                      Open PDS
+                    <Link className="btn primary" href="/systems/pds/dashboard/">
+                      Open PDS Dashboard
                     </Link>
-                    <Link className="btn inverse-soft" href="/systems/">
+                    <Link className="btn inverse-soft" href="/systems/pds/">
                       View System Architecture
                     </Link>
                   </div>

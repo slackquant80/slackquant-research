@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "status": "PASS",
+  "public_authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
+  "performance_clock": {
+    "source_key": "signal/origin month",
+    "public_performance_key": "realized holding month",
+    "holding_rule": "signal/origin month + 1",
+    "annual_rule": "compound by realized holding year"
+  },
+  "cross_surface": {
+    "PDS_F2R_holding_year_exact_match": true,
+    "overlap_start": "2017",
+    "overlap_end": "2026",
+    "overlap_years": 10
+  },
+  "provider_semantics": {
+    "ADAA": "PDS-basis comparator on common execution clock; standalone ADAA source-native evidence remains separate",
+    "F2R": "PDS-basis comparator on realized holding clock; standalone signal-year attribution remains research provenance"
+  },
+  "protected_current_state": true
+}

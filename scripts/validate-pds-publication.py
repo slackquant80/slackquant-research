@@ -7,6 +7,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parents[1]
 SYSTEMS = APP / 'src/data/systems.ts'
 PDS_PAGE = APP / 'src/app/systems/pds/page.tsx'
+PDS_DASHBOARD = APP / 'src/app/systems/pds/dashboard/page.tsx'
 F2R_PAGE = APP / 'src/app/systems/f2r/page.tsx'
 SNAPSHOT = APP / 'src/data/pdsPublicSnapshot.ts'
 BINDER = APP / 'scripts/bind-pds-public-export.py'
@@ -27,6 +28,7 @@ def require(text: str, token: str, label: str) -> None:
 def main() -> int:
     systems = need(SYSTEMS)
     pds = need(PDS_PAGE)
+    dashboard = need(PDS_DASHBOARD)
     f2r = need(F2R_PAGE)
     snapshot = need(SNAPSHOT)
     binder = need(BINDER)
@@ -51,6 +53,19 @@ def main() -> int:
         'Portfolio Integration & Allocation',
     ]:
         require(pds, token, 'PDS page')
+
+    for token in [
+        'Delayed portfolio evidence, with current decisions protected.',
+        'Core Performance', 'Historical Operational Spot Sensitivity',
+        'Delayed · non-canonical', 'Public history is not a live portfolio feed.',
+        'corePerformanceSummary', 'fxPerformanceSummary', 'fxHedgeHistory',
+        'Historical delayed state',
+        'Recent 24 completed holding months',
+        'Annual performance by currency treatment',
+        'Monthly returns',
+        'Annual performance',
+    ]:
+        require(dashboard, token, 'PDS public dashboard')
 
     for forbidden in [
         'Active Core architecture',
@@ -86,6 +101,10 @@ def main() -> int:
         'public_core_monthly_returns.csv', 'public_core_strategy_roster.csv',
         'public_system_identity.json', 'public_disclosure_state.json',
         'public_export_manifest.json', 'PDS_PUBLIC_BINDING_RECEIPT.json',
+        'public_core_performance_path.csv', 'public_core_performance_summary.csv',
+        'public_core_calendar_returns.csv', 'public_fx_performance_path.csv',
+        'public_fx_performance_summary.csv', 'public_fx_hedge_history.csv',
+        'public_fx_calendar_returns.csv',
     }
     missing = [name for name in sorted(required) if not (DATA / name).is_file()]
     if missing:
@@ -98,6 +117,10 @@ def main() -> int:
         raise RuntimeError('current decision disclosure boundary is not protected')
     if disclosure.get('public_component_identity') != 'ADAA + F2R':
         raise RuntimeError('public component identity mismatch')
+    if disclosure.get('historical_fx_spot_sensitivity') != 'DELAYED_PUBLIC_NON_CANONICAL':
+        raise RuntimeError('historical FX public layer is not explicitly delayed/non-canonical')
+    if disclosure.get('current_fx_overlay') != 'PRIVATE_NOT_EXPORTED':
+        raise RuntimeError('current FX state is not protected')
     if manifest.get('no_private_leakage_scan') != 'PASS':
         raise RuntimeError('source exporter leakage scan not PASS')
     if receipt.get('status') != 'PDS_SLACKQUANT_PUBLIC_BINDING_PASS':

@@ -18,6 +18,13 @@ EXPECTED = {
     "public_system_identity.json",
     "public_disclosure_state.json",
     "public_export_manifest.json",
+    "public_core_performance_path.csv",
+    "public_core_performance_summary.csv",
+    "public_core_calendar_returns.csv",
+    "public_fx_performance_path.csv",
+    "public_fx_performance_summary.csv",
+    "public_fx_hedge_history.csv",
+    "public_fx_calendar_returns.csv",
 }
 PROHIBITED = [
     re.compile(r"(?i)\bMFA\b"),
@@ -45,6 +52,19 @@ def as_float(value: str) -> float:
         return float(value)
     except Exception as exc:
         raise RuntimeError(f"numeric public field is invalid: {value!r}") from exc
+
+
+def as_optional_float(value: str):
+    if value is None or str(value).strip() == "":
+        return None
+    return as_float(value)
+
+
+def as_int(value: str) -> int:
+    try:
+        return int(value)
+    except Exception as exc:
+        raise RuntimeError(f"integer public field is invalid: {value!r}") from exc
 
 
 def scan_source(root: Path) -> None:
@@ -91,6 +111,13 @@ def main() -> int:
     strategy_rows = read_csv(export_root / "public_active_core_strategy_weights.csv")
     asset_rows = read_csv(export_root / "public_active_core_asset_targets.csv")
     return_rows = read_csv(export_root / "public_core_monthly_returns.csv")
+    core_performance_rows = read_csv(export_root / "public_core_performance_path.csv")
+    core_summary_rows = read_csv(export_root / "public_core_performance_summary.csv")
+    core_calendar_rows = read_csv(export_root / "public_core_calendar_returns.csv")
+    fx_performance_rows = read_csv(export_root / "public_fx_performance_path.csv")
+    fx_summary_rows = read_csv(export_root / "public_fx_performance_summary.csv")
+    fx_hedge_rows = read_csv(export_root / "public_fx_hedge_history.csv")
+    fx_calendar_rows = read_csv(export_root / "public_fx_calendar_returns.csv")
 
     latest_signal = str(disclosure.get("latest_released_signal_period", ""))
     latest_strategy_candidates = [r for r in strategy_rows if r.get("signal_period") == latest_signal]
@@ -137,6 +164,61 @@ def main() -> int:
         for r in recent
     ]
 
+    core_performance_snapshot = [
+        {"signalPeriod": r["signal_period"], "holdingMonth": r["holding_month"], "seriesId": r["series_id"],
+         "displayName": r["display_name"], "netReturn": as_float(r["net_return"]),
+         "cumulativeWealth": as_float(r["cumulative_wealth"]), "drawdown": as_float(r["drawdown"]),
+         "seriesRole": r.get("series_role", "")}
+        for r in core_performance_rows
+    ]
+    core_summary_snapshot = [
+        {"seriesId": r["series_id"], "displayName": r["display_name"], "months": as_int(r["months"]),
+         "startHoldingMonth": r["start_holding_month"], "endHoldingMonth": r["end_holding_month"],
+         "cagr": as_optional_float(r["cagr"]), "annVol": as_optional_float(r["ann_vol"]),
+         "sharpeRf0": as_optional_float(r["sharpe_rf0"]), "maxDrawdown": as_optional_float(r["max_drawdown"]),
+         "calmar": as_optional_float(r["calmar"]), "cumulativeReturn": as_optional_float(r["cumulative_return"]),
+         "terminalWealth": as_optional_float(r["terminal_wealth"]), "seriesRole": r.get("series_role", "")}
+        for r in core_summary_rows
+    ]
+    core_calendar_snapshot = [
+        {"year": r["year"], "seriesId": r["series_id"], "displayName": r["display_name"],
+         "annualReturn": as_float(r["annual_return"]), "monthsObserved": as_int(r["months_observed"]),
+         "seriesRole": r.get("series_role", "")}
+        for r in core_calendar_rows
+    ]
+    fx_performance_snapshot = [
+        {"signalPeriod": r["signal_period"], "holdingMonth": r["holding_month"], "seriesId": r["series_id"],
+         "displayName": r["display_name"], "netReturn": as_float(r["net_return"]),
+         "cumulativeWealth": as_float(r["cumulative_wealth"]), "drawdown": as_float(r["drawdown"]),
+         "layerStatus": r.get("layer_status", "")}
+        for r in fx_performance_rows
+    ]
+    fx_summary_snapshot = [
+        {"seriesId": r["series_id"], "displayName": r["display_name"], "months": as_int(r["months"]),
+         "startHoldingMonth": r["start_holding_month"], "endHoldingMonth": r["end_holding_month"],
+         "cagr": as_optional_float(r["cagr"]), "annVol": as_optional_float(r["ann_vol"]),
+         "sharpeRf0": as_optional_float(r["sharpe_rf0"]), "maxDrawdown": as_optional_float(r["max_drawdown"]),
+         "calmar": as_optional_float(r["calmar"]), "cumulativeReturn": as_optional_float(r["cumulative_return"]),
+         "terminalWealth": as_optional_float(r["terminal_wealth"]), "layerStatus": r.get("layer_status", "")}
+        for r in fx_summary_rows
+    ]
+    fx_hedge_snapshot = [
+        {"signalPeriod": r["signal_period"], "holdingMonth": r["holding_month"],
+         "dynamicHedgeRatio": as_float(r["dynamic_hedge_ratio"]),
+         "zscoreSignal": as_optional_float(r.get("zscore_signal", "")),
+         "layerStatus": r.get("layer_status", "")}
+        for r in fx_hedge_rows
+    ]
+
+    fx_calendar_snapshot = [
+        {
+            "year": r["year"], "seriesId": r["series_id"], "displayName": r["display_name"],
+            "annualReturn": as_float(r["annual_return"]), "monthsObserved": as_int(r["months_observed"]),
+            "layerStatus": r.get("layer_status", ""),
+        }
+        for r in fx_calendar_rows
+    ]
+
     snapshot = {
         "exportStatus": "BOUND_PUBLIC_SAFE_EXPORT",
         "publicAsOfDate": str(disclosure.get("public_as_of_date", "")),
@@ -149,6 +231,13 @@ def main() -> int:
         "latestStrategyWeights": latest_strategy,
         "latestAssetTargets": asset_snapshot,
         "recentMonthlyReturns": return_snapshot,
+        "corePerformance": core_performance_snapshot,
+        "corePerformanceSummary": core_summary_snapshot,
+        "coreCalendarReturns": core_calendar_snapshot,
+        "fxPerformance": fx_performance_snapshot,
+        "fxPerformanceSummary": fx_summary_snapshot,
+        "fxHedgeHistory": fx_hedge_snapshot,
+        "fxCalendarReturns": fx_calendar_snapshot,
         "rawDataBaseHref": "/data/systems/pds",
     }
 

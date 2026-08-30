@@ -51,7 +51,8 @@ export default function PdsSystemPage() {
             <span>Current Active Core providers · ADAA + F2R</span>
           </div>
           <div className="actions">
-            <a className="btn primary" href="#decision-state">View Public System State</a>
+            <Link className="btn primary" href="/systems/pds/dashboard/">Open Public Dashboard</Link>
+            <a className="btn soft" href="#architecture">View System Architecture</a>
             <Link className="btn soft" href="/systems/adaa/">Explore ADAA</Link>
             <Link className="btn soft" href="/systems/f2r/">Explore F2R</Link>
           </div>
