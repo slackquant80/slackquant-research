@@ -12,12 +12,16 @@ export default function HomePage() {
     ) ?? researchItems[0];
   const academicFeatured =
     researchItems.find((item) => item.stream === "academic") ?? researchItems[0];
-  const reproducibleRepositoryCount = new Set(
-    researchItems.map((item) => item.links.github).filter(Boolean),
-  ).size;
-  const featuredSystem = systemItems[0];
-  const versionedReleaseCount = new Set(
-    researchItems.map((item) => item.links.replication).filter(Boolean),
+  const featuredSystem =
+    systemItems.find((item) => item.prominence === "flagship") ?? systemItems[0];
+  const supportingSystems = systemItems.filter(
+    (item) => item.slug !== featuredSystem?.slug,
+  );
+  const publicRepositoryCount = new Set(
+    [
+      ...researchItems.map((item) => item.links.github),
+      ...systemItems.map((item) => item.links.deploymentRepository),
+    ].filter((href): href is string => Boolean(href)),
   ).size;
 
   return (
@@ -118,6 +122,66 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section home-systems-section">
+        <div className="shell">
+          <div className="section-head">
+            <div className="section-title">Featured System</div>
+            <Link className="section-link" href="/systems/">
+              Explore all systems &#8594;
+            </Link>
+          </div>
+
+          {featuredSystem ? (
+            <>
+              <article className="home-system-feature">
+                <div className="home-system-feature-copy">
+                  <div className="kicker">Operating layer · Flagship</div>
+                  <h2>{featuredSystem.title}</h2>
+                  <div className="home-system-feature-subtitle">{featuredSystem.subtitle}</div>
+                  <p>{featuredSystem.shortSummary}</p>
+                  <div className="actions">
+                    <Link className="btn primary" href={`/systems/${featuredSystem.slug}/`}>
+                      Open PDS
+                    </Link>
+                    <Link className="btn inverse-soft" href="/systems/">
+                      View System Architecture
+                    </Link>
+                  </div>
+                </div>
+                <aside className="home-system-feature-meta">
+                  <div>
+                    <span>System role</span>
+                    <strong>{featuredSystem.role}</strong>
+                  </div>
+                  <div>
+                    <span>Public state</span>
+                    <strong>{featuredSystem.status}</strong>
+                  </div>
+                  <div>
+                    <span>Architecture</span>
+                    <strong>Provider-agnostic portfolio operating layer</strong>
+                    <small>Current providers are operating inputs, not the definition of PDS.</small>
+                  </div>
+                </aside>
+              </article>
+
+              {supportingSystems.length ? (
+                <div className="home-system-supporting" aria-label="Supporting SlackQuant systems">
+                  {supportingSystems.map((system) => (
+                    <Link className="home-system-mini" href={`/systems/${system.slug}/`} key={system.slug}>
+                      <div className="kicker">{system.category}</div>
+                      <h3>{system.title}</h3>
+                      <p>{system.role}</p>
+                      <span>{system.status.startsWith("Public live") ? "Public live" : system.status} &#8594;</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      </section>
+
       <section className="section">
         <div className="shell">
           <div className="section-head">
@@ -147,30 +211,6 @@ export default function HomePage() {
               </Link>
             </article>
           </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="shell">
-          <div className="section-head">
-            <div className="section-title">Systems</div>
-            <Link className="section-link" href="/systems/">
-              Explore Systems &#8594;
-            </Link>
-          </div>
-          {featuredSystem ? (
-            <article className="stream home-system-card">
-              <div className="card-kicker-row">
-                <div className="kicker">SlackQuant Systems</div>
-                <span className="track-chip">{featuredSystem.category}</span>
-              </div>
-              <h3>{featuredSystem.title}</h3>
-              <p>{featuredSystem.shortSummary}</p>
-              <Link className="section-link strong-link" href={`/systems/${featuredSystem.slug}/`}>
-                View System &#8594;
-              </Link>
-            </article>
-          ) : null}
         </div>
       </section>
 
@@ -212,29 +252,29 @@ export default function HomePage() {
       <section className="section">
         <div className="shell">
           <div className="section-head">
-            <div className="section-title">Research Output</div>
+            <div className="section-title">Public Output</div>
           </div>
-          <div className="output-metrics" aria-label="Current public research output">
+          <div className="output-metrics" aria-label="Current SlackQuant public output">
             <div className="output-metric">
               <div className="output-value">{researchItems.length}</div>
               <div className="output-label">Research Papers</div>
+            </div>
+            <div className="output-metric">
+              <div className="output-value">{systemItems.length}</div>
+              <div className="output-label">Public Systems</div>
             </div>
             <div className="output-metric">
               <div className="output-value">{quantitativeMethods.length}</div>
               <div className="output-label">Methods Articles</div>
             </div>
             <div className="output-metric">
-              <div className="output-value">{reproducibleRepositoryCount}</div>
-              <div className="output-label">Reproducible Repositories</div>
-            </div>
-            <div className="output-metric">
-              <div className="output-value">{versionedReleaseCount}</div>
-              <div className="output-label">Versioned Releases</div>
+              <div className="output-value">{publicRepositoryCount}</div>
+              <div className="output-label">Public Repositories</div>
             </div>
           </div>
           <p className="output-note">
-            Counts reflect the current public research catalog. Companion Quantitative
-            Methods labs are excluded from the Methods Articles count.
+            Counts reflect the current public catalog across Research, Systems, and Quantitative Methods.
+            Repository links are deduplicated across research and system deployment records.
           </p>
         </div>
       </section>

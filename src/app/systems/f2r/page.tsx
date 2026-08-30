@@ -69,9 +69,9 @@ export default function F2rSystemPage() {
               portfolio decision.
             </p>
             <p className="body-copy">
-              Machine learning is used where it is load-bearing: estimating relative opportunity. Portfolio formation is kept
-              explicit through a separate ranking and allocation rule, so the system remains interpretable as a portfolio
-              strategy rather than a generic AI product.
+              Machine learning is confined to the forecasting layer, where it estimates relative opportunity. Portfolio formation
+              remains explicit through a separate ranking and allocation rule, so the system is interpretable as a portfolio
+              strategy rather than presented as a generic AI product.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">ML</div><div className="label">Forecasting layer</div></div>
@@ -135,7 +135,7 @@ export default function F2rSystemPage() {
             <div className="kicker">System relationship</div>
             <h2>F2R is a strategy system; PDS is the portfolio operating layer</h2>
             <p className="body-copy">
-              F2R produces a strategy-level portfolio decision. PDS governs how independently owned providers are qualified,
+              F2R produces a strategy-level portfolio decision. PDS governs how independent providers are qualified,
               admitted, integrated, and monitored at the portfolio level. F2R and ADAA are the current Active Core providers;
               that configuration is a current operating state, not the definition of PDS.
             </p>
@@ -178,11 +178,11 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Operating boundary</div>
-            <h2>One operational source, one public-safe deployment surface</h2>
+            <h2>One operational source, governed public deployment surfaces</h2>
             <p className="body-copy">
-              The public GitHub repository and Streamlit application are deployment surfaces, not a second strategy source.
-              F2R's operational state, validation, and release decisions remain owned by the source system; only validated
-              public-safe artifacts cross the deployment boundary.
+              The GitHub repository carries the public-safe deployment artifact, while Streamlit serves the public application.
+              Neither is a second operational source. F2R's operational state, validation, and release decisions remain
+              source-owned; only validated public-safe artifacts cross the deployment boundary.
             </p>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">

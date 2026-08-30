@@ -165,14 +165,14 @@
     "href": "index.html#library-principles",
     "title": "Quantitative Methods",
     "section": "Library principles",
-    "text": "Library principles\nThe library is paper-driven rather than encyclopedic. Methods are added when they materially help readers understand a research design, empirical result, or investment decision. Articles favor plain-language intuition before unnecessary formalism, but do not simplify away assumptions that matter for validity.\nEach computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence."
+    "text": "Library principles\nThe library is evidence- and application-driven rather than encyclopedic. Methods are added when they materially help readers understand a research design, empirical result, investment decision, or operational SlackQuant System. A method may be anchored to a research paper, a public system, or both. Articles favor plain-language intuition before unnecessary formalism, but do not simplify away assumptions that matter for validity.\nEach computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence."
   },
   {
     "objectID": "index.html#next-methods",
     "href": "index.html#next-methods",
     "title": "Quantitative Methods",
     "section": "Next methods",
-    "text": "Next methods\nFuture additions remain paper-driven and will be added when they materially support active SlackQuant research."
+    "text": "Next methods\nFuture additions are driven by active research and public systems and will be added when they materially support active SlackQuant research."
   },
   {
     "objectID": "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html",

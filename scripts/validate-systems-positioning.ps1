@@ -69,7 +69,7 @@ foreach ($token in @('ADAA + F2R','Protected until release gate','PDS is provide
 foreach ($forbidden in @('Active Core architecture','Latest released strategy mix','Two independent Portfolio Strategy Systems')) {
   if ($pdsPage -match [regex]::Escape($forbidden)) { throw "PDS fixed-blend narrative regression: $forbidden" }
 }
-foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Live Dashboard','GitHub Repository','one public-safe deployment surface','/systems/pds/')) {
+foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Live Dashboard','GitHub Repository','governed public deployment surfaces','/systems/pds/')) {
   if ($f2rPage -notmatch [regex]::Escape($token)) { throw "F2R relationship/live-system contract missing: $token" }
 }
 foreach ($token in @('status: "Public live"','https://f2r-forecast-to-rank-allocation.streamlit.app','https://github.com/slackquant80/f2r-forecast-to-rank-allocation')) {
@@ -77,6 +77,31 @@ foreach ($token in @('status: "Public live"','https://f2r-forecast-to-rank-alloc
 }
 foreach ($forbidden in @('MFA_','_LOCAL_PRIVATE_DATA','MACRO_FORECAST_ALLOCATION','provider_preview','runtime_decisions')) {
   if ($f2rPage -match [regex]::Escape($forbidden)) { throw "F2R public page leaks internal identifier/path token: $forbidden" }
+}
+
+$homePage = [System.IO.File]::ReadAllText((Need "src\app\page.tsx"))
+foreach ($token in @(
+  'item.prominence === "flagship"',
+  'Featured System',
+  'Operating layer',
+  'Flagship',
+  'home-system-feature',
+  'home-system-supporting',
+  'Public Output',
+  'Public Systems',
+  'Public Repositories'
+)) {
+  if ($homePage -notmatch [regex]::Escape($token)) { throw "Home platform/system positioning contract missing: $token" }
+}
+foreach ($token in @(
+  'status: "Public live',
+  'validated baseline v1"',
+  'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7354238'
+)) {
+  if ($systemsData -notmatch [regex]::Escape($token)) { throw "Stress Lab public registry normalization missing: $token" }
+}
+if ($systemsData -match [regex]::Escape('https://github.com/slackquant80/multi-asset-scenario-stress-lab')) {
+  throw "Stress Lab private deployment repository must not be linked from the public Systems registry"
 }
 
 Write-Host "SYSTEMS_POSITIONING_GATE_PASS" -ForegroundColor Green

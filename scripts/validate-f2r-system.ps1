@@ -32,7 +32,7 @@ foreach ($token in @(
   'Open Live Dashboard',
   'GitHub Repository',
   'current operating state, not the definition of PDS',
-  'one public-safe deployment surface',
+  'governed public deployment surfaces',
   'MethodsUsed',
   'context="system"'
 )) {

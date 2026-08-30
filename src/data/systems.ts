@@ -80,7 +80,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Updated August 30, 2026",
     shortSummary:
-      "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains independently owned while serving as one of the strategy providers currently admitted to the PDS Active Core.",
+      "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains an independent Portfolio Strategy System while serving as one of the strategy providers currently admitted to the PDS Active Core.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
     methodsKey: "f2r-system",
     links: {
@@ -97,7 +97,7 @@ export const systemItems: SystemItem[] = [
     category: "Risk & Scenario System",
     systemGroup: "risk-scenario",
     prominence: "standard",
-    status: "Operational baseline v1",
+    status: "Public live · validated baseline v1",
     dateLabel: "Updated August 27, 2026",
     shortSummary:
       "A human-in-the-loop multi-asset system for exploring portfolio behavior under plausible joint market stress. It organizes conditional scenarios into interpretable stress archetypes and revalues portfolios on a common scenario set, with a transparent historical comparator retained for context. Designed for portfolio stress decision support, not market timing or automated allocation.",
@@ -106,14 +106,13 @@ export const systemItems: SystemItem[] = [
     evidenceLabel: "Technical White Paper",
     methodsKey: "scenario-stress-lab",
     links: {
-      ssrn: "https://papers.ssrn.com/abstract=7354238",
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7354238",
       whitePaper:
         "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Technical_White_Paper.pdf",
       liveDashboard: "https://multi-asset-scenario-stress-lab.streamlit.app",
       dashboardGuide: "/systems/scenario-stress-lab/guide/",
       dashboardGuidePdf: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf",
       fullManual: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Full_Manual.pdf",
-      deploymentRepository: "https://github.com/slackquant80/multi-asset-scenario-stress-lab",
     },
   },
 ];
