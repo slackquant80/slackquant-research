@@ -1,7 +1,7 @@
 {
   "account_holdings": "PRIVATE_NOT_EXPORTED",
-  "completed_holding_month_cutoff": "2026-07",
-  "contract_id": "PDS_PUBLIC_EXPORT_CONTRACT_V1_5",
+  "completed_holding_month_cutoff": "2026-08",
+  "contract_id": "PDS_PUBLIC_EXPORT_CONTRACT_V1_6_RECOVERY",
   "core_performance_period_semantics": "SOURCE_RETURN_PERIOD_IS_SIGNAL_ORIGIN_MONTH__PUBLIC_PERFORMANCE_HOLDING_MONTH_EQUALS_ORIGIN_PLUS_1",
   "current_decision_state": "WITHHELD_BY_POLICY",
   "current_fx_overlay": "PRIVATE_NOT_EXPORTED",
@@ -9,11 +9,11 @@
   "f2r_public_naming_lock": "PASS",
   "historical_fx_spot_sensitivity": "DELAYED_PUBLIC_NON_CANONICAL",
   "intramonth_preview": "PRIVATE_NOT_EXPORTED",
-  "latest_eligible_signal_period": "2026-06",
-  "latest_released_signal_period": "2026-06",
+  "latest_eligible_signal_period": "2026-07",
+  "latest_released_signal_period": "2026-07",
   "performance_clock": "REALIZED_HOLDING_MONTH",
-  "public_as_of_date": "2026-08-31",
+  "public_as_of_date": "2026-09-01",
   "public_component_identity": "ADAA + F2R",
-  "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_5",
+  "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V1_6_RECOVERY",
   "shadow_monitor_state": "PRIVATE_NOT_EXPORTED"
 }
