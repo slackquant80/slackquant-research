@@ -1817,3 +1817,41 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V108_END */
+
+/* PDS_PUBLIC_MOBILE_V109_START */
+@media (max-width:760px){
+  /* Drawdown table: no sticky column; keep header treatment visually consistent. */
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table thead th:first-child{
+    position:static!important;
+    left:auto!important;
+    z-index:auto!important;
+    background:var(--soft)!important;
+    box-shadow:none!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table tbody td:first-child{
+    position:static!important;
+    left:auto!important;
+    z-index:auto!important;
+    background:var(--paper)!important;
+    box-shadow:none!important;
+  }
+
+  /* Recent table: keep Holding month visible while the remaining columns scroll. */
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child{
+    position:sticky!important;
+    left:0!important;
+    z-index:5!important;
+    background:var(--soft)!important;
+    box-shadow:1px 0 0 var(--line);
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    position:sticky!important;
+    left:0!important;
+    z-index:4!important;
+    background:var(--paper)!important;
+    box-shadow:1px 0 0 var(--line);
+  }
+}
+/* PDS_PUBLIC_MOBILE_V109_END */
