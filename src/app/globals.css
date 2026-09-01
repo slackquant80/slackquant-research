@@ -1506,3 +1506,163 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V106_END */
+
+/* PDS_PUBLIC_MOBILE_V107_START */
+@media (max-width:760px){
+  /* Compact historical diagnostics that do not need wide-table behavior. */
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table,
+  .pds-dashboard-page .pds-history-card .pds-recent-table{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:fixed!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table th,
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table td,
+  .pds-dashboard-page .pds-history-card .pds-recent-table th,
+  .pds-dashboard-page .pds-history-card .pds-recent-table td{
+    padding:9px 5px!important;
+    font-size:10px!important;
+    line-height:1.35!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere;
+    word-break:normal;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table tbody th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    position:static!important;
+    left:auto!important;
+    z-index:auto!important;
+  }
+
+  .pds-dashboard-page .pds-history-card:has(.pds-drawdown-table) .evidence-table-wrap,
+  .pds-dashboard-page .pds-history-card:has(.pds-recent-table) .evidence-table-wrap{
+    overflow-x:hidden!important;
+  }
+
+  .pds-dashboard-page .pds-recent-table th:first-child,
+  .pds-dashboard-page .pds-recent-table td:first-child{
+    width:31%!important;
+  }
+
+  .pds-dashboard-page .pds-recent-table th:not(:first-child),
+  .pds-dashboard-page .pds-recent-table td:not(:first-child){
+    width:23%!important;
+  }
+
+  /* Released Portfolio / Disclosure: prevent wide child tables from sizing the grid item. */
+  .pds-dashboard-page .pds-bottom-grid,
+  .pds-dashboard-page .pds-bottom-main,
+  .pds-dashboard-page .pds-boundary-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main,
+  .pds-dashboard-page .pds-boundary-card{
+    overflow:hidden;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact > div,
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact h2,
+  .pds-dashboard-page .pds-bottom-main .pds-section-note{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-wrap:anywhere;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact h2{
+    font-size:clamp(29px,8.5vw,36px)!important;
+    line-height:1.1!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact .section-link{
+    display:inline-block!important;
+    margin-top:10px!important;
+    max-width:100%;
+    white-space:normal;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-allocation-strip{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-allocation-strip > div{
+    min-width:0!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-asset-table{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-public-table{
+    min-width:520px!important;
+  }
+
+  .pds-dashboard-page .pds-boundary-card h2,
+  .pds-dashboard-page .pds-boundary-card p,
+  .pds-dashboard-page .pds-boundary-block{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-wrap:anywhere;
+  }
+
+  .pds-dashboard-page .pds-boundary-card h2{
+    font-size:clamp(27px,8vw,32px)!important;
+    line-height:1.12!important;
+  }
+
+  .pds-dashboard-page .pds-boundary-block p{
+    white-space:normal!important;
+  }
+}
+
+@media (max-width:430px){
+  .pds-dashboard-page .pds-drawdown-table th:nth-child(5),
+  .pds-dashboard-page .pds-drawdown-table td:nth-child(5){
+    display:none;
+  }
+
+  .pds-dashboard-page .pds-drawdown-table th,
+  .pds-dashboard-page .pds-drawdown-table td{
+    width:25%!important;
+    padding-left:4px!important;
+    padding-right:4px!important;
+    font-size:9.5px!important;
+  }
+
+  .pds-dashboard-page .pds-recent-table th,
+  .pds-dashboard-page .pds-recent-table td{
+    font-size:9.5px!important;
+    padding-left:4px!important;
+    padding-right:4px!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main,
+  .pds-dashboard-page .pds-boundary-card{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+}
+/* PDS_PUBLIC_MOBILE_V107_END */
