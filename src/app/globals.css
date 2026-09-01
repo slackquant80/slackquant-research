@@ -1915,3 +1915,19 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V111_END */
+
+/* PDS_PUBLIC_MOBILE_V112_START */
+@media (max-width:760px){
+  /* Rolling Diagnostics should use the same mobile section geometry
+     and background treatment as the rest of the dashboard. */
+  .pds-dashboard-page.pds-dashboard-performance-v2 #rolling,
+  .pds-dashboard-page .pds-dashboard-performance-v2 #rolling,
+  .pds-dashboard-performance-v2 #rolling{
+    background:none!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    padding-left:0!important;
+    padding-right:0!important;
+  }
+}
+/* PDS_PUBLIC_MOBILE_V112_END */
