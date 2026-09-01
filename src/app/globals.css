@@ -1666,3 +1666,154 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V107_END */
+
+/* PDS_PUBLIC_MOBILE_V108_START */
+@media (max-width:760px){
+  /* Historical diagnostic tables:
+     keep the card inside the viewport and scroll the table itself.
+     No sticky first column on mobile. */
+  .pds-dashboard-page .pds-history-card:has(.pds-drawdown-table) .evidence-table-wrap,
+  .pds-dashboard-page .pds-history-card:has(.pds-recent-table) .evidence-table-wrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-inline:contain;
+    touch-action:pan-x pan-y;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table{
+    width:max-content!important;
+    min-width:720px!important;
+    max-width:none!important;
+    table-layout:auto!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-recent-table{
+    width:max-content!important;
+    min-width:600px!important;
+    max-width:none!important;
+    table-layout:auto!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table th,
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table td,
+  .pds-dashboard-page .pds-history-card .pds-recent-table th,
+  .pds-dashboard-page .pds-history-card .pds-recent-table td{
+    width:auto!important;
+    padding:10px 12px!important;
+    font-size:10.5px!important;
+    line-height:1.35!important;
+    white-space:nowrap!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table tbody th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-drawdown-table tbody td:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody td:first-child{
+    position:static!important;
+    left:auto!important;
+    right:auto!important;
+    z-index:auto!important;
+    background:inherit!important;
+  }
+
+  /* Restore all drawdown columns hidden by v1.0.7 on narrow screens. */
+  .pds-dashboard-page .pds-drawdown-table th:nth-child(5),
+  .pds-dashboard-page .pds-drawdown-table td:nth-child(5){
+    display:table-cell!important;
+  }
+
+  /* Released Portfolio / Disclosure:
+     force a zero-minimum single grid track so wide child tables cannot size the page. */
+  .pds-dashboard-page .pds-bottom-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main,
+  .pds-dashboard-page .pds-boundary-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main > *,
+  .pds-dashboard-page .pds-boundary-card > *{
+    min-width:0!important;
+    max-width:100%;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact > div,
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact h2,
+  .pds-dashboard-page .pds-bottom-main .pds-section-note{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact h2{
+    font-size:clamp(28px,8vw,34px)!important;
+    line-height:1.1!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-section-heading.compact .section-link{
+    display:inline-block!important;
+    margin-top:10px!important;
+    max-width:100%!important;
+    white-space:normal!important;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-asset-table{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-inline:contain;
+    touch-action:pan-x pan-y;
+  }
+
+  .pds-dashboard-page .pds-bottom-main .pds-public-table{
+    width:max-content!important;
+    min-width:520px!important;
+    max-width:none!important;
+    table-layout:auto!important;
+  }
+
+  .pds-dashboard-page .pds-boundary-card h2,
+  .pds-dashboard-page .pds-boundary-card p,
+  .pds-dashboard-page .pds-boundary-block{
+    max-width:100%!important;
+    min-width:0!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+  }
+}
+/* PDS_PUBLIC_MOBILE_V108_END */

@@ -1,7 +1,7 @@
 {
   "active_core_public_identity": "ADAA + F2R",
   "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
-  "bound_at": "2026-09-01T09:11:13.124921+09:00",
+  "bound_at": "2026-09-01T09:20:02.079173+09:00",
   "bound_files_sha256": {
     "public_active_core_asset_targets.csv": "92aaf2f63d1c1bbff19a524eed795efaa8d59a7b9bf13874db4b8f8c95d5c3d6",
     "public_active_core_strategy_weights.csv": "5a97c00794c555b60512acb51a1c85cf3e3ffd66c00aae8fe5c1cc399d5c51cf",
