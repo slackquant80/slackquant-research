@@ -1875,3 +1875,43 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V110_END */
+
+/* PDS_PUBLIC_MOBILE_V111_START */
+@media (max-width:760px){
+  .pds-dashboard-page .pds-history-card .pds-recent-table{
+    width:420px!important;
+    min-width:420px!important;
+    max-width:none!important;
+    table-layout:fixed!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    width:100px!important;
+    min-width:100px!important;
+    max-width:100px!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-recent-table th:not(:first-child),
+  .pds-dashboard-page .pds-history-card .pds-recent-table td:not(:first-child){
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    text-align:center!important;
+  }
+}
+
+@media (max-width:430px){
+  .pds-dashboard-page .pds-history-card .pds-recent-table{
+    width:408px!important;
+    min-width:408px!important;
+  }
+
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    width:96px!important;
+    min-width:96px!important;
+    max-width:96px!important;
+  }
+}
+/* PDS_PUBLIC_MOBILE_V111_END */
