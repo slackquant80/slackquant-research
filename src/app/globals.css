@@ -1855,3 +1855,23 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V109_END */
+
+/* PDS_PUBLIC_MOBILE_V110_START */
+@media (max-width:760px){
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    width:118px!important;
+    min-width:118px!important;
+    max-width:118px!important;
+  }
+}
+
+@media (max-width:430px){
+  .pds-dashboard-page .pds-history-card .pds-recent-table thead th:first-child,
+  .pds-dashboard-page .pds-history-card .pds-recent-table tbody th:first-child{
+    width:112px!important;
+    min-width:112px!important;
+    max-width:112px!important;
+  }
+}
+/* PDS_PUBLIC_MOBILE_V110_END */
