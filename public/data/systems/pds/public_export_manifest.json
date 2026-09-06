@@ -7,24 +7,24 @@
   "files_sha256": {
     "public_active_core_asset_targets.csv": "2205bdde6dfc7aad48270f26f23a4ee507a4de512347b8a2957baa35686f8aee",
     "public_active_core_strategy_weights.csv": "987ac06c0b0f59383901a52a61a6edf32c5d79b2c5316f0ed58bdf95bdfaf06e",
-    "public_core_calendar_returns.csv": "387fdfec336f95fe3be0aca3f05046d16120b1dcd977f2fde2aeb4ca94d871db",
-    "public_core_monthly_returns.csv": "3245f69e7c11d1c64d11305cf95d34413b7c5f34f9fe0e4014fddbf3ebcb1b9e",
-    "public_core_performance_path.csv": "aeb72fc11248d412de55e74bc796c5f8a7db962e9659ae50f90a4a5bd4d6483e",
-    "public_core_performance_summary.csv": "c8afc10d7fa731d19f610eb00b0bb6bd6a37df41e92c10b38113bf51cfcb24ed",
+    "public_core_calendar_returns.csv": "7d3b806b1dad7bc88a3d9c7568c991560cd36d24d81b70b0c6a6a437e008921f",
+    "public_core_monthly_returns.csv": "b1b00fbc26b8c29b30dcd17c08737c8b0891b941a1630b12c39d69bf22fa0924",
+    "public_core_performance_path.csv": "a15f9a2cd9e8323ca2bc9eb455a503e8d8cc963c18b54382fc8c63c0e5efef19",
+    "public_core_performance_summary.csv": "b1dfcd363330ec19ffde0a7ec623fe211243e5c94870c5aab0168cd60157b4fc",
     "public_core_strategy_roster.csv": "776e141068fca5747d9bcaf973096f19bfd3c17b4faced57e335462e7a62d8c1",
     "public_disclosure_state.json": "da206586f70098529ede3374633a2bb69b98c35eeda2e31697e370ed77fdfbaa",
-    "public_fx_calendar_returns.csv": "8f9b5422994324b683791fb239b498b902e45c16c02fe1f5d986c781db81c5b0",
+    "public_fx_calendar_returns.csv": "aab2aa0543a1c47a83991658b43f23873902fa1960fb11cbf415c2fc96be8e42",
     "public_fx_hedge_history.csv": "2c94d1585b661d227f8b26d4ca06b1fabf2156e2abe6d24a1a2478c8e536170c",
-    "public_fx_performance_path.csv": "a00dba06b250925a1074d7c4f7bc2f1ccd7d973b92ad12e1f7b004ae9321dd1e",
-    "public_fx_performance_summary.csv": "92fae5005a1f22e5dd3825949da044a9c08401a2cb100d6a0dbd7bf656710331",
+    "public_fx_performance_path.csv": "929c19739d9a12de7dd4a0f01792a148735efe4eabcd1670e7088628ff62c3e4",
+    "public_fx_performance_summary.csv": "03a71d6b08b90656978b05baba4dea16fe6a6ccf024134bf1f95e4c0d71b519c",
     "public_system_identity.json": "3ba90c7a9b90608c3e38a3052a239edf9a50911ad09a853c284ca1b1b5ba305b"
   },
-  "generated_at": "2026-09-07T01:46:03.535859+09:00",
+  "generated_at": "2026-09-07T02:16:11.614065+09:00",
   "latest_released_signal_period": "2026-07",
   "no_private_leakage_scan": "PASS",
   "performance_clock": "REALIZED_HOLDING_MONTH",
   "platform_deployment_authorized": false,
-  "private_dashboard_sha256": "2097c5d9159da9d244da8090b14f7ba0521e01cba71df8ec81d522df55549ae7",
+  "private_dashboard_sha256": "8032f6aa0df6ee55656dfab7e4960e0d053939ac3ac043bfaa1dc62b191e06a7",
   "protected_state_not_exported": [
     "current target",
     "Intramonth Preview",
@@ -34,7 +34,7 @@
     "account holdings"
   ],
   "public_naming_lock": "F2R_PUBLIC_NAMING_LOCK_V1_PASS",
-  "source_program_version": "0.3.178",
-  "source_rs03_version": "0.21.48",
+  "source_program_version": "0.3.179",
+  "source_rs03_version": "0.21.49",
   "status": "PASS_PUBLIC_SAFE_EXPORT_V2_FIXED_25_75"
 }

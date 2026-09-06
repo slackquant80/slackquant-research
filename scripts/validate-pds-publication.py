@@ -28,6 +28,11 @@ def require(text: str, token: str, label: str) -> None:
         raise RuntimeError(f'{label} missing required token: {token}')
 
 
+def require_ci(text: str, token: str, label: str) -> None:
+    if token.casefold() not in text.casefold():
+        raise RuntimeError(f'{label} missing required semantic token: {token}')
+
+
 def rows(path: Path) -> list[dict[str, str]]:
     with path.open('r', encoding='utf-8-sig', newline='') as f:
         return list(csv.DictReader(f))
@@ -78,9 +83,16 @@ def main() -> int:
     for token in [
         'PDS_PUBLIC_DATA', 'PM Cockpit', 'Core Performance', 'Portfolio Weights',
         'Forward Shadow', 'Forward Preview', 'FX Overlay', 'FX Performance',
-        'DELAYED PUBLIC', '25 / 75', 'current asset-level target',
+        'DELAYED PUBLIC', 'F2R 25% · ADAA 75%',
+        '<div class=\"brand-name\">SlackQuant</div><div class=\"brand-sub\">Systems</div>',
+        '<div class=\"nav-section\">PM workspace</div>', 'pds-product-kicker', 'cockpit-hero',
     ]:
         require(public_html, token, 'PDS standalone public dashboard')
+
+    for token in [
+        'current asset targets', 'current mark', 'current FX state', 'not exported',
+    ]:
+        require_ci(public_html, token, 'PDS standalone public disclosure boundary')
 
     require(binder, '"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"', 'PDS binder')
 
@@ -137,6 +149,13 @@ def main() -> int:
         raise RuntimeError('platform binding receipt not PASS')
     if dash_receipt.get('status') != 'PASS' or dash_receipt.get('private_current_values_embedded') is not False:
         raise RuntimeError('standalone public-dashboard receipt is not safe PASS')
+    if dash_receipt.get('artifact') != 'PDS_PUBLIC_DASHBOARD_CANONICAL_PRESENTATION_V2':
+        raise RuntimeError('standalone public dashboard is not using the canonical PDS presentation v2')
+    if dash_receipt.get('presentation_contract') != 'RS03_CANONICAL_LOCAL_PRESENTATION_FAMILY':
+        raise RuntimeError('public dashboard presentation contract is not bound to the canonical local family')
+    for stale in ['<div class=\"brand-name\">PDS</div>', '<span class=\"crumb\">Public Dashboard</span>']:
+        if stale in public_html:
+            raise RuntimeError(f'legacy PDS public-dashboard presentation still present: {stale}')
 
     w = rows(DATA / 'public_active_core_strategy_weights.csv')
     if not w:
@@ -152,7 +171,7 @@ def main() -> int:
             raise RuntimeError(f'public PDS data leakage/naming blocker: {path.name}')
 
     print('PDS_PUBLICATION_GATE_PASS')
-    print('Presentation: standalone local-parity public dashboard')
+    print('Presentation: canonical RS-03 local-family public profile')
     print('Core        : F2R 25% + ADAA 75% fixed over displayed history')
     print(f"Delayed     : signal {disclosure.get('latest_released_signal_period')} / holding {disclosure.get('completed_holding_month_cutoff')}")
     print('Protected   : current asset targets / Preview / Shadow / current mark / current FX')
