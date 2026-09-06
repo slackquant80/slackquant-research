@@ -1,0 +1,9 @@
+{
+  "artifact": "PDS_PUBLIC_DASHBOARD_V1",
+  "completed_holding": "2026-08",
+  "html_sha256": "bef3d02459e178a70c25731a3f01ecb0ff418b7e5d0b978cefc740ff3b1af09b",
+  "private_current_values_embedded": false,
+  "released_signal": "2026-07",
+  "status": "PASS",
+  "visual_source": "RS03_LOCAL_DASHBOARD_STYLES"
+}

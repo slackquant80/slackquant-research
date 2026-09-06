@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import csv
 import json
 import re
 from pathlib import Path
@@ -12,6 +13,8 @@ F2R_PAGE = APP / 'src/app/systems/f2r/page.tsx'
 SNAPSHOT = APP / 'src/data/pdsPublicSnapshot.ts'
 BINDER = APP / 'scripts/bind-pds-public-export.py'
 DATA = APP / 'public/data/systems/pds'
+PUBLIC_DASHBOARD = APP / 'public/assets/systems/pds/Portfolio_Decision_System_Public.html'
+PUBLIC_DASHBOARD_RECEIPT = APP / 'public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json'
 
 
 def need(path: Path) -> str:
@@ -25,13 +28,19 @@ def require(text: str, token: str, label: str) -> None:
         raise RuntimeError(f'{label} missing required token: {token}')
 
 
+def rows(path: Path) -> list[dict[str, str]]:
+    with path.open('r', encoding='utf-8-sig', newline='') as f:
+        return list(csv.DictReader(f))
+
+
 def main() -> int:
     systems = need(SYSTEMS)
     pds = need(PDS_PAGE)
-    dashboard = need(PDS_DASHBOARD)
+    dashboard_route = need(PDS_DASHBOARD)
     f2r = need(F2R_PAGE)
     snapshot = need(SNAPSHOT)
     binder = need(BINDER)
+    public_html = need(PUBLIC_DASHBOARD)
 
     for token in [
         'slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"',
@@ -43,43 +52,38 @@ def main() -> int:
         require(systems, token, 'systems registry')
 
     for token in [
-        'Protected until release gate', 'holding month', '/systems/adaa/', '/systems/f2r/',
+        'fixed 25% F2R / 75% ADAA', 'current asset-level target', '/systems/adaa/', '/systems/f2r/',
         'pdsPublicSnapshot', 'Public / delayed / private',
         'PDS is provider-agnostic and is not defined by any particular pair of strategies',
-        'Current provider configuration within a broader operating architecture',
-        'Historical operating state',
-        'not the definition of PDS',
-        'They should not be interpreted',
         'Portfolio Integration & Allocation',
     ]:
         require(pds, token, 'PDS page')
 
-    for token in [
-        'Delayed portfolio evidence, with current decisions protected.',
-        'Core Performance', 'Historical Operational Spot Sensitivity',
-        'Delayed · non-canonical', 'Public history is not a live portfolio feed.',
-        'corePerformanceSummary', 'fxPerformanceSummary', 'fxHedgeHistory',
-        'Historical delayed state',
-        'Recent 24 completed holding months',
-        'Annual performance by currency treatment',
-        'Monthly returns',
-        'Annual performance',
+    for stale in [
+        'current provider weights and asset targets are protected',
+        'exact current provider weights remain',
+        'not a permanent product recipe',
+        'should not be interpreted as a fixed ADAA–F2R blend',
     ]:
-        require(dashboard, token, 'PDS public dashboard')
+        if stale in pds:
+            raise RuntimeError(f'PDS public narrative contains superseded allocation-policy wording: {stale}')
 
-    for forbidden in [
-        'Active Core architecture',
-        'Latest released strategy mix',
-        'Two independent Portfolio Strategy Systems',
+    for token in [
+        '/assets/systems/pds/Portfolio_Decision_System_Public.html',
+        'Portfolio Decision System Public Dashboard',
+        'position: "fixed"',
     ]:
-        if forbidden in pds:
-            raise RuntimeError(f'PDS public narrative regressed to fixed-blend framing: {forbidden}')
+        require(dashboard_route, token, 'PDS public-dashboard route')
+
+    for token in [
+        'PDS_PUBLIC_DATA', 'PM Cockpit', 'Core Performance', 'Portfolio Weights',
+        'Forward Shadow', 'Forward Preview', 'FX Overlay', 'FX Performance',
+        'DELAYED PUBLIC', '25 / 75', 'current asset-level target',
+    ]:
+        require(public_html, token, 'PDS standalone public dashboard')
 
     require(binder, '"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"', 'PDS binder')
 
-    # F2R public identity is split intentionally across the registry and page:
-    # the registry owns the formal subtitle, while the page uses reader-facing prose.
-    # Do not force the registry subtitle to be duplicated verbatim in page copy.
     for token in [
         'Forecast-to-Rank Allocation (F2R)',
         'live machine-learning cross-asset Portfolio Strategy System',
@@ -90,11 +94,12 @@ def main() -> int:
     ]:
         require(f2r, token, 'F2R page')
 
-    if re.search(r'(?i)\bMFA\b|macro\s+forecast\s+allocation', pds + '\n' + f2r):
-        raise RuntimeError('legacy MFA product identity leaked onto PDS/F2R public page source')
+    leak_re = re.compile(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\')
+    if leak_re.search(pds + '\n' + f2r + '\n' + public_html):
+        raise RuntimeError('private/internal PDS or F2R identity leaked onto a public surface')
 
     if 'export const pdsPublicSnapshot: PdsPublicSnapshot | null = null;' in snapshot:
-        raise RuntimeError('PDS governed delayed snapshot is not bound; run scripts/sync-pds-public.ps1 before deployment')
+        raise RuntimeError('PDS governed delayed snapshot is not bound')
 
     required = {
         'public_active_core_asset_targets.csv', 'public_active_core_strategy_weights.csv',
@@ -113,30 +118,44 @@ def main() -> int:
     disclosure = json.loads((DATA / 'public_disclosure_state.json').read_text(encoding='utf-8'))
     manifest = json.loads((DATA / 'public_export_manifest.json').read_text(encoding='utf-8'))
     receipt = json.loads((DATA / 'PDS_PUBLIC_BINDING_RECEIPT.json').read_text(encoding='utf-8'))
+    dash_receipt = json.loads(PUBLIC_DASHBOARD_RECEIPT.read_text(encoding='utf-8'))
+
     if disclosure.get('current_decision_state') != 'WITHHELD_BY_POLICY':
         raise RuntimeError('current decision disclosure boundary is not protected')
     if disclosure.get('public_component_identity') != 'ADAA + F2R':
         raise RuntimeError('public component identity mismatch')
     if disclosure.get('historical_fx_spot_sensitivity') != 'DELAYED_PUBLIC_NON_CANONICAL':
         raise RuntimeError('historical FX public layer is not explicitly delayed/non-canonical')
-    if disclosure.get('current_fx_overlay') != 'PRIVATE_NOT_EXPORTED':
-        raise RuntimeError('current FX state is not protected')
+    for k in ['intramonth_preview','shadow_monitor_state','current_fx_overlay','account_holdings']:
+        if disclosure.get(k) != 'PRIVATE_NOT_EXPORTED':
+            raise RuntimeError(f'protected public boundary mismatch: {k}')
     if manifest.get('no_private_leakage_scan') != 'PASS':
         raise RuntimeError('source exporter leakage scan not PASS')
+    if manifest.get('active_core_policy') != 'F2R_25_ADAA_75_FIXED_ALL_HISTORY':
+        raise RuntimeError('public Core policy is not the canonical fixed 25/75 definition')
     if receipt.get('status') != 'PDS_SLACKQUANT_PUBLIC_BINDING_PASS':
         raise RuntimeError('platform binding receipt not PASS')
+    if dash_receipt.get('status') != 'PASS' or dash_receipt.get('private_current_values_embedded') is not False:
+        raise RuntimeError('standalone public-dashboard receipt is not safe PASS')
+
+    w = rows(DATA / 'public_active_core_strategy_weights.csv')
+    if not w:
+        raise RuntimeError('public strategy-weight history is empty')
+    for i, r in enumerate(w, start=2):
+        if abs(float(r['f2r_weight']) - 0.25) > 1e-12 or abs(float(r['adaa_weight']) - 0.75) > 1e-12:
+            raise RuntimeError(f'public fixed-Core history drift at row {i}')
+        if r.get('weight_basis') != 'FIXED_25_75_CANONICAL_ALL_HISTORY':
+            raise RuntimeError(f'public fixed-Core weight basis drift at row {i}')
 
     for path in sorted(DATA.iterdir()):
-        if not path.is_file():
-            continue
-        text = path.read_text(encoding='utf-8', errors='replace')
-        if re.search(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\', text):
+        if path.is_file() and leak_re.search(path.read_text(encoding='utf-8', errors='replace')):
             raise RuntimeError(f'public PDS data leakage/naming blocker: {path.name}')
 
     print('PDS_PUBLICATION_GATE_PASS')
-    print('Hierarchy : PDS flagship operating layer > ADAA / F2R strategy layer')
-    print(f"Delayed   : signal {disclosure.get('latest_released_signal_period')} / holding {disclosure.get('completed_holding_month_cutoff')}")
-    print('Protected : current target / preview / shadow / current mark / current overlay')
+    print('Presentation: standalone local-parity public dashboard')
+    print('Core        : F2R 25% + ADAA 75% fixed over displayed history')
+    print(f"Delayed     : signal {disclosure.get('latest_released_signal_period')} / holding {disclosure.get('completed_holding_month_cutoff')}")
+    print('Protected   : current asset targets / Preview / Shadow / current mark / current FX')
     return 0
 
 

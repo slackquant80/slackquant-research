@@ -88,7 +88,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Current Active Core</span>
                 <strong>ADAA + F2R</strong>
-                <small>These are the strategy systems currently admitted to the Active Core. Their presence does not define the PDS architecture; current provider weights and asset targets are protected.</small>
+                <small>These are the strategy systems currently admitted to the Active Core. The canonical Core uses a fixed 25% F2R / 75% ADAA allocation across the displayed history; current asset targets remain protected until their release window.</small>
               </div>
               <div>
                 <span className="pds-state-label">Public release model</span>
@@ -98,7 +98,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Current portfolio target</span>
                 <strong>Protected until release gate</strong>
-                <small>The public page does not expose the currently active target, provider weights, preview, shadow state, or current overlay state.</small>
+                <small>The public page exposes the fixed 25% F2R / 75% ADAA Core definition, but does not expose the current asset-level target, Preview, Forward Shadow state, or current FX overlay state.</small>
               </div>
             </div>
             <div className="boundary-note">
@@ -175,10 +175,10 @@ export default function PdsSystemPage() {
             <div className="kicker">Current Active Core providers</div>
             <h2>Current provider configuration within a broader operating architecture</h2>
             <p className="body-copy">
-              The current public Active Core identifies ADAA and Forecast-to-Rank Allocation (F2R). This is the present
-              provider configuration, not the definition of PDS. The operating architecture is designed to evaluate and
-              govern eligible strategy systems and portfolio roles over time; exact current provider weights remain
-              decision-sensitive until the applicable holding month has completed.
+              The current public Active Core identifies ADAA and Forecast-to-Rank Allocation (F2R). PDS remains a broader
+              provider-governance architecture, while the canonical Core portfolio is currently defined as a fixed 25% F2R /
+              75% ADAA blend across the displayed history. Current asset-level decisions remain protected until the applicable
+              release window.
             </p>
             <div className="dual pds-provider-dual">
               <div className="dual-card">
@@ -201,9 +201,9 @@ export default function PdsSystemPage() {
             <h2>Integrate approved providers under a governed portfolio policy</h2>
             <p className="body-copy">
               PDS evaluates approved providers and their portfolio roles at the portfolio level, maintains explicit provider
-              weights, maps them into asset-level targets, and keeps source contribution traceable. Provider configuration
-              is an operating state produced under governed portfolio policy, not a permanent product recipe. The public
-              surface shows the architecture and released historical decisions; it does not publish the currently active mix.
+              weights, maps them into asset-level targets, and keeps source contribution traceable. The current canonical Core allocation is fixed at 25% F2R / 75% ADAA across the displayed history. The public
+              surface shows that top-level definition together with released historical asset decisions, while current
+              asset-level targets and forward monitoring states remain protected.
             </p>
             {latestWeights ? (
               <div className="pds-released-allocation">
@@ -215,9 +215,8 @@ export default function PdsSystemPage() {
                   <span className="track-chip">Historical delayed state</span>
                 </div>
                 <div className="evidence-note pds-config-note">
-                  <strong>Historical operating state — not the definition of PDS.</strong> The weights below are one released
-                  configuration produced under the portfolio policy applicable at that time. They should not be interpreted
-                  as a fixed ADAA–F2R blend.
+                  <strong>Released historical state.</strong> The provider weights below reflect the canonical fixed 25% F2R / 75% ADAA
+                  Core definition. Asset-level targets are released only after the governed disclosure window.
                 </div>
                 <div className="metrics pds-weight-metrics">
                   <div className="metric"><div className="value">{pct(latestWeights.adaaWeight)}</div><div className="label">ADAA provider weight</div></div>

@@ -1,6 +1,8 @@
 {
   "active_core": {
-    "compact_label": "ADAA + F2R"
+    "compact_label": "ADAA + F2R",
+    "history_definition": "FIXED_25_75_ALL_DISPLAYED_HISTORY",
+    "policy": "F2R 25% + ADAA 75% fixed"
   },
   "identity_contract": "F2R_PUBLIC_NAMING_LOCK_V1",
   "naming_rule": "Public/display alias only; internal scientific/runtime/provenance identifiers are unchanged.",
