@@ -2,7 +2,7 @@
   "artifact": "PDS_PUBLIC_DASHBOARD_PRODUCT_V3",
   "completed_holding": "2026-08",
   "data_profile": "GOVERNED_DELAYED_PUBLIC_SAFE",
-  "html_sha256": "88ade02ee743da1e948d73bc778997745863c9aa629d69971abdb13550278c25",
+  "html_sha256": "64edcfb71420f4ea4202056bc71e992d476199d7aff01dbe825c2d17fa894170",
   "investor_view_authority": "DELAYED_PUBLIC_NON_CANONICAL_SPOT_SENSITIVITY",
   "page_contract": [
     "overview",

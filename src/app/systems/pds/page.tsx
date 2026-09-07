@@ -34,6 +34,13 @@ export default function PdsSystemPage() {
   const latestReturns = snapshot?.recentMonthlyReturns ?? [];
   const latestTargets = snapshot?.latestAssetTargets ?? [];
   const latestWeights = snapshot?.latestStrategyWeights ?? null;
+  const recentReturnPeriods = [...new Set(latestReturns.map((row) => row.period))].sort().reverse();
+  const recentReturnRows = recentReturnPeriods.map((period) => ({
+    period,
+    core: latestReturns.find((row) => row.period === period && row.seriesId === "PDS_ACTIVE_CORE"),
+    f2r: latestReturns.find((row) => row.period === period && row.seriesId === "F2R"),
+    adaa: latestReturns.find((row) => row.period === period && row.seriesId === "ADAA"),
+  }));
 
   return (
     <main>
@@ -284,21 +291,22 @@ export default function PdsSystemPage() {
                   </div>
                 ) : null}
 
-                {latestReturns.length ? (
+                {recentReturnRows.length ? (
                   <div className="selected-table-block">
                     <div className="selected-exhibits-head">
                       <div className="section-title">Recent Released Monthly Returns</div>
-                      <p>Source-exported monthly returns through the conservative public release cutoff; no live or preview return is included.</p>
+                      <p>Completed delayed returns for the fixed PDS Core and its independently owned ADAA/F2R providers; no live or preview return is included.</p>
                     </div>
-                    <div className="evidence-table-wrap" role="region" aria-label="Recent released PDS monthly returns" tabIndex={0}>
+                    <div className="evidence-table-wrap" role="region" aria-label="Recent released PDS Core and provider monthly returns" tabIndex={0}>
                       <table className="evidence-table pds-public-table">
-                        <thead><tr><th>Month</th><th>Series</th><th>Net return</th></tr></thead>
+                        <thead><tr><th>Month</th><th>PDS Core</th><th>F2R</th><th>ADAA</th></tr></thead>
                         <tbody>
-                          {latestReturns.map((row) => (
-                            <tr key={`${row.period}-${row.seriesId}`}>
+                          {recentReturnRows.map((row) => (
+                            <tr key={row.period}>
                               <th scope="row">{row.period}</th>
-                              <td>{row.displayName}</td>
-                              <td>{pct(row.netReturn)}</td>
+                              <td>{row.core ? pct(row.core.netReturn) : "—"}</td>
+                              <td>{row.f2r ? pct(row.f2r.netReturn) : "—"}</td>
+                              <td>{row.adaa ? pct(row.adaa.netReturn) : "—"}</td>
                             </tr>
                           ))}
                         </tbody>
