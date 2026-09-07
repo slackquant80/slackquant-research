@@ -1,9 +1,17 @@
 {
-  "artifact": "PDS_PUBLIC_DASHBOARD_CANONICAL_PRESENTATION_V2",
+  "artifact": "PDS_PUBLIC_DASHBOARD_PRODUCT_V3",
   "completed_holding": "2026-08",
   "data_profile": "GOVERNED_DELAYED_PUBLIC_SAFE",
-  "html_sha256": "1ad993f595ecfd37178d5051de9394255b90acf417afe9c189510e0988542473",
-  "presentation_contract": "RS03_CANONICAL_LOCAL_PRESENTATION_FAMILY",
+  "html_sha256": "19e19aced55a110b24632d140c8e7f8d6e547e609c4f1ebbc2c09972bea1bfec",
+  "investor_view_authority": "DELAYED_PUBLIC_NON_CANONICAL_SPOT_SENSITIVITY",
+  "page_contract": [
+    "overview",
+    "performance",
+    "portfolio",
+    "investor",
+    "system"
+  ],
+  "presentation_contract": "RS03_PUBLIC_PRODUCT_V3__LOCAL_VISUAL_FAMILY",
   "private_current_values_embedded": false,
   "released_signal": "2026-07",
   "status": "PASS"
