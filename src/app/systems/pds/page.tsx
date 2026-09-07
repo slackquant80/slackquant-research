@@ -175,10 +175,9 @@ export default function PdsSystemPage() {
             <div className="kicker">Current Active Core providers</div>
             <h2>Current provider configuration within a broader operating architecture</h2>
             <p className="body-copy">
-              The current public Active Core identifies ADAA and Forecast-to-Rank Allocation (F2R). PDS remains a broader
-              provider-governance architecture, while the canonical Core portfolio is currently defined as a fixed 25% F2R /
-              75% ADAA blend across the displayed history. Current asset-level decisions remain protected until the applicable
-              release window.
+              The current Active Core consists of ADAA and Forecast-to-Rank Allocation (F2R). They remain independently owned
+              provider systems within the broader PDS architecture; provider logic and evidence lineage stay source-owned, while
+              PDS governs portfolio-level admission, integration, and monitoring.
             </p>
             <div className="dual pds-provider-dual">
               <div className="dual-card">
@@ -201,9 +200,10 @@ export default function PdsSystemPage() {
             <h2>Integrate approved providers under a governed portfolio policy</h2>
             <p className="body-copy">
               PDS evaluates approved providers and their portfolio roles at the portfolio level, maintains explicit provider
-              weights, maps them into asset-level targets, and keeps source contribution traceable. The current canonical Core allocation is fixed at 25% F2R / 75% ADAA across the displayed history. The public
-              surface shows that top-level definition together with released historical asset decisions, while current
-              asset-level targets and forward monitoring states remain protected.
+              weights, maps them into asset-level targets, and keeps source contribution traceable. The canonical Core allocation is fixed at 25% F2R / 75% ADAA across the displayed history. The public surface shows
+              that top-level definition together with released historical asset decisions, while current asset-level targets
+              and forward monitoring states remain protected. Between monthly execution dates, daily performance marks drifted
+              weights to market; the Core is not reset to 25/75 each day.
             </p>
             {latestWeights ? (
               <div className="pds-released-allocation">
@@ -344,7 +344,7 @@ export default function PdsSystemPage() {
               <div className="system-boundary-card prohibited">
                 <h3>Protected</h3>
                 <ul>
-                  <li>Currently active portfolio target and strategy weights</li>
+                  <li>Current asset-level target and live allocation state beyond the disclosed fixed Core policy</li>
                   <li>Intramonth forward preview and Forward Shadow state</li>
                   <li>Current market mark, FX/overlay state, and operator diagnostics</li>
                   <li>Credentials, provider caches, local paths, and account-specific holdings</li>

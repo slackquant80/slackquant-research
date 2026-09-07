@@ -21,6 +21,11 @@ export function SystemCard({ item }: { item: SystemItem }) {
           View System →
         </Link>
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
+          {item.links.publicDashboard ? (
+            <Link className="strong-link" href={item.links.publicDashboard}>
+              Public Dashboard →
+            </Link>
+          ) : null}
           {item.links.liveDashboard ? (
             <a className="strong-link" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
               Live Dashboard ↗

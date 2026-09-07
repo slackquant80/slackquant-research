@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about/",
     "/research/",
     "/systems/",
+    "/systems/pds/dashboard/",
     "/methods/",
     ...researchItems.map((item) => `/research/${item.slug}/`),
     ...systemItems.map((item) => `/systems/${item.slug}/`),

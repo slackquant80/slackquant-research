@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
 import { SystemCard } from "@/components/SystemCard";
 import { systemGroupDefinitions, systemItems } from "@/data/systems";
+import { pdsPublicSnapshot } from "@/data/pdsPublicSnapshot";
 
 export const metadata: Metadata = {
   title: "Systems",
   description:
     "Operational investment and decision systems published by SlackQuant, organized by their role in the portfolio decision process.",
 };
+
+function formatPdsPublicDate(isoDate: string) {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  if (!year || !month || !day) return isoDate;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
 
 export default function SystemsPage() {
   return (
@@ -50,7 +62,17 @@ export default function SystemsPage() {
                   </div>
                   <div className="research-list">
                     {items.map((item) => (
-                      <SystemCard key={item.slug} item={item} />
+                      <SystemCard
+                        key={item.slug}
+                        item={
+                          item.slug === "pds" && pdsPublicSnapshot?.publicAsOfDate
+                            ? {
+                                ...item,
+                                dateLabel: `Updated ${formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)}`,
+                              }
+                            : item
+                        }
+                      />
                     ))}
                   </div>
                 </section>

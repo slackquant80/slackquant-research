@@ -37,7 +37,7 @@ export function MethodsUsed({
             </div>
             <div className="method-used-copy">
               <h3>{method.title}</h3>
-              <p>{method.researchContext}</p>
+              <p>{isSystem ? method.researchContext.replace("this research", "this system") : method.researchContext}</p>
             </div>
             <span className="method-used-arrow" aria-hidden="true">
               &#8594;

@@ -4,7 +4,15 @@ import csv,json,re
 from pathlib import Path
 
 APP=Path(__file__).resolve().parents[1]
-SYSTEMS=APP/'src/data/systems.ts';PDS_PAGE=APP/'src/app/systems/pds/page.tsx';PDS_DASHBOARD=APP/'src/app/systems/pds/dashboard/page.tsx';F2R_PAGE=APP/'src/app/systems/f2r/page.tsx';SNAPSHOT=APP/'src/data/pdsPublicSnapshot.ts';BINDER=APP/'scripts/bind-pds-public-export.py';DATA=APP/'public/data/systems/pds';PUBLIC_DASHBOARD=APP/'public/assets/systems/pds/Portfolio_Decision_System_Public.html';PUBLIC_DASHBOARD_RECEIPT=APP/'public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json'
+SYSTEMS=APP/'src/data/systems.ts';SYSTEM_CARD=APP/'src/components/SystemCard.tsx';SYSTEMS_PAGE=APP/'src/app/systems/page.tsx';METHODS=APP/'src/data/methods.ts';METHODS_USED=APP/'src/components/MethodsUsed.tsx';SITEMAP=APP/'src/app/sitemap.ts';PDS_PAGE=APP/'src/app/systems/pds/page.tsx';PDS_DASHBOARD=APP/'src/app/systems/pds/dashboard/page.tsx';F2R_PAGE=APP/'src/app/systems/f2r/page.tsx';SNAPSHOT=APP/'src/data/pdsPublicSnapshot.ts';BINDER=APP/'scripts/bind-pds-public-export.py';DATA=APP/'public/data/systems/pds';PUBLIC_DASHBOARD=APP/'public/assets/systems/pds/Portfolio_Decision_System_Public.html';PUBLIC_DASHBOARD_RECEIPT=APP/'public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json'
+PDS_METHOD_ARTICLES=[
+    APP/'public/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html',
+    APP/'public/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html',
+    APP/'public/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html',
+    APP/'public/methods/40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html',
+    APP/'public/methods/40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html',
+    APP/'public/methods/80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html',
+]
 
 def need(path:Path)->str:
     if not path.is_file():raise RuntimeError(f'missing required PDS platform artifact: {path.relative_to(APP)}')
@@ -16,13 +24,19 @@ def rows(path:Path):
     with path.open('r',encoding='utf-8-sig',newline='') as f:return list(csv.DictReader(f))
 
 def main()->int:
-    systems=need(SYSTEMS);pds=need(PDS_PAGE);route=need(PDS_DASHBOARD);f2r=need(F2R_PAGE);snapshot=need(SNAPSHOT);binder=need(BINDER);public_html=need(PUBLIC_DASHBOARD)
-    for tok in ['slug: "pds"','systemGroup: "portfolio-decision"','prominence: "flagship"','Portfolio Decision & Operating System','slug: "f2r"','Forecast-to-Rank Allocation','Machine-Learning Cross-Asset Portfolio Strategy','systemGroup: "portfolio-strategy"']:require(systems,tok,'systems registry')
-    for tok in ['fixed 25% F2R / 75% ADAA','current asset-level target','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS is provider-agnostic and is not defined by any particular pair of strategies','Portfolio Integration & Allocation']:require(pds,tok,'PDS page')
-    for stale in ['current provider weights and asset targets are protected','exact current provider weights remain','not a permanent product recipe','should not be interpreted as a fixed ADAA–F2R blend']:
+    systems=need(SYSTEMS);system_card=need(SYSTEM_CARD);systems_page=need(SYSTEMS_PAGE);methods=need(METHODS);methods_used=need(METHODS_USED);sitemap=need(SITEMAP);pds=need(PDS_PAGE);route=need(PDS_DASHBOARD);f2r=need(F2R_PAGE);snapshot=need(SNAPSHOT);binder=need(BINDER);public_html=need(PUBLIC_DASHBOARD)
+    for tok in ['slug: "pds"','systemGroup: "portfolio-decision"','prominence: "flagship"','Portfolio Decision & Operating System','dateLabel: "Updated with latest public release"','publicDashboard: "/systems/pds/dashboard/"','slug: "f2r"','Forecast-to-Rank Allocation','Machine-Learning Cross-Asset Portfolio Strategy','systemGroup: "portfolio-strategy"']:require(systems,tok,'systems registry')
+    for tok in ['item.links.publicDashboard','Public Dashboard →']:require(system_card,tok,'Systems card PDS dashboard link')
+    for tok in ['pdsPublicSnapshot','function formatPdsPublicDate','formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)']:require(systems_page,tok,'Systems index PDS release-date binding')
+    require(methods,'"pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"]','PDS methods bundle')
+    require(methods_used,'method.researchContext.replace("this research", "this system")','system methods copy')
+    require(sitemap,'"/systems/pds/dashboard/",','PDS dashboard sitemap')
+    for article in PDS_METHOD_ARTICLES: need(article)
+    for tok in ['fixed 25% F2R / 75% ADAA','current asset-level target','the Core is not reset to 25/75 each day','Current asset-level target and live allocation state beyond the disclosed fixed Core policy','/systems/pds/dashboard/','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS is provider-agnostic and is not defined by any particular pair of strategies','Portfolio Integration & Allocation']:require(pds,tok,'PDS page')
+    for stale in ['current provider weights and asset targets are protected','exact current provider weights remain','not a permanent product recipe','should not be interpreted as a fixed ADAA–F2R blend','Currently active portfolio target and strategy weights']:
         if stale in pds:raise RuntimeError(f'PDS public narrative contains superseded allocation-policy wording: {stale}')
     for tok in ['/assets/systems/pds/Portfolio_Decision_System_Public.html','Portfolio Decision System Public Dashboard','position: "fixed"']:require(route,tok,'PDS public-dashboard route')
-    for tok in ['PDS_PUBLIC_DATA','Public dashboard','Overview','Core Performance','Portfolio History','Investor / FX','System & Disclosure','KRW Investor View','F2R 25% · ADAA 75%','Current asset targets','<div class="brand-name">SlackQuant</div><div class="brand-sub">Systems</div>','pds-product-kicker']:require(public_html,tok,'PDS standalone public dashboard',casefold=True)
+    for tok in ['PDS_PUBLIC_DATA','Public dashboard','Overview','Core Performance','Portfolio History','Investor / FX','System & Disclosure','KRW Investor View','F2R 25% · ADAA 75%','Current asset targets','Monthly execution only · daily weights drift','<div class="brand-name">SlackQuant</div><div class="brand-sub">Systems</div>','pds-product-kicker','href="/systems/pds/"','href="/systems/adaa/"','href="/systems/f2r/"']:require(public_html,tok,'PDS standalone public dashboard',casefold=True)
     for stale in ['Forward Shadow is not published live','Forward Preview is not published live','<div class="nav-section">PM workspace</div>']:
         if stale.casefold() in public_html.casefold():raise RuntimeError(f'public dashboard regressed to sparse private-page clone: {stale}')
     require(binder,'"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"','PDS binder')
@@ -60,6 +74,9 @@ def main()->int:
     print('Core        : F2R 25% + ADAA 75% fixed over displayed history')
     print('Investor    : delayed historical Dynamic-FX non-canonical spot sensitivity only')
     print(f"Delayed     : signal {disclosure.get('latest_released_signal_period')} / holding {disclosure.get('completed_holding_month_cutoff')}")
+    print('Methods     : QM007 / QM008 / QM009 / QM011 / QM013 / QM014')
+    print('Links       : Systems card -> dashboard -> PDS page + ADAA/F2R + public CSVs')
+    print('Rebalance   : monthly execution only / daily weights drift')
     print('Protected   : current asset targets / Preview / Shadow / current mark / current FX')
     return 0
 if __name__=='__main__':raise SystemExit(main())

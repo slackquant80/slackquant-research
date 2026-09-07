@@ -18,6 +18,7 @@ export type SystemItem = {
     ssrn?: string;
     whitePaper?: string;
     liveDashboard?: string;
+    publicDashboard?: string;
     dashboardGuide?: string;
     dashboardGuidePdf?: string;
     fullManual?: string;
@@ -38,12 +39,14 @@ export const systemItems: SystemItem[] = [
     systemGroup: "portfolio-decision",
     prominence: "flagship",
     status: "Public architecture · protected current decision state",
-    dateLabel: "Updated August 29, 2026",
+    dateLabel: "Updated with latest public release",
     shortSummary:
       "SlackQuant's portfolio-level operating system for provider qualification, portfolio admission, integration, decision formation, and ongoing monitoring. PDS is provider-agnostic: ADAA and F2R are the current Active Core providers, not the definition of the system. The architecture and delayed historical evidence are public while the current decision state remains protected.",
     role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
     methodsKey: "pds-system",
-    links: {},
+    links: {
+      publicDashboard: "/systems/pds/dashboard/",
+    },
   },
   {
     slug: "adaa",
