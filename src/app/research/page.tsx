@@ -5,7 +5,7 @@ import { researchItems } from "@/data/research";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 export const metadata: Metadata = {
-  title: "Research",
+  title: "Research",  alternates: { canonical: "/research/" },
 };
 
 export default function ResearchPage() {

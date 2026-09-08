@@ -26,10 +26,12 @@ def rows(path:Path):
 def main()->int:
     systems=need(SYSTEMS);system_card=need(SYSTEM_CARD);systems_page=need(SYSTEMS_PAGE);methods=need(METHODS);methods_used=need(METHODS_USED);sitemap=need(SITEMAP);pds=need(PDS_PAGE);route=need(PDS_DASHBOARD);f2r=need(F2R_PAGE);snapshot=need(SNAPSHOT);binder=need(BINDER);public_html=need(PUBLIC_DASHBOARD)
     for tok in ['slug: "pds"','systemGroup: "portfolio-decision"','prominence: "flagship"','Portfolio Decision & Operating System','dateLabel: "Updated with latest public release"','publicDashboard: "/systems/pds/dashboard/"','slug: "f2r"','Forecast-to-Rank Allocation','Machine-Learning Cross-Asset Portfolio Strategy','systemGroup: "portfolio-strategy"']:require(systems,tok,'systems registry')
-    for tok in ['item.links.publicDashboard','Public Dashboard →']:require(system_card,tok,'Systems card PDS dashboard link')
+    for tok in ['item.links.publicDashboard','Open Dashboard ↗','data-sq-dashboard-app="true"']:require(system_card,tok,'Systems card PDS dashboard link')
     for tok in ['pdsPublicSnapshot','function formatPdsPublicDate','formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)']:require(systems_page,tok,'Systems index PDS release-date binding')
     require(methods,'"pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"]','PDS methods bundle')
-    require(methods_used,'method.researchContext.replace("this research", "this system")','system methods copy')
+    require(methods_used,'getMethodContextForArtifact(method, researchSlug, context)','explicit artifact-specific methods context')
+    if 'replace("this research"' in methods_used:
+        raise RuntimeError('legacy research-to-system string replacement remains in MethodsUsed')
     require(sitemap,'"/systems/pds/dashboard/",','PDS dashboard sitemap')
     for article in PDS_METHOD_ARTICLES: need(article)
     for tok in ['fixed 25% F2R / 75% ADAA','current asset-level target','the Core is not reset to 25/75 each day','Current asset-level target and live allocation state beyond the disclosed fixed Core policy','/systems/pds/dashboard/','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS is provider-agnostic and is not defined by any particular pair of strategies','Portfolio Integration & Allocation','const recentReturnRows =','Recent released PDS Core and provider monthly returns','<th>PDS Core</th><th>F2R</th><th>ADAA</th>']:require(pds,tok,'PDS page')

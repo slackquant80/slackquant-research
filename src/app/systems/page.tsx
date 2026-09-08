@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Systems",
   description:
     "Operational investment and decision systems published by SlackQuant, organized by their role in the portfolio decision process.",
+  alternates: { canonical: "/systems/" },
 };
 
 function formatPdsPublicDate(isoDate: string) {

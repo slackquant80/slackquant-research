@@ -152,6 +152,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="canonical" href="https://research.slackquant.com/methods/10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">
 </head>
 
 <body class="quarto-light">
@@ -539,7 +540,24 @@ Figure&nbsp;2: The fixed rolling window responds more quickly to the synthetic b
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p><a href="https://research.slackquant.com/research/beyond-average-accuracy/"><strong>Beyond Average Accuracy: Statistical Distinguishability and Temporal Concentration in Data-Rich Macroeconomic Forecasting</strong></a> uses a fixed-length rolling estimation window inside a repeated pseudo-out-of-sample forecasting design. QM002 explains the estimation-window choice itself; the research paper contains the application-specific model set, horizons, benchmarks, and statistical evidence.</p>
+<ul>
+<li><a
+href="https://research.slackquant.com/research/beyond-average-accuracy/">Beyond
+Average Accuracy</a>: uses a fixed-length rolling estimation window
+inside a repeated pseudo-out-of-sample forecasting design.</li>
+<li><a
+href="https://research.slackquant.com/research/price-macro-decision/">The
+Decision Value of Price and Macro Information</a>: uses rolling
+estimation to generate the forecasts that are later translated into
+portfolio rankings.</li>
+<li><a
+href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank
+Allocation (F2R)</a>: uses rolling estimation-window design in the
+forecasting layer that feeds the cross-asset ranking step.</li>
+</ul>
+<p>QM002 isolates the rolling-versus-expanding design choice; the linked
+artifacts retain their own model, horizon, and portfolio
+specifications.</p>
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>

@@ -283,4 +283,34 @@ if ($methodsIndex -match 'SlackQuant Quantitative Methods explains') {
   throw "Methods index repeats the SlackQuant brand unnecessarily"
 }
 
+
+
+# System-specific Method copy must be explicit rather than derived by paper/research string replacement.
+if ($methodsUsedSource -match 'replace\("this research"') {
+  throw "MethodsUsed still derives system copy by string replacement"
+}
+foreach ($token in @('systemMethodContext','"adaa-system"','"f2r-system"','"pds-system"','getMethodContextForArtifact')) {
+  if ($methodsData -notmatch [regex]::Escape($token)) { throw "Artifact-specific method context contract missing: $token" }
+}
+
+$systemReverse = @{
+  'ADAA' = @{ Route = 'https://research.slackquant.com/systems/adaa/'; Methods = @('QM007','QM009','QM010','QM011','QM014') }
+  'F2R'  = @{ Route = 'https://research.slackquant.com/systems/f2r/'; Methods = @('QM001','QM002','QM003','QM007','QM009','QM013') }
+  'PDS'  = @{ Route = 'https://research.slackquant.com/systems/pds/'; Methods = @('QM007','QM008','QM009','QM011','QM013','QM014') }
+}
+$articleById = @{}
+Get-ChildItem (Join-Path $PlatformRoot 'public\methods') -Recurse -Filter article.html | ForEach-Object {
+  if ($_.FullName -match '(QM\d{3})_') { $articleById[$matches[1]] = $_.FullName }
+}
+foreach ($system in $systemReverse.Keys) {
+  $route = $systemReverse[$system].Route
+  foreach ($mid in $systemReverse[$system].Methods) {
+    if (-not $articleById.ContainsKey($mid)) { throw "Rendered Method article missing for reverse usage: $mid" }
+    $html = [System.IO.File]::ReadAllText($articleById[$mid])
+    if ($html -notmatch [regex]::Escape($route)) { throw "$mid missing reverse usage link to $system" }
+  }
+}
+
+Write-Host "METHODS_SYSTEM_REVERSE_USAGE_PASS" -ForegroundColor Green
+
 Write-Host "METHODS_PLATFORM_INTEGRATION_VALIDATION_PASS" -ForegroundColor Green

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Forecast-to-Rank Allocation (F2R) — Portfolio Strategy System",
   description:
     "Forecast-to-Rank Allocation (F2R), a live machine-learning cross-asset Portfolio Strategy System with an independently deployed public dashboard and a defined relationship to PDS.",
+  alternates: { canonical: "/systems/f2r/" },
 };
 
 export default function F2rSystemPage() {
@@ -33,7 +34,7 @@ export default function F2rSystemPage() {
           <div className="actions">
             {item.links.liveDashboard ? (
               <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                Open Live Dashboard
+                Open Dashboard ↗
               </a>
             ) : null}
             {item.links.relatedResearch ? (
@@ -117,7 +118,7 @@ export default function F2rSystemPage() {
                   <span className="artifact-kicker">LIVE SYSTEM</span>
                   <strong>F2R Public Dashboard</strong>
                   <small>Official decision, intramonth preview, historical evidence, and certified target history.</small>
-                  <span className="artifact-action">Open Live Dashboard ↗</span>
+                  <span className="artifact-action">Open Dashboard ↗</span>
                 </a>
               ) : null}
               {item.links.deploymentRepository ? (

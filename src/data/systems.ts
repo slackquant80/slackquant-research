@@ -23,6 +23,7 @@ export type SystemItem = {
     dashboardGuidePdf?: string;
     fullManual?: string;
     deploymentRepository?: string;
+    replicationRepository?: string;
     relatedResearch?: string;
     researchDashboard?: string;
     replication?: string;
@@ -56,7 +57,7 @@ export const systemItems: SystemItem[] = [
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
-    dateLabel: "Updated August 2026",
+    dateLabel: "Live release series",
     shortSummary:
       "A live rules-based multi-asset portfolio strategy system built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
@@ -68,20 +69,20 @@ export const systemItems: SystemItem[] = [
       liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/",
       relatedResearch: "/research/adaa/",
       researchDashboard: "https://slackquant80.github.io/adaa-slackquant/",
-      deploymentRepository: "https://github.com/slackquant80/adaa-decision-diversification",
+      replicationRepository: "https://github.com/slackquant80/adaa-decision-diversification",
       replication: "https://github.com/slackquant80/adaa-decision-diversification/releases/tag/v1.1.4",
       archivalRelease: "https://doi.org/10.5281/zenodo.22006841",
     },
   },
   {
     slug: "f2r",
-    title: "Forecast-to-Rank Allocation",
+    title: "Forecast-to-Rank Allocation (F2R)",
     subtitle: "Machine-Learning Cross-Asset Portfolio Strategy",
     category: "Portfolio Strategy System",
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
-    dateLabel: "Updated August 30, 2026",
+    dateLabel: "Live release series",
     shortSummary:
       "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains an independent Portfolio Strategy System while serving as one of the strategy providers currently admitted to the PDS Active Core.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",

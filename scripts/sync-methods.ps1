@@ -63,7 +63,10 @@ if (-not (Test-Path $normalizer)) {
 }
 
 Write-Host "Normalizing Methods platform navigation..." -ForegroundColor Cyan
-& powershell -ExecutionPolicy Bypass -File $normalizer -PlatformRoot $PlatformRoot
+$psExe = Get-Command pwsh -ErrorAction SilentlyContinue
+if (-not $psExe) { $psExe = Get-Command powershell -ErrorAction SilentlyContinue }
+if (-not $psExe) { throw "PowerShell executable not found for Methods navigation normalization" }
+& $psExe.Source -NoProfile -File $normalizer -PlatformRoot $PlatformRoot
 if ($LASTEXITCODE -ne 0) {
   throw "Methods navigation normalization failed with exit code $LASTEXITCODE"
 }

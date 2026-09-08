@@ -7,6 +7,32 @@ export type QuantitativeMethod = {
   researchContext: string;
 };
 
+const systemMethodContext: Record<string, Record<string, string>> = {
+  "adaa-system": {
+    QM007: "Defines the monthly rebalance, drift, and execution-clock accounting needed to interpret ADAA's official decisions and realized portfolio path.",
+    QM009: "Explains drift-aware turnover and transaction-cost accounting used when ADAA target changes are translated into net implementation results.",
+    QM010: "Provides the momentum and trend concepts used by parts of ADAA's decision-diversified allocation architecture.",
+    QM011: "Provides the decision-diversification framework used to distinguish complementary allocation perspectives from redundant strategy behavior.",
+    QM014: "Defines release-date, vintage, and availability discipline for ADAA components that use macroeconomic information.",
+  },
+  "f2r-system": {
+    QM001: "Defines the out-of-sample information boundary for F2R's forecasting layer before forecasts are converted into relative ranks.",
+    QM002: "Explains rolling estimation-window design for the forecast models that feed F2R's cross-asset ranking step.",
+    QM003: "Defines leakage controls for forecasting inputs, model development, and the historical ranking exercise used to validate F2R.",
+    QM007: "Explains how monthly F2R targets become holding-period portfolio returns under explicit rebalance timing and weight drift.",
+    QM009: "Explains the turnover and transaction-cost conventions required to interpret F2R performance net of modeled trading costs.",
+    QM013: "Defines benchmark-relative measures used to judge whether F2R's ranked portfolio adds value beyond same-universe and external comparators.",
+  },
+  "pds-system": {
+    QM007: "Defines portfolio accounting and rebalance timing used to maintain a continuous PDS Core performance path across provider decisions.",
+    QM008: "Defines drawdown, underwater duration, and recovery measures used to interpret path-dependent PDS Core downside behavior.",
+    QM009: "Defines turnover and transaction-cost conventions used when implementation effects are evaluated across governed portfolio decisions.",
+    QM011: "Provides strategy-similarity and decision-diversification concepts used when PDS evaluates how independently owned providers complement one another.",
+    QM013: "Defines benchmark-relative portfolio measures used to separate absolute PDS Core performance from relative performance evidence.",
+    QM014: "Defines information-timing and data-availability discipline used when PDS governs provider inputs that depend on macroeconomic information.",
+  },
+};
+
 export const quantitativeMethods: QuantitativeMethod[] = [
   {
     id: "QM001",
@@ -182,6 +208,17 @@ const artifactMethodIds: Record<string, string[]> = {
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014"],
   "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 };
+
+export function getMethodContextForArtifact(
+  method: QuantitativeMethod,
+  artifactSlug: string,
+  context: "research" | "system",
+) {
+  if (context === "system") {
+    return systemMethodContext[artifactSlug]?.[method.id] ?? method.researchContext;
+  }
+  return method.researchContext;
+}
 
 export function getMethodsForArtifact(slug: string) {
   const ids = artifactMethodIds[slug] ?? [];

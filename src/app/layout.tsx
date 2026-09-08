@@ -6,11 +6,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { ExternalLinkPolicy } from "@/components/ExternalLinkPolicy";
 import { site } from "@/data/site";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://research.slackquant.com";
 const gaMeasurementId = "G-6GE45R8S4F";
 
 export const metadata: Metadata = {
-  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  metadataBase: new URL(siteUrl),
   title: {
     default: site.name,
     template: `%s — ${site.name}`,

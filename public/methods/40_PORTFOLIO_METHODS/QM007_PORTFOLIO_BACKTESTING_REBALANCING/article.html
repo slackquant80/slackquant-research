@@ -152,6 +152,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">
 </head>
 
 <body class="quarto-light">
@@ -699,7 +700,35 @@ TO_t^{1w}
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p><a href="https://research.slackquant.com/research/protection-patience/"><strong>When Protection Works but the Portfolio Still Lags</strong></a> uses historical portfolio paths with explicit monthly rebalancing and signal timing. QM007 explains the general portfolio-accounting mechanics; the research paper contains the application-specific defensive rule, long-horizon evidence, benchmarks, and implementation details.</p>
+<ul>
+<li><a href="https://research.slackquant.com/research/adaa/">Diversify
+the Decisions, Not Just the Assets</a>: uses historical portfolio paths
+with explicit monthly decision and rebalance timing.</li>
+<li><a
+href="https://research.slackquant.com/research/protection-patience/">When
+Protection Works but the Portfolio Still Lags</a>: uses historical
+portfolio paths with explicit monthly rebalancing and signal
+timing.</li>
+<li><a
+href="https://research.slackquant.com/research/price-macro-decision/">The
+Decision Value of Price and Macro Information</a>: translates
+forecast-ranked targets into a monthly holding-period portfolio
+path.</li>
+<li><a href="https://research.slackquant.com/systems/adaa/">ADAA</a>:
+separates official monthly decisions, executed holdings, and subsequent
+mark-to-market drift.</li>
+<li><a
+href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank
+Allocation (F2R)</a>: maps monthly ranked targets into holding-period
+performance under explicit rebalance timing and weight drift.</li>
+<li><a href="https://research.slackquant.com/systems/pds/">Portfolio
+Decision System (PDS)</a>: uses continuous portfolio accounting and
+governed execution timing when provider decisions are integrated into
+the public Core performance path.</li>
+</ul>
+<p>QM007 defines the reusable accounting and timing mechanics; strategy
+rules and system-specific portfolio policies remain in their linked
+artifacts.</p>
 </section>
 <section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>

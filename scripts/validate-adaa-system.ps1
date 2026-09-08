@@ -25,7 +25,8 @@ foreach ($token in @(
   'status: "Public live"',
   'https://slackquant.shinyapps.io/adaa_strategy_main/',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518',
-  'relatedResearch: "/research/adaa/"'
+  'relatedResearch: "/research/adaa/"',
+  'replicationRepository: "https://github.com/slackquant80/adaa-decision-diversification"'
 )) {
   if ($systemsData -notmatch [regex]::Escape($token)) {
     throw "ADAA system registry missing: $token"
@@ -45,13 +46,23 @@ foreach ($token in @(
   'Public Working Paper v1.34',
   'Diversify decision logic, not just asset exposure',
   'MethodsUsed',
-  'context="system"'
+  'context="system"',
+  'validates the canonical 19-ETF',
+  'public-safe bundled snapshot',
+  'not the authority that refreshes source data'
 )) {
   if ($systemPage -notmatch [regex]::Escape($token)) {
     throw "ADAA system page contract missing: $token"
   }
 }
 
+
+if ($systemsData -match [regex]::Escape('deploymentRepository: "https://github.com/slackquant80/adaa-decision-diversification"')) {
+  throw "ADAA research/replication repository is mislabeled as a deployment repository"
+}
+foreach ($stale in @('Updated August 2026','Updated August 30, 2026')) {
+  if ($systemsData -match [regex]::Escape($stale)) { throw "Stale operational date label remains: $stale" }
+}
 if ($systemPage -match 'Technical White Paper') {
   throw "ADAA system page should not expose a Technical White Paper layer"
 }

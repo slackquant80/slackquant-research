@@ -152,6 +152,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="canonical" href="https://research.slackquant.com/methods/20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">
 </head>
 
 <body class="quarto-light">
@@ -187,6 +188,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#a-practical-reporting-checklist" id="toc-a-practical-reporting-checklist" class="nav-link" data-scroll-target="#a-practical-reporting-checklist">A Practical Reporting Checklist</a></li>
   <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -554,6 +556,24 @@ Figure&nbsp;2: The IID bootstrap produces a much smaller standard error in this 
 <li>the sample is so short that meaningful block resampling leaves very few distinct blocks; or</li>
 <li>a model-based bootstrap, subsampling method, or another dependence-aware procedure better matches the inferential problem.</li>
 </ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<ul>
+<li><a
+href="https://research.slackquant.com/research/price-macro-decision/">The
+Decision Value of Price and Macro Information</a>: uses dependence-aware
+resampling as part of inference for forecast and portfolio
+comparisons.</li>
+<li><a
+href="https://research.slackquant.com/systems/scenario-stress-lab/">Multi-Asset
+Scenario Stress Lab</a>: uses block resampling as a transparent
+historical scenario comparator and as a dependence-aware benchmark for
+model evaluation.</li>
+</ul>
+<p>QM006 explains the reusable resampling logic; each linked artifact
+defines the statistic, block design, and inferential or scenario role
+used in that application.</p>
 </section>
 <section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>

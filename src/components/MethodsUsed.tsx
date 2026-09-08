@@ -1,4 +1,4 @@
-import { getMethodsForArtifact } from "@/data/methods";
+import { getMethodContextForArtifact, getMethodsForArtifact } from "@/data/methods";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 type MethodsUsedProps = {
@@ -37,7 +37,7 @@ export function MethodsUsed({
             </div>
             <div className="method-used-copy">
               <h3>{method.title}</h3>
-              <p>{isSystem ? method.researchContext.replace("this research", "this system") : method.researchContext}</p>
+              <p>{getMethodContextForArtifact(method, researchSlug, context)}</p>
             </div>
             <span className="method-used-arrow" aria-hidden="true">
               &#8594;

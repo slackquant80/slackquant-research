@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "ADAA — Portfolio Strategy System",
   description:
     "Live multi-asset Portfolio Strategy System built around Decision Diversification, with distinct official, mark-to-market, and intramonth preview states.",
+  alternates: { canonical: "/systems/adaa/" },
 };
 
 
@@ -35,7 +36,7 @@ export default function AdaaSystemPage() {
           <div className="actions">
             {item.links.liveDashboard ? (
               <a className="btn primary ext" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                Open Live Dashboard
+                Open Dashboard ↗
               </a>
             ) : null}
             {item.links.relatedResearch ? (
@@ -157,12 +158,13 @@ export default function AdaaSystemPage() {
                 <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
-                  The live implementation refreshes current data and monitoring views, including portfolio state,
-                  drift, FX diagnostics, allocation history, and the intramonth preview.
+                  The governed release workflow refreshes source data before deployment, validates the canonical 19-ETF
+                  snapshot, and produces a public-safe bundled snapshot. Public Shiny sessions auto-run from that validated
+                  bundle; they are consumers of the released snapshot, not the authority that refreshes source data.
                 </p>
                 {item.links.liveDashboard ? (
                   <a className="btn inverse ext" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                    Open Live Dashboard
+                    Open Dashboard ↗
                   </a>
                 ) : null}
               </div>
@@ -181,7 +183,7 @@ export default function AdaaSystemPage() {
             </div>
             <div className="system-operating-list adaa-evidence-list">
               <div><strong>Published evidence.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable record for the published study.</span></div>
-              <div><strong>Live operation.</strong><span> Current data, monitoring, and implementation views can update under change control without rewriting published findings.</span></div>
+              <div><strong>Live operation.</strong><span> Source refresh, canonical snapshot validation, and public-safe bundling occur before deployment; the public application reads the validated released bundle.</span></div>
               <div><strong>Interpretation.</strong><span> The dashboard reports current strategy state and research-linked evidence; it is not a claim of guaranteed future performance.</span></div>
             </div>
 
@@ -220,6 +222,12 @@ export default function AdaaSystemPage() {
                 <a className="artifact" href={item.links.researchDashboard} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">EVIDENCE</span><strong>Research Dashboard</strong>
                   <small>Versioned visual evidence aligned to the public paper.</small><span className="artifact-action">Open Research Dashboard ↗</span>
+                </a>
+              ) : null}
+              {item.links.replicationRepository ? (
+                <a className="artifact" href={item.links.replicationRepository} target="_blank" rel="noopener noreferrer">
+                  <span className="artifact-kicker">GITHUB</span><strong>Replication Repository</strong>
+                  <small>Source repository for the versioned public research and replication record.</small><span className="artifact-action">Open Repository ↗</span>
                 </a>
               ) : null}
               {item.links.replication ? (

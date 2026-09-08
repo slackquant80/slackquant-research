@@ -152,6 +152,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">
 </head>
 
 <body class="quarto-light">
@@ -193,6 +194,7 @@ window.Quarto = {
   <li><a href="#letting-transaction-cost-realism-hide-an-information-leak" id="toc-letting-transaction-cost-realism-hide-an-information-leak" class="nav-link" data-scroll-target="#letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</a></li>
   </ul></li>
   <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -762,6 +764,34 @@ TO_{\mathcal T}^{L1}
 <li>optimization that chooses targets jointly with trading costs.</li>
 </ul>
 <p>Perold’s implementation-shortfall framework and later transaction-cost analysis emphasize the gap between a paper portfolio and the implemented outcome <span class="citation" data-cites="perold1988 kritzmanmyrgrenpage2006">(<a href="#ref-perold1988" role="doc-biblioref">Perold 1988</a>; <a href="#ref-kritzmanmyrgrenpage2006" role="doc-biblioref">Kritzman et al. 2006</a>)</span>. Almgren and Chriss show why market impact and execution risk can make optimal trading a separate problem from portfolio-weight accounting <span class="citation" data-cites="almgrenchriss2001">(<a href="#ref-almgrenchriss2001" role="doc-biblioref">Almgren and Chriss 2001</a>)</span>.</p>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<ul>
+<li><a
+href="https://research.slackquant.com/research/protection-patience/">When
+Protection Works but the Portfolio Still Lags</a>: evaluates portfolio
+results after applying declared turnover and transaction-cost
+conventions.</li>
+<li><a
+href="https://research.slackquant.com/research/price-macro-decision/">The
+Decision Value of Price and Macro Information</a>: uses turnover-linked
+cost accounting when comparing forecast-ranked portfolio variants.</li>
+<li><a href="https://research.slackquant.com/systems/adaa/">ADAA</a>:
+uses drift-aware turnover and transaction-cost accounting when target
+changes are translated into implementation results.</li>
+<li><a
+href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank
+Allocation (F2R)</a>: reports net implementation results under explicit
+turnover and modeled trading-cost conventions.</li>
+<li><a href="https://research.slackquant.com/systems/pds/">Portfolio
+Decision System (PDS)</a>: uses declared transaction-cost conventions
+when implementation effects are evaluated across governed portfolio
+decisions.</li>
+</ul>
+<p>QM009 defines the reusable turnover and cost-accounting mechanics;
+the linked artifacts retain authority over their own cost rates,
+execution assumptions, and reported results.</p>
 </section>
 <section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>

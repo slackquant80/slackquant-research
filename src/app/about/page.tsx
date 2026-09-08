@@ -3,7 +3,7 @@ import Link from "next/link";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About",  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {

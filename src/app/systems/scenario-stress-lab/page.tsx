@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
@@ -9,7 +9,7 @@ const item = getSystem("scenario-stress-lab");
 export const metadata: Metadata = {
   title: "Multi-Asset Scenario Stress Lab",
   description:
-    "Multi-asset scenario analysis for portfolio stress testing, interpretation, and human decision support.",
+    "Multi-asset scenario analysis for portfolio stress testing, interpretation, and human decision support.",  alternates: { canonical: "/systems/scenario-stress-lab/" },
 };
 
 const stageD = [

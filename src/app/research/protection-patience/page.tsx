@@ -14,7 +14,7 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "When Protection Works but the Portfolio Still Lags",
+  title: "When Protection Works but the Portfolio Still Lags",  alternates: { canonical: "/research/protection-patience/" },
 };
 
 export default function ProtectionPatiencePage() {

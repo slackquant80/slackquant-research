@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
 import { site } from "@/data/site";
 import { systemItems } from "@/data/systems";
 import { methodsRootHref } from "@/lib/methodsHref";
+
+export const metadata: Metadata = {
+  title: "SlackQuant Research",
+  description:
+    "Systematic investing, asset allocation, forecasting, financial data science, AI/ML, quantitative methods, and operational portfolio systems.",
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   const investmentFeatured =
@@ -21,6 +29,7 @@ export default function HomePage() {
     [
       ...researchItems.map((item) => item.links.github),
       ...systemItems.map((item) => item.links.deploymentRepository),
+      ...systemItems.map((item) => item.links.replicationRepository),
     ].filter((href): href is string => Boolean(href)),
   ).size;
 

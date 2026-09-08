@@ -30,17 +30,29 @@ def main() -> int:
     raw_path = data / "public_core_monthly_returns.csv"
     perf_path = data / "public_core_performance_path.csv"
     cal_path = data / "public_core_calendar_returns.csv"
+    weights_path = data / "public_active_core_strategy_weights.csv"
     disclosure_path = data / "public_disclosure_state.json"
+    manifest_path = data / "public_export_manifest.json"
 
-    for p in (raw_path, perf_path, cal_path, disclosure_path):
+    for p in (raw_path, perf_path, cal_path, weights_path, disclosure_path, manifest_path):
         if not p.is_file():
             raise RuntimeError(f"PDS clock gate missing artifact: {p}")
 
     raw = read_csv(raw_path)
     perf = read_csv(perf_path)
     cal = read_csv(cal_path)
+    weights = read_csv(weights_path)
     disclosure = json.loads(disclosure_path.read_text(encoding="utf-8"))
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
+    if manifest.get("performance_clock") != "REALIZED_HOLDING_MONTH":
+        raise RuntimeError("Public monthly-return artifact is not declared on realized holding-month clock")
+    if manifest.get("active_core_policy") != "F2R_25_ADAA_75_FIXED_ALL_HISTORY":
+        raise RuntimeError("PDS public Core policy is not canonical fixed 25/75")
+
+    # public_core_monthly_returns.period is the realized holding month. The performance
+    # path preserves the source signal/origin month separately and must map it +1 into
+    # that holding month; do not relabel the public monthly file as a signal-month file.
     raw_map = {(r["series_id"], r["period"]): float(r["net_return"]) for r in raw}
     holding_cutoff = str(disclosure["completed_holding_month_cutoff"])
 
@@ -56,15 +68,15 @@ def main() -> int:
             raise RuntimeError(f"Holding clock mismatch {sid} {signal}: {holding} != {expected_holding}")
         if holding > holding_cutoff:
             raise RuntimeError(f"Performance path exceeds completed holding cutoff: {sid} {holding} > {holding_cutoff}")
-        key = (sid, signal)
+        key = (sid, holding)
         if key not in raw_map:
-            raise RuntimeError(f"Performance row missing raw signal-key lineage: {key}")
+            raise RuntimeError(f"Performance row missing realized holding-month lineage: {key}")
         if abs(float(r["net_return"]) - raw_map[key]) > 1e-12:
-            raise RuntimeError(f"Performance return differs from raw lineage: {key}")
+            raise RuntimeError(f"Performance return differs from realized holding-month source: {key}")
         seen.add(key)
 
     if seen != set(raw_map):
-        raise RuntimeError("Raw/performance lineage key sets differ")
+        raise RuntimeError("Monthly-return/performance holding-month key sets differ")
 
     for r in cal:
         sid = str(r["series_id"])
@@ -80,23 +92,22 @@ def main() -> int:
         if abs(expected - float(r["annual_return"])) > 1e-12:
             raise RuntimeError(f"Holding-year annual compounding mismatch: {sid} {year}")
 
-    by_series = {}
-    for r in raw:
-        by_series.setdefault(r["series_id"], {})[r["period"]] = float(r["net_return"])
-    if all(x in by_series for x in ("PDS_ACTIVE_CORE", "ADAA", "F2R")):
-        c = by_series["PDS_ACTIVE_CORE"]
-        a = by_series["ADAA"]
-        f = by_series["F2R"]
-        common = sorted(set(c) & set(a) & set(f))
-        maxdiff = max(abs(c[p] - 0.5 * a[p] - 0.5 * f[p]) for p in common)
-        if maxdiff > 1e-12:
-            raise RuntimeError(f"PDS Active Core 50/50 raw identity failed: {maxdiff}")
+    for i, r in enumerate(weights, start=2):
+        signal = str(r["signal_period"])
+        holding = str(r["holding_month"])
+        if holding != add_month(signal, 1):
+            raise RuntimeError(f"Core weight clock mismatch row {i}: {signal} -> {holding}")
+        if abs(float(r["f2r_weight"]) - 0.25) > 1e-12 or abs(float(r["adaa_weight"]) - 0.75) > 1e-12:
+            raise RuntimeError(f"Fixed 25/75 Core policy drift at row {i}")
+        if r.get("weight_basis") != "FIXED_25_75_CANONICAL_ALL_HISTORY":
+            raise RuntimeError(f"Core weight-basis drift at row {i}")
 
     print("PDS_PERFORMANCE_CLOCK_GATE_PASS")
-    print("Clock       : signal/origin month -> realized holding month +1")
+    print("Clock       : source signal/origin month -> realized holding month +1")
     print(f"Holding max : {holding_cutoff}")
-    print("Annual      : compounded by holding year")
-    print("Raw lineage : preserved by signal/origin key")
+    print("Monthly file: period is realized holding month")
+    print("Annual      : compounded by realized holding year")
+    print("Core policy : F2R 25% / ADAA 75% fixed target history")
     return 0
 
 

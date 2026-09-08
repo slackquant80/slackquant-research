@@ -14,7 +14,7 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "Beyond Average Accuracy",
+  title: "Beyond Average Accuracy",  alternates: { canonical: "/research/beyond-average-accuracy/" },
 };
 
 export default function BeyondAverageAccuracyPage() {

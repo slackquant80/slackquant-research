@@ -3,6 +3,15 @@
 import { useEffect } from "react";
 
 const CANONICAL_HOST = "research.slackquant.com";
+const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set(["/systems/pds/dashboard/"]);
+
+function secureNewTabAnchor(anchor: HTMLAnchorElement) {
+  anchor.target = "_blank";
+  const rel = new Set(anchor.rel.split(/\s+/).filter(Boolean));
+  rel.add("noopener");
+  rel.add("noreferrer");
+  anchor.rel = Array.from(rel).join(" ");
+}
 
 function normalizeFirstPartyAnchor(anchor: HTMLAnchorElement) {
   anchor.removeAttribute("target");
@@ -14,6 +23,13 @@ function normalizeFirstPartyAnchor(anchor: HTMLAnchorElement) {
   } else {
     anchor.removeAttribute("rel");
   }
+}
+
+function isApprovedFirstPartyNewTab(anchor: HTMLAnchorElement, url: URL) {
+  return (
+    anchor.dataset.sqDashboardApp === "true" &&
+    FIRST_PARTY_NEW_TAB_APP_PATHS.has(url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`)
+  );
 }
 
 function enforceExternalLinkPolicy() {
@@ -34,15 +50,15 @@ function enforceExternalLinkPolicy() {
       url.origin === window.location.origin || url.hostname === CANONICAL_HOST;
 
     if (isInternal) {
-      normalizeFirstPartyAnchor(anchor);
+      if (isApprovedFirstPartyNewTab(anchor, url)) {
+        secureNewTabAnchor(anchor);
+      } else {
+        normalizeFirstPartyAnchor(anchor);
+      }
       return;
     }
 
-    anchor.target = "_blank";
-    const rel = new Set(anchor.rel.split(/\s+/).filter(Boolean));
-    rel.add("noopener");
-    rel.add("noreferrer");
-    anchor.rel = Array.from(rel).join(" ");
+    secureNewTabAnchor(anchor);
   });
 }
 
@@ -50,11 +66,8 @@ export function ExternalLinkPolicy() {
   useEffect(() => {
     enforceExternalLinkPolicy();
 
-    const observer = new MutationObserver(() => {
-      enforceExternalLinkPolicy();
-    });
+    const observer = new MutationObserver(enforceExternalLinkPolicy);
     observer.observe(document.body, { childList: true, subtree: true });
-
     return () => observer.disconnect();
   }, []);
 

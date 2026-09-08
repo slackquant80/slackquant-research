@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Portfolio Decision System — Portfolio Decision & Operating System",
   description:
     "SlackQuant's governed multi-strategy Portfolio Decision & Operating System, with open architecture and a protected current decision state.",
+  alternates: { canonical: "/systems/pds/" },
 };
 
 const architectureStages = [
@@ -58,7 +59,15 @@ export default function PdsSystemPage() {
             <span>Current Active Core providers · ADAA + F2R</span>
           </div>
           <div className="actions">
-            <Link className="btn primary" href="/systems/pds/dashboard/">Open Public Dashboard</Link>
+            <Link
+              className="btn primary"
+              href="/systems/pds/dashboard/"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-sq-dashboard-app="true"
+            >
+              Open Dashboard ↗
+            </Link>
             <a className="btn soft" href="#architecture">View System Architecture</a>
             <Link className="btn soft" href="/systems/adaa/">Explore ADAA</Link>
             <Link className="btn soft" href="/systems/f2r/">Explore F2R</Link>

@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Dashboard Guide | Multi-Asset Scenario Stress Lab",
   description:
-    "Short screen-centered guide to reading the Multi-Asset Scenario Stress Lab public dashboard.",
+    "Short screen-centered guide to reading the Multi-Asset Scenario Stress Lab public dashboard.",  alternates: { canonical: "/systems/scenario-stress-lab/guide/" },
 };
 
 const boundaries = [
@@ -63,10 +63,8 @@ export default function StressLabDashboardGuidePage() {
               Open Live Dashboard
             </a>
             <a
-              className="btn soft ext"
+              className="btn soft"
               href="/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               Guide PDF
             </a>

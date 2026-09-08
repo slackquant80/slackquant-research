@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
 export function SystemCard({ item }: { item: SystemItem }) {
+  const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard;
+  const dashboardIsFirstPartyApp = Boolean(item.links.publicDashboard);
+
   return (
     <article className={`system-card ${item.prominence === "flagship" ? "system-card-flagship" : ""}`}>
       <div className="card-kicker-row">
@@ -21,18 +24,25 @@ export function SystemCard({ item }: { item: SystemItem }) {
           View System →
         </Link>
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
-          {item.links.publicDashboard ? (
-            <Link className="strong-link" href={item.links.publicDashboard}>
-              Public Dashboard →
-            </Link>
-          ) : null}
-          {item.links.liveDashboard ? (
-            <a className="strong-link" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-              Live Dashboard ↗
-            </a>
+          {dashboardHref ? (
+            dashboardIsFirstPartyApp ? (
+              <Link
+                className="strong-link"
+                href={dashboardHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-sq-dashboard-app="true"
+              >
+                Open Dashboard ↗
+              </Link>
+            ) : (
+              <a className="strong-link" href={dashboardHref} target="_blank" rel="noopener noreferrer">
+                Open Dashboard ↗
+              </a>
+            )
           ) : null}
           {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
-          {item.links.whitePaper ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}
+          {item.links.whitePaper ? (item.links.whitePaper.startsWith("/") ? <Link href={item.links.whitePaper}>White Paper PDF</Link> : <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a>) : null}
         </div>
       </div>
     </article>

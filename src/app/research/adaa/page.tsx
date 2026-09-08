@@ -15,7 +15,7 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "ADAA",
+  title: "ADAA",  alternates: { canonical: "/research/adaa/" },
 };
 
 export default function AdaaPage() {

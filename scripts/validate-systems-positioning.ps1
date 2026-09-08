@@ -69,7 +69,7 @@ foreach ($token in @('ADAA + F2R','Protected until release gate','PDS is provide
 foreach ($forbidden in @('Active Core architecture','Latest released strategy mix','Two independent Portfolio Strategy Systems')) {
   if ($pdsPage -match [regex]::Escape($forbidden)) { throw "PDS fixed-blend narrative regression: $forbidden" }
 }
-foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Live Dashboard','GitHub Repository','governed public deployment surfaces','/systems/pds/')) {
+foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Dashboard ↗','GitHub Repository','governed public deployment surfaces','/systems/pds/')) {
   if ($f2rPage -notmatch [regex]::Escape($token)) { throw "F2R relationship/live-system contract missing: $token" }
 }
 foreach ($token in @('status: "Public live"','https://f2r-forecast-to-rank-allocation.streamlit.app','https://github.com/slackquant80/f2r-forecast-to-rank-allocation')) {

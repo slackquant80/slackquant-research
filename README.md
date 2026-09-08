@@ -17,6 +17,7 @@ Next.js App Router + React + TypeScript static export.
 /research/beyond-average-accuracy/
 /systems/
 /systems/pds/
+/systems/pds/dashboard/
 /systems/adaa/
 /systems/f2r/
 /systems/scenario-stress-lab/
@@ -46,7 +47,29 @@ The deployment repository is a public-safe artifact generated from the source-ow
 
 ## Development
 
-See `SETUP_AND_RUN_WINDOWS.md`.
+```powershell
+npm install
+npm run typecheck
+npm run build
+```
+
+The production build creates the static export in `out/`. On Windows, use the repository's native Node dependencies; do not copy a platform-specific `node_modules` directory between operating systems.
+
+## Consolidated 3-System / Methods / indexability gate
+
+Run the source/static gate before release:
+
+```powershell
+.\scripts\validate-three-systems-surface.ps1
+```
+
+The gate checks PDS / ADAA / F2R identity and dashboard policy, System ↔ Method integration, Method article destinations and reverse usage, sitemap/canonical/robots contracts, repository semantics, stale operational wording, and the PDS public disclosure boundary. After `npm run build`, rerun with the build requirement enabled:
+
+```powershell
+.\scripts\validate-three-systems-surface.ps1 -RequireBuild
+```
+
+Use `-Live` only for the remote link gate; transient network/provider failures are reported separately from structural source failures.
 
 ## Build output
 

@@ -17,7 +17,7 @@ $methodsData = [System.IO.File]::ReadAllText((Need "src\data\methods.ts"))
 
 foreach ($token in @(
   'slug: "f2r"',
-  'title: "Forecast-to-Rank Allocation"',
+  'title: "Forecast-to-Rank Allocation (F2R)"',
   'status: "Public live"',
   'systemGroup: "portfolio-strategy"',
   'https://f2r-forecast-to-rank-allocation.streamlit.app',
@@ -29,7 +29,7 @@ foreach ($token in @(
 
 foreach ($token in @(
   'Forecast-to-Rank Allocation (F2R)',
-  'Open Live Dashboard',
+  'Open Dashboard ↗',
   'GitHub Repository',
   'current operating state, not the definition of PDS',
   'governed public deployment surfaces',

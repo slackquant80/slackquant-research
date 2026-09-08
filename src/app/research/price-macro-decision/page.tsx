@@ -30,7 +30,7 @@ const ew11Rows = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "The Decision Value of Price and Macro Information",
+  title: "The Decision Value of Price and Macro Information",  alternates: { canonical: "/research/price-macro-decision/" },
 };
 
 export default function PriceMacroDecisionPage() {
