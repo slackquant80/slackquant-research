@@ -105,7 +105,7 @@ def audit_static(require_build: bool) -> list[Check]:
         add(c, f"{slug.upper()} page CTA wording", "Open Dashboard ↗" in s, "Open Dashboard ↗")
     pds = text(SYSTEM_PAGE_FILES["pds"])
     add(c, "PDS approved same-origin new-tab marker", 'href="/systems/pds/dashboard/"' in pds and 'target="_blank"' in pds and 'rel="noopener noreferrer"' in pds and 'data-sq-dashboard-app="true"' in pds, "PDS dashboard opens securely in new tab")
-    add(c, "ExternalLinkPolicy dashboard exception", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "/systems/pds/dashboard/", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]), "Only marked dashboard application route is eligible")
+    add(c, "ExternalLinkPolicy approved first-party exceptions", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "isFirstPartyPdf", ".pdf", "/systems/pds/dashboard/", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]), "PDF documents plus the marked dashboard application route are eligible")
 
     unauthorized = []
     for p in (ROOT / "src").rglob("*.tsx"):
@@ -117,6 +117,7 @@ def audit_static(require_build: bool) -> list[Check]:
             if not href_m: continue
             href = href_m.group(1)
             if href == "/systems/pds/dashboard/" and 'data-sq-dashboard-app="true"' in tag: continue
+            if href.lower().endswith(".pdf"): continue
             unauthorized.append(f"{p.relative_to(ROOT)} -> {href}")
     add(c, "No unauthorized same-origin new-tab", not unauthorized, "none", "; ".join(unauthorized[:8]))
 

@@ -31,6 +31,15 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM013: "Defines benchmark-relative portfolio measures used to separate absolute PDS Core performance from relative performance evidence.",
     QM014: "Defines information-timing and data-availability discipline used when PDS governs provider inputs that depend on macroeconomic information.",
   },
+  "scenario-stress-lab": {
+    QM001: "Defines the out-of-sample information boundary used when the Stress Lab evaluates scenario-generation methods without leaking future market information.",
+    QM003: "Defines leakage controls for dated market inputs, scenario construction, retrospective evaluation, and public evidence used by the Stress Lab.",
+    QM006: "Explains dependence-aware block resampling used by the Stress Lab's transparent historical comparator.",
+    QM015: "Provides multivariate probabilistic evaluation concepts used to assess joint scenario quality beyond a single marginal accuracy score.",
+    QM016: "Defines the EWMA-t conditional scenario engine used as the Stress Lab's reference model for heavy-tailed joint return simulation.",
+    QM017: "Defines same-scenario portfolio stress testing, tail-loss measurement, and what-if comparison without turning the exercise into portfolio optimization.",
+    QM018: "Defines stress-archetype construction and representative-scenario geometry used to summarize adverse scenario structure in interpretable form.",
+  },
 };
 
 export const quantitativeMethods: QuantitativeMethod[] = [
@@ -215,7 +224,11 @@ export function getMethodContextForArtifact(
   context: "research" | "system",
 ) {
   if (context === "system") {
-    return systemMethodContext[artifactSlug]?.[method.id] ?? method.researchContext;
+    const systemContext = systemMethodContext[artifactSlug]?.[method.id];
+    if (!systemContext) {
+      throw new Error(`Missing system-specific method context: ${artifactSlug} / ${method.id}`);
+    }
+    return systemContext;
   }
   return method.researchContext;
 }

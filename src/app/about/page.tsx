@@ -3,7 +3,9 @@ import Link from "next/link";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About",  alternates: { canonical: "/about/" },
+  title: "About",
+  description: "About SlackQuant Research, its research streams, operational systems, Quantitative Methods library, and separation between research evidence and live operation.",
+  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {
@@ -83,7 +85,7 @@ export default function AboutPage() {
             <p>
               Public systems are presented as operational tools with clearly
               defined roles and interpretation limits. Supporting research and white
-              papers remain separately versioned, so live updates do not rewrite the
+              papers remain separately versioned, so operational releases do not rewrite the
               underlying evidence.
             </p>
             <Link className="section-link strong-link" href="/systems/">

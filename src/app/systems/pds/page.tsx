@@ -32,15 +32,21 @@ export default function PdsSystemPage() {
   if (!item) notFound();
 
   const snapshot = pdsPublicSnapshot;
-  const latestReturns = snapshot?.recentMonthlyReturns ?? [];
   const latestTargets = snapshot?.latestAssetTargets ?? [];
   const latestWeights = snapshot?.latestStrategyWeights ?? null;
-  const recentReturnPeriods = [...new Set(latestReturns.map((row) => row.period))].sort().reverse();
+  const corePerformance = snapshot?.corePerformance ?? [];
+  const fxPerformance = snapshot?.fxPerformance ?? [];
+  const recentReturnPeriods = [...new Set(
+    corePerformance
+      .filter((row) => ["PDS_ACTIVE_CORE", "F2R", "ADAA"].includes(row.seriesId))
+      .map((row) => row.holdingMonth),
+  )].sort().reverse().slice(0, 12);
   const recentReturnRows = recentReturnPeriods.map((period) => ({
     period,
-    core: latestReturns.find((row) => row.period === period && row.seriesId === "PDS_ACTIVE_CORE"),
-    f2r: latestReturns.find((row) => row.period === period && row.seriesId === "F2R"),
-    adaa: latestReturns.find((row) => row.period === period && row.seriesId === "ADAA"),
+    fx: fxPerformance.find((row) => row.holdingMonth === period && row.seriesId === "DYNAMIC_COSTED"),
+    core: corePerformance.find((row) => row.holdingMonth === period && row.seriesId === "PDS_ACTIVE_CORE"),
+    f2r: corePerformance.find((row) => row.holdingMonth === period && row.seriesId === "F2R"),
+    adaa: corePerformance.find((row) => row.holdingMonth === period && row.seriesId === "ADAA"),
   }));
 
   return (
@@ -303,16 +309,17 @@ export default function PdsSystemPage() {
                 {recentReturnRows.length ? (
                   <div className="selected-table-block">
                     <div className="selected-exhibits-head">
-                      <div className="section-title">Recent Released Monthly Returns</div>
-                      <p>Completed delayed returns for the fixed PDS Core and its independently owned ADAA/F2R providers; no live or preview return is included.</p>
+                      <div className="section-title">Recent 12-Month Released Returns</div>
+                      <p>Completed delayed returns for the historical Dynamic FX sensitivity layer, fixed PDS Core, and independently owned F2R/ADAA providers; no live or preview return is included.</p>
                     </div>
-                    <div className="evidence-table-wrap" role="region" aria-label="Recent released PDS Core and provider monthly returns" tabIndex={0}>
+                    <div className="evidence-table-wrap" role="region" aria-label="Recent 12-month Dynamic FX, PDS Core, and provider returns" tabIndex={0}>
                       <table className="evidence-table pds-public-table">
-                        <thead><tr><th>Month</th><th>PDS Core</th><th>F2R</th><th>ADAA</th></tr></thead>
+                        <thead><tr><th>Month</th><th>Dynamic FX · 5bp</th><th>PDS Core</th><th>F2R</th><th>ADAA</th></tr></thead>
                         <tbody>
                           {recentReturnRows.map((row) => (
                             <tr key={row.period}>
                               <th scope="row">{row.period}</th>
+                              <td>{row.fx ? pct(row.fx.netReturn) : "—"}</td>
                               <td>{row.core ? pct(row.core.netReturn) : "—"}</td>
                               <td>{row.f2r ? pct(row.f2r.netReturn) : "—"}</td>
                               <td>{row.adaa ? pct(row.adaa.netReturn) : "—"}</td>
@@ -321,13 +328,17 @@ export default function PdsSystemPage() {
                         </tbody>
                       </table>
                     </div>
+                    <p className="body-copy documentation-note"><strong>Dynamic FX · 5bp</strong> is a delayed historical non-canonical spot-sensitivity layer shown for comparison. It is not the current FX overlay state.</p>
                   </div>
                 ) : null}
 
                 <div className="card-artifact-links pds-data-links" aria-label="PDS delayed public data downloads">
                   <a href={`${snapshot.rawDataBaseHref}/public_active_core_asset_targets.csv`}>Asset targets CSV</a>
                   <a href={`${snapshot.rawDataBaseHref}/public_active_core_strategy_weights.csv`}>Strategy weights CSV</a>
-                  <a href={`${snapshot.rawDataBaseHref}/public_core_monthly_returns.csv`}>Monthly returns CSV</a>
+                  <a href={`${snapshot.rawDataBaseHref}/public_recent_12m_returns.xlsx`}>12-month table Excel (.xlsx)</a>
+                  <a href={`${snapshot.rawDataBaseHref}/public_recent_12m_returns.csv`}>12-month table CSV</a>
+                  <a href={`${snapshot.rawDataBaseHref}/public_core_monthly_returns.csv`}>Full Core/provider returns CSV</a>
+                  <a href={`${snapshot.rawDataBaseHref}/public_fx_performance_path.csv`}>Dynamic FX history CSV</a>
                   <a href={`${snapshot.rawDataBaseHref}/PDS_PUBLIC_BINDING_RECEIPT.json`}>Binding receipt</a>
                 </div>
               </>

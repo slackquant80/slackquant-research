@@ -1280,8 +1280,9 @@ Scheuerer, Michael, and Thomas M. Hamill. 2015. <span>“Variogram-Based Proper 
         const isFirstParty =
           url.origin === window.location.origin ||
           url.hostname === canonicalHost;
+        const isPdfDocument = url.pathname.toLowerCase().endsWith(".pdf");
         const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
-        if (isFirstParty) {
+        if (isFirstParty && !isPdfDocument) {
           anchor.removeAttribute("target");
           rel.delete("noopener");
           rel.delete("noreferrer");

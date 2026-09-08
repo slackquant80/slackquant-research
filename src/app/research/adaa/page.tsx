@@ -15,7 +15,9 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "ADAA",  alternates: { canonical: "/research/adaa/" },
+  title: "ADAA",
+  description: "Research on decision diversification and robust strategy combination in dynamic asset allocation, with public evidence and replication links.",
+  alternates: { canonical: "/research/adaa/" },
 };
 
 export default function AdaaPage() {
@@ -260,9 +262,11 @@ export default function AdaaPage() {
             </p>
 
             <div className="boundary-note">
-              <b>Research vs. live system:</b> the ADAA system may refresh current data and
-              operational views, while the findings on this page remain tied to Public Working
-              Paper {item.publicVersion}. <Link href="/systems/adaa/">Open the ADAA System →</Link>
+              <b>Research vs. operational system:</b> the findings on this page remain tied to
+              Public Working Paper {item.publicVersion}. For the public system, source data are refreshed
+              before deployment, the canonical 19-ETF snapshot is validated and bundled, and the public
+              session consumes that validated bundle rather than acting as the source-data refresh authority.
+              <Link href="/systems/adaa/"> Open the ADAA System →</Link>
             </div>
 
             <div className="dual">
@@ -286,11 +290,12 @@ export default function AdaaPage() {
 
               <div className="dual-card operational">
                 <div className="kicker">Implementation</div>
-                <h3>ADAA Live Dashboard</h3>
+                <h3>ADAA Dashboard</h3>
                 <p>
-                  Current implementation and portfolio-monitoring views. This interface
-                  can change with live conditions and is separate from the versioned
-                  research record.
+                  Current public implementation and portfolio-monitoring views. Source data
+                  are refreshed and the canonical 19-ETF snapshot is validated before deployment;
+                  public sessions consume the validated bundled snapshot and remain separate from
+                  the versioned research record.
                 </p>
                 {item.links.operationalDashboard ? (
                   <ArtifactLink
@@ -298,7 +303,7 @@ export default function AdaaPage() {
                     external
                     variant="inverse"
                   >
-                    Open Live Dashboard
+                    Open Dashboard ↗
                   </ArtifactLink>
                 ) : null}
               </div>
@@ -306,7 +311,7 @@ export default function AdaaPage() {
 
             <div className="boundary-note">
               <b>Version note:</b> research results on this page correspond to
-              the cited public paper version; live system views may change independently.
+              the cited public paper version; operational releases may change independently.
             </div>
           </section>
 

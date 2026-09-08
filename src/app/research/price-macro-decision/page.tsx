@@ -30,7 +30,9 @@ const ew11Rows = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "The Decision Value of Price and Macro Information",  alternates: { canonical: "/research/price-macro-decision/" },
+  title: "The Decision Value of Price and Macro Information",
+  description: "Out-of-sample evidence on whether price and macro information improve cross-asset allocation decisions under conservative information timing.",
+  alternates: { canonical: "/research/price-macro-decision/" },
 };
 
 export default function PriceMacroDecisionPage() {

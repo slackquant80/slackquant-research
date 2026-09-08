@@ -10,6 +10,7 @@ import re
 import shutil
 from datetime import datetime
 from pathlib import Path
+from pds_recent_xlsx import write_recent_xlsx_from_csv
 
 EXPECTED = {
     "public_active_core_asset_targets.csv",
@@ -197,7 +198,7 @@ def main() -> int:
 
     allowed_series = {"PDS_ACTIVE_CORE", "ADAA", "F2R"}
     filtered_returns = [r for r in return_rows if r.get("series_id") in allowed_series]
-    periods = sorted({r.get("period", "") for r in filtered_returns if r.get("period")})[-6:]
+    periods = sorted({r.get("period", "") for r in filtered_returns if r.get("period")})[-12:]
     recent = [r for r in filtered_returns if r.get("period") in periods]
     recent.sort(key=lambda r: (r.get("period", ""), r.get("series_id", "")), reverse=True)
     return_snapshot = [
@@ -284,6 +285,26 @@ def main() -> int:
     }
 
     bound_hashes = copy_governed_files(export_root, data_root)
+    recent_periods = sorted({r["holding_month"] for r in core_performance_rows if r.get("series_id") == "PDS_ACTIVE_CORE"})[-12:]
+    core_map = {(r["holding_month"], r["series_id"]): r["net_return"] for r in core_performance_rows}
+    fx_map = {(r["holding_month"], r["series_id"]): r["net_return"] for r in fx_performance_rows}
+    recent_csv = data_root / "public_recent_12m_returns.csv"
+    with recent_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["holding_month", "dynamic_fx_5bp", "pds_core", "f2r", "adaa", "dynamic_fx_layer_status"])
+        writer.writeheader()
+        for period in reversed(recent_periods):
+            writer.writerow({
+                "holding_month": period,
+                "dynamic_fx_5bp": fx_map.get((period, "DYNAMIC_COSTED"), ""),
+                "pds_core": core_map.get((period, "PDS_ACTIVE_CORE"), ""),
+                "f2r": core_map.get((period, "F2R"), ""),
+                "adaa": core_map.get((period, "ADAA"), ""),
+                "dynamic_fx_layer_status": "HISTORICAL_DELAYED_NON_CANONICAL_SPOT_SENSITIVITY",
+            })
+    bound_hashes[recent_csv.name] = sha256(recent_csv)
+    recent_xlsx = data_root / "public_recent_12m_returns.xlsx"
+    write_recent_xlsx_from_csv(recent_csv, recent_xlsx)
+    bound_hashes[recent_xlsx.name] = sha256(recent_xlsx)
     receipt = {
         "status": "PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
         "bound_at": datetime.now().astimezone().isoformat(),

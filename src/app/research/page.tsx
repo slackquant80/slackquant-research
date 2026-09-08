@@ -5,7 +5,9 @@ import { researchItems } from "@/data/research";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 export const metadata: Metadata = {
-  title: "Research",  alternates: { canonical: "/research/" },
+  title: "Research",
+  description: "Public working papers and research releases in systematic investing, forecasting, financial data science, and AI/ML, with evidence and reproducibility links where available.",
+  alternates: { canonical: "/research/" },
 };
 
 export default function ResearchPage() {

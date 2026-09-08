@@ -25,10 +25,15 @@ function normalizeFirstPartyAnchor(anchor: HTMLAnchorElement) {
   }
 }
 
+function isFirstPartyPdf(url: URL) {
+  return url.pathname.toLowerCase().endsWith(".pdf");
+}
+
 function isApprovedFirstPartyNewTab(anchor: HTMLAnchorElement, url: URL) {
   return (
-    anchor.dataset.sqDashboardApp === "true" &&
-    FIRST_PARTY_NEW_TAB_APP_PATHS.has(url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`)
+    isFirstPartyPdf(url) ||
+    (anchor.dataset.sqDashboardApp === "true" &&
+      FIRST_PARTY_NEW_TAB_APP_PATHS.has(url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`))
   );
 }
 

@@ -42,8 +42,8 @@ export default function HomePage() {
           <p className="hero-copy">
             Investment and academic research, operational systems, and quantitative
             methods across systematic investing, asset allocation, forecasting,
-            financial data science, and AI/ML. Each project links directly to its
-            papers, evidence, code, tools, and live interfaces.
+            financial data science, and AI/ML. Where available, projects link directly
+            to papers, evidence, code, tools, documentation, and live interfaces.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -283,7 +283,7 @@ export default function HomePage() {
           </div>
           <p className="output-note">
             Counts reflect the current public catalog across Research, Systems, and Quantitative Methods.
-            Repository links are deduplicated across research and system deployment records.
+            Repository links are deduplicated across research, deployment, and replication records.
           </p>
         </div>
       </section>
@@ -291,7 +291,7 @@ export default function HomePage() {
       <section className="section">
         <div className="shell">
           <div className="section-head">
-            <div className="section-title">Latest Public Research</div>
+            <div className="section-title">Public Research Releases</div>
           </div>
           <div className="release-list">
             {[...researchItems].reverse().map((item) => (

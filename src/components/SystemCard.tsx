@@ -42,7 +42,7 @@ export function SystemCard({ item }: { item: SystemItem }) {
             )
           ) : null}
           {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
-          {item.links.whitePaper ? (item.links.whitePaper.startsWith("/") ? <Link href={item.links.whitePaper}>White Paper PDF</Link> : <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a>) : null}
+          {item.links.whitePaper ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}
         </div>
       </div>
     </article>

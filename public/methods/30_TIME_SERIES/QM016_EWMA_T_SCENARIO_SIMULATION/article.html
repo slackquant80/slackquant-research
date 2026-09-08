@@ -1242,8 +1242,9 @@ J.P. Morgan and Reuters. 1996. <em>RiskMetrics Technical Document</em>. Fourth. 
         const isFirstParty =
           url.origin === window.location.origin ||
           url.hostname === canonicalHost;
+        const isPdfDocument = url.pathname.toLowerCase().endsWith(".pdf");
         const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
-        if (isFirstParty) {
+        if (isFirstParty && !isPdfDocument) {
           anchor.removeAttribute("target");
           rel.delete("noopener");
           rel.delete("noreferrer");

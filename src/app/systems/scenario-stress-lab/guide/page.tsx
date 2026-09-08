@@ -60,13 +60,15 @@ export default function StressLabDashboardGuidePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Open Live Dashboard
+              Open Dashboard ↗
             </a>
             <a
               className="btn soft"
               href="/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Guide PDF
+              Guide PDF ↗
             </a>
             <Link className="btn soft" href="/systems/scenario-stress-lab/">
               Back to System Page

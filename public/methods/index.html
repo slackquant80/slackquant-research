@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Practical explanations of statistical, econometric, portfolio, time-series, data-design, and machine-learning methods used in quantitative research and investment practice.">
 
 <title>Quantitative Methods – SlackQuant Research</title>
 <style>
@@ -113,6 +114,11 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <p class="subtitle lead">A practical methods library for applied quantitative research and investment practice</p>
 </div>
 
+<div>
+  <div class="description">
+    Practical explanations of statistical, econometric, portfolio, time-series, data-design, and machine-learning methods used in quantitative research and investment practice.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -324,12 +330,12 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
 </section>
 <section id="library-principles" class="level2">
 <h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
-<p>The library is <strong>paper-driven rather than encyclopedic</strong>. Methods are added when they materially help readers understand a research design, empirical result, or investment decision. Articles favor plain-language intuition before unnecessary formalism, but do not simplify away assumptions that matter for validity.</p>
+<p>The library is <strong>application-driven rather than encyclopedic</strong>. Methods are added when they materially support SlackQuant research, investment systems, or applied quantitative practice.</p>
 <p>Each computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence.</p>
 </section>
 <section id="next-methods" class="level2">
 <h2 class="anchored" data-anchor-id="next-methods">Next methods</h2>
-<p>Future additions remain paper-driven and will be added when they materially support active SlackQuant research.</p>
+<p>Future additions are added when they materially support active SlackQuant research, investment systems, or applied quantitative practice.</p>
 
 
 </section>
@@ -996,8 +1002,9 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
         const isFirstParty =
           url.origin === window.location.origin ||
           url.hostname === canonicalHost;
+        const isPdfDocument = url.pathname.toLowerCase().endsWith(".pdf");
         const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
-        if (isFirstParty) {
+        if (isFirstParty && !isPdfDocument) {
           anchor.removeAttribute("target");
           rel.delete("noopener");
           rel.delete("noreferrer");

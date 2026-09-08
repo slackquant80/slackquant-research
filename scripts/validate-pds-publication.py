@@ -34,7 +34,26 @@ def main()->int:
         raise RuntimeError('legacy research-to-system string replacement remains in MethodsUsed')
     require(sitemap,'"/systems/pds/dashboard/",','PDS dashboard sitemap')
     for article in PDS_METHOD_ARTICLES: need(article)
-    for tok in ['fixed 25% F2R / 75% ADAA','current asset-level target','the Core is not reset to 25/75 each day','Current asset-level target and live allocation state beyond the disclosed fixed Core policy','/systems/pds/dashboard/','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS is provider-agnostic and is not defined by any particular pair of strategies','Portfolio Integration & Allocation','const recentReturnRows =','Recent released PDS Core and provider monthly returns','<th>PDS Core</th><th>F2R</th><th>ADAA</th>']:require(pds,tok,'PDS page')
+    for tok in [
+        'fixed 25% F2R / 75% ADAA',
+        'current asset-level target',
+        'the Core is not reset to 25/75 each day',
+        'Current asset-level target and live allocation state beyond the disclosed fixed Core policy',
+        '/systems/pds/dashboard/',
+        '/systems/adaa/',
+        '/systems/f2r/',
+        'pdsPublicSnapshot',
+        'Public / delayed / private',
+        'PDS is provider-agnostic and is not defined by any particular pair of strategies',
+        'Portfolio Integration & Allocation',
+        'const recentReturnRows =',
+        'Recent 12-Month Released Returns',
+        'Dynamic FX · 5bp',
+        '<th>Dynamic FX · 5bp</th><th>PDS Core</th><th>F2R</th><th>ADAA</th>',
+        'public_recent_12m_returns.csv',
+        '12-month table Excel (.xlsx)','12-month table CSV',
+    ]:
+        require(pds, tok, 'PDS page')
     for stale in ['current provider weights and asset targets are protected','exact current provider weights remain','not a permanent product recipe','should not be interpreted as a fixed ADAA–F2R blend','Currently active portfolio target and strategy weights']:
         if stale in pds:raise RuntimeError(f'PDS public narrative contains superseded allocation-policy wording: {stale}')
     for tok in ['pdsPublicSnapshot','sourceProgramVersion','publicAsOfDate','encodeURIComponent(dashboardVersion)','/assets/systems/pds/Portfolio_Decision_System_Public.html?v=${encodeURIComponent(dashboardVersion)}','Portfolio Decision System Public Dashboard','position: "fixed"']:require(route,tok,'PDS public-dashboard route')
@@ -42,11 +61,14 @@ def main()->int:
     for stale in ['Forward Shadow is not published live','Forward Preview is not published live','<div class="nav-section">PM workspace</div>']:
         if stale.casefold() in public_html.casefold():raise RuntimeError(f'public dashboard regressed to sparse private-page clone: {stale}')
     require(binder,'"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"','PDS binder')
+    require(binder,'[-12:]','PDS binder 12-month window')
+    require(binder,'public_recent_12m_returns.csv','PDS binder derived table export')
+    require(binder,'public_recent_12m_returns.xlsx','PDS binder Excel export')
     for tok in ['Forecast-to-Rank Allocation (F2R)','live machine-learning cross-asset Portfolio Strategy System','Independent strategy system','current PDS Active Core provider','current operating state, not the definition of PDS','/systems/pds/']:require(f2r,tok,'F2R page')
     leak=re.compile(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\')
     if leak.search(pds+'\n'+f2r+'\n'+public_html):raise RuntimeError('private/internal PDS or F2R identity leaked onto a public surface')
     if 'export const pdsPublicSnapshot: PdsPublicSnapshot | null = null;' in snapshot:raise RuntimeError('PDS governed delayed snapshot is not bound')
-    required={'public_active_core_asset_targets.csv','public_active_core_strategy_weights.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv'}
+    required={'public_active_core_asset_targets.csv','public_active_core_strategy_weights.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv','public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'}
     missing=[x for x in sorted(required) if not (DATA/x).is_file()]
     if missing:raise RuntimeError('PDS public data binding incomplete: '+', '.join(missing))
     disclosure=json.loads((DATA/'public_disclosure_state.json').read_text(encoding='utf-8'));manifest=json.loads((DATA/'public_export_manifest.json').read_text(encoding='utf-8'));receipt=json.loads((DATA/'PDS_PUBLIC_BINDING_RECEIPT.json').read_text(encoding='utf-8'));dash=json.loads(PUBLIC_DASHBOARD_RECEIPT.read_text(encoding='utf-8'))

@@ -14,7 +14,9 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "When Protection Works but the Portfolio Still Lags",  alternates: { canonical: "/research/protection-patience/" },
+  title: "When Protection Works but the Portfolio Still Lags",
+  description: "Long-horizon evidence on downside protection, benchmark-relative drawdowns, and the persistence cost of defensive equity allocation.",
+  alternates: { canonical: "/research/protection-patience/" },
 };
 
 export default function ProtectionPatiencePage() {

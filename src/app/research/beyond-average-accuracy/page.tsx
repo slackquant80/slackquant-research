@@ -14,7 +14,9 @@ const metrics = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "Beyond Average Accuracy",  alternates: { canonical: "/research/beyond-average-accuracy/" },
+  title: "Beyond Average Accuracy",
+  description: "Forecast evaluation research comparing average accuracy, statistical distinguishability, model confidence sets, and temporal concentration across macroeconomic targets.",
+  alternates: { canonical: "/research/beyond-average-accuracy/" },
 };
 
 export default function BeyondAverageAccuracyPage() {

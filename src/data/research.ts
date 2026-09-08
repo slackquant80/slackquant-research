@@ -236,7 +236,7 @@ export const researchItems: ResearchItem[] = [
       }
     ],
     links: {
-      ssrn: "https://papers.ssrn.com/abstract=7340100",
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7340100",
       github: "https://github.com/slackquant80/price-macro-decision-replication",
       replication:
         "https://github.com/slackquant80/price-macro-decision-replication/releases/tag/v1.1",

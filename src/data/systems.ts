@@ -102,7 +102,7 @@ export const systemItems: SystemItem[] = [
     systemGroup: "risk-scenario",
     prominence: "standard",
     status: "Public live · validated baseline v1",
-    dateLabel: "Updated August 27, 2026",
+    dateLabel: "On-demand release series",
     shortSummary:
       "A human-in-the-loop multi-asset system for exploring portfolio behavior under plausible joint market stress. It organizes conditional scenarios into interpretable stress archetypes and revalues portfolios on a common scenario set, with a transparent historical comparator retained for context. Designed for portfolio stress decision support, not market timing or automated allocation.",
     role: "Scenario-Based Portfolio Stress Decision Support",

@@ -15,6 +15,8 @@ export function ArtifactLink({
 }: ArtifactLinkProps) {
   if (!href) return null;
 
+  const opensNewTab = external || href.toLowerCase().endsWith(".pdf");
+
   const classes = [
     "btn",
     primary ? "primary" : "soft",
@@ -28,8 +30,8 @@ export function ArtifactLink({
     <a
       className={classes}
       href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
+      target={opensNewTab ? "_blank" : undefined}
+      rel={opensNewTab ? "noopener noreferrer" : undefined}
     >
       {children}
     </a>

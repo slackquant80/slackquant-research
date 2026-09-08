@@ -17,8 +17,10 @@ $pds = [System.IO.File]::ReadAllText((Need "src\app\systems\pds\page.tsx"))
 
 foreach ($token in @(
   'FIRST_PARTY_NEW_TAB_APP_PATHS',
+  'isFirstPartyPdf',
+  '.pdf',
   '/systems/pds/dashboard/',
-  'data-sq-dashboard-app',
+  'anchor.dataset.sqDashboardApp',
   'secureNewTabAnchor',
   'normalizeFirstPartyAnchor',
   'noopener',
@@ -45,10 +47,11 @@ foreach ($file in $tsxFiles) {
     $tag = $match.Value
     $href = $match.Groups['href'].Value
     if ($href -eq '/systems/pds/dashboard/' -and $tag -match 'data-sq-dashboard-app="true"') { continue }
+    if ($href.ToLowerInvariant().EndsWith('.pdf')) { continue }
     throw "Unauthorized same-origin new-tab link: $($file.FullName) -> $href"
   }
 }
 
 Write-Host "EXTERNAL_LINK_POLICY_PASS" -ForegroundColor Green
 Write-Host "External   : new tab + noopener noreferrer"
-Write-Host "First-party: same tab except explicit /systems/pds/dashboard/ application route"
+Write-Host "First-party: same tab except PDF documents and explicit /systems/pds/dashboard/ application route"
