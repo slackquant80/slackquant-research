@@ -12,7 +12,7 @@
   "latest_eligible_signal_period": "2026-07",
   "latest_released_signal_period": "2026-07",
   "performance_clock": "REALIZED_HOLDING_MONTH",
-  "public_as_of_date": "2026-09-07",
+  "public_as_of_date": "2026-09-08",
   "public_component_identity": "ADAA + F2R",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V2_FIXED_25_75",
   "shadow_monitor_state": "PRIVATE_NOT_EXPORTED"
