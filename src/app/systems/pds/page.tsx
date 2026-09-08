@@ -310,11 +310,11 @@ export default function PdsSystemPage() {
                   <div className="selected-table-block">
                     <div className="selected-exhibits-head">
                       <div className="section-title">Recent 12-Month Released Returns</div>
-                      <p>Completed delayed returns for the historical Dynamic FX sensitivity layer, fixed PDS Core, and independently owned F2R/ADAA providers; no live or preview return is included.</p>
+                      <p>Completed monthly returns only. PDS + Dynamic FX is shown for historical comparison; PDS Core, F2R, and ADAA show released historical performance. Live and preview returns are excluded.</p>
                     </div>
-                    <div className="evidence-table-wrap" role="region" aria-label="Recent 12-month Dynamic FX, PDS Core, and provider returns" tabIndex={0}>
+                    <div className="evidence-table-wrap" role="region" aria-label="Recent 12-month PDS plus Dynamic FX, PDS Core, and provider returns" tabIndex={0}>
                       <table className="evidence-table pds-public-table">
-                        <thead><tr><th>Month</th><th>Dynamic FX · 5bp</th><th>PDS Core</th><th>F2R</th><th>ADAA</th></tr></thead>
+                        <thead><tr><th>Month</th><th>PDS + Dynamic FX (5bp)</th><th>PDS Core</th><th>F2R</th><th>ADAA</th></tr></thead>
                         <tbody>
                           {recentReturnRows.map((row) => (
                             <tr key={row.period}>
@@ -328,7 +328,7 @@ export default function PdsSystemPage() {
                         </tbody>
                       </table>
                     </div>
-                    <p className="body-copy documentation-note"><strong>Dynamic FX · 5bp</strong> is a delayed historical non-canonical spot-sensitivity layer shown for comparison. It is not the current FX overlay state.</p>
+                    <p className="pds-fx-history-note"><strong>PDS + Dynamic FX (5bp)</strong> is a historical comparison series only. It applies the delayed Dynamic FX sensitivity to PDS Core with a 5bp cost assumption and does not represent the current FX overlay.</p>
                   </div>
                 ) : null}
 

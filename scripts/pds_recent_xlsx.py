@@ -46,7 +46,7 @@ def write_recent_xlsx_from_csv(csv_path: Path, xlsx_path: Path) -> None:
     if not records:
         raise RuntimeError(f"No rows in {csv_path}")
 
-    rows = [["Month", "Dynamic FX · 5bp", "PDS Core", "F2R", "ADAA", "Dynamic FX Authority"]]
+    rows = [["Month", "PDS + Dynamic FX (5bp)", "PDS Core", "F2R", "ADAA", "Dynamic FX Authority"]]
     for r in records:
         rows.append([
             r["holding_month"],

@@ -17,7 +17,7 @@ def main():
     for p in ["src/app/research/page.tsx","src/app/about/page.tsx","src/app/research/adaa/page.tsx","src/app/research/beyond-average-accuracy/page.tsx","src/app/research/price-macro-decision/page.tsx","src/app/research/protection-patience/page.tsx"]:
         need(p, "description:")
     pds=(ROOT/"src/app/systems/pds/page.tsx").read_text(encoding="utf-8-sig")
-    for token in ["slice(0, 12)","Dynamic FX · 5bp","Recent 12-Month Released Returns","public_recent_12m_returns.csv","12-month table Excel (.xlsx)"]:
+    for token in ["slice(0, 12)","PDS + Dynamic FX (5bp)","Recent 12-Month Released Returns","public_recent_12m_returns.csv","12-month table Excel (.xlsx)"]:
         if token not in pds: raise RuntimeError(f"PDS cleanup token missing: {token}")
     derived=ROOT/"public/data/systems/pds/public_recent_12m_returns.csv"
     if not derived.is_file(): raise RuntimeError("derived PDS 12-month CSV missing")

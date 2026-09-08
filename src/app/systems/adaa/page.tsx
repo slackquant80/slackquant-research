@@ -35,7 +35,7 @@ export default function AdaaSystemPage() {
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (
-              <a className="btn primary ext" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+              <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
                 Open Dashboard ↗
               </a>
             ) : null}
@@ -163,7 +163,7 @@ export default function AdaaSystemPage() {
                   bundle; they are consumers of the released snapshot, not the authority that refreshes source data.
                 </p>
                 {item.links.liveDashboard ? (
-                  <a className="btn inverse ext" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                  <a className="btn inverse" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
                     Open Dashboard ↗
                   </a>
                 ) : null}

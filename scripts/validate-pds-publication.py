@@ -48,8 +48,8 @@ def main()->int:
         'Portfolio Integration & Allocation',
         'const recentReturnRows =',
         'Recent 12-Month Released Returns',
-        'Dynamic FX · 5bp',
-        '<th>Dynamic FX · 5bp</th><th>PDS Core</th><th>F2R</th><th>ADAA</th>',
+        'PDS + Dynamic FX (5bp)',
+        '<th>PDS + Dynamic FX (5bp)</th><th>PDS Core</th><th>F2R</th><th>ADAA</th>',
         'public_recent_12m_returns.csv',
         '12-month table Excel (.xlsx)','12-month table CSV',
     ]:
