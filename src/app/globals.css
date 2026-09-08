@@ -101,6 +101,7 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .paper-subtitle{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1.25;color:#3f4449;max-width:860px;margin-bottom:24px}
 .paper-meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:13px;margin-bottom:30px}
 .detail-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:66px;padding:62px 30px}
+.detail-layout>*{min-width:0}
 .toc{position:sticky;top:105px;align-self:start;font-size:13px;color:var(--muted)}
 .toc strong{display:block;color:var(--ink);margin-bottom:14px;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
 .toc a{display:block;padding:6px 0}

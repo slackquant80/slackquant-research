@@ -169,6 +169,16 @@ def audit_static(require_build: bool) -> list[Check]:
             missing_source_canon.append(str(p.relative_to(ROOT)))
     add(c, "Next page canonical metadata", not missing_source_canon, "metadata-bearing pages define alternates.canonical", "; ".join(missing_source_canon))
 
+    globals_css = text(ROOT / "src/app/globals.css")
+    responsive_grid = re.search(r"\.detail-layout\s*>\s*\*\s*\{[^}]*min-width\s*:\s*0", globals_css, re.S)
+    add(c, "Research detail mobile min-width containment", responsive_grid is not None, "detail-layout children may shrink below intrinsic content width")
+
+    method_css_files = list((ROOT / "public/methods/site_libs/bootstrap").glob("bootstrap-*.min.css"))
+    method_css = "\n".join(text(x) for x in method_css_files)
+    table_mobile = "table.table{display:block;width:100%;max-width:100%;overflow-x:auto" in method_css
+    math_mobile = ".math.display{display:block;max-width:100%;overflow-x:auto" in method_css
+    add(c, "Rendered Methods mobile overflow containment", bool(method_css_files) and table_mobile and math_mobile, "wide tables and display math use local horizontal scroll on small viewports")
+
     adaa = text(SYSTEM_PAGE_FILES["adaa"])
     adaa_required = ["refreshes source data before deployment", "canonical 19-ETF", "public-safe bundled snapshot", "Public Shiny sessions auto-run", "not the authority that refreshes source data"]
     add(c, "ADAA v3.93 public runtime parity", all(x in adaa for x in adaa_required), "pre-deploy refresh → validated bundle → public consumer")
