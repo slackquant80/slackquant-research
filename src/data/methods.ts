@@ -17,7 +17,7 @@ const systemMethodContext: Record<string, Record<string, string>> = {
   },
   "f2r-system": {
     QM001: "Defines the out-of-sample information boundary for F2R's forecasting layer before forecasts are converted into relative ranks.",
-    QM002: "Explains rolling estimation-window design for the forecast models that feed F2R's cross-asset ranking step.",
+    QM002: "Explains expanding estimation-sample design for the forecast models that feed F2R's cross-asset ranking step, with rolling windows retained as a methodological comparison rather than the live default.",
     QM003: "Defines leakage controls for forecasting inputs, model development, and the historical ranking exercise used to validate F2R.",
     QM007: "Explains how monthly F2R targets become holding-period portfolio returns under explicit rebalance timing and weight drift.",
     QM009: "Explains the turnover and transaction-cost conventions required to interpret F2R performance net of modeled trading costs.",

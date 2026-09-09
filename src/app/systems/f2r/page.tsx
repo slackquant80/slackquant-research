@@ -37,6 +37,14 @@ export default function F2rSystemPage() {
                 Open Dashboard ↗
               </a>
             ) : null}
+            <a
+              className="btn soft"
+              href="/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              System Documentation ↗
+            </a>
             {item.links.relatedResearch ? (
               <Link className="btn soft" href={item.links.relatedResearch}>View Related Research</Link>
             ) : null}

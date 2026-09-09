@@ -48,6 +48,8 @@ jobs:
       - name: Platform source audit
         run: python3 scripts/validate-platform-full-audit.py
 
+      - name: F2R documentation source audit
+        run: python3 scripts/validate-f2r-documentation.py
       - name: Typecheck
         run: npm run typecheck
 
@@ -57,6 +59,8 @@ jobs:
       - name: Platform built-output audit
         run: python3 scripts/validate-platform-full-audit.py --require-build
 
+      - name: F2R documentation built-output audit
+        run: python3 scripts/validate-f2r-documentation.py --require-build
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'
         run: touch out/.nojekyll
