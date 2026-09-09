@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOC_REL = Path("public/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf")
-DOC_SHA256 = "53bdf72599dd0a9178b08cd14b00d172cf860d109cf6ea43e412ebbce3ae5d09"
+DOC_SHA256 = "1bf685f26d8db8a0401d13224f041caa7bbd4f83fcbacf0358da88b1187b6995"
 PAGE_REL = Path("src/app/systems/f2r/page.tsx")
 METHODS_REL = Path("src/data/methods.ts")
 
