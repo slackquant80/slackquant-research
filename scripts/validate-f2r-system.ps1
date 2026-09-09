@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$PlatformRoot = (Get-Location).Path
 )
 

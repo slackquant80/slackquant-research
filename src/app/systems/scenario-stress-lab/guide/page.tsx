@@ -42,7 +42,7 @@ const boundaries = [
 
 export default function StressLabDashboardGuidePage() {
   return (
-    <main>
+    <main lang="ko">
       <section className="paper-hero system-hero">
         <div className="shell">
           <div className="paper-track-row">
@@ -55,7 +55,7 @@ export default function StressLabDashboardGuidePage() {
           </div>
           <div className="actions">
             <a
-              className="btn primary ext"
+              className="btn primary"
               href="https://multi-asset-scenario-stress-lab.streamlit.app"
               target="_blank"
               rel="noopener noreferrer"

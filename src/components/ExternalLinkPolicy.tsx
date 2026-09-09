@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 const CANONICAL_HOST = "research.slackquant.com";
 const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set(["/systems/pds/dashboard/"]);
+const FIRST_PARTY_FULLSIZE_ASSET_EXTENSIONS = [".png", ".jpg", ".jpeg", ".svg", ".webp"];
 
 function secureNewTabAnchor(anchor: HTMLAnchorElement) {
   anchor.target = "_blank";
@@ -29,9 +30,16 @@ function isFirstPartyPdf(url: URL) {
   return url.pathname.toLowerCase().endsWith(".pdf");
 }
 
+function isMarkedFirstPartyFullSizeAsset(anchor: HTMLAnchorElement, url: URL) {
+  if (anchor.dataset.sqFullsizeAsset !== "true") return false;
+  const path = url.pathname.toLowerCase();
+  return FIRST_PARTY_FULLSIZE_ASSET_EXTENSIONS.some((extension) => path.endsWith(extension));
+}
+
 function isApprovedFirstPartyNewTab(anchor: HTMLAnchorElement, url: URL) {
   return (
     isFirstPartyPdf(url) ||
+    isMarkedFirstPartyFullSizeAsset(anchor, url) ||
     (anchor.dataset.sqDashboardApp === "true" &&
       FIRST_PARTY_NEW_TAB_APP_PATHS.has(url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`))
   );

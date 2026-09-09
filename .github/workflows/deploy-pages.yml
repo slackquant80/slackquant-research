@@ -3,6 +3,8 @@ name: Deploy SlackQuant Research to GitHub Pages
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +29,7 @@ jobs:
           node-version: 24
 
       - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
       - name: Configure custom domain environment
@@ -38,21 +41,34 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
+      - name: Normalize rendered Methods shell
+        shell: pwsh
+        run: ./scripts/normalize-methods-navigation.ps1 -PlatformRoot .
+
+      - name: Platform source audit
+        run: python3 scripts/validate-platform-full-audit.py
+
       - name: Typecheck
         run: npm run typecheck
 
       - name: Build static site
         run: npm run build
 
+      - name: Platform built-output audit
+        run: python3 scripts/validate-platform-full-audit.py --require-build
+
       - name: Disable Jekyll processing
+        if: github.event_name != 'pull_request'
         run: touch out/.nojekyll
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -79,7 +79,7 @@ export default function AboutPage() {
         <div className="shell about-columns">
           <div>
             <div className="section-title">Systems</div>
-            <h3>Operational Decision Systems</h3>
+            <h3>Operational &amp; Decision-Support Systems</h3>
           </div>
           <div>
             <p>

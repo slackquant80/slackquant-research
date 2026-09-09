@@ -149,8 +149,14 @@ export default function HomePage() {
                   <div className="home-system-feature-subtitle">{featuredSystem.subtitle}</div>
                   <p>{featuredSystem.shortSummary}</p>
                   <div className="actions">
-                    <Link className="btn primary" href="/systems/pds/dashboard/">
-                      Open PDS Dashboard
+                    <Link
+                      className="btn primary"
+                      href="/systems/pds/dashboard/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-sq-dashboard-app="true"
+                    >
+                      Open PDS Dashboard ↗
                     </Link>
                     <Link className="btn inverse-soft" href="/systems/pds/">
                       View System Architecture
@@ -234,12 +240,12 @@ export default function HomePage() {
           <div className="grid-2">
             <article className="stream">
               <div className="kicker">Methods library</div>
-              <h3>Understand the methods behind the research.</h3>
+              <h3>Understand the methods behind the research and systems.</h3>
               <p>
-                A practical library of statistical, econometric, portfolio, and
-                machine-learning methods used across SlackQuant Research. Each
-                article connects intuition, formal definitions, implementation,
-                common failure modes, and reproducible examples.
+                A practical library of statistical, econometric, portfolio, time-series,
+                data-design, and model-evaluation methods used across SlackQuant
+                research and systems. Each article connects intuition, formal definitions,
+                implementation, common failure modes, and reproducible examples.
               </p>
               <a className="section-link strong-link" href={methodsRootHref}>
                 Explore Quantitative Methods &#8594;

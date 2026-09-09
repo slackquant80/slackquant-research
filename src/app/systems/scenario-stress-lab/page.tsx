@@ -45,13 +45,13 @@ export default function ScenarioStressLabPage() {
             <span>{item.status}</span>
             <span>{item.role}</span>
             <span>20-day joint scenario horizon</span>
-            <span>Research anchor · SSRN {item.ssrnId}</span>
+            <span>{item.evidenceLabel ?? "SSRN"} · SSRN {item.ssrnId}</span>
             <span>{item.dateLabel}</span>
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (
-              <a className="btn primary ext" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                Open Live Dashboard
+              <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                Open Dashboard ↗
               </a>
             ) : null}
             {item.links.dashboardGuide ? (
@@ -265,12 +265,12 @@ export default function ScenarioStressLabPage() {
               {item.links.fullManual ? (
                 <a className="artifact" href={item.links.fullManual} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">MANUAL · v1.1</span><strong>Full Manual</strong>
-                  <small>Comprehensive Korean manual covering concepts, operation, interpretation, and workflow</small><span className="artifact-action">Open PDF →</span>
+                  <small>Comprehensive Korean manual covering concepts, operation, interpretation, and workflow</small><span className="artifact-action">Open PDF ↗</span>
                 </a>
               ) : null}
               <a className="artifact" href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">
                 <span className="artifact-kicker">PDF</span><strong>Technical White Paper</strong>
-                <small>System architecture, validation results, and interpretation limits</small><span className="artifact-action">Open PDF →</span>
+                <small>System architecture, validation results, and interpretation limits</small><span className="artifact-action">Open PDF ↗</span>
               </a>
               <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
                 <span className="artifact-kicker">SSRN</span><strong>SSRN Record</strong>

@@ -31,7 +31,7 @@ export default function AdaaSystemPage() {
             <span>{item.status}</span>
             <span>{item.role}</span>
             <span>Monthly official decision cycle</span>
-            <span>Research anchor · SSRN {item.ssrnId}</span>
+            <span>{item.evidenceLabel ?? "SSRN"} · SSRN {item.ssrnId}</span>
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (

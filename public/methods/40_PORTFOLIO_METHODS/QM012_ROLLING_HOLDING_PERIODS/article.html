@@ -507,7 +507,7 @@ Richardson, Matthew, and James H. Stock. 1989. <span>“Drawing Inferences from 
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -524,7 +524,7 @@ Richardson, Matthew, and James H. Stock. 1989. <span>“Drawing Inferences from 
             // target, if specified
             link.setAttribute("target", "_blank");
             if (link.getAttribute("rel") === null) {
-              link.setAttribute("rel", "noopener");
+              link.setAttribute("rel", "noopener noreferrer");
             }
         }
       }

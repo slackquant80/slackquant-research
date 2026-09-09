@@ -547,7 +547,7 @@ MSCI. 2013. <em>Introducing MSCI IndexMetrics</em>. MSCI. <a href="https://www.m
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -564,7 +564,7 @@ MSCI. 2013. <em>Introducing MSCI IndexMetrics</em>. MSCI. <a href="https://www.m
             // target, if specified
             link.setAttribute("target", "_blank");
             if (link.getAttribute("rel") === null) {
-              link.setAttribute("rel", "noopener");
+              link.setAttribute("rel", "noopener noreferrer");
             }
         }
       }

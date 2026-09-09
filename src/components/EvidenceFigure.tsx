@@ -12,6 +12,7 @@ export function EvidenceFigure({
         href={figure.imageUrl}
         target="_blank"
         rel="noopener noreferrer"
+        data-sq-fullsize-asset="true"
         aria-label={`Open full-size figure: ${figure.title}`}
       >
         <img
@@ -30,6 +31,7 @@ export function EvidenceFigure({
           href={figure.imageUrl}
           target="_blank"
           rel="noopener noreferrer"
+          data-sq-fullsize-asset="true"
         >
           Open full-size figure ↗
         </a>

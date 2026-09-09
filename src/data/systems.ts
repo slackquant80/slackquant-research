@@ -62,7 +62,7 @@ export const systemItems: SystemItem[] = [
       "A live rules-based multi-asset portfolio strategy system built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
-    evidenceLabel: "Research anchor",
+    evidenceLabel: "Public Working Paper",
     methodsKey: "adaa-system",
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",

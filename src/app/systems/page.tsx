@@ -29,9 +29,9 @@ export default function SystemsPage() {
           <div className="eyebrow">Systems</div>
           <h1>Operational systems organized by role in the investment process.</h1>
           <p className="hero-copy">
-            SlackQuant publishes distinct operational systems across portfolio strategy, risk analysis, and portfolio-level
-            decision governance. Each system retains its own role, evidence boundary, and operating authority; related
-            research remains separately versioned under Research.
+            SlackQuant publishes distinct systems across portfolio strategy, risk analysis, and portfolio-level
+            decision governance. Each system has a defined operating role and evidence record; related research
+            remains separately versioned under Research.
           </p>
         </div>
       </section>
@@ -44,7 +44,7 @@ export default function SystemsPage() {
             <p>
               Systems are grouped by the function they perform in the investment process. Strategy systems generate
               portfolio decisions, risk systems support diagnosis and stress analysis, and portfolio operating systems
-              govern how independently owned providers are evaluated, admitted, integrated, and monitored at the
+              govern how independent providers are evaluated, admitted, integrated, and monitored at the
               portfolio level.
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function SystemsPage() {
 
           <p className="systems-rollout-note">
             Presentation hierarchy reflects operating scope, not performance ranking. PDS occupies the portfolio-level
-            operating layer; ADAA, F2R, and the Stress Lab retain independent system identities and source ownership.
+            operating layer; ADAA, F2R, and the Stress Lab retain independent system identities and operating roles.
           </p>
         </div>
       </section>

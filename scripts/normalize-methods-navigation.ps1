@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$PlatformRoot = (Get-Location).Path,
   [switch]$CheckOnly
 )
@@ -16,6 +16,10 @@ $systems  = '<a href="https://research.slackquant.com/systems/" target="_self">S
 $methods  = '<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>'
 $about    = '<a href="https://research.slackquant.com/about/" target="_self">About</a>'
 $githubHref = 'href="https://github.com/slackquant80/slackquant-research"'
+$oldFilter = 'var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");'
+$newFilter = 'var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/");'
+$oldRel = 'link.setAttribute("rel", "noopener");'
+$newRel = 'link.setAttribute("rel", "noopener noreferrer");'
 
 function Count-Token([string]$Text, [string]$Token) {
   return ([regex]::Matches($Text, [regex]::Escape($Token))).Count
@@ -24,6 +28,8 @@ function Count-Token([string]$Text, [string]$Token) {
 $headerFiles = 0
 $changedFiles = 0
 $missingSystems = @()
+$staleFilters = @()
+$staleRel = @()
 
 Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
   $path = $_.FullName
@@ -34,29 +40,39 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
   }
 
   $headerFiles += 1
-  $navStart = $text.IndexOf('<nav class="sq-platform-nav-links"')
-  $navEnd = $text.IndexOf('</nav>', $navStart)
-  if ($navStart -lt 0 -or $navEnd -lt 0) {
-    throw "Malformed Methods platform navigation: $path"
-  }
-
   $next = $text
+
   if (-not $next.Contains($systems)) {
     if (-not $next.Contains($research)) {
       throw "Research anchor missing from Methods platform header: $path"
     }
-
     if ($CheckOnly) {
       $missingSystems += $path.Substring($methodsRoot.Length).TrimStart('\')
-      return
+    } else {
+      $next = $next.Replace($research, $research + "`r`n      " + $systems)
     }
-
-    $next = $next.Replace($research, $research + "`r`n      " + $systems)
   }
 
-  $navStart2 = $next.IndexOf('<nav class="sq-platform-nav-links"')
-  $navEnd2 = $next.IndexOf('</nav>', $navStart2)
-  $nav = $next.Substring($navStart2, $navEnd2 - $navStart2)
+  if ($next.Contains($oldFilter)) {
+    if ($CheckOnly) { $staleFilters += $path.Substring($methodsRoot.Length).TrimStart('\') }
+    else { $next = $next.Replace($oldFilter, $newFilter) }
+  } elseif (-not $next.Contains($newFilter)) {
+    $staleFilters += $path.Substring($methodsRoot.Length).TrimStart('\')
+  }
+
+  if ($next.Contains($oldRel)) {
+    if ($CheckOnly) { $staleRel += $path.Substring($methodsRoot.Length).TrimStart('\') }
+    else { $next = $next.Replace($oldRel, $newRel) }
+  } elseif (-not $next.Contains($newRel)) {
+    $staleRel += $path.Substring($methodsRoot.Length).TrimStart('\')
+  }
+
+  $navStart = $next.IndexOf('<nav class="sq-platform-nav-links"')
+  $navEnd = $next.IndexOf('</nav>', $navStart)
+  if ($navStart -lt 0 -or $navEnd -lt 0) {
+    throw "Malformed Methods platform navigation: $path"
+  }
+  $nav = $next.Substring($navStart, $navEnd - $navStart)
 
   foreach ($pair in @(
     @{Name="Research"; Token=$research},
@@ -86,7 +102,7 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
     }
   }
 
-  if ($next -ne $text) {
+  if (-not $CheckOnly -and $next -ne $text) {
     $enc = New-Object System.Text.UTF8Encoding($false)
     [System.IO.File]::WriteAllText($path, $next, $enc)
     $changedFiles += 1
@@ -96,10 +112,15 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
 if ($headerFiles -eq 0) {
   throw "No rendered Methods platform headers found under $methodsRoot"
 }
-
 if ($missingSystems.Count -gt 0) {
   throw ("Systems is missing from {0} rendered Methods header(s):`n{1}" -f $missingSystems.Count, ($missingSystems -join "`n"))
 }
+if ($staleFilters.Count -gt 0) {
+  throw ("Methods first-party host filter is stale/missing in {0} rendered HTML file(s). Example: {1}" -f $staleFilters.Count, $staleFilters[0])
+}
+if ($staleRel.Count -gt 0) {
+  throw ("Methods external rel policy is stale in {0} rendered HTML file(s). Example: {1}" -f $staleRel.Count, $staleRel[0])
+}
 
 $mode = if ($CheckOnly) { "CHECK" } else { "NORMALIZE" }
-Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles" -ForegroundColor Green
+Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles first_party=canonical_host" -ForegroundColor Green

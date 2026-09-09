@@ -21,6 +21,7 @@ SYSTEM_METHODS = {
     "adaa": ["QM007", "QM009", "QM010", "QM011", "QM014"],
     "f2r": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013"],
     "pds": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
+    "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 }
 SYSTEM_ROUTES = {k: f"{CANONICAL}/systems/{k}/" for k in SYSTEM_METHODS}
 SYSTEM_PAGE_FILES = {k: ROOT / f"src/app/systems/{k}/page.tsx" for k in SYSTEM_METHODS}
@@ -100,7 +101,7 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "PDS dashboard route source", (ROOT / "src/app/systems/pds/dashboard/page.tsx").is_file(), "src/app/systems/pds/dashboard/page.tsx")
 
     add(c, "Three-system card CTA wording", "Open Dashboard ↗" in card and "Open Live Dashboard" not in card and "Public Dashboard →" not in card, "SystemCard uses Open Dashboard ↗")
-    for slug in ("pds", "adaa", "f2r"):
+    for slug in ("pds", "adaa", "f2r", "scenario-stress-lab"):
         s = text(SYSTEM_PAGE_FILES[slug])
         add(c, f"{slug.upper()} page CTA wording", "Open Dashboard ↗" in s, "Open Dashboard ↗")
     pds = text(SYSTEM_PAGE_FILES["pds"])
@@ -229,7 +230,7 @@ def audit_static(require_build: bool) -> list[Check]:
                 add(c, "Sitemap URL ↔ built route parity", not missing_routes, f"{len(urls)} sitemap routes resolve in out", ", ".join(missing_routes[:12]))
             except Exception as e: add(c, "Sitemap URL ↔ built route parity", False, str(e))
         if robots_file.is_file(): add(c, "Built robots → sitemap", f"Sitemap: {CANONICAL}/sitemap.xml" in text(robots_file), "root sitemap declared")
-        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/f2r/", "/systems/pds/dashboard/"] + list(hrefs.values())
+        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/scenario-stress-lab/guide/", "/systems/pds/dashboard/"] + list(hrefs.values())
         bad_head=[]
         for r in built_routes:
             f=expected_out_file(r)

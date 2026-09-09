@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$ResearchRoot = "",
   [string]$AsOfDate = (Get-Date -Format 'yyyy-MM-dd')
 )

@@ -41,7 +41,7 @@ export default function F2rSystemPage() {
               <Link className="btn soft" href={item.links.relatedResearch}>View Related Research</Link>
             ) : null}
             {item.links.deploymentRepository ? (
-              <a className="btn soft" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
+              <a className="btn soft ext" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
                 GitHub Repository
               </a>
             ) : null}

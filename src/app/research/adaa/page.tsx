@@ -303,7 +303,7 @@ export default function AdaaPage() {
                     external
                     variant="inverse"
                   >
-                    Open Dashboard ↗
+                    Open Dashboard
                   </ArtifactLink>
                 ) : null}
               </div>
