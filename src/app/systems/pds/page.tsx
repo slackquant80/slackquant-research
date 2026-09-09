@@ -74,7 +74,14 @@ export default function PdsSystemPage() {
             >
               Open Dashboard ↗
             </Link>
-            <a className="btn soft" href="#architecture">View System Architecture</a>
+            <a
+              className="btn soft"
+              href="/resources/systems/pds/PDS_System_Documentation_v1.0.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              System Documentation ↗
+            </a>
             <Link className="btn soft" href="/systems/adaa/">Explore ADAA</Link>
             <Link className="btn soft" href="/systems/f2r/">Explore F2R</Link>
           </div>

@@ -4,7 +4,6 @@ import { pdsPublicSnapshot } from "@/data/pdsPublicSnapshot";
 export const metadata: Metadata = {
   title: "PDS Public Dashboard — Portfolio Decision System",
   description: "Delayed public operating dashboard for SlackQuant's Portfolio Decision System.",
-  alternates: { canonical: "/systems/pds/dashboard/" },
 };
 
 export default function PdsDashboardPage() {
