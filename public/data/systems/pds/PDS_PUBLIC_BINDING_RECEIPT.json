@@ -2,7 +2,7 @@
   "active_core_policy": "F2R_25_ADAA_75_FIXED_ALL_HISTORY",
   "active_core_public_identity": "ADAA + F2R",
   "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
-  "bound_at": "2026-09-10T19:23:53.614250+09:00",
+  "bound_at": "2026-09-10T19:32:52.221119+09:00",
   "bound_files_sha256": {
     "public_active_core_asset_targets.csv": "2205bdde6dfc7aad48270f26f23a4ee507a4de512347b8a2957baa35686f8aee",
     "public_active_core_strategy_weights.csv": "987ac06c0b0f59383901a52a61a6edf32c5d79b2c5316f0ed58bdf95bdfaf06e",
@@ -12,7 +12,7 @@
     "public_core_performance_summary.csv": "a2cfcca9655152ad32bbb71468f04d9700d141072572ad9eb13612529d8c40f3",
     "public_core_strategy_roster.csv": "776e141068fca5747d9bcaf973096f19bfd3c17b4faced57e335462e7a62d8c1",
     "public_disclosure_state.json": "9c7e656841087d6fa4b8c41dad896d388203788c41143d3c483e302f2c793d6d",
-    "public_export_manifest.json": "923fe265b180f46ec1150b384bca947c016f2245fab473e504cb8edbbc6eea19",
+    "public_export_manifest.json": "e92c889d3e3a450334c6fc204acec4cba4d463c67e0a211a2b495e0c15d2bca1",
     "public_fx_calendar_returns.csv": "782740910ff163b865f2bdee87c65e544677c71ce5ae343731cdfe5dc6990e96",
     "public_fx_hedge_history.csv": "2c94d1585b661d227f8b26d4ca06b1fabf2156e2abe6d24a1a2478c8e536170c",
     "public_fx_performance_path.csv": "372ae8aaa9d4bae4d666cdc252ce0cfed0e462e5d5fc84ad9de8aaa897ef45e7",
@@ -22,6 +22,6 @@
   "completed_holding_month_cutoff": "2026-08",
   "latest_released_signal_period": "2026-07",
   "public_as_of_date": "2026-09-10",
-  "source_export_manifest_sha256": "923fe265b180f46ec1150b384bca947c016f2245fab473e504cb8edbbc6eea19",
+  "source_export_manifest_sha256": "e92c889d3e3a450334c6fc204acec4cba4d463c67e0a211a2b495e0c15d2bca1",
   "status": "PDS_SLACKQUANT_PUBLIC_BINDING_PASS"
 }

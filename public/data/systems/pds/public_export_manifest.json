@@ -19,7 +19,7 @@
     "public_fx_performance_summary.csv": "03b28d3bfd92b3d830009fd5e021481514ac5aeaeb5091451829598c2e1fac9e",
     "public_system_identity.json": "3ba90c7a9b90608c3e38a3052a239edf9a50911ad09a853c284ca1b1b5ba305b"
   },
-  "generated_at": "2026-09-10T19:22:12.509934+09:00",
+  "generated_at": "2026-09-10T19:32:31.987142+09:00",
   "latest_released_signal_period": "2026-07",
   "no_private_leakage_scan": "PASS",
   "performance_clock": "REALIZED_HOLDING_MONTH",
@@ -34,7 +34,7 @@
     "account holdings"
   ],
   "public_naming_lock": "F2R_PUBLIC_NAMING_LOCK_V1_PASS",
-  "source_program_version": "0.3.197",
-  "source_rs03_version": "0.21.67",
+  "source_program_version": "0.3.198",
+  "source_rs03_version": "0.21.68",
   "status": "PASS_PUBLIC_SAFE_EXPORT_V2_FIXED_25_75"
 }
