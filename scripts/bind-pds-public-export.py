@@ -197,7 +197,7 @@ def main() -> int:
 
     allowed_series = {"PDS_ACTIVE_CORE", "ADAA", "F2R"}
     filtered_returns = [r for r in return_rows if r.get("series_id") in allowed_series]
-    periods = sorted({r.get("period", "") for r in filtered_returns if r.get("period")})[-6:]
+    periods = sorted({r.get("period", "") for r in filtered_returns if r.get("period")})[-12:]
     recent = [r for r in filtered_returns if r.get("period") in periods]
     recent.sort(key=lambda r: (r.get("period", ""), r.get("series_id", "")), reverse=True)
     return_snapshot = [
