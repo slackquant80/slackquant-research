@@ -114,6 +114,15 @@ def main() -> int:
     )
     if "Recent released PDS Core and provider monthly returns" in pds:
         raise RuntimeError("stale PDS recent-table wording remains")
+    for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv"):
+        if forbidden in pds:
+            raise RuntimeError(f"PDS recipe-protection regression in landing source: {forbidden}")
+    for required in (
+        "The current Core integrates F2R and ADAA under a governed strategic allocation.",
+        "Exact provider composition weights are not part of the public disclosure layer.",
+    ):
+        if required not in pds:
+            raise RuntimeError(f"PDS recipe-protection disclosure missing from landing source: {required}")
 
     pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
     if not pds_documentation.is_file() or pds_documentation.read_bytes()[:5] != b"%PDF-":
@@ -125,18 +134,22 @@ def main() -> int:
     if len(rows) != 12:
         raise RuntimeError(f"PDS recent return CSV must have 12 rows; found {len(rows)}")
 
-    weights = ROOT / "public/data/systems/pds/public_active_core_strategy_weights.csv"
-    with weights.open("r", encoding="utf-8-sig", newline="") as f:
-        wr = list(csv.DictReader(f))
-    if not wr:
-        raise RuntimeError("PDS strategy-weight history empty")
-    for r in wr:
-        if abs(float(r["f2r_weight"]) - 0.25) > 1e-12 or abs(float(r["adaa_weight"]) - 0.75) > 1e-12:
-            raise RuntimeError(f"PDS fixed Core regression at {r.get('signal_period')}")
+    # PDS_RECIPE_PROTECTION_GATE_V1
+    retired_weights = ROOT / "public/data/systems/pds/public_active_core_strategy_weights.csv"
+    if retired_weights.exists():
+        raise RuntimeError("PDS retired provider-weight artifact must not exist in the public tree")
 
     disclosure = json.loads(need("public/data/systems/pds/public_disclosure_state.json"))
     if disclosure.get("current_decision_state") != "WITHHELD_BY_POLICY":
         raise RuntimeError("PDS current decision disclosure boundary regression")
+    for key in ("provider_composition_weights", "provider_weight_history", "integration_formula"):
+        if disclosure.get(key) != "PRIVATE_NOT_EXPORTED":
+            raise RuntimeError(f"PDS recipe-protection disclosure regression: {key}={disclosure.get(key)!r}")
+    manifest = json.loads(need("public/data/systems/pds/public_export_manifest.json"))
+    if manifest.get("active_core_policy") != "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED":
+        raise RuntimeError("PDS public Active Core policy is not recipe-protected")
+    if manifest.get("recipe_protection_scan") != "PASS":
+        raise RuntimeError("PDS public recipe-protection scan is not PASS")
 
     # Methods mirror.
     mi = need("public/methods/index.html", "application-driven rather than encyclopedic", "Future additions")
@@ -185,7 +198,7 @@ def main() -> int:
     print("Research=4 Systems=4 Methods=18 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
     print("Methods whole-host first-party navigation=PASS")
-    print("PDS 12-month released table / fixed 25-75 Core / protected current state=PASS")
+    print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")
     return 0
