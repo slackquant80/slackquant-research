@@ -16,12 +16,12 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM014: "Defines release-date, vintage, and availability discipline for ADAA components that use macroeconomic information.",
   },
   "f2r-system": {
-    QM001: "Defines the out-of-sample information boundary for F2R's forecasting layer before forecasts are converted into relative ranks.",
-    QM002: "Explains expanding estimation-sample design for the forecast models that feed F2R's cross-asset ranking step, with rolling windows retained as a methodological comparison rather than the live default.",
-    QM003: "Defines leakage controls for forecasting inputs, model development, and the historical ranking exercise used to validate F2R.",
-    QM007: "Explains how monthly F2R targets become holding-period portfolio returns under explicit rebalance timing and weight drift.",
-    QM009: "Explains the turnover and transaction-cost conventions required to interpret F2R performance net of modeled trading costs.",
-    QM013: "Defines benchmark-relative measures used to judge whether F2R's ranked portfolio adds value beyond same-universe and external comparators.",
+    QM001: "Defines the out-of-sample information boundary shared by F2R's heterogeneous forecasting layer before conventional ML and Chronos-2 views are converted into relative ranks.",
+    QM002: "Explains the time-ordered estimation design used by F2R's conventional supervised models; the pretrained Chronos-2 sequence expert enters through a separate governed inference path rather than sharing the same fitting window.",
+    QM003: "Defines leakage controls for F2R's point-in-time inputs, supervised-model training, pretrained-model evaluation, current-model reconstruction, and rank-based portfolio validation.",
+    QM007: "Explains how F2R's rank-based monthly target becomes a continuous holding-period wealth path under explicit execution timing and between-rebalance weight drift.",
+    QM009: "Explains the drift-aware turnover and transaction-cost conventions used to translate F2R's monthly model-portfolio changes into net performance.",
+    QM013: "Defines benchmark-relative measures used to judge the portfolio value of F2R's heterogeneous Forecast-to-Rank decision process beyond same-universe and external comparators.",
   },
   "pds-system": {
     QM007: "Defines portfolio accounting and rebalance timing used to maintain a continuous PDS Core performance path across provider decisions.",

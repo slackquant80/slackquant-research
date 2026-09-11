@@ -151,6 +151,37 @@ def main() -> int:
     if manifest.get("recipe_protection_scan") != "PASS":
         raise RuntimeError("PDS public recipe-protection scan is not PASS")
 
+    # F2R_CURRENT_ARCHITECTURE_GATE_V2_1
+    f2r = need(
+        "src/app/systems/f2r/page.tsx",
+        "Chronos-2 pretrained time-series intelligence",
+        "Heterogeneous forecasts, one common decision space",
+        "Public disclosure names the forecasting technologies and the decision architecture.",
+        "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
+        "System Documentation ↗",
+    )
+    for forbidden in ("252-session", "C3_REX_SCORE_CHRONOS20", "C3_REX", "exact contribution weight"):
+        if forbidden in f2r:
+            raise RuntimeError(f"F2R public recipe-protection regression: {forbidden}")
+    f2r_documentation = ROOT / "public/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
+    if not f2r_documentation.is_file() or f2r_documentation.read_bytes()[:5] != b"%PDF-":
+        raise RuntimeError("F2R System Documentation v2.1 PDF missing or invalid")
+    legacy_f2r_doc = ROOT / "public/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf"
+    if legacy_f2r_doc.exists():
+        raise RuntimeError("legacy F2R System Documentation v1.0 remains on the primary public resource surface")
+    need(
+        "src/app/systems/adaa/page.tsx",
+        "Decision Diversification: diversify the",
+        "Diversify the decision process before diversifying the portfolio",
+        "not the exact construction",
+    )
+    need(
+        "src/app/systems/pds/page.tsx",
+        "A portfolio operating system, not another strategy model",
+        "Chronos-2",
+        "The current Core integrates F2R and ADAA under a governed strategic allocation.",
+    )
+
     # Methods mirror.
     mi = need("public/methods/index.html", "application-driven rather than encyclopedic", "Future additions")
     if "paper-driven rather than encyclopedic" in mi:
@@ -193,12 +224,17 @@ def main() -> int:
         built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
         if not built_doc.is_file() or built_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built PDS System Documentation PDF missing or invalid")
+        built_f2r_doc = ROOT / "out/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
+        if not built_f2r_doc.is_file() or built_f2r_doc.read_bytes()[:5] != b"%PDF-":
+            raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
     print("Research=4 Systems=4 Methods=18 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
+    print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
+    print("PDS / ADAA / F2R system-page editorial positioning=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")
     return 0

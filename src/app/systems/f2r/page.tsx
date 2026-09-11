@@ -9,7 +9,7 @@ const item = getSystem("f2r");
 export const metadata: Metadata = {
   title: "Forecast-to-Rank Allocation (F2R) — Portfolio Strategy System",
   description:
-    "Forecast-to-Rank Allocation (F2R), a live machine-learning cross-asset Portfolio Strategy System with an independently deployed public dashboard and a defined relationship to PDS.",
+    "Forecast-to-Rank Allocation (F2R), a live cross-asset Portfolio Strategy System that combines conventional supervised machine learning with Chronos-2 pretrained time-series intelligence before translating forecasts into ranked portfolio decisions.",
   alternates: { canonical: "/systems/f2r/" },
 };
 
@@ -29,6 +29,7 @@ export default function F2rSystemPage() {
           <div className="paper-meta">
             <span>{item.status}</span>
             <span>{item.role}</span>
+            <span>Heterogeneous forecasting · conventional ML + Chronos-2</span>
             <span>Independent strategy system · current PDS Active Core provider</span>
           </div>
           <div className="actions">
@@ -39,7 +40,7 @@ export default function F2rSystemPage() {
             ) : null}
             <a
               className="btn soft"
-              href="/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf"
+              href="/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -73,18 +74,20 @@ export default function F2rSystemPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              Forecast-to-Rank Allocation (F2R) is a live machine-learning cross-asset Portfolio Strategy System. It converts
-              asset-level forecasts into a relative ranking and then maps that ordering into a disciplined multi-asset
-              portfolio decision.
+              F2R is a live cross-asset Portfolio Strategy System built around a clean separation between prediction and
+              portfolio choice. A heterogeneous forecasting layer combines conventional supervised machine learning with
+              Chronos-2 pretrained time-series intelligence; those views meet in a common cross-sectional ranking space
+              before any portfolio is formed.
             </p>
             <p className="body-copy">
-              Machine learning is confined to the forecasting layer, where it estimates relative opportunity. Portfolio formation
-              remains explicit through a separate ranking and allocation rule, so the system is interpretable as a portfolio
-              strategy rather than presented as a generic AI product.
+              That separation is deliberate. F2R does not treat raw forecast magnitudes as portfolio weights. Forecasts first
+              become comparable relative-opportunity ranks, then a governed allocation rule converts the final ordering into
+              a disciplined monthly multi-asset decision. The result is a modern forecasting stack wrapped in an interpretable
+              portfolio operating contract.
             </p>
             <div className="metrics system-metrics">
-              <div className="metric"><div className="value">ML</div><div className="label">Forecasting layer</div></div>
-              <div className="metric"><div className="value">Cross-Asset</div><div className="label">Decision universe</div></div>
+              <div className="metric"><div className="value">Heterogeneous</div><div className="label">Forecast architecture</div></div>
+              <div className="metric"><div className="value">Chronos-2</div><div className="label">Pretrained sequence expert</div></div>
               <div className="metric"><div className="value">Rank</div><div className="label">Portfolio translation</div></div>
               <div className="metric"><div className="value">Monthly</div><div className="label">Decision cycle</div></div>
             </div>
@@ -92,23 +95,27 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="process">
             <div className="kicker">Strategy architecture</div>
-            <h2>Forecast first, rank second, allocate under a defined decision rule</h2>
+            <h2>Heterogeneous forecasts, one common decision space</h2>
             <div className="f2r-process-grid">
               <div className="system-role-card">
                 <div className="kicker">01 · Forecast</div>
-                <h3>Estimate relative opportunity</h3>
-                <p>Asset-level machine-learning forecasts summarize the forward-looking information used by the strategy.</p>
+                <h3>Combine distinct forecasting views</h3>
+                <p>Conventional supervised models and Chronos-2 process price history through different representations before their views enter a common decision layer.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">02 · Rank</div>
-                <h3>Order opportunities cross-sectionally</h3>
-                <p>Forecasts are translated into a common cross-asset ordering rather than used directly as portfolio weights.</p>
+                <h3>Normalize forecasts through rank consensus</h3>
+                <p>Heterogeneous outputs are translated into a comparable cross-asset ordering rather than mixed as raw forecast scales or used directly as portfolio weights.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">03 · Allocate</div>
-                <h3>Convert the ranking into a portfolio</h3>
-                <p>A predefined allocation rule maps the final ranking into target positions under the system's monthly operating contract.</p>
+                <h3>Translate rank into a governed portfolio target</h3>
+                <p>A separate allocation rule maps the final ordering into the monthly model portfolio under a defined timing, turnover, cost, and accounting contract.</p>
               </div>
+            </div>
+            <div className="evidence-note">
+              <strong>Public disclosure names the forecasting technologies and the decision architecture.</strong> Exact feature horizons,
+              sequence/runtime parameters, model-contribution settings, and low-level integration mechanics remain protected implementation details.
             </div>
           </section>
 
@@ -167,9 +174,10 @@ export default function F2rSystemPage() {
             <div className="kicker">Related evidence</div>
             <h2>Research evidence and the live operating system remain separately identified</h2>
             <p className="body-copy">
-              The related Investment Research study evaluates a matched forecasting, ranking, and multi-asset allocation
-              process and documents evidence on price-based forecasting and the incremental contribution of macro information.
-              It supports the design family without implying that every current runtime detail is identical to the frozen paper artifact.
+              The related Investment Research study is the frozen research foundation for the Forecast-to-Rank design family,
+              documenting matched forecasting, ranking, portfolio formation, and the incremental value of macro information.
+              The live system has since evolved through a separate governed model-adoption process to a heterogeneous architecture
+              that includes Chronos-2. That operational evolution is documented as system lineage rather than retrofitted into the frozen paper.
             </p>
             {item.links.relatedResearch ? (
               <div className="repro-links documentation-artifacts">
@@ -197,7 +205,7 @@ export default function F2rSystemPage() {
               <div className="system-boundary-card allowed">
                 <h3>Public surface</h3>
                 <ul>
-                  <li>Formal F2R system identity and decision architecture</li>
+                  <li>Formal F2R system identity, decision architecture, and named use of conventional supervised ML plus Chronos-2</li>
                   <li>Validated official and provisional public states</li>
                   <li>Approved historical evidence and target-history views</li>
                   <li>Public deployment repository and related research</li>
@@ -206,7 +214,7 @@ export default function F2rSystemPage() {
               <div className="system-boundary-card prohibited">
                 <h3>Source-owned / non-public</h3>
                 <ul>
-                  <li>Internal scientific and runtime identifiers</li>
+                  <li>Exact feature horizons, Chronos-2 sequence/runtime parameters, model-contribution settings, and low-level conflict-resolution rules</li>
                   <li>Local operating paths, credentials, and environment state</li>
                   <li>Research branches not promoted to the live specification</li>
                   <li>Internal validation and release-engineering artifacts</li>

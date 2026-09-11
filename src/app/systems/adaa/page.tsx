@@ -9,7 +9,7 @@ const item = getSystem("adaa");
 export const metadata: Metadata = {
   title: "ADAA — Portfolio Strategy System",
   description:
-    "Live multi-asset Portfolio Strategy System built around Decision Diversification, with distinct official, mark-to-market, and intramonth preview states.",
+    "Live multi-asset Portfolio Strategy System built around Decision Diversification: complementary decision horizons, opportunity views, defensive responses, and persistence combined under a disciplined monthly operating contract.",
   alternates: { canonical: "/systems/adaa/" },
 };
 
@@ -68,14 +68,15 @@ export default function AdaaSystemPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification. Rather than
-              depending on a single allocation rule, it combines complementary decision perspectives so portfolio
-              behavior is not tied to a single decision path.
+              ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification: diversify the
+              decision process before relying on asset diversification alone. Complementary allocation perspectives carry
+              different horizons, opportunity views, defensive responses, and persistence, so portfolio behavior is not
+              tied to one rule, one model family, or one regime response.
             </p>
             <p className="body-copy">
-              The public interface is designed around operating clarity: the latest official monthly decision, current
-              mark-to-market drift, and a provisional intramonth preview are shown as distinct states. Detailed
-              historical implementation, robustness tests, and replication remain in the linked research record.
+              This is not a simple average of interchangeable rules. The design objective is to reduce dependence on any
+              single decision path while retaining an interpretable, operationally disciplined monthly portfolio. The public
+              interface keeps the official decision, current mark-to-market drift, and provisional intramonth preview clearly separated.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">Monthly</div><div className="label">Official decision cycle</div></div>
@@ -117,33 +118,33 @@ export default function AdaaSystemPage() {
 
           <section className="prose-section" id="architecture">
             <div className="kicker">Portfolio architecture</div>
-            <h2>Diversify decision logic, not just asset exposure</h2>
+            <h2>Diversify the decision process before diversifying the portfolio</h2>
             <p className="body-copy">
-              ADAA is designed as an ensemble of complementary allocation perspectives. They differ in market
-              sensitivity, information horizon, cross-asset selection, defensive behavior, and persistence. The aim is
-              not to average similar signals, but to reduce dependence on any single decision path while preserving a
-              portfolio that remains interpretable and implementable.
+              ADAA treats allocation rules as decision engines with different jobs rather than interchangeable signals to
+              average. Complementary perspectives respond at different speeds, emphasize different forms of cross-asset
+              opportunity, and carry different defensive and persistence characteristics. Their diversity is intentional: the
+              portfolio should not depend on one model family, one horizon, or one regime response.
             </p>
             <div className="system-role-grid adaa-architecture-grid">
               <div className="system-role-card">
                 <div className="kicker">State adaptation</div>
-                <h3>Different responses to changing regimes</h3>
-                <p>Complementary decision rules react at different speeds and with different risk responses as market conditions change.</p>
+                <h3>Different horizons, different regime responses</h3>
+                <p>Decision engines react at different speeds and with different defensive behavior as market conditions change.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Opportunity selection</div>
-                <h3>Multiple views of cross-asset leadership</h3>
-                <p>Selection is informed by distinct momentum and relative-strength perspectives rather than one ranking rule alone.</p>
+                <h3>Multiple views of cross-asset opportunity</h3>
+                <p>Opportunity selection is informed by complementary views of leadership and persistence rather than one ranking lens alone.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Persistence & risk control</div>
-                <h3>Moderate synchronized portfolio transitions</h3>
-                <p>More persistent decision components and risk-aware inputs help avoid having the entire portfolio transition on the same signal or at the same time.</p>
+                <h3>Avoid one-path portfolio transitions</h3>
+                <p>Persistent and risk-aware components help prevent the entire portfolio from changing for the same reason at the same moment.</p>
               </div>
             </div>
             <div className="evidence-note">
-              This System page focuses on operating architecture and decision roles. Detailed construction, historical
-              tests, and reproducibility materials are maintained in the related research record.
+              This System page exposes the Decision Diversification architecture and operating roles, not the exact construction
+              recipe. Detailed implementation, historical tests, and reproducibility materials remain in the versioned research record.
             </div>
             <div className="system-operating-list adaa-pds-relationship">
               <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System and source owner while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>

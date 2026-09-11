@@ -42,7 +42,7 @@ export const systemItems: SystemItem[] = [
     status: "Public architecture · protected current decision state",
     dateLabel: "Updated with latest public release",
     shortSummary:
-      "SlackQuant's portfolio-level operating system for provider qualification, portfolio admission, integration, decision formation, and ongoing monitoring. PDS is provider-agnostic: ADAA and F2R are the current Active Core providers, not the definition of the system. The architecture and delayed historical evidence are public while the current decision state remains protected.",
+      "SlackQuant's governed portfolio operating layer for qualifying independent strategy providers, deciding portfolio admission, integrating approved sources, forming traceable portfolio targets, and monitoring whether each role remains justified. ADAA and F2R are the current Active Core providers; the architecture is broader than any current provider configuration, and exact integration parameters remain protected.",
     role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
     methodsKey: "pds-system",
     links: {
@@ -59,7 +59,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Live release series",
     shortSummary:
-      "A live rules-based multi-asset portfolio strategy system built around Decision Diversification. ADAA combines complementary allocation perspectives while keeping the official monthly decision, current mark-to-market state, and provisional intramonth preview clearly separated; detailed construction remains in the linked research record.",
+      "A live multi-asset Portfolio Strategy System built around Decision Diversification: deliberately combining complementary decision horizons, cross-asset opportunity views, defensive responses, and persistence so the portfolio is not dependent on one allocation path. Official decisions, current drift, and provisional preview states remain explicitly separated.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
     evidenceLabel: "Public Working Paper",
@@ -84,7 +84,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Live release series",
     shortSummary:
-      "Forecast-to-Rank Allocation (F2R) is a machine-learning cross-asset portfolio strategy system that converts asset-level forecasts into relative rankings and a disciplined multi-asset portfolio decision. F2R remains an independent Portfolio Strategy System while serving as one of the strategy providers currently admitted to the PDS Active Core.",
+      "Forecast-to-Rank Allocation (F2R) is a live cross-asset Portfolio Strategy System that combines conventional supervised machine learning with Chronos-2 pretrained time-series intelligence, translates heterogeneous forecasts into a common rank-based decision space, and converts that ordering into a disciplined monthly portfolio. Technology and architecture are public; low-level construction parameters remain protected.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
     methodsKey: "f2r-system",
     links: {

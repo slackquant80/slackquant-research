@@ -10,7 +10,7 @@ const item = getSystem("pds");
 export const metadata: Metadata = {
   title: "Portfolio Decision System — Portfolio Decision & Operating System",
   description:
-    "SlackQuant's governed multi-strategy Portfolio Decision & Operating System, with open architecture and a protected current decision state.",
+    "SlackQuant's governed portfolio operating layer for qualifying independent strategy providers, controlling admission and integration, forming portfolio decisions, and monitoring whether each role remains justified.",
   alternates: { canonical: "/systems/pds/" },
 };
 
@@ -105,12 +105,12 @@ export default function PdsSystemPage() {
         <article>
           <section className="prose-section" id="decision-state">
             <div className="kicker">Portfolio operating layer</div>
-            <h2>Govern strategy admission, portfolio integration, and ongoing portfolio decisions in one operating layer.</h2>
+            <h2>Turn independent strategy systems into one governed portfolio decision process.</h2>
             <p className="lede">
-              PDS is provider-agnostic and is not defined by any particular pair of strategies. It evaluates independently
-              owned strategy systems, determines whether and how they enter the portfolio, governs their portfolio-level
-              integration, produces traceable portfolio targets, and monitors whether those decisions remain justified as
-              evidence and operating conditions evolve.
+              PDS sits above individual strategies. It qualifies independently owned providers, separates research credibility
+              from portfolio usefulness, decides admission, governs portfolio-level integration, forms traceable asset targets,
+              and continuously monitors whether each provider still deserves its role. The current provider set is an operating
+              state of the system, not the definition of the system itself.
             </p>
             <div className="pds-state-band">
               <div>
@@ -137,12 +137,12 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="orchestration">
             <div className="kicker">What PDS orchestrates</div>
-            <h2>Independent providers, one governed portfolio decision process</h2>
+            <h2>A portfolio operating system, not another strategy model</h2>
             <p className="body-copy">
-              PDS can consume rules-based, optimization-based, forecast-based, and other eligible portfolio providers
-              without requiring them to share the same internal model. It standardizes only the interfaces needed for
-              portfolio-level comparison and decision-making while preserving each provider&apos;s source ownership,
-              scientific lineage, and evidence record.
+              PDS is deliberately model-agnostic. Rules-based allocation, optimization, machine-learning forecasts, and other
+              eligible strategy systems can enter through a common portfolio interface without surrendering source ownership.
+              PDS standardizes what must be compared at the portfolio level while preserving each provider&apos;s scientific lineage,
+              operating contract, and evidence record.
             </p>
             <div className="system-role-grid pds-role-grid">
               <div className="system-role-card">
@@ -201,7 +201,7 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="providers">
             <div className="kicker">Current Active Core providers</div>
-            <h2>Current provider configuration within a broader operating architecture</h2>
+            <h2>Complementary strategy systems inside a broader operating architecture</h2>
             <p className="body-copy">
               The current Active Core consists of ADAA and Forecast-to-Rank Allocation (F2R). They remain independently owned
               provider systems within the broader PDS architecture; provider logic and evidence lineage stay source-owned, while
@@ -211,13 +211,13 @@ export default function PdsSystemPage() {
               <div className="dual-card">
                 <div className="kicker">Portfolio Strategy System</div>
                 <h3>ADAA</h3>
-                <p>A rules-based multi-asset strategy organized around Decision Diversification and complementary allocation perspectives.</p>
+                <p>A multi-asset strategy built around Decision Diversification, combining complementary decision horizons, opportunity views, defensive responses, and persistence.</p>
                 <Link className="btn soft" href="/systems/adaa/">View ADAA</Link>
               </div>
               <div className="dual-card">
                 <div className="kicker">Portfolio Strategy System</div>
                 <h3>Forecast-to-Rank Allocation (F2R)</h3>
-                <p>A machine-learning cross-asset strategy that converts asset-level forecasts into relative rankings and a disciplined portfolio decision.</p>
+                <p>A heterogeneous cross-asset forecasting system that combines conventional supervised machine learning with Chronos-2, then converts those views into a common rank-based portfolio decision.</p>
                 <Link className="btn soft" href="/systems/f2r/">View F2R</Link>
               </div>
             </div>
@@ -225,7 +225,7 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="portfolio">
             <div className="kicker">Portfolio integration & decision</div>
-            <h2>Integrate approved providers under a governed portfolio policy</h2>
+            <h2>Integrate approved providers without collapsing their identities</h2>
             <p className="body-copy">
               PDS evaluates approved providers and their portfolio roles at the portfolio level, maps governed provider decisions into asset-level targets, and keeps source contribution traceable. The current Core integrates F2R and ADAA under a governed strategic allocation. Exact provider composition weights are not part of the public disclosure layer. The integration formula is likewise protected. Released historical asset decisions and completed performance may be shown after the disclosure gate, while current asset-level targets and forward monitoring states remain protected. Between monthly execution dates, daily performance marks the existing portfolio to market; provider and asset weights drift with returns rather than being reset each day.
             </p>
