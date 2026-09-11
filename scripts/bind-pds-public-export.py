@@ -13,7 +13,6 @@ from pathlib import Path
 
 EXPECTED = {
     "public_active_core_asset_targets.csv",
-    "public_active_core_strategy_weights.csv",
     "public_core_monthly_returns.csv",
     "public_core_strategy_roster.csv",
     "public_system_identity.json",
@@ -32,9 +31,13 @@ PROHIBITED = [
     re.compile(r"(?i)macro\s+forecast\s+allocation"),
     re.compile(r"(?i)_LOCAL_PRIVATE_DATA"),
     re.compile(r"(?i)\b[A-Z]:\\"),
+    re.compile(r"(?i)F2R\s*25%"),
+    re.compile(r"(?i)ADAA\s*75%"),
+    re.compile(r"(?i)25/75"),
+    re.compile(r"FIXED_25_75"),
+    re.compile(r"(?i)f2r_weight"),
+    re.compile(r"(?i)adaa_weight"),
 ]
-WF, WA = 0.25, 0.75
-WEIGHT_BASIS = "FIXED_25_75_CANONICAL_ALL_HISTORY"
 
 
 def sha256(path: Path) -> str:
@@ -84,28 +87,14 @@ def scan_source(root: Path) -> None:
                 raise RuntimeError(f"public-export leakage/naming blocker in {name}: {pat.pattern}")
 
 
-def validate_fixed_core(strategy_rows: list[dict[str, str]]) -> None:
-    if not strategy_rows:
-        raise RuntimeError("public strategy-weight history is empty")
-    for row in strategy_rows:
-        fw = fnum(row.get("f2r_weight"))
-        aw = fnum(row.get("adaa_weight"))
-        if abs(fw - WF) > 1e-12 or abs(aw - WA) > 1e-12:
-            raise RuntimeError(
-                f"public Core policy regression at {row.get('signal_period')}: "
-                f"F2R={fw}, ADAA={aw}; expected 0.25/0.75"
-            )
-        if str(row.get("weight_basis") or "") != WEIGHT_BASIS:
-            raise RuntimeError(
-                f"public Core weight_basis regression at {row.get('signal_period')}: "
-                f"{row.get('weight_basis')!r}"
-            )
-
-
 def copy_governed_files(export_root: Path, data_root: Path) -> dict[str, str]:
     data_root.mkdir(parents=True, exist_ok=True)
-    # Do not delete the directory: PDS_PERFORMANCE_CLOCK_RECEIPT.json is a separately
-    # governed platform receipt that the release runner preserves across binding.
+    # Do not delete the directory: separately governed platform receipts are preserved.
+    # Explicitly retire the former provider-weight artifact so stale public data cannot
+    # survive a new recipe-protected binding.
+    retired = data_root / "public_active_core_strategy_weights.csv"
+    if retired.exists():
+        retired.unlink()
     for name in sorted(EXPECTED):
         shutil.copy2(export_root / name, data_root / name)
     return {name: sha256(data_root / name) for name in sorted(EXPECTED)}
@@ -136,24 +125,24 @@ def main() -> int:
         raise RuntimeError(f"PDS exporter status is not PASS: {manifest.get('status')}")
     if manifest.get("no_private_leakage_scan") != "PASS":
         raise RuntimeError("PDS exporter leakage scan is not PASS")
+    if manifest.get("recipe_protection_scan") != "PASS":
+        raise RuntimeError("PDS exporter recipe-protection scan is not PASS")
     if manifest.get("public_naming_lock") != "F2R_PUBLIC_NAMING_LOCK_V1_PASS":
         raise RuntimeError("F2R public naming lock missing from PDS export")
-    if manifest.get("active_core_policy") != "F2R_25_ADAA_75_FIXED_ALL_HISTORY":
-        raise RuntimeError(f"unexpected public Core policy: {manifest.get('active_core_policy')}")
+    if manifest.get("active_core_policy") != "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED":
+        raise RuntimeError(f"unexpected public Core disclosure policy: {manifest.get('active_core_policy')}")
     if disclosure.get("current_decision_state") != "WITHHELD_BY_POLICY":
         raise RuntimeError("current PDS decision is not withheld by public disclosure policy")
     if disclosure.get("public_component_identity") != "ADAA + F2R":
         raise RuntimeError("unexpected public Active Core identity")
-    if disclosure.get("core_performance_definition") != "F2R_25_ADAA_75_FIXED_ALL_HISTORY__DAILY_RISK_METRICS":
-        raise RuntimeError("public Core performance definition is not fixed 25/75 daily-risk policy")
+    if disclosure.get("core_performance_definition") != "CURRENT_GOVERNED_CORE__DAILY_RISK_METRICS__PROVIDER_COMPOSITION_PRIVATE":
+        raise RuntimeError("public Core performance definition does not preserve recipe protection")
     active_core = identity.get("active_core") or {}
-    if active_core.get("compact_label") != "ADAA + F2R":
-        raise RuntimeError("PDS public identity does not bind ADAA + F2R")
-    if active_core.get("policy") != "F2R 25% + ADAA 75% fixed":
-        raise RuntimeError("PDS public identity does not state fixed 25/75 Core policy")
+    if active_core.get("compact_label") not in {"ADAA + F2R", "F2R + ADAA"}:
+        raise RuntimeError("PDS public identity does not bind F2R + ADAA")
+    if active_core.get("composition_disclosure") != "RECIPE_PROTECTED":
+        raise RuntimeError("PDS public identity does not protect provider composition")
 
-    strategy_rows = read_csv(export_root / "public_active_core_strategy_weights.csv")
-    validate_fixed_core(strategy_rows)
     asset_rows = read_csv(export_root / "public_active_core_asset_targets.csv")
     return_rows = read_csv(export_root / "public_core_monthly_returns.csv")
     core_performance_rows = read_csv(export_root / "public_core_performance_path.csv")
@@ -165,17 +154,6 @@ def main() -> int:
     fx_calendar_rows = read_csv(export_root / "public_fx_calendar_returns.csv")
 
     latest_signal = str(disclosure.get("latest_released_signal_period", ""))
-    latest_sw = [r for r in strategy_rows if r.get("signal_period") == latest_signal]
-    if len(latest_sw) != 1:
-        raise RuntimeError(f"expected one latest public strategy-weight row for {latest_signal}; found {len(latest_sw)}")
-    sw = latest_sw[0]
-    latest_strategy = {
-        "signalPeriod": sw["signal_period"],
-        "holdingMonth": sw["holding_month"],
-        "f2rWeight": fnum(sw["f2r_weight"]),
-        "adaaWeight": fnum(sw["adaa_weight"]),
-        "weightBasis": sw["weight_basis"],
-    }
 
     latest_assets = [r for r in asset_rows if r.get("signal_period") == latest_signal]
     if not latest_assets:
@@ -270,7 +248,6 @@ def main() -> int:
         "sourceProgramVersion": str(manifest.get("source_program_version", "")),
         "sourceRs03Version": str(manifest.get("source_rs03_version", "")),
         "publicComponentIdentity": "ADAA + F2R",
-        "latestStrategyWeights": latest_strategy,
         "latestAssetTargets": asset_snapshot,
         "recentMonthlyReturns": return_snapshot,
         "corePerformance": core_performance_snapshot,
@@ -292,7 +269,7 @@ def main() -> int:
         "latest_released_signal_period": latest_signal,
         "completed_holding_month_cutoff": snapshot["completedHoldingMonthCutoff"],
         "active_core_public_identity": "ADAA + F2R",
-        "active_core_policy": "F2R_25_ADAA_75_FIXED_ALL_HISTORY",
+        "active_core_policy": "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED",
         "bound_files_sha256": bound_hashes,
         "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
     }
@@ -316,7 +293,7 @@ def main() -> int:
         raise RuntimeError(f"PDS snapshot binding markers missing or duplicated: count={count}")
     snapshot_ts.write_text(updated, encoding="utf-8")
 
-    print("PDS SLACKQUANT PUBLIC BINDING: PASS · FIXED 25/75 V2")
+    print("PDS SLACKQUANT PUBLIC BINDING: PASS · RECIPE-PROTECTED V3")
     print(json.dumps({
         "status": receipt["status"],
         "released_signal": latest_signal,

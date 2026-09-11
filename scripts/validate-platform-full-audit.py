@@ -101,11 +101,11 @@ def main() -> int:
     )
 
     # PDS released-evidence contract.
-    # PDS_SYSTEM_DOCUMENTATION_GATE_V1_0
+    # PDS_SYSTEM_DOCUMENTATION_GATE_V1_1
     pds = need(
         "src/app/systems/pds/page.tsx",
         "Recent 12-Month Released Returns",
-        "/resources/systems/pds/PDS_System_Documentation_v1.0.pdf",
+        "/resources/systems/pds/PDS_System_Documentation_v1.1.pdf",
         "System Documentation ↗",
         "PDS + Dynamic FX (5bp)",
         "historical comparison series only",
@@ -115,7 +115,7 @@ def main() -> int:
     if "Recent released PDS Core and provider monthly returns" in pds:
         raise RuntimeError("stale PDS recent-table wording remains")
 
-    pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.0.pdf"
+    pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
     if not pds_documentation.is_file() or pds_documentation.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("PDS System Documentation PDF missing or invalid")
 
@@ -177,7 +177,7 @@ def main() -> int:
         for rel in required_out:
             if not (ROOT / rel).is_file():
                 raise RuntimeError(f"built route/artifact missing: {rel}")
-        built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.0.pdf"
+        built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
         if not built_doc.is_file() or built_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built PDS System Documentation PDF missing or invalid")
 

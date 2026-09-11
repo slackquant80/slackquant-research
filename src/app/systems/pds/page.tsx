@@ -33,7 +33,6 @@ export default function PdsSystemPage() {
 
   const snapshot = pdsPublicSnapshot;
   const latestTargets = snapshot?.latestAssetTargets ?? [];
-  const latestWeights = snapshot?.latestStrategyWeights ?? null;
   const corePerformance = snapshot?.corePerformance ?? [];
   const fxPerformance = snapshot?.fxPerformance ?? [];
   const recentReturnPeriods = [...new Set(
@@ -76,7 +75,7 @@ export default function PdsSystemPage() {
             </Link>
             <a
               className="btn soft"
-              href="/resources/systems/pds/PDS_System_Documentation_v1.0.pdf"
+              href="/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -117,7 +116,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Current Active Core</span>
                 <strong>ADAA + F2R</strong>
-                <small>These are the strategy systems currently admitted to the Active Core. The canonical Core uses a fixed 25% F2R / 75% ADAA allocation across the displayed history; current asset targets remain protected until their release window.</small>
+                <small>These are the strategy systems currently admitted to the Active Core under a governed strategic allocation. Exact provider composition weights are not part of the public disclosure layer.</small>
               </div>
               <div>
                 <span className="pds-state-label">Public release model</span>
@@ -127,7 +126,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Current portfolio target</span>
                 <strong>Protected until release gate</strong>
-                <small>The public page exposes the fixed 25% F2R / 75% ADAA Core definition, but does not expose the current asset-level target, Preview, Forward Shadow state, or current FX overlay state.</small>
+                <small>The public page identifies the current Active Core providers and released final PDS portfolio evidence, while exact provider composition, Preview, Forward Shadow, and current FX state remain outside the public disclosure layer.</small>
               </div>
             </div>
             <div className="boundary-note">
@@ -228,39 +227,12 @@ export default function PdsSystemPage() {
             <div className="kicker">Portfolio integration & decision</div>
             <h2>Integrate approved providers under a governed portfolio policy</h2>
             <p className="body-copy">
-              PDS evaluates approved providers and their portfolio roles at the portfolio level, maintains explicit provider
-              weights, maps them into asset-level targets, and keeps source contribution traceable. The canonical Core allocation is fixed at 25% F2R / 75% ADAA across the displayed history. The public surface shows
-              that top-level definition together with released historical asset decisions, while current asset-level targets
-              and forward monitoring states remain protected. Between monthly execution dates, daily performance marks drifted
-              weights to market; the Core is not reset to 25/75 each day.
+              PDS evaluates approved providers and their portfolio roles at the portfolio level, maps governed provider decisions into asset-level targets, and keeps source contribution traceable. The current Core integrates F2R and ADAA under a governed strategic allocation. Exact provider composition weights are not part of the public disclosure layer. The integration formula is likewise protected. Released historical asset decisions and completed performance may be shown after the disclosure gate, while current asset-level targets and forward monitoring states remain protected. Between monthly execution dates, daily performance marks the existing portfolio to market; provider and asset weights drift with returns rather than being reset each day.
             </p>
-            {latestWeights ? (
-              <div className="pds-released-allocation">
-                <div className="pds-release-head">
-                  <div>
-                    <div className="kicker">Latest released portfolio configuration</div>
-                    <h3>Signal {latestWeights.signalPeriod} · Holding {latestWeights.holdingMonth}</h3>
-                  </div>
-                  <span className="track-chip">Historical delayed state</span>
-                </div>
-                <div className="evidence-note pds-config-note">
-                  <strong>Released historical state.</strong> The provider weights below reflect the canonical fixed 25% F2R / 75% ADAA
-                  Core definition. Asset-level targets are released only after the governed disclosure window.
-                </div>
-                <div className="metrics pds-weight-metrics">
-                  <div className="metric"><div className="value">{pct(latestWeights.adaaWeight)}</div><div className="label">ADAA provider weight</div></div>
-                  <div className="metric"><div className="value">{pct(latestWeights.f2rWeight)}</div><div className="label">F2R provider weight</div></div>
-                  <div className="metric"><div className="value">{latestWeights.holdingMonth}</div><div className="label">Completed holding month</div></div>
-                  <div className="metric"><div className="value">Released</div><div className="label">Historical public state</div></div>
-                </div>
-              </div>
-            ) : (
-              <div className="evidence-note">
-                The page is wired to the governed PDS public-export contract. A delayed strategy-weight snapshot appears
-                here only after the source-owned exporter has produced and passed a release snapshot.
-              </div>
-            )}
-          </section>
+            <div className="evidence-note pds-config-note">
+              <strong>Provider integration is governed, not publicly parameterized.</strong> The current Core providers are F2R and ADAA. Exact provider composition weights and the integration formula are intentionally excluded from the public disclosure layer.
+            </div>
+</section>
 
           <section className="prose-section" id="monitoring">
             <div className="kicker">Monitoring & governance</div>
@@ -341,8 +313,7 @@ export default function PdsSystemPage() {
 
                 <div className="card-artifact-links pds-data-links" aria-label="PDS delayed public data downloads">
                   <a href={`${snapshot.rawDataBaseHref}/public_active_core_asset_targets.csv`}>Asset targets CSV</a>
-                  <a href={`${snapshot.rawDataBaseHref}/public_active_core_strategy_weights.csv`}>Strategy weights CSV</a>
-                  <a href={`${snapshot.rawDataBaseHref}/public_recent_12m_returns.xlsx`}>12-month table Excel (.xlsx)</a>
+<a href={`${snapshot.rawDataBaseHref}/public_recent_12m_returns.xlsx`}>12-month table Excel (.xlsx)</a>
                   <a href={`${snapshot.rawDataBaseHref}/public_recent_12m_returns.csv`}>12-month table CSV</a>
                   <a href={`${snapshot.rawDataBaseHref}/public_core_monthly_returns.csv`}>Full Core/provider returns CSV</a>
                   <a href={`${snapshot.rawDataBaseHref}/public_fx_performance_path.csv`}>Dynamic FX history CSV</a>
@@ -379,7 +350,7 @@ export default function PdsSystemPage() {
               <div className="system-boundary-card prohibited">
                 <h3>Protected</h3>
                 <ul>
-                  <li>Current asset-level target and live allocation state beyond the disclosed fixed Core policy</li>
+                  <li>Exact provider composition weights, integration formula, current asset-level target, and live allocation state</li>
                   <li>Intramonth forward preview and Forward Shadow state</li>
                   <li>Current market mark, FX/overlay state, and operator diagnostics</li>
                   <li>Credentials, provider caches, local paths, and account-specific holdings</li>

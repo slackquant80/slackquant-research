@@ -1,8 +1,9 @@
 {
   "active_core": {
-    "compact_label": "ADAA + F2R",
-    "history_definition": "FIXED_25_75_ALL_DISPLAYED_HISTORY",
-    "policy": "F2R 25% + ADAA 75% fixed"
+    "compact_label": "F2R + ADAA",
+    "composition_disclosure": "RECIPE_PROTECTED",
+    "provider_roles": "GOVERNED_ACTIVE_CORE_PROVIDERS",
+    "public_policy": "The current Core integrates F2R and ADAA under a governed strategic allocation. Exact provider composition weights are not part of the public disclosure layer."
   },
   "identity_contract": "F2R_PUBLIC_NAMING_LOCK_V1",
   "naming_rule": "Public/display alias only; internal scientific/runtime/provenance identifiers are unchanged.",
