@@ -8,6 +8,7 @@ import json
 import math
 import re
 import shutil
+import zipfile
 from datetime import datetime
 from pathlib import Path
 
@@ -25,6 +26,8 @@ EXPECTED = {
     "public_fx_performance_summary.csv",
     "public_fx_hedge_history.csv",
     "public_fx_calendar_returns.csv",
+    "public_recent_12m_returns.csv",
+    "public_recent_12m_returns.xlsx",
 }
 PROHIBITED = [
     re.compile(r"(?i)\bMFA\b"),
@@ -51,6 +54,15 @@ def sha256(path: Path) -> str:
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         return list(csv.DictReader(f))
+
+
+def xlsx_text(path: Path) -> str:
+    with zipfile.ZipFile(path) as z:
+        return "\n".join(
+            z.read(name).decode("utf-8", errors="replace")
+            for name in sorted(z.namelist())
+            if name.endswith(".xml") or name.endswith(".rels")
+        )
 
 
 def fnum(value: str | None, *, optional: bool = False):
@@ -81,10 +93,18 @@ def scan_source(root: Path) -> None:
     if missing:
         raise RuntimeError("missing governed public-export file(s): " + ", ".join(missing))
     for name in sorted(EXPECTED):
-        text = (root / name).read_text(encoding="utf-8", errors="replace")
+        path = root / name
+        text = xlsx_text(path) if path.suffix.lower() == ".xlsx" else path.read_text(encoding="utf-8", errors="replace")
         for pat in PROHIBITED:
             if pat.search(text):
                 raise RuntimeError(f"public-export leakage/naming blocker in {name}: {pat.pattern}")
+    recent_csv = root / "public_recent_12m_returns.csv"
+    recent_xlsx = root / "public_recent_12m_returns.xlsx"
+    xt = xlsx_text(recent_xlsx)
+    if sha256(recent_csv) not in xt:
+        raise RuntimeError("public recent-12M XLSX is not bound to current governed CSV")
+    if "Governed strategic allocation; exact provider composition private" not in xt:
+        raise RuntimeError("public recent-12M XLSX recipe-protected policy metadata missing")
 
 
 def copy_governed_files(export_root: Path, data_root: Path) -> dict[str, str]:

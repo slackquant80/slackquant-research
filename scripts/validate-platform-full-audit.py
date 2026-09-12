@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
 import sys
@@ -133,6 +134,39 @@ def main() -> int:
         rows = list(csv.DictReader(f))
     if len(rows) != 12:
         raise RuntimeError(f"PDS recent return CSV must have 12 rows; found {len(rows)}")
+    # PDS_RECENT_12M_PARITY_GATE_V2
+    core_path = ROOT / "public/data/systems/pds/public_core_monthly_returns.csv"
+    fx_path = ROOT / "public/data/systems/pds/public_fx_performance_path.csv"
+    with core_path.open("r", encoding="utf-8-sig", newline="") as f:
+        core_rows = list(csv.DictReader(f))
+    with fx_path.open("r", encoding="utf-8-sig", newline="") as f:
+        fx_rows = list(csv.DictReader(f))
+    core = {(r.get("period", ""), r.get("series_id", "")): r for r in core_rows}
+    dyn = {r.get("holding_month", ""): r for r in fx_rows if r.get("series_id") == "DYNAMIC_COSTED"}
+    periods = sorted(p for p in dyn if all((p, sid) in core for sid in ("PDS_ACTIVE_CORE", "F2R", "ADAA")))[-12:]
+    expected_periods = list(reversed(periods))
+    if [r.get("holding_month") for r in rows] != expected_periods:
+        raise RuntimeError("PDS recent return CSV periods are stale versus governed public data")
+    for r in rows:
+        p = r["holding_month"]
+        expected = {"dynamic_fx_5bp": float(dyn[p]["net_return"]), "pds_core": float(core[(p, "PDS_ACTIVE_CORE")]["net_return"]), "f2r": float(core[(p, "F2R")]["net_return"]), "adaa": float(core[(p, "ADAA")]["net_return"])}
+        for key, value in expected.items():
+            if abs(float(r[key]) - value) > 1e-12:
+                raise RuntimeError(f"PDS recent return CSV is stale: {p} {key}")
+        if r.get("dynamic_fx_layer_status") != dyn[p].get("layer_status"):
+            raise RuntimeError(f"PDS recent return CSV Dynamic-FX authority mismatch: {p}")
+    recent_xlsx = ROOT / "public/data/systems/pds/public_recent_12m_returns.xlsx"
+    if not recent_xlsx.is_file():
+        raise RuntimeError("PDS recent return XLSX missing")
+    csv_sha = hashlib.sha256(recent.read_bytes()).hexdigest()
+    with zipfile.ZipFile(recent_xlsx) as z:
+        xlsx_text = "\n".join(z.read(n).decode("utf-8", errors="replace") for n in sorted(z.namelist()) if n.endswith(".xml") or n.endswith(".rels"))
+    if csv_sha not in xlsx_text:
+        raise RuntimeError("PDS recent return XLSX checksum is stale versus CSV")
+    if "Governed strategic allocation; exact provider composition private" not in xlsx_text:
+        raise RuntimeError("PDS recent return XLSX recipe-protected policy metadata missing")
+    if re.search(r"(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history", xlsx_text):
+        raise RuntimeError("PDS recent return XLSX leaks protected provider recipe")
 
     # PDS_RECIPE_PROTECTION_GATE_V1
     retired_weights = ROOT / "public/data/systems/pds/public_active_core_strategy_weights.csv"

@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 from __future__ import annotations
-import csv,json,re,hashlib
+import csv,json,re,hashlib,zipfile
 from pathlib import Path
 
 APP=Path(__file__).resolve().parents[1]
@@ -22,6 +22,44 @@ def require(text:str,token:str,label:str,casefold=False)->None:
     if not ok:raise RuntimeError(f'{label} missing required token: {token}')
 def rows(path:Path):
     with path.open('r',encoding='utf-8-sig',newline='') as f:return list(csv.DictReader(f))
+
+def xlsx_text(path:Path)->str:
+    with zipfile.ZipFile(path) as z:
+        return '\n'.join(z.read(n).decode('utf-8',errors='replace') for n in sorted(z.namelist()) if n.endswith('.xml') or n.endswith('.rels'))
+
+def recent_expected_from_public_data():
+    core_rows=rows(DATA/'public_core_monthly_returns.csv');fx_rows=rows(DATA/'public_fx_performance_path.csv')
+    core={(r.get('period',''),r.get('series_id','')):r for r in core_rows}
+    dyn={r.get('holding_month',''):r for r in fx_rows if r.get('series_id')=='DYNAMIC_COSTED'}
+    periods=sorted(p for p in dyn if all((p,sid) in core for sid in ('PDS_ACTIVE_CORE','F2R','ADAA')))[-12:]
+    out=[]
+    for period in reversed(periods):
+        out.append({'holding_month':period,'dynamic_fx_5bp':float(dyn[period]['net_return']),'pds_core':float(core[(period,'PDS_ACTIVE_CORE')]['net_return']),'f2r':float(core[(period,'F2R')]['net_return']),'adaa':float(core[(period,'ADAA')]['net_return']),'dynamic_fx_layer_status':dyn[period].get('layer_status','')})
+    return out
+
+def recent_from_snapshot(snapshot_text:str):
+    m=re.search(r'// PDS_PUBLIC_BINDING_START\s*export const pdsPublicSnapshot: PdsPublicSnapshot \| null = (.*?) as PdsPublicSnapshot;\s*// PDS_PUBLIC_BINDING_END',snapshot_text,re.S)
+    if not m:raise RuntimeError('PDS snapshot JSON binding block is not parseable')
+    obj=json.loads(m.group(1))
+    core={(r['holdingMonth'],r['seriesId']):r for r in obj.get('corePerformance',[])}
+    dyn={r['holdingMonth']:r for r in obj.get('fxPerformance',[]) if r.get('seriesId')=='DYNAMIC_COSTED'}
+    periods=sorted(period for period in dyn if all((period,sid) in core for sid in ('PDS_ACTIVE_CORE','F2R','ADAA')))[-12:]
+    return [{'holding_month':period,'dynamic_fx_5bp':float(dyn[period]['netReturn']),'pds_core':float(core[(period,'PDS_ACTIVE_CORE')]['netReturn']),'f2r':float(core[(period,'F2R')]['netReturn']),'adaa':float(core[(period,'ADAA')]['netReturn']),'dynamic_fx_layer_status':dyn[period].get('layerStatus','')} for period in reversed(periods)]
+
+def assert_recent_parity(snapshot_text:str):
+    csv_path=DATA/'public_recent_12m_returns.csv';xlsx_path=DATA/'public_recent_12m_returns.xlsx'
+    recent=rows(csv_path);expected=recent_expected_from_public_data();snap=recent_from_snapshot(snapshot_text)
+    if len(recent)!=12 or len(expected)!=12 or len(snap)!=12:raise RuntimeError('PDS recent-12M artifacts must resolve to exactly 12 common months')
+    for label,other in [('governed public data',expected),('pdsPublicSnapshot',snap)]:
+        for a,b in zip(recent,other):
+            if a.get('holding_month')!=b['holding_month']:raise RuntimeError(f'recent-12M period mismatch versus {label}')
+            for k in ('dynamic_fx_5bp','pds_core','f2r','adaa'):
+                if abs(float(a[k])-float(b[k]))>1e-12:raise RuntimeError(f'recent-12M value mismatch versus {label}: {a.get("holding_month")} {k}')
+            if a.get('dynamic_fx_layer_status')!=b['dynamic_fx_layer_status']:raise RuntimeError(f'recent-12M authority mismatch versus {label}: {a.get("holding_month")}')
+    xt=xlsx_text(xlsx_path);csv_sha=hashlib.sha256(csv_path.read_bytes()).hexdigest()
+    if csv_sha not in xt:raise RuntimeError('recent-12M XLSX checksum does not bind to current CSV')
+    if 'Governed strategic allocation; exact provider composition private' not in xt:raise RuntimeError('recent-12M XLSX recipe-protected policy metadata missing')
+    if re.search(r'(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history',xt):raise RuntimeError('recent-12M XLSX leaks exact provider recipe')
 
 def main()->int:
     systems=need(SYSTEMS);system_card=need(SYSTEM_CARD);systems_page=need(SYSTEMS_PAGE);methods=need(METHODS);methods_used=need(METHODS_USED);sitemap=need(SITEMAP);pds=need(PDS_PAGE);route=need(PDS_DASHBOARD);f2r=need(F2R_PAGE);snapshot=need(SNAPSHOT);binder=need(BINDER);public_html=need(PUBLIC_DASHBOARD)
@@ -52,7 +90,7 @@ def main()->int:
     leak=re.compile(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\')
     if leak.search(pds+'\n'+f2r+'\n'+public_html):raise RuntimeError('private/internal PDS or F2R identity leaked onto a public surface')
     if 'export const pdsPublicSnapshot: PdsPublicSnapshot | null = null;' in snapshot:raise RuntimeError('PDS governed delayed snapshot is not bound')
-    required={'public_active_core_asset_targets.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv'}
+    required={'public_active_core_asset_targets.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv','public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'}
     missing=[x for x in sorted(required) if not (DATA/x).is_file()]
     if missing:raise RuntimeError('PDS public data binding incomplete: '+', '.join(missing))
     disclosure=json.loads((DATA/'public_disclosure_state.json').read_text(encoding='utf-8'));manifest=json.loads((DATA/'public_export_manifest.json').read_text(encoding='utf-8'));receipt=json.loads((DATA/'PDS_PUBLIC_BINDING_RECEIPT.json').read_text(encoding='utf-8'));dash=json.loads(PUBLIC_DASHBOARD_RECEIPT.read_text(encoding='utf-8'))
@@ -64,6 +102,9 @@ def main()->int:
     if manifest.get('no_private_leakage_scan')!='PASS':raise RuntimeError('source exporter leakage scan not PASS')
     if manifest.get('active_core_policy')!='GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED':raise RuntimeError('public Core disclosure policy is not recipe-protected')
     if receipt.get('status')!='PDS_SLACKQUANT_PUBLIC_BINDING_PASS':raise RuntimeError('platform binding receipt not PASS')
+    assert_recent_parity(snapshot)
+    for name in ('public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'):
+        if name not in (receipt.get('bound_files_sha256') or {}):raise RuntimeError(f'binding receipt missing governed recent-12M artifact hash: {name}')
     if dash.get('status')!='PASS' or dash.get('private_current_values_embedded') is not False:raise RuntimeError('public-dashboard receipt is not safe PASS')
     if dash.get('artifact')!='PDS_PUBLIC_DASHBOARD_PRODUCT_V3':raise RuntimeError('public dashboard is not product v3')
     if dash.get('presentation_contract')!='RS03_PUBLIC_PRODUCT_V3__LOCAL_VISUAL_FAMILY':raise RuntimeError('public presentation contract mismatch')
@@ -76,7 +117,9 @@ def main()->int:
     recipe_leak=re.compile(r'(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history')
     if recipe_leak.search(pds+'\n'+public_html+'\n'+snapshot):raise RuntimeError('exact provider recipe leaked into public UI/payload')
     for path in sorted(DATA.iterdir()):
-        if path.is_file() and leak.search(path.read_text(encoding='utf-8',errors='replace')):raise RuntimeError(f'public PDS data leakage/naming blocker: {path.name}')
+        if not path.is_file():continue
+        text=xlsx_text(path) if path.suffix.lower()=='.xlsx' else path.read_text(encoding='utf-8',errors='replace')
+        if leak.search(text):raise RuntimeError(f'public PDS data leakage/naming blocker: {path.name}')
     print('PDS_PUBLICATION_GATE_PASS')
     print('Presentation: PDS public product v3 / canonical local visual family')
     print('Pages       : Overview / Core Performance / Portfolio History / Investor-FX / System-Disclosure')
