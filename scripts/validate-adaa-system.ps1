@@ -44,10 +44,10 @@ foreach ($token in @(
   'Intramonth Preview',
   'no execution authority',
   'Public Working Paper v1.34',
-  'Diversify decision logic, not just asset exposure',
+  'Diversify the decision process before diversifying the portfolio',
   'MethodsUsed',
   'context="system"',
-  'validates the canonical 19-ETF',
+  'validates the canonical 19-symbol market-data',
   'public-safe bundled snapshot',
   'not the authority that refreshes source data'
 )) {

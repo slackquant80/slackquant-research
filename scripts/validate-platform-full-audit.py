@@ -208,6 +208,7 @@ def main() -> int:
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
         "not the exact construction",
+        "canonical 19-symbol market-data",
     )
     need(
         "src/app/systems/pds/page.tsx",

@@ -159,7 +159,7 @@ export default function AdaaSystemPage() {
                 <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
-                  The governed release workflow refreshes source data before deployment, validates the canonical 19-ETF
+                  The governed release workflow refreshes source data before deployment, validates the canonical 19-symbol market-data
                   snapshot, and produces a public-safe bundled snapshot. Public Shiny sessions auto-run from that validated
                   bundle; they are consumers of the released snapshot, not the authority that refreshes source data.
                 </p>
