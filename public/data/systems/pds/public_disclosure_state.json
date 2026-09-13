@@ -15,7 +15,7 @@
   "performance_clock": "REALIZED_HOLDING_MONTH",
   "provider_composition_weights": "PRIVATE_NOT_EXPORTED",
   "provider_weight_history": "PRIVATE_NOT_EXPORTED",
-  "public_as_of_date": "2026-09-12",
+  "public_as_of_date": "2026-09-13",
   "public_component_identity": "ADAA + F2R",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V3_RECIPE_PROTECTED",
   "shadow_monitor_state": "PRIVATE_NOT_EXPORTED"
