@@ -101,6 +101,40 @@ def main() -> int:
         "GitHub Repository",
     )
 
+    # RESEARCH_DETAIL_HERO_CONSISTENCY_GATE_V1
+    need(
+        "src/app/about/page.tsx",
+        "Explore Investment Research",
+        "Explore Academic Research",
+        "/research/#investment-research-heading",
+        "/research/#academic-research-heading",
+    )
+    need(
+        "src/components/ResearchPaperHero.tsx",
+        "Open SSRN Record",
+        "Replication Repository",
+        "Research Dashboard",
+        "paper-hero-actions",
+    )
+    research_detail_pages = [
+        "src/app/research/adaa/page.tsx",
+        "src/app/research/protection-patience/page.tsx",
+        "src/app/research/price-macro-decision/page.tsx",
+        "src/app/research/beyond-average-accuracy/page.tsx",
+    ]
+    for rel in research_detail_pages:
+        detail = need(rel, "ResearchPaperHero")
+        if '<section className="paper-hero">' in detail:
+            raise RuntimeError(f"bespoke research-detail hero remains: {rel}")
+    need(
+        "src/app/research/adaa/page.tsx",
+        'label: "ADAA System"',
+    )
+    need(
+        "src/app/research/price-macro-decision/page.tsx",
+        'label: "F2R System"',
+    )
+
     # PDS released-evidence contract.
     # PDS_SYSTEM_DOCUMENTATION_GATE_V1_1
     pds = need(
@@ -270,6 +304,7 @@ def main() -> int:
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
     print("PDS / ADAA / F2R system-page editorial positioning=PASS")
+    print("About research links / shared research-detail hero=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")
     return 0

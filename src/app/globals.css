@@ -2041,3 +2041,22 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   }
 }
 /* PDS_PUBLIC_MOBILE_V113_END */
+
+
+/* Research paper hero link consistency */
+.paper-hero-actions{
+  align-items:stretch;
+}
+.paper-hero-actions .btn{
+  min-width:180px;
+}
+@media (max-width:620px){
+  .paper-hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .paper-hero-actions .btn{
+    width:100%;
+    min-width:0;
+  }
+}

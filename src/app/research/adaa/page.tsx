@@ -5,6 +5,7 @@ import { ArtifactLink } from "@/components/ArtifactLink";
 import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -26,43 +27,7 @@ export default function AdaaPage() {
 
   return (
     <main>
-      <section className="paper-hero">
-        <div className="shell">
-          <div className="paper-track-row">
-            <div className="eyebrow">{item.streamLabel}</div>
-            {item.investmentTrackLabel ? (
-              <span className="track-chip">{item.investmentTrackLabel}</span>
-            ) : null}
-          </div>
-          <h1 className="paper-title">{item.title}</h1>
-          <div className="paper-subtitle">{item.subtitle}</div>
-          <div className="paper-meta">
-            <span>{item.authorLine}</span>
-            {item.affiliation ? <span>{item.affiliation}</span> : null}
-            <span>{item.status}</span>
-            {item.ssrnId ? <span>SSRN {item.ssrnId}</span> : null}
-            <span>{item.dateLabel}</span>
-          </div>
-          <div className="actions">
-            <ArtifactLink href={item.links.ssrn} primary external>
-              Open SSRN Record
-            </ArtifactLink>
-            {item.links.github ? (
-              <ArtifactLink href={item.links.github} external>
-                Replication Repository
-              </ArtifactLink>
-            ) : null}
-            {item.links.researchDashboard ? (
-              <ArtifactLink href={item.links.researchDashboard} external>
-                Research Dashboard
-              </ArtifactLink>
-            ) : null}
-            <ArtifactLink href="/systems/adaa/" primary>
-              ADAA System
-            </ArtifactLink>
-          </div>
-        </div>
-      </section>
+      <ResearchPaperHero item={item} relatedSystem={{ href: "/systems/adaa/", label: "ADAA System" }} />
 
       <div className="shell detail-layout">
         <aside className="toc">

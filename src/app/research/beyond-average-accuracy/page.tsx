@@ -4,6 +4,7 @@ import { ArtifactLink } from "@/components/ArtifactLink";
 import { CitationBox } from "@/components/CitationBox";
 import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
 
 const metrics = [
@@ -25,31 +26,7 @@ export default function BeyondAverageAccuracyPage() {
 
   return (
     <main>
-      <section className="paper-hero">
-        <div className="shell">
-          <div className="eyebrow">{item.streamLabel}</div>
-          <h1 className="paper-title">{item.title}</h1>
-          <div className="paper-subtitle">{item.subtitle}</div>
-          <div className="paper-meta">
-            <span>{item.authorLine}</span>
-            {item.affiliation ? <span>{item.affiliation}</span> : null}
-            <span>{item.status}</span>
-            {item.ssrnId ? <span>SSRN {item.ssrnId}</span> : null}
-            <span>{item.dateLabel}</span>
-          </div>
-          <div className="actions">
-            <ArtifactLink href={item.links.ssrn} primary external>
-              Open SSRN Record
-            </ArtifactLink>
-            <ArtifactLink href={item.links.github} external>
-              Replication Repository
-            </ArtifactLink>
-            <ArtifactLink href={item.links.researchDashboard} external>
-              Interactive Dashboard
-            </ArtifactLink>
-          </div>
-        </div>
-      </section>
+      <ResearchPaperHero item={item} />
 
       <div className="shell detail-layout">
         <aside className="toc">

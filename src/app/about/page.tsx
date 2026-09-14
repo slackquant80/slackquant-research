@@ -96,6 +96,12 @@ export default function AboutPage() {
               Systematic investing, asset allocation, portfolio decision design,
               robustness, and implementation-oriented research.
             </p>
+            <Link
+              className="section-link strong-link"
+              href="/research/#investment-research-heading"
+            >
+              Explore Investment Research &#8594;
+            </Link>
           </div>
           <div>
             <div className="section-title">&nbsp;</div>
@@ -104,6 +110,12 @@ export default function AboutPage() {
               Forecasting, financial data science, AI/ML, empirical methods,
               and related technical research.
             </p>
+            <Link
+              className="section-link strong-link"
+              href="/research/#academic-research-heading"
+            >
+              Explore Academic Research &#8594;
+            </Link>
           </div>
         </div>
       </section>
