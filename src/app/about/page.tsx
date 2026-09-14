@@ -4,7 +4,8 @@ import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "About SlackQuant Research, its research streams, operational systems, Quantitative Methods library, and separation between research evidence and live operation.",
+  description:
+    "About SlackQuant Research, its researcher, research streams, operational systems, Quantitative Methods library, and separation between research evidence and live operation.",
   alternates: { canonical: "/about/" },
 };
 
@@ -43,12 +44,44 @@ export default function AboutPage() {
               stay connected without collapsing research and live operation into the
               same record.
             </p>
+
             <div className="person-card">
               <div className="person-kicker">Researcher</div>
               <div className="person-name">
                 {site.researcher.name} <span>({site.researcher.nameKo})</span>
               </div>
-              <div className="person-role">SlackQuant Research</div>
+              <div className="person-role">{site.researcher.headline}</div>
+
+              <p className="body-copy">{site.researcher.bio}</p>
+
+              <div className="card-meta">
+                <span>{site.researcher.affiliation}</span>
+              </div>
+
+              <div className="actions">
+                <a
+                  className="btn soft"
+                  href={`mailto:${site.researcher.email}`}
+                >
+                  Email
+                </a>
+                <a
+                  className="btn soft ext"
+                  href={site.researcher.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  className="btn soft ext"
+                  href={site.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -125,6 +158,12 @@ export default function AboutPage() {
             <p>
               Academic and employer affiliations are project-specific and
               follow the corresponding public paper or publication record.
+            </p>
+            <p>
+              General research inquiries:{" "}
+              <a className="strong-link" href={`mailto:${site.researcher.email}`}>
+                {site.researcher.email}
+              </a>
             </p>
           </div>
         </div>
