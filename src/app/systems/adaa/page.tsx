@@ -159,9 +159,10 @@ export default function AdaaSystemPage() {
                 <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
-                  The governed release workflow refreshes source data before deployment, validates the canonical 19-symbol market-data
-                  snapshot, and produces a public-safe bundled snapshot. Public Shiny sessions auto-run from that validated
-                  bundle; they are consumers of the released snapshot, not the authority that refreshes source data.
+                  The governed release workflow refreshes and validates the canonical ADAA source state before deployment, including
+                  the 19-source-series market snapshot (18 final decision assets plus the EWJ history bridge). The public Thin-Shiny
+                  shell serves the validated snapshot-rendered dashboard; public sessions do not acquire Yahoo/FRED/FX data or
+                  recompute the strategy.
                 </p>
                 {item.links.liveDashboard ? (
                   <a className="btn inverse" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
