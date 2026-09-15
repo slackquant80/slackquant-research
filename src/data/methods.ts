@@ -22,6 +22,10 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM007: "Explains how F2R's rank-based monthly target becomes a continuous holding-period wealth path under explicit execution timing and between-rebalance weight drift.",
     QM009: "Explains the drift-aware turnover and transaction-cost conventions used to translate F2R's monthly model-portfolio changes into net performance.",
     QM013: "Defines benchmark-relative measures used to judge the portfolio value of F2R's heterogeneous Forecast-to-Rank decision process beyond same-universe and external comparators.",
+    QM019: "Defines the regularized linear-model family that anchors F2R's conventional supervised forecasting lane, including scaling and tuning controls for correlated predictors.",
+    QM020: "Defines chronological model-selection and hyperparameter-tuning discipline used when F2R compares conventional supervised candidates without leaking future information.",
+    QM024: "Explains how heterogeneous predictive views can be combined or aggregated without confusing forecast weights, forecast scales, rank aggregation, and downstream portfolio weights.",
+    QM025: "Defines the evaluation boundary for Chronos-2 and other pretrained time-series foundation models, separating inference-time information from pretraining knowledge and historical-evaluation claims.",
   },
   "pds-system": {
     QM007: "Defines portfolio accounting and rebalance timing used to maintain a continuous PDS Core performance path across provider decisions.",
@@ -205,17 +209,53 @@ export const quantitativeMethods: QuantitativeMethod[] = [
     researchContext:
       "Explains how adverse scenario tails can be organized into interpretable stress archetypes, represented by feasible scenarios, and assessed for stability, taxonomy adequacy, and external relevance.",
   },
+  {
+    id: "QM019",
+    title: "Regularized Linear Models: Ridge, Lasso, and Elastic Net",
+    category: "Machine Learning",
+    level: "Intermediate",
+    href: "/methods/60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html",
+    researchContext:
+      "Explains Ridge, Lasso, and Elastic Net with explicit scaling, penalty, correlated-predictor, and leakage-aware tuning conventions for predictive modeling.",
+  },
+  {
+    id: "QM020",
+    title: "Time-Series Model Selection and Hyperparameter Tuning",
+    category: "Machine Learning",
+    level: "Advanced",
+    href: "/methods/60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html",
+    researchContext:
+      "Explains chronological model selection and hyperparameter tuning for time-ordered data, including nested evaluation, gap design, target maturity, and leakage control.",
+  },
+  {
+    id: "QM024",
+    title: "Forecast Combination and Model Averaging",
+    category: "Machine Learning",
+    level: "Intermediate",
+    href: "/methods/60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html",
+    researchContext:
+      "Explains forecast combination and model averaging, including weighting uncertainty, scale compatibility, rank aggregation, and leakage-aware ensemble evaluation.",
+  },
+  {
+    id: "QM025",
+    title: "Pretrained Time-Series Foundation Models",
+    category: "AI Foundation Models",
+    level: "Advanced",
+    href: "/methods/70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html",
+    researchContext:
+      "Explains pretrained time-series forecasting models by separating inference-time data, pretraining knowledge, zero-shot use, covariate timing, and fair historical evaluation claims.",
+  },
 ];
 
 const artifactMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014"],
-  "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013"],
+  "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM024", "QM025"],
   "pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
-  "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014"],
-  "second-opinion-portfolio": ["QM001", "QM003", "QM007", "QM009"],
+  "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014", "QM019", "QM020"],
+  "second-opinion-portfolio": ["QM001", "QM003", "QM007", "QM009", "QM011", "QM019", "QM020", "QM024", "QM025"],
   "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 };
 

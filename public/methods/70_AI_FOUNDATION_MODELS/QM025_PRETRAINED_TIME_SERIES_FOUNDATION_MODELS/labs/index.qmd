@@ -1,0 +1,27 @@
+---
+title: "QM025 Hands-On Lab"
+subtitle: "Pretrained Time-Series Foundation Models"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Audit whether context values and future covariates were actually available at a simulated historical forecast origin.
+
+# Run
+
+```bash
+python python/qm025_tsfm_information_audit.py
+```
+
+# Experiment
+
+Move the availability date of `future_realized_macro` to the forecast origin and rerun. Then explain whether that change is a legitimate information assumption or merely a way to make the audit pass.
+
+The lab does not download or benchmark any pretrained model. It isolates the reusable information-timing contract.

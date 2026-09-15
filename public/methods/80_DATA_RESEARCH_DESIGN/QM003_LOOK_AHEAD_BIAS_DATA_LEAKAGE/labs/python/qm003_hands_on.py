@@ -58,7 +58,7 @@ def main() -> None:
     print("Feature comparison")
     for name in names:
         r = results[name]
-        print(f"{name:>8} — development RMSE {r['development_rmse']:.3f}; held-out RMSE {r['held_out_rmse']:.3f}")
+        print(f"{name:>8} - development RMSE {r['development_rmse']:.3f}; held-out RMSE {r['held_out_rmse']:.3f}")
         for key, value in r.items():
             print(f"QM003_LAB_METRIC {name}_{key}={value:.12g}")
 

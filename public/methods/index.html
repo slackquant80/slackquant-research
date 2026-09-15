@@ -306,6 +306,45 @@ QM017 · PORTFOLIO METHODS · INTERMEDIATE
 </div>
 </section>
 </div>
+<section id="machine-learning-methods" class="level3 sq-method-group" data-method-group="machine_learning">
+<h3 class="anchored" data-anchor-id="machine-learning-methods">Machine Learning Methods</h3>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM019 · MACHINE LEARNING · INTERMEDIATE
+</div>
+<section id="regularized-linear-models-ridge-lasso-and-elastic-net" class="level3">
+<h3 class="anchored" data-anchor-id="regularized-linear-models-ridge-lasso-and-elastic-net"><a href="./60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">Regularized Linear Models: Ridge, Lasso, and Elastic Net</a></h3>
+<p>How can a linear predictor remain stable when features are numerous, noisy, or correlated? It compares Ridge, Lasso, and Elastic Net, makes scaling and penalty conventions explicit, and treats preprocessing and penalty selection as part of the leakage-controlled forecasting procedure.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM020 · MACHINE LEARNING · ADVANCED
+</div>
+<section id="time-series-model-selection-and-hyperparameter-tuning" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-model-selection-and-hyperparameter-tuning"><a href="./60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html">Time-Series Model Selection and Hyperparameter Tuning</a></h3>
+<p>How should hyperparameters be selected when the tuning procedure itself must respect historical information sets? It covers chronological folds, nested evaluation, target maturity, gap design, fold-local preprocessing, and the important conditions under which ordinary K-fold is not automatically invalid.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM024 · MACHINE LEARNING · INTERMEDIATE
+</div>
+<section id="forecast-combination-and-model-averaging" class="level3">
+<h3 class="anchored" data-anchor-id="forecast-combination-and-model-averaging"><a href="./60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">Forecast Combination and Model Averaging</a></h3>
+<p>When should several models be combined instead of forcing a single winner? It separates equal and estimated combinations, forecast-scale compatibility, rank aggregation, weight-estimation risk, and model-combination weights from downstream portfolio allocations.</p>
+</section>
+</div>
+<div class="sq-method-row">
+<div class="sq-meta">
+QM025 · AI &amp; FOUNDATION MODELS · ADVANCED
+</div>
+<section id="pretrained-time-series-foundation-models" class="level3">
+<h3 class="anchored" data-anchor-id="pretrained-time-series-foundation-models"><a href="./70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">Pretrained Time-Series Foundation Models</a></h3>
+<p>How should pretrained forecasting models be evaluated without confusing zero-shot inference with information-free prediction? It separates downstream inference timing from pretrained knowledge, distinguishes model architectures, audits future covariates and pretraining overlap, and separates retrospective technology counterfactuals from historical live OOS claims.</p>
+</section>
+</div>
+</section>
 <section id="research-design-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
 <h3 class="anchored" data-anchor-id="research-design-technical-methods">Research Design &amp; Technical Methods</h3>
 <div class="sq-method-row">
@@ -897,6 +936,10 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
       { id: "QM016", title: "EWMA-t Scenario Simulation", path: "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html", folder: "QM016_EWMA_T_SCENARIO_SIMULATION" },
       { id: "QM017", title: "Scenario-Based Portfolio Stress Testing", path: "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html", folder: "QM017_SCENARIO_STRESS_TESTING" },
       { id: "QM018", title: "Stress Archetypes and Representative Scenario Geometry", path: "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html", folder: "QM018_STRESS_ARCHETYPES_GEOMETRY" },
+      { id: "QM019", title: "Regularized Linear Models: Ridge, Lasso, and Elastic Net", path: "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html", folder: "QM019_REGULARIZED_LINEAR_MODELS" },
+      { id: "QM020", title: "Time-Series Model Selection and Hyperparameter Tuning", path: "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html", folder: "QM020_TIME_SERIES_MODEL_SELECTION" },
+      { id: "QM024", title: "Forecast Combination and Model Averaging", path: "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html", folder: "QM024_FORECAST_COMBINATION_MODEL_AVERAGING" },
+      { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
     ];
 
     const init = () => {

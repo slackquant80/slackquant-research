@@ -1,0 +1,27 @@
+---
+title: "QM019 Hands-On Lab"
+subtitle: "Regularized Linear Models"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with correlated predictors and compare holdout error.
+
+# Run
+
+```bash
+python python/qm019_regularized_models.py
+```
+
+# Experiment
+
+Change the predictor correlation and the penalty strengths. Inspect whether prediction error and coefficient stability move together.
+
+The data are synthetic. The lab makes no empirical market-performance claim.

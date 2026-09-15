@@ -53,8 +53,8 @@ def main() -> None:
         raise SystemExit("--window must be at least 20 for this exercise.")
     out = evaluate(args.window)
     print(f"Rolling window: {args.window}")
-    print(f"Post-break RMSE — expanding: {out['post_rmse_expanding']:.3f}")
-    print(f"Post-break RMSE — rolling:   {out['post_rmse_rolling']:.3f}")
+    print(f"Post-break RMSE - expanding: {out['post_rmse_expanding']:.3f}")
+    print(f"Post-break RMSE - rolling:   {out['post_rmse_rolling']:.3f}")
     print(f"Rolling vs expanding:        {out['post_rolling_vs_expanding_pct']:+.1f}%")
     for k,v in out.items():
         print(f"QM002_LAB_METRIC {k}={v:.12g}")

@@ -1,0 +1,27 @@
+---
+title: "QM024 Hands-On Lab"
+subtitle: "Forecast Combination and Model Averaging"
+page-layout: article
+toc: true
+format:
+  html:
+    theme:
+      - cosmo
+      - ../../../styles/slackquant-methods.scss
+---
+
+# Objective
+
+Compare a simple equal-weight forecast average with covariance-estimated sum-to-one weights on a later synthetic holdout.
+
+# Run
+
+```bash
+python python/qm024_forecast_combination.py
+```
+
+# Experiment
+
+Change the estimation-window length or error correlation. Estimated weights may become unstable and need not outperform equal weights out of sample.
+
+The data are synthetic and do not establish an empirical advantage for either combination rule.

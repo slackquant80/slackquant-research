@@ -65,7 +65,8 @@ def main() -> int:
         '"scenario-stress-lab"',
     )
     ids = set(re.findall(r'id:\s*"(QM\d{3})"', methods))
-    if ids != {f"QM{i:03d}" for i in range(1, 19)}:
+    expected_method_ids = {f"QM{i:03d}" for i in range(1, 19)} | {"QM019", "QM020", "QM024", "QM025"}
+    if ids != expected_method_ids:
         raise RuntimeError(f"Methods registry mismatch: {sorted(ids)}")
 
     # Core UI/link/source contracts.
@@ -296,8 +297,8 @@ def main() -> int:
     if "paper-driven rather than encyclopedic" in mi:
         raise RuntimeError("stale Methods principle remains")
     articles = sorted((ROOT / "public/methods").rglob("article.html"))
-    if len(articles) != 18:
-        raise RuntimeError(f"expected 18 Method articles; found {len(articles)}")
+    if len(articles) != 22:
+        raise RuntimeError(f"expected 22 Method articles; found {len(articles)}")
 
     old_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/methods\\/");'
     new_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/");'
@@ -309,7 +310,7 @@ def main() -> int:
         nav_pages += 1
         if old_filter in s or new_filter not in s:
             raise RuntimeError(f"Methods first-party navigation filter regression: {p.relative_to(ROOT)}")
-    if nav_pages < 37:
+    if nav_pages < 45:
         raise RuntimeError(f"Methods platform navigation coverage too small: {nav_pages}")
 
     if require_build:
@@ -339,7 +340,7 @@ def main() -> int:
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=5 Systems=4 Methods=18 / exact registry sets=PASS")
+    print("Research=5 Systems=4 Methods=22 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")

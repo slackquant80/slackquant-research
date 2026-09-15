@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical framework for selecting models and hyperparameters when observations are time ordered and the tuning procedure itself must respect the forecast information set.">
+
+<title>Time-Series Model Selection and Hyperparameter Tuning – SlackQuant Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="canonical" href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
+  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
+  <ul class="collapse">
+  <li><a href="#separate-tuning-from-evaluation" id="toc-separate-tuning-from-evaluation" class="nav-link" data-scroll-target="#separate-tuning-from-evaluation">Separate tuning from evaluation</a></li>
+  <li><a href="#expanding-and-rolling-validation" id="toc-expanding-and-rolling-validation" class="nav-link" data-scroll-target="#expanding-and-rolling-validation">Expanding and rolling validation</a></li>
+  <li><a href="#the-role-of-a-gap" id="toc-the-role-of-a-gap" class="nav-link" data-scroll-target="#the-role-of-a-gap">The role of a gap</a></li>
+  </ul></li>
+  <li><a href="#is-ordinary-k-fold-always-wrong-for-time-series" id="toc-is-ordinary-k-fold-always-wrong-for-time-series" class="nav-link" data-scroll-target="#is-ordinary-k-fold-always-wrong-for-time-series">Is Ordinary K-Fold Always Wrong for Time Series?</a></li>
+  <li><a href="#preprocessing-belongs-inside-the-fold" id="toc-preprocessing-belongs-inside-the-fold" class="nav-link" data-scroll-target="#preprocessing-belongs-inside-the-fold">Preprocessing Belongs Inside the Fold</a></li>
+  <li><a href="#nested-historical-evaluation" id="toc-nested-historical-evaluation" class="nav-link" data-scroll-target="#nested-historical-evaluation">Nested Historical Evaluation</a></li>
+  <li><a href="#how-to-choose-the-objective" id="toc-how-to-choose-the-objective" class="nav-link" data-scroll-target="#how-to-choose-the-objective">How to Choose the Objective</a></li>
+  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<header class="sq-platform-header">
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
+      <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
+</header>
+<script id="sq-header-relocator">
+  (() => {
+    const script = document.currentScript;
+    const header = script?.previousElementSibling;
+    const quartoContent = document.getElementById("quarto-content");
+    if (
+      header?.classList.contains("sq-platform-header") &&
+      quartoContent?.parentNode
+    ) {
+      quartoContent.parentNode.insertBefore(header, quartoContent);
+    }
+  })();
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Time-Series Model Selection and Hyperparameter Tuning</h1>
+<p class="subtitle lead">Chronological resampling, nested evaluation, gap design, and leakage control</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Machine Learning</div>
+    <div class="quarto-category">Advanced</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A practical framework for selecting models and hyperparameters when observations are time ordered and the tuning procedure itself must respect the forecast information set.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="method-kicker">
+<p>QM020 · Machine Learning · Advanced</p>
+</div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> Hyperparameter tuning is part of the forecasting algorithm. Its folds, preprocessing, target maturity, and selection rule must use only information admissible at each simulated forecast origin.</p>
+<p><strong>Use it for.</strong> Choosing penalty strengths, tree depth, learning rates, feature-selection thresholds, model families, or ensemble settings in time-ordered prediction problems.</p>
+<p><strong>It does not establish.</strong> That one resampling scheme is universally correct, that ordinary K-fold cross-validation is mathematically invalid in every time-series problem, or that tuning protects against a poorly chosen final evaluation design.</p>
+</div>
+<section id="the-question" class="level1">
+<h1>The Question</h1>
+<p>A machine-learning model is rarely just an estimator with fixed settings. Researchers also choose hyperparameters, preprocessing rules, features, and sometimes the model family itself.</p>
+<p>If those choices are made using future observations, the final forecast evaluation can be biased even when the final coefficient fit uses only past data.</p>
+<p>The real question is therefore:</p>
+<blockquote class="blockquote">
+<p>How should model selection be embedded inside a time-series forecasting experiment so that both fitting and tuning obey the information available at each forecast origin?</p>
+</blockquote>
+</section>
+<section id="why-it-matters" class="level1">
+<h1>Why It Matters</h1>
+<p>Model selection can overfit a finite validation criterion just as coefficient estimation can overfit a training sample. Cawley and Talbot emphasize that optimizing a noisy model-selection criterion can itself create selection bias <span class="citation" data-cites="cawleytalbot2010">(<a href="#ref-cawleytalbot2010" role="doc-biblioref">Cawley and Talbot 2010</a>)</span>. Varma and Simon show why using the same cross-validation process both to select a model and to report its performance can produce optimistically biased error estimates <span class="citation" data-cites="varmasimon2006">(<a href="#ref-varmasimon2006" role="doc-biblioref">Varma and Simon 2006</a>)</span>.</p>
+<p>In time series there is an additional issue: chronology. Future observations can contaminate training through fold construction, preprocessing, feature engineering, or labels whose outcomes have not matured by the forecast origin.</p>
+</section>
+<section id="intuition" class="level1">
+<h1>Intuition</h1>
+<p>Think of a historical backtest that issues a forecast at the end of each month.</p>
+<p>At a particular origin <span class="math inline">\(t\)</span>:</p>
+<ol type="1">
+<li>all raw inputs must have been available by <span class="math inline">\(t\)</span>;</li>
+<li>any target used for training must already be fully realized by <span class="math inline">\(t\)</span>;</li>
+<li>scalers, imputers, feature selectors, and dimensionality reductions must be fitted only on the admissible training data;</li>
+<li>hyperparameter selection must use only folds contained within that admissible history; and</li>
+<li>the forecast for <span class="math inline">\(t+1\)</span> or a longer horizon must not influence any of those choices.</li>
+</ol>
+<p>A model that obeys these rules can still overfit. But it avoids the more basic mistake of training or tuning on unavailable information.</p>
+</section>
+<section id="the-method" class="level1">
+<h1>The Method</h1>
+<section id="separate-tuning-from-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="separate-tuning-from-evaluation">Separate tuning from evaluation</h2>
+<p>Let <span class="math inline">\(\theta\)</span> denote model parameters fitted from data and <span class="math inline">\(\lambda\)</span> denote hyperparameters selected by a validation rule.</p>
+<p>A clean design distinguishes:</p>
+<ul>
+<li><strong>inner estimation/tuning:</strong> choose <span class="math inline">\(\lambda\)</span> and fit <span class="math inline">\(\theta\)</span> using only admissible historical data;</li>
+<li><strong>outer evaluation:</strong> score the resulting procedure on observations that did not participate in selecting <span class="math inline">\(\lambda\)</span>.</li>
+</ul>
+<p>If the same observations determine <span class="math inline">\(\lambda\)</span> and are then used to claim out-of-sample performance, the performance estimate is conditional on selection using those observations.</p>
+</section>
+<section id="expanding-and-rolling-validation" class="level2">
+<h2 class="anchored" data-anchor-id="expanding-and-rolling-validation">Expanding and rolling validation</h2>
+<p>For ordered observations <span class="math inline">\(1,\ldots,T\)</span>, an expanding validation design might use:</p>
+<p><span class="math display">\[
+\mathcal T_k=\{1,\ldots,t_k\},
+\qquad
+\mathcal V_k=\{t_k+g+1,\ldots,t_k+g+h\},
+\]</span></p>
+<p>where <span class="math inline">\(g\ge 0\)</span> is a gap and <span class="math inline">\(h\)</span> is validation-block length.</p>
+<p>A rolling design replaces the expanding training set with a fixed-length window:</p>
+<p><span class="math display">\[
+\mathcal T_k=\{t_k-w+1,\ldots,t_k\}.
+\]</span></p>
+<p>The choice between rolling and expanding windows reflects a modeling view about stability versus adaptation; it is not a purely mechanical tuning detail. <a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">QM002 — Rolling vs Expanding Windows</a> develops that distinction.</p>
+</section>
+<section id="the-role-of-a-gap" class="level2">
+<h2 class="anchored" data-anchor-id="the-role-of-a-gap">The role of a gap</h2>
+<p>A gap excludes observations immediately before the validation block from model fitting. In software such as scikit-learn, <code>TimeSeriesSplit(gap=...)</code> implements this index separation <span class="citation" data-cites="sklearntimeseriessplit">(<a href="#ref-sklearntimeseriessplit" role="doc-biblioref"><span class="nocase">scikit-learn developers</span>, n.d.-b</a>)</span>.</p>
+<p>But a gap should not be chosen by habit. Its purpose depends on the data-generating and labeling process. Examples include:</p>
+<ul>
+<li>an <span class="math inline">\(h\)</span>-period forward-return label that is not fully realized at the forecast cutoff;</li>
+<li>overlapping target windows;</li>
+<li>features whose construction uses a trailing window extending beyond an apparent row timestamp; or</li>
+<li>operational delays between observation and actual availability.</li>
+</ul>
+<p>The relevant exclusion can therefore be driven by <strong>label maturity and information availability</strong>, not just by serial correlation.</p>
+</section>
+</section>
+<section id="is-ordinary-k-fold-always-wrong-for-time-series" class="level1">
+<h1>Is Ordinary K-Fold Always Wrong for Time Series?</h1>
+<p>No.&nbsp;That blanket statement is too strong.</p>
+<p>Bergmeir, Hyndman, and Koo show that standard K-fold cross-validation can be valid for evaluating purely autoregressive prediction under conditions that yield uncorrelated errors <span class="citation" data-cites="bergmeir2018">(<a href="#ref-bergmeir2018" role="doc-biblioref">Bergmeir et al. 2018</a>)</span>. Their result is an important warning against turning a practical default into a universal theorem.</p>
+<p>For many financial/economic workflows, however, random K-fold remains a poor default because:</p>
+<ul>
+<li>the process may be nonstationary;</li>
+<li>features may include revised or delayed data;</li>
+<li>target windows may overlap;</li>
+<li>the intended deployment is explicitly forward through time; and</li>
+<li>the researcher wants to mimic the information set available at historical forecast origins.</li>
+</ul>
+<p>Thus the recommended default is chronological resampling <strong>because it matches the operational forecasting problem</strong>, not because every non-chronological split is mathematically invalid in every autoregressive setting.</p>
+</section>
+<section id="preprocessing-belongs-inside-the-fold" class="level1">
+<h1>Preprocessing Belongs Inside the Fold</h1>
+<p>Suppose a StandardScaler is fitted using all observations before cross-validation. The validation fold then influences the training-feature means and standard deviations. That is leakage.</p>
+<p>The correct pattern is:</p>
+<ol type="1">
+<li>split the fold;</li>
+<li>fit preprocessing on the fold’s training observations;</li>
+<li>transform training and validation data with that fitted object;</li>
+<li>fit the predictive model; and</li>
+<li>evaluate on the validation fold.</li>
+</ol>
+<p>Pipelines make this discipline easier to enforce <span class="citation" data-cites="sklearnpitfalls">(<a href="#ref-sklearnpitfalls" role="doc-biblioref"><span class="nocase">scikit-learn developers</span>, n.d.-a</a>)</span>. The same logic applies to imputation, PCA, feature selection, winsorization thresholds learned from data, and target transformations whose parameters are estimated.</p>
+</section>
+<section id="nested-historical-evaluation" class="level1">
+<h1>Nested Historical Evaluation</h1>
+<p>For a final historical performance estimate, the entire tuning procedure should be rerun inside each outer forecast origin.</p>
+<p>At outer origin <span class="math inline">\(t\)</span>:</p>
+<ol type="1">
+<li>construct the admissible history <span class="math inline">\(\mathcal H_t\)</span>;</li>
+<li>build inner chronological folds within <span class="math inline">\(\mathcal H_t\)</span>;</li>
+<li>evaluate candidate hyperparameters only on those inner folds;</li>
+<li>choose the hyperparameter using a predeclared rule;</li>
+<li>refit on the admissible history using that choice; and</li>
+<li>forecast the outer evaluation target.</li>
+</ol>
+<p>This is computationally heavier than tuning once on the full sample, but it answers a different and more defensible question: <strong>what would this model-selection procedure have produced using only historical information?</strong></p>
+</section>
+<section id="how-to-choose-the-objective" class="level1">
+<h1>How to Choose the Objective</h1>
+<p>The tuning loss should match the research objective closely enough to be meaningful.</p>
+<p>For point forecasts, common choices include MSE and MAE. For probabilistic forecasts, proper scoring rules are more appropriate. For portfolio systems, one may be tempted to tune directly on downstream Sharpe or CAGR. That can be legitimate as a decision-focused objective, but it creates additional sampling noise, path dependence, and multiple-testing risk.</p>
+<p>If a model is selected on portfolio performance, the research should state that explicitly rather than describing the exercise as pure forecast-error tuning.</p>
+</section>
+<section id="financial-economic-example" class="level1">
+<h1>Financial / Economic Example</h1>
+<p>Suppose a monthly cross-asset model predicts next-month returns from lagged price features. Candidate Ridge penalties are <span class="math inline">\(\{0.1,1,10,100\}\)</span>.</p>
+<p>At each outer month-end:</p>
+<ul>
+<li>only completed historical targets are admitted;</li>
+<li>inner folds move forward through the available history;</li>
+<li>the scaler and Ridge model are refitted inside each fold;</li>
+<li>the penalty with the lowest average inner validation loss is selected; and</li>
+<li>the selected model is refitted on the current history and used to produce the next forecast.</li>
+</ul>
+<p>The resulting outer forecasts can then be mapped to ranks and portfolio decisions without allowing later months to influence the penalty chosen at earlier origins.</p>
+</section>
+<section id="implementation" class="level1">
+<h1>Implementation</h1>
+<p>The accompanying example implements a small nested expanding-window tuner. Its splitter is deliberately explicit rather than presented as a universal library recipe.</p>
+<p>A simplified pattern is:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> outer_origin <span class="kw">in</span> outer_origins:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    X_hist, y_hist <span class="op">=</span> admissible_history(outer_origin)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    best <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> candidate <span class="kw">in</span> grid:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        fold_losses <span class="op">=</span> []</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> train_idx, val_idx <span class="kw">in</span> inner_splits(X_hist):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            model <span class="op">=</span> make_pipeline(StandardScaler(), Ridge(alpha<span class="op">=</span>candidate))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            model.fit(X_hist[train_idx], y_hist[train_idx])</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            fold_losses.append(loss(y_hist[val_idx], model.predict(X_hist[val_idx])))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># choose candidate from inner-fold losses only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="hands-on-lab" class="level1">
+<h1>Hands-on Lab</h1>
+<p>Run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm020_time_series_tuning.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The synthetic series contains a mild regime change. Compare a single full-history tuning decision with repeated nested historical tuning. The exercise is illustrative; neither procedure is guaranteed to dominate in all samples.</p>
+</section>
+<section id="common-mistakes" class="level1">
+<h1>Common Mistakes</h1>
+<ol type="1">
+<li><strong>Randomly shuffling a deployment-mimicking forecasting problem.</strong> The folds no longer reproduce the historical information flow.</li>
+<li><strong>Using the final test period to pick hyperparameters.</strong> The test is no longer untouched.</li>
+<li><strong>Fitting preprocessing before splitting.</strong> Validation information leaks into training transformations.</li>
+<li><strong>Ignoring target maturity.</strong> A row dated <span class="math inline">\(t\)</span> can still contain a target whose realization occurs after <span class="math inline">\(t\)</span>.</li>
+<li><strong>Using <code>gap=0</code> automatically.</strong> The appropriate gap depends on the label and information clock.</li>
+<li><strong>Using a large gap automatically.</strong> Throwing away data without a design reason can reduce efficiency without fixing the real timing issue.</li>
+<li><strong>Reporting the best of many tried designs without accounting for the search.</strong> Model-selection risk includes researcher degrees of freedom, not only software hyperparameters.</li>
+<li><strong>Claiming standard K-fold is universally invalid for time series.</strong> The literature contains important conditional validity results <span class="citation" data-cites="bergmeir2018">(<a href="#ref-bergmeir2018" role="doc-biblioref">Bergmeir et al. 2018</a>)</span>.</li>
+</ol>
+</section>
+<section id="when-not-to-use-it" class="level1">
+<h1>When Not to Use It</h1>
+<p>Nested historical tuning can be unnecessary when a model has no meaningful hyperparameters, when a setting is fixed ex ante by design, or when the sample is too small for a stable inner/outer separation. In those cases, a simpler predeclared model may be more credible than an elaborate but weakly identified tuning process.</p>
+</section>
+<section id="related-methods" class="level1 related-methods">
+<h1 class="related-methods">Related Methods</h1>
+<ul>
+<li><a href="../../10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">QM001 — Out-of-Sample Forecast Evaluation</a> — defines the outer evaluation logic.</li>
+<li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">QM002 — Rolling vs Expanding Windows</a> — compares training-window designs.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003 — Look-Ahead Bias and Data Leakage</a> — governs information leakage broadly.</li>
+<li><a href="../../60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">QM019 — Regularized Linear Models</a> — provides a concrete family whose penalties require tuning.</li>
+<li><a href="../../60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">QM024 — Forecast Combination and Model Averaging</a> — shows how model-combination weights can become another selection problem.</li>
+<li><a href="../../70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">QM025 — Pretrained Time-Series Foundation Models</a> — distinguishes zero-shot inference from task-specific tuning and evaluation.</li>
+</ul>
+</section>
+<section id="used-in-slackquant-research" class="level1">
+<h1>Used in SlackQuant Research</h1>
+<p>Time-series model selection is load-bearing wherever SlackQuant compares forecasting architectures over historical decision dates. In F2R research, the public Method documents the general information-set and tuning discipline without disclosing protected live model settings.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bergmeir2018" class="csl-entry" role="listitem">
+Bergmeir, Christoph, Rob J. Hyndman, and Bonsoo Koo. 2018. <span>“A Note on the Validity of Cross-Validation for Evaluating Autoregressive Time Series Prediction.”</span> <em>Computational Statistics &amp; Data Analysis</em> 120: 70–83. <a href="https://doi.org/10.1016/j.csda.2017.11.003">https://doi.org/10.1016/j.csda.2017.11.003</a>.
+</div>
+<div id="ref-cawleytalbot2010" class="csl-entry" role="listitem">
+Cawley, Gavin C., and Nicola L. C. Talbot. 2010. <span>“On over-Fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation.”</span> <em>Journal of Machine Learning Research</em> 11: 2079–107. <a href="https://www.jmlr.org/papers/v11/cawley10a.html">https://www.jmlr.org/papers/v11/cawley10a.html</a>.
+</div>
+<div id="ref-sklearnpitfalls" class="csl-entry" role="listitem">
+<span class="nocase">scikit-learn developers</span>. n.d.-a. <span>“Common Pitfalls and Recommended Practices.”</span> Accessed September 15, 2026. <a href="https://scikit-learn.org/stable/common_pitfalls.html">https://scikit-learn.org/stable/common_pitfalls.html</a>.
+</div>
+<div id="ref-sklearntimeseriessplit" class="csl-entry" role="listitem">
+<span class="nocase">scikit-learn developers</span>. n.d.-b. <span>“TimeSeriesSplit.”</span> Accessed September 15, 2026. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html">https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html</a>.
+</div>
+<div id="ref-varmasimon2006" class="csl-entry" role="listitem">
+Varma, Sudhir, and Richard Simon. 2006. <span>“Bias in Error Estimation When Using Cross-Validation for Model Selection.”</span> <em>BMC Bioinformatics</em> 7: 91. <a href="https://doi.org/10.1186/1471-2105-7-91">https://doi.org/10.1186/1471-2105-7-91</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener noreferrer");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>SlackQuant Research · Quantitative Methods</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Methods for applied quantitative research and investment practice</p>
+</div>
+  </div>
+</footer>
+<script id="sq-method-index-discovery-script">
+  (() => {
+    const normalize = (value) =>
+      (value || "")
+        .toLocaleLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const categoryDisplay = (raw) => {
+      const key = normalize(raw);
+      const aliases = {
+        "forecast evaluation": "Forecast",
+        "statistical inference": "Statistical Inference",
+        "time-series methods": "Time Series",
+        "data & research design": "Data / Research Design",
+        "portfolio methods": "Portfolio",
+        "machine learning": "Machine Learning",
+        "ml methods": "Machine Learning",
+      };
+      if (aliases[key]) return aliases[key];
+      return raw
+        .toLocaleLowerCase()
+        .replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+    };
+
+    const init = () => {
+      const discovery = document.getElementById("sq-method-discovery");
+      const catalog = document.getElementById("sq-method-catalog");
+      const input = document.getElementById("sq-method-search");
+      const filterHost = document.getElementById("sq-method-filters");
+      const resultCount = document.getElementById("sq-method-result-count");
+      const empty = document.getElementById("sq-method-empty");
+      if (!discovery || !catalog || !input || !filterHost || !resultCount || !empty) return;
+
+      const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
+      const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      if (!rows.length) return;
+
+      const categories = new Map();
+      rows.forEach((row) => {
+        const meta = row.querySelector(".sq-meta")?.textContent || "";
+        const parts = meta.split("·").map((part) => part.trim());
+        const rawCategory = parts.length >= 2 ? parts[1] : "Other";
+        const category = normalize(rawCategory);
+        row.dataset.methodCategory = category;
+        row.dataset.methodSearch = normalize(row.textContent);
+        if (!categories.has(category)) {
+          categories.set(category, categoryDisplay(rawCategory));
+        }
+      });
+
+      let activeCategory = "all";
+      const buttons = new Map();
+
+      const addFilter = (key, label) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sq-method-filter";
+        button.dataset.methodFilter = key;
+        button.textContent = label;
+        button.setAttribute("aria-pressed", key === "all" ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeCategory = key;
+          buttons.forEach((item, itemKey) => {
+            item.setAttribute("aria-pressed", itemKey === activeCategory ? "true" : "false");
+          });
+          apply();
+        });
+        buttons.set(key, button);
+        filterHost.appendChild(button);
+      };
+
+      addFilter("all", "All");
+      categories.forEach((label, key) => addFilter(key, label));
+
+      const apply = () => {
+        const query = normalize(input.value);
+        let visible = 0;
+
+        rows.forEach((row) => {
+          const queryMatch = !query || row.dataset.methodSearch.includes(query);
+          const categoryMatch =
+            activeCategory === "all" || row.dataset.methodCategory === activeCategory;
+          const show = queryMatch && categoryMatch;
+          row.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        groups.forEach((group) => {
+          const hasVisibleRow = Array.from(group.querySelectorAll(".sq-method-row")).some(
+            (row) => !row.hidden
+          );
+          group.hidden = !hasVisibleRow;
+        });
+
+        resultCount.textContent = `${visible} ${visible === 1 ? "method" : "methods"}`;
+        empty.hidden = visible !== 0;
+        discovery.classList.toggle(
+          "is-filtering",
+          Boolean(query) || activeCategory !== "all"
+        );
+      };
+
+      input.addEventListener("input", apply);
+      input.addEventListener("search", apply);
+      apply();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-method-browser-script">
+  (() => {
+    const methods = [
+      { id: "QM001", title: "Out-of-Sample Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html", folder: "QM001_OUT_OF_SAMPLE_EVALUATION" },
+      { id: "QM002", title: "Rolling vs Expanding Windows", path: "10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html", folder: "QM002_ROLLING_VS_EXPANDING_WINDOWS" },
+      { id: "QM003", title: "Look-Ahead Bias and Data Leakage", path: "80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html", folder: "QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE" },
+      { id: "QM004", title: "Diebold–Mariano Test", path: "10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html", folder: "QM004_DIEBOLD_MARIANO_TEST" },
+      { id: "QM005", title: "Model Confidence Set", path: "10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html", folder: "QM005_MODEL_CONFIDENCE_SET" },
+      { id: "QM006", title: "Block Bootstrap", path: "20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html", folder: "QM006_BLOCK_BOOTSTRAP" },
+      { id: "QM007", title: "Portfolio Backtesting and Rebalancing", path: "40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html", folder: "QM007_PORTFOLIO_BACKTESTING_REBALANCING" },
+      { id: "QM008", title: "Drawdown, Underwater Duration, and Recovery", path: "40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html", folder: "QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY" },
+      { id: "QM009", title: "Turnover, Transaction Costs, and Net Performance", path: "40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html", folder: "QM009_TURNOVER_COSTS" },
+      { id: "QM010", title: "Momentum and Trend Signals", path: "40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html", folder: "QM010_MOMENTUM_TREND" },
+      { id: "QM011", title: "Strategy Similarity and Decision Diversification", path: "40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html", folder: "QM011_DECISION_DIVERSIFICATION" },
+      { id: "QM012", title: "Rolling Holding-Period Analysis", path: "40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html", folder: "QM012_ROLLING_HOLDING_PERIODS" },
+      { id: "QM013", title: "Benchmark-Relative Portfolio Evaluation", path: "40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html", folder: "QM013_BENCHMARK_RELATIVE" },
+      { id: "QM014", title: "Information Timing, Data Vintages, and Real-Time Macro Data", path: "80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html", folder: "QM014_MACRO_INFORMATION_TIMING" },
+      { id: "QM015", title: "Multivariate Probabilistic Forecast Evaluation", path: "10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html", folder: "QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION" },
+      { id: "QM016", title: "EWMA-t Scenario Simulation", path: "30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html", folder: "QM016_EWMA_T_SCENARIO_SIMULATION" },
+      { id: "QM017", title: "Scenario-Based Portfolio Stress Testing", path: "40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html", folder: "QM017_SCENARIO_STRESS_TESTING" },
+      { id: "QM018", title: "Stress Archetypes and Representative Scenario Geometry", path: "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html", folder: "QM018_STRESS_ARCHETYPES_GEOMETRY" },
+      { id: "QM019", title: "Regularized Linear Models: Ridge, Lasso, and Elastic Net", path: "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html", folder: "QM019_REGULARIZED_LINEAR_MODELS" },
+      { id: "QM020", title: "Time-Series Model Selection and Hyperparameter Tuning", path: "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html", folder: "QM020_TIME_SERIES_MODEL_SELECTION" },
+      { id: "QM024", title: "Forecast Combination and Model Averaging", path: "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html", folder: "QM024_FORECAST_COMBINATION_MODEL_AVERAGING" },
+      { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
+    ];
+
+    const init = () => {
+      const currentPath = decodeURIComponent(window.location.pathname);
+      const current = methods.find((method) =>
+        currentPath.includes(`/${method.folder}/`)
+      );
+      if (!current) return;
+
+      const panel = document.createElement("nav");
+      panel.className = "sq-method-browser";
+      panel.setAttribute("aria-label", "Browse Quantitative Methods");
+
+      const label = document.createElement("label");
+      label.className = "sq-method-browser-label";
+      label.htmlFor = "sq-method-browser-select";
+      label.textContent = "Browse Methods";
+
+      const controls = document.createElement("div");
+      controls.className = "sq-method-browser-controls";
+
+      const select = document.createElement("select");
+      select.id = "sq-method-browser-select";
+      select.className = "sq-method-browser-select";
+      select.setAttribute("aria-label", "Choose another Quantitative Method");
+
+      methods.forEach((method) => {
+        const option = document.createElement("option");
+        option.value = method.path;
+        option.textContent = `${method.id} — ${method.title}`;
+        option.selected = method.id === current.id;
+        select.appendChild(option);
+      });
+
+      const methodMarker = "/methods/";
+      let base = "/";
+      const methodsIndex = currentPath.indexOf(methodMarker);
+      if (methodsIndex >= 0) {
+        base = currentPath.slice(0, methodsIndex + methodMarker.length);
+      } else {
+        const domainMarkers = [
+          "/10_FORECAST_EVALUATION/",
+          "/20_STATISTICAL_INFERENCE/",
+          "/30_TIME_SERIES/",
+          "/40_PORTFOLIO_METHODS/",
+          "/80_DATA_RESEARCH_DESIGN/",
+        ];
+        for (const marker of domainMarkers) {
+          const index = currentPath.indexOf(marker);
+          if (index >= 0) {
+            base = currentPath.slice(0, index + 1);
+            break;
+          }
+        }
+      }
+
+      const resolve = (relativePath) => `${base}${relativePath}`;
+
+      select.addEventListener("change", () => {
+        window.location.assign(resolve(select.value));
+      });
+
+      const indexLink = document.createElement("a");
+      indexLink.className = "sq-method-browser-index";
+      indexLink.href = resolve("index.html");
+      indexLink.target = "_self";
+      indexLink.textContent = "All Methods";
+
+      controls.appendChild(select);
+      controls.appendChild(indexLink);
+      panel.appendChild(label);
+      panel.appendChild(controls);
+
+      const kicker = document.querySelector(".method-kicker");
+      const titleBlock = document.getElementById("title-block-header");
+      const main = document.getElementById("quarto-document-content");
+      if (kicker) {
+        kicker.insertAdjacentElement("afterend", panel);
+      } else if (titleBlock) {
+        titleBlock.insertAdjacentElement("afterend", panel);
+      } else if (main) {
+        main.prepend(panel);
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
+<script id="sq-external-link-policy">
+  (() => {
+    const canonicalHost = "research.slackquant.com";
+    const apply = () => {
+      document.querySelectorAll("a[href]").forEach((anchor) => {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        let url;
+        try { url = new URL(href, window.location.href); } catch { return; }
+        if (url.protocol !== "http:" && url.protocol !== "https:") return;
+        const isFirstParty =
+          url.origin === window.location.origin ||
+          url.hostname === canonicalHost;
+        const isPdfDocument = url.pathname.toLowerCase().endsWith(".pdf");
+        const rel = new Set((anchor.rel || "").split(/\s+/).filter(Boolean));
+        if (isFirstParty && !isPdfDocument) {
+          anchor.removeAttribute("target");
+          rel.delete("noopener");
+          rel.delete("noreferrer");
+          if (rel.size) {
+            anchor.rel = Array.from(rel).join(" ");
+          } else {
+            anchor.removeAttribute("rel");
+          }
+          return;
+        }
+        anchor.target = "_blank";
+        rel.add("noopener");
+        rel.add("noreferrer");
+        anchor.rel = Array.from(rel).join(" ");
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", apply, { once: true });
+    } else {
+      apply();
+    }
+    new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

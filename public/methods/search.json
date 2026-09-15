@@ -1,5 +1,33 @@
 [
   {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/labs/index.html",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/labs/index.html",
+    "title": "QM025 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nAudit whether context values and future covariates were actually available at a simulated historical forecast origin.\n\n\nRun\npython python/qm025_tsfm_information_audit.py\n\n\nExperiment\nMove the availability date of future_realized_macro to the forecast origin and rerun. Then explain whether that change is a legitimate information assumption or merely a way to make the audit pass.\nThe lab does not download or benchmark any pretrained model. It isolates the reusable information-timing contract."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/labs/index.html",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/labs/index.html",
+    "title": "QM024 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nCompare a simple equal-weight forecast average with covariance-estimated sum-to-one weights on a later synthetic holdout.\n\n\nRun\npython python/qm024_forecast_combination.py\n\n\nExperiment\nChange the estimation-window length or error correlation. Estimated weights may become unstable and need not outperform equal weights out of sample.\nThe data are synthetic and do not establish an empirical advantage for either combination rule."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/labs/index.html",
+    "href": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/labs/index.html",
+    "title": "QM020 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nTune a Ridge penalty using expanding chronological folds, then evaluate the selected procedure on a later holdout block.\n\n\nRun\npython python/qm020_time_series_tuning.py\n\n\nExperiment\nChange gap, the minimum training size, or the strength of the synthetic regime change. Explain why a gap is justified or unnecessary from the label-information design rather than choosing it mechanically.\nThe data are synthetic and provide no empirical forecasting claim."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/labs/index.html",
+    "href": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/labs/index.html",
+    "title": "QM019 Hands-On Lab",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub\n    \n  \n\n\n\n\n\n\n\nObjective\nFit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with correlated predictors and compare holdout error.\n\n\nRun\npython python/qm019_regularized_models.py\n\n\nExperiment\nChange the predictor correlation and the penalty strengths. Inspect whether prediction error and coefficient stability move together.\nThe data are synthetic. The lab makes no empirical market-performance claim."
+  },
+  {
     "objectID": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/labs/index.html",
     "href": "80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/labs/index.html",
     "title": "QM018 Hands-On Lab — Stress Archetypes and Representative Scenario Geometry",
@@ -158,7 +186,7 @@
     "href": "index.html#current-articles",
     "title": "Quantitative Methods",
     "section": "Current articles",
-    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nQM015 · FORECAST EVALUATION · ADVANCED\n\n\nMultivariate Probabilistic Forecast Evaluation\nHow should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.\n\n\n\n\nQM010 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nMomentum and Trend Signals\nHow should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.\n\n\n\n\nQM011 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nStrategy Similarity and Decision Diversification\nDo multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.\n\n\n\n\nQM012 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nRolling Holding-Period Analysis\nWhat do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.\n\n\n\n\nQM013 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nBenchmark-Relative Portfolio Evaluation\nHow should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.\n\n\n\n\nQM016 · TIME-SERIES METHODS · INTERMEDIATE\n\n\nEWMA-t Scenario Simulation\nHow can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.\n\n\n\n\nQM017 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nScenario-Based Portfolio Stress Testing\nHow should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.\n\n\n\n\n\nResearch Design & Technical Methods\n\n\nQM014 · DATA & RESEARCH DESIGN · INTERMEDIATE\n\n\nInformation Timing, Data Vintages, and Real-Time Macro Data\nWhich macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.\n\n\n\n\nQM018 · DATA & RESEARCH DESIGN · ADVANCED\n\n\nStress Archetypes and Representative Scenario Geometry\nHow can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks."
+    "text": "Current articles\n\n\nSearch methods \n\n\n\n\n\n\n\n\n\n\nNo published Methods match this search.\n\n\n\n\nCore Methods\n\n\nQM001 · Forecast Evaluation · Foundation\n\n\nOut-of-Sample Forecast Evaluation\nCan a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.\n\n\n\n\nQM002 · Forecast Evaluation · Foundation\n\n\nRolling vs Expanding Windows\nHow much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.\n\n\n\n\nQM003 · DATA & RESEARCH DESIGN · FOUNDATION\n\n\nLook-Ahead Bias and Data Leakage\nWhen can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.\n\n\n\n\nQM004 · FORECAST EVALUATION · INTERMEDIATE\n\n\nDiebold–Mariano Test\nDoes a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.\n\n\n\n\nQM005 · FORECAST EVALUATION · ADVANCED\n\n\nModel Confidence Set\nWhen does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.\n\n\n\n\nQM006 · STATISTICAL INFERENCE · INTERMEDIATE\n\n\nBlock Bootstrap\nHow should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.\n\n\n\n\nQM015 · FORECAST EVALUATION · ADVANCED\n\n\nMultivariate Probabilistic Forecast Evaluation\nHow should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.\n\n\n\n\nInvestment Methods\n\n\nQM007 · PORTFOLIO METHODS · FOUNDATION\n\n\nPortfolio Backtesting and Rebalancing\nWhich weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.\n\n\n\n\nQM008 · PORTFOLIO METHODS · FOUNDATION\n\n\nDrawdown, Underwater Duration, and Recovery\nHow deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.\n\n\n\n\nQM009 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nTurnover, Transaction Costs, and Net Performance\nHow much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.\n\n\n\n\nQM010 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nMomentum and Trend Signals\nHow should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.\n\n\n\n\nQM011 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nStrategy Similarity and Decision Diversification\nDo multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.\n\n\n\n\nQM012 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nRolling Holding-Period Analysis\nWhat do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.\n\n\n\n\nQM013 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nBenchmark-Relative Portfolio Evaluation\nHow should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.\n\n\n\n\nQM016 · TIME-SERIES METHODS · INTERMEDIATE\n\n\nEWMA-t Scenario Simulation\nHow can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.\n\n\n\n\nQM017 · PORTFOLIO METHODS · INTERMEDIATE\n\n\nScenario-Based Portfolio Stress Testing\nHow should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.\n\n\n\n\n\nMachine Learning Methods\n\n\nQM019 · MACHINE LEARNING · INTERMEDIATE\n\n\nRegularized Linear Models: Ridge, Lasso, and Elastic Net\nHow can a linear predictor remain stable when features are numerous, noisy, or correlated? It compares Ridge, Lasso, and Elastic Net, makes scaling and penalty conventions explicit, and treats preprocessing and penalty selection as part of the leakage-controlled forecasting procedure.\n\n\n\n\nQM020 · MACHINE LEARNING · ADVANCED\n\n\nTime-Series Model Selection and Hyperparameter Tuning\nHow should hyperparameters be selected when the tuning procedure itself must respect historical information sets? It covers chronological folds, nested evaluation, target maturity, gap design, fold-local preprocessing, and the important conditions under which ordinary K-fold is not automatically invalid.\n\n\n\n\nQM024 · MACHINE LEARNING · INTERMEDIATE\n\n\nForecast Combination and Model Averaging\nWhen should several models be combined instead of forcing a single winner? It separates equal and estimated combinations, forecast-scale compatibility, rank aggregation, weight-estimation risk, and model-combination weights from downstream portfolio allocations.\n\n\n\n\nQM025 · AI & FOUNDATION MODELS · ADVANCED\n\n\nPretrained Time-Series Foundation Models\nHow should pretrained forecasting models be evaluated without confusing zero-shot inference with information-free prediction? It separates downstream inference timing from pretrained knowledge, distinguishes model architectures, audits future covariates and pretraining overlap, and separates retrospective technology counterfactuals from historical live OOS claims.\n\n\n\n\nResearch Design & Technical Methods\n\n\nQM014 · DATA & RESEARCH DESIGN · INTERMEDIATE\n\n\nInformation Timing, Data Vintages, and Real-Time Macro Data\nWhich macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.\n\n\n\n\nQM018 · DATA & RESEARCH DESIGN · ADVANCED\n\n\nStress Archetypes and Representative Scenario Geometry\nHow can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks."
   },
   {
     "objectID": "index.html#library-principles",
@@ -1244,5 +1272,131 @@
     "title": "Stress Archetypes and Representative Scenario Geometry",
     "section": "Representative-geometry distance",
     "text": "Representative-geometry distance\nLet \\(\\mathbf z_j^{\\mathrm{real}}\\) be a standardized geometry for realized stress window \\(j\\), using the same normalization convention as the simulated scenarios. Define distance to the closest generated representative as\n\\[\nD_j\n=\n\\min_k d(\\mathbf z_j^{\\mathrm{real}},\\mathbf z_{m_k^*}).\n\\]\nLarge distances indicate that the named representatives do not closely resemble that realized joint stress geometry under the chosen feature map and metric.\nThe absolute magnitude of \\(D_j\\) has no universal interpretation. It depends on the normalization, feature set, and distance metric, so comparisons should be made under a fixed design."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html",
+    "href": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html",
+    "title": "Regularized Linear Models: Ridge, Lasso, and Elastic Net",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#ridge",
+    "href": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#ridge",
+    "title": "Regularized Linear Models: Ridge, Lasso, and Elastic Net",
+    "section": "Ridge",
+    "text": "Ridge\nOne common Ridge formulation is\n\\[\n\\hat\\beta^{\\text{ridge}}(\\lambda)\n=\n\\arg\\min_{\\beta}\n\\left\\{\n\\frac{1}{2n}\\|y-X\\beta\\|_2^2\n+\n\\frac{\\lambda}{2}\\|\\beta\\|_2^2\n\\right\\},\n\\]\nwith \\(\\lambda\\ge 0\\).\nAs \\(\\lambda\\) rises, coefficient magnitudes are increasingly penalized. Ridge generally does not set coefficients exactly to zero."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#lasso",
+    "href": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#lasso",
+    "title": "Regularized Linear Models: Ridge, Lasso, and Elastic Net",
+    "section": "Lasso",
+    "text": "Lasso\nA common Lasso formulation is\n\\[\n\\hat\\beta^{\\text{lasso}}(\\lambda)\n=\n\\arg\\min_{\\beta}\n\\left\\{\n\\frac{1}{2n}\\|y-X\\beta\\|_2^2\n+\n\\lambda\\|\\beta\\|_1\n\\right\\}.\n\\]\nThe L1 penalty creates corners in the optimization geometry, so some fitted coefficients can be exactly zero (Tibshirani 1996). This gives Lasso a variable-selection interpretation, but selected variables should not automatically be read as stable structural drivers."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#elastic-net",
+    "href": "60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html#elastic-net",
+    "title": "Regularized Linear Models: Ridge, Lasso, and Elastic Net",
+    "section": "Elastic Net",
+    "text": "Elastic Net\nOne widely used parameterization is\n\\[\n\\hat\\beta^{\\text{EN}}(\\lambda,\\alpha)\n=\n\\arg\\min_{\\beta}\n\\left\\{\n\\frac{1}{2n}\\|y-X\\beta\\|_2^2\n+\n\\lambda\\alpha\\|\\beta\\|_1\n+\n\\frac{\\lambda(1-\\alpha)}{2}\\|\\beta\\|_2^2\n\\right\\},\n\\]\nwhere \\(0\\le\\alpha\\le 1\\).\nUnder this notation:\n\n\\(\\alpha=1\\) gives an L1 penalty;\n\\(\\alpha=0\\) gives an L2 penalty; and\nintermediate values blend the two.\n\nThis matches the objective used by scikit-learn when its alpha parameter is interpreted as \\(\\lambda\\) and l1_ratio as \\(\\alpha\\) (scikit-learn developers, n.d.-b). Other software uses different symbols and rescalings. Penalty values are not directly portable across libraries unless the objective functions match."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html",
+    "href": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html",
+    "title": "Time-Series Model Selection and Hyperparameter Tuning",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#separate-tuning-from-evaluation",
+    "href": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#separate-tuning-from-evaluation",
+    "title": "Time-Series Model Selection and Hyperparameter Tuning",
+    "section": "Separate tuning from evaluation",
+    "text": "Separate tuning from evaluation\nLet \\(\\theta\\) denote model parameters fitted from data and \\(\\lambda\\) denote hyperparameters selected by a validation rule.\nA clean design distinguishes:\n\ninner estimation/tuning: choose \\(\\lambda\\) and fit \\(\\theta\\) using only admissible historical data;\nouter evaluation: score the resulting procedure on observations that did not participate in selecting \\(\\lambda\\).\n\nIf the same observations determine \\(\\lambda\\) and are then used to claim out-of-sample performance, the performance estimate is conditional on selection using those observations."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#expanding-and-rolling-validation",
+    "href": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#expanding-and-rolling-validation",
+    "title": "Time-Series Model Selection and Hyperparameter Tuning",
+    "section": "Expanding and rolling validation",
+    "text": "Expanding and rolling validation\nFor ordered observations \\(1,\\ldots,T\\), an expanding validation design might use:\n\\[\n\\mathcal T_k=\\{1,\\ldots,t_k\\},\n\\qquad\n\\mathcal V_k=\\{t_k+g+1,\\ldots,t_k+g+h\\},\n\\]\nwhere \\(g\\ge 0\\) is a gap and \\(h\\) is validation-block length.\nA rolling design replaces the expanding training set with a fixed-length window:\n\\[\n\\mathcal T_k=\\{t_k-w+1,\\ldots,t_k\\}.\n\\]\nThe choice between rolling and expanding windows reflects a modeling view about stability versus adaptation; it is not a purely mechanical tuning detail. QM002 — Rolling vs Expanding Windows develops that distinction."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#the-role-of-a-gap",
+    "href": "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html#the-role-of-a-gap",
+    "title": "Time-Series Model Selection and Hyperparameter Tuning",
+    "section": "The role of a gap",
+    "text": "The role of a gap\nA gap excludes observations immediately before the validation block from model fitting. In software such as scikit-learn, TimeSeriesSplit(gap=...) implements this index separation (scikit-learn developers, n.d.-b).\nBut a gap should not be chosen by habit. Its purpose depends on the data-generating and labeling process. Examples include:\n\nan \\(h\\)-period forward-return label that is not fully realized at the forecast cutoff;\noverlapping target windows;\nfeatures whose construction uses a trailing window extending beyond an apparent row timestamp; or\noperational delays between observation and actual availability.\n\nThe relevant exclusion can therefore be driven by label maturity and information availability, not just by serial correlation."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html",
+    "title": "Forecast Combination and Model Averaging",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#fixed-linear-combination",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#fixed-linear-combination",
+    "title": "Forecast Combination and Model Averaging",
+    "section": "Fixed linear combination",
+    "text": "Fixed linear combination\nFor forecasts measuring the same target in the same units,\n\\[\n\\hat y_t^{\\text{comb}}=\\mathbf w'\\hat{\\mathbf y}_t,\n\\]\nwhere \\(\\hat{\\mathbf y}_t=(\\hat y_{1,t},\\ldots,\\hat y_{M,t})'\\).\nA common restriction is\n\\[\n\\sum_{m=1}^{M}w_m=1.\n\\]\nNonnegative weights additionally require \\(w_m\\ge 0\\). Neither constraint is universally required; they define the combination class.\nThe equal-weight combination is\n\\[\nw_m=\\frac{1}{M}.\n\\]\nIt has no estimated weighting parameters and is therefore a useful robustness benchmark."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#error-variance-logic",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#error-variance-logic",
+    "title": "Forecast Combination and Model Averaging",
+    "section": "Error-variance logic",
+    "text": "Error-variance logic\nFor two unbiased forecasts with errors \\(e_1\\) and \\(e_2\\), a linear combination has error variance\n\\[\n\\operatorname{Var}(w e_1+(1-w)e_2)\n=\nw^2\\sigma_1^2+(1-w)^2\\sigma_2^2+2w(1-w)\\sigma_{12}.\n\\]\nIf the error variances and covariance were known and stable, an optimal MSE weight could be derived. In practice they are estimated, can change over time, and may be noisy. This is one reason theoretically refined combinations do not automatically dominate simple rules out of sample (Timmermann 2006)."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#estimated-weights",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#estimated-weights",
+    "title": "Forecast Combination and Model Averaging",
+    "section": "Estimated weights",
+    "text": "Estimated weights\nWeights can be estimated from historical forecast errors, constrained regression, inverse-error rules, stacking, Bayesian model averaging, or other procedures. Once estimated, they become another layer of model selection.\nThe key timing rule is:\n\nA combination weight used for forecast origin \\(t\\) may depend only on information and realized forecast errors available by \\(t\\).\n\nUsing the full historical sample to estimate one set of combination weights and then applying those weights retrospectively to earlier dates gives those earlier decisions future information."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#rank-aggregation-is-different-from-forecast-averaging",
+    "href": "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html#rank-aggregation-is-different-from-forecast-averaging",
+    "title": "Forecast Combination and Model Averaging",
+    "section": "Rank aggregation is different from forecast averaging",
+    "text": "Rank aggregation is different from forecast averaging\nSuppose each model ranks \\(N\\) assets. A weighted rank score might be\n\\[\ns_{i,t}=\\sum_{m=1}^{M} w_m r_{i,m,t},\n\\]\nwhere \\(r_{i,m,t}\\) is an asset rank or a normalized rank score.\nThis is a model-integration rule, not an arithmetic forecast in return units. A 20% contribution from one model means 20% of the model-combination rule under the declared normalization. It does not mean 20% of portfolio capital is allocated to that model.\nThat distinction should be explicit in any portfolio paper or dashboard."
+  },
+  {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html",
+    "title": "Pretrained Time-Series Foundation Models",
+    "section": "",
+    "text": "SlackQuant Research\n    \n      Research\n      Methods\n      About\n      GitHub"
+  },
+  {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#original-chronos",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#original-chronos",
+    "title": "Pretrained Time-Series Foundation Models",
+    "section": "Original Chronos",
+    "text": "Original Chronos\nThe original Chronos framework scales and quantizes time-series values into discrete tokens and trains language-model architectures with a cross-entropy objective. Probabilistic forecasts are obtained from the predictive token distribution and sampled future trajectories (Ansari et al. 2024).\nThat description belongs to the original Chronos family."
+  },
+  {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#chronos-2",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#chronos-2",
+    "title": "Pretrained Time-Series Foundation Models",
+    "section": "Chronos-2",
+    "text": "Chronos-2\nChronos-2 is a later model designed for zero-shot univariate, multivariate, and covariate-informed forecasting. It uses a group-attention mechanism intended to share information across related series, variates, targets, and covariates (Ansari et al. 2025). The official implementation exposes a Chronos2Pipeline; its quantile interface can return quantile and mean forecasts, and its input schema distinguishes past covariates from covariates known into the forecast horizon (Amazon Science, n.d.).\nIt should not be described simply as the original Chronos tokenization architecture with a new version number."
+  },
+  {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#moirai",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#moirai",
+    "title": "Pretrained Time-Series Foundation Models",
+    "section": "Moirai",
+    "text": "Moirai\nMoirai is a masked-encoder universal forecasting transformer trained on LOTSA, a large multi-domain time-series archive. Its design targets zero-shot forecasting across frequencies and varying numbers of variates (Woo et al. 2024)."
+  },
+  {
+    "objectID": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#timesfm-and-lag-llama",
+    "href": "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html#timesfm-and-lag-llama",
+    "title": "Pretrained Time-Series Foundation Models",
+    "section": "TimesFM and Lag-Llama",
+    "text": "TimesFM and Lag-Llama\nTimesFM uses a decoder-only foundation-model approach for time-series forecasting (Das et al. 2023). Lag-Llama is a decoder-only probabilistic forecasting model that uses lagged values as covariates and was designed for zero-shot and fine-tuned use (Rasul et al. 2023).\nThese examples demonstrate why the category is methodological rather than one-model-specific."
   }
 ]
