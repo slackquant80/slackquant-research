@@ -14,16 +14,38 @@ format:
 
 # Objective
 
-Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with correlated predictors and compare holdout error.
+Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with **controlled predictor correlation** and compare both holdout error and coefficient stability.
+
+The generator now constructs $x_1$ and $x_2$ so their population correlation is the requested `rho`; the script also prints the realized sample correlation rather than treating an input parameter as if it were the observed correlation.
 
 # Run
 
+From the QM019 folder:
+
 ```bash
-python python/qm019_regularized_models.py
+python labs/python/qm019_regularized_models.py
 ```
+
+A useful sensitivity pair is:
+
+```bash
+python labs/python/qm019_regularized_models.py --rho 0.30
+python labs/python/qm019_regularized_models.py --rho 0.95 --ridge-alpha 20 --lasso-alpha 0.20
+```
+
+# What to inspect
+
+The script reports:
+
+- requested population correlation and realized sample `Corr(x1,x2)`;
+- holdout MSE for Ridge, Lasso, and Elastic Net;
+- standardized-feature coefficients; and
+- a simple coefficient-instability statistic computed across several expanding training endpoints.
+
+The instability statistic is descriptive, not a formal inferential test. Its purpose is to make the regularization/stability trade-off visible.
 
 # Experiment
 
-Change the predictor correlation and the penalty strengths. Inspect whether prediction error and coefficient stability move together.
+Change `--rho` and the penalty strengths. Ask whether lower holdout loss and greater coefficient stability move together. They need not: a model can produce relatively stable coefficients without winning the holdout, and sparse selection can change as correlated predictors become harder to distinguish.
 
 The data are synthetic. The lab makes no empirical market-performance claim.

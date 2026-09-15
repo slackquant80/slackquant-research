@@ -1,1 +1,2 @@
-# Standard library only.
+# Information-audit script uses only the Python standard library.
+# For actual Chronos-2 inference, install requirements-chronos2.txt.

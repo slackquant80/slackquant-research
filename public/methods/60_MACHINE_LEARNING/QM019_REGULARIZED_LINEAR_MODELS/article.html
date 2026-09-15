@@ -422,12 +422,14 @@ z_{jt}=\frac{x_{jt}-\bar x_{j,\text{train}}}{s_{j,\text{train}}}.
 </section>
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
-<p>The lab uses a synthetic time-ordered regression with correlated features. It asks you to change the correlation level and penalty strength, then inspect how coefficient stability and holdout loss respond.</p>
+<p>The lab uses a synthetic time-ordered regression whose first two predictors have a controlled population correlation. It reports the realized sample correlation, holdout MSE, standardized coefficients, and coefficient instability across expanding training endpoints.</p>
 <div class="lab-downloads">
 <p><strong>Run it yourself.</strong> Start with the <a href="../../60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm019_regularized_models.py">Python</a>.</p>
 </div>
 <p>From the QM019 folder:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py <span class="at">--rho</span> 0.95 <span class="at">--ridge-alpha</span> 20</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The stability statistic is descriptive rather than inferential. The exercise asks whether predictive loss and coefficient stability respond similarly as correlation and penalty strength change; they need not.</p>
 </section>
 <section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>

@@ -405,12 +405,14 @@ s_{i,t}=\sum_{m=1}^{M} w_m r_{i,m,t},
 </section>
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
+<p>The lab is explicitly a controlled forecast-error experiment: each synthetic forecast equals the target plus a designed error process. This isolates the finite-sample combination problem instead of pretending the synthetic columns were fitted economic models.</p>
 <div class="lab-downloads">
 <p><strong>Run it yourself.</strong> Start with the <a href="../../60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm024_forecast_combination.py">Python</a>.</p>
 </div>
 <p>From the QM024 folder:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Then change the training-sample length and error correlation. Observe how estimated weights become less stable when the estimation sample shrinks or model errors become difficult to distinguish.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py <span class="at">--window</span> 60 <span class="at">--common-scale</span> 1.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The script prints the training error-correlation matrix and covariance condition number in addition to standalone and combined holdout losses. Shorter estimation windows and more strongly shared errors can make estimated combination weights less stable; equal weighting is a benchmark, not a guaranteed winner.</p>
 </section>
 <section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>

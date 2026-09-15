@@ -102,6 +102,35 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="canonical" href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/labs/">
 </head>
@@ -120,6 +149,7 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
   <ul>
   <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
   <li><a href="#run" id="toc-run" class="nav-link" data-scroll-target="#run">Run</a></li>
+  <li><a href="#what-to-inspect" id="toc-what-to-inspect" class="nav-link" data-scroll-target="#what-to-inspect">What to inspect</a></li>
   <li><a href="#experiment" id="toc-experiment" class="nav-link" data-scroll-target="#experiment">Experiment</a></li>
   </ul>
 </nav>
@@ -175,15 +205,31 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <p><a href="../../../60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">← Back to Method article</a></p>
 <section id="objective" class="level1">
 <h1>Objective</h1>
-<p>Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with correlated predictors and compare holdout error.</p>
+<p>Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with <strong>controlled predictor correlation</strong> and compare both holdout error and coefficient stability.</p>
+<p>The generator now constructs <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> so their population correlation is the requested <code>rho</code>; the script also prints the realized sample correlation rather than treating an input parameter as if it were the observed correlation.</p>
 </section>
 <section id="run" class="level1">
 <h1>Run</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm019_regularized_models.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>From the QM019 folder:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A useful sensitivity pair is:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py <span class="at">--rho</span> 0.30</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py <span class="at">--rho</span> 0.95 <span class="at">--ridge-alpha</span> 20 <span class="at">--lasso-alpha</span> 0.20</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="what-to-inspect" class="level1">
+<h1>What to inspect</h1>
+<p>The script reports:</p>
+<ul>
+<li>requested population correlation and realized sample <code>Corr(x1,x2)</code>;</li>
+<li>holdout MSE for Ridge, Lasso, and Elastic Net;</li>
+<li>standardized-feature coefficients; and</li>
+<li>a simple coefficient-instability statistic computed across several expanding training endpoints.</li>
+</ul>
+<p>The instability statistic is descriptive, not a formal inferential test. Its purpose is to make the regularization/stability trade-off visible.</p>
 </section>
 <section id="experiment" class="level1">
 <h1>Experiment</h1>
-<p>Change the predictor correlation and the penalty strengths. Inspect whether prediction error and coefficient stability move together.</p>
+<p>Change <code>--rho</code> and the penalty strengths. Ask whether lower holdout loss and greater coefficient stability move together. They need not: a model can produce relatively stable coefficients without winning the holdout, and sparse selection can change as correlated predictors become harder to distinguish.</p>
 <p>The data are synthetic. The lab makes no empirical market-performance claim.</p>
 
 

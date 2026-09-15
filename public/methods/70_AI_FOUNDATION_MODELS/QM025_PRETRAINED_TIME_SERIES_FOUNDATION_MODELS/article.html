@@ -462,13 +462,17 @@ window.Quarto = {
 </section>
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
-<p>The public lab does <strong>not</strong> download a large foundation model. Instead it audits a synthetic inference request for temporal admissibility. This keeps the Method reproducible while teaching the part most likely to invalidate a historical study.</p>
+<p>The lab now has two deliberately separate parts. <strong>Part A</strong> keeps the deterministic information-timing audit. <strong>Part B</strong> performs actual zero-shot inference with Amazon Chronos-2 on a synthetic monthly series through the official <code>BaseChronosPipeline.from_pretrained(...)</code> / <code>predict_df(...)</code> interface <span class="citation" data-cites="chronosrepo">(<a href="#ref-chronosrepo" role="doc-biblioref">Amazon Science, n.d.</a>)</span>.</p>
 <div class="lab-downloads">
-<p><strong>Run it yourself.</strong> Start with the <a href="../../70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm025_tsfm_information_audit.py">Python</a>.</p>
+<p><strong>Run it yourself.</strong> Start with the <a href="../../70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm025_tsfm_information_audit.py">information audit</a> · <a href="labs/python/qm025_chronos2_zero_shot.py">actual Chronos-2 inference</a> · <a href="labs/python/requirements-chronos2.txt">optional Chronos-2 requirements</a>.</p>
 </div>
-<p>From the QM025 folder:</p>
+<p>From the QM025 folder, the offline audit remains:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_tsfm_information_audit.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Change the forecast origin and future-covariate availability dates. The audit should reject values that were not known by the simulated origin.</p>
+<p>For actual pretrained inference:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> labs/python/requirements-chronos2.txt</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_chronos2_zero_shot.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The first actual run may download the model checkpoint if it is not cached. The lab compares the Chronos-2 point forecast with a seasonal-naive baseline on one synthetic holdout, but that comparison is only a usage demonstration. It does not establish model superiority.</p>
+<p>Most importantly, Part B is labeled a <strong>retrospective technology counterfactual</strong>. Using only pre-cutoff downstream observations does not turn a current pretrained model into a historical real-time OOS technology. For governed work, record and preferably pin the model revision rather than silently following a mutable <code>main</code>.</p>
 </section>
 <section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>

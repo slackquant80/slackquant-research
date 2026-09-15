@@ -120,6 +120,7 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
   <ul>
   <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
   <li><a href="#run" id="toc-run" class="nav-link" data-scroll-target="#run">Run</a></li>
+  <li><a href="#what-to-inspect" id="toc-what-to-inspect" class="nav-link" data-scroll-target="#what-to-inspect">What to inspect</a></li>
   <li><a href="#experiment" id="toc-experiment" class="nav-link" data-scroll-target="#experiment">Experiment</a></li>
   </ul>
 </nav>
@@ -175,15 +176,24 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <p><a href="../../../60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">← Back to Method article</a></p>
 <section id="objective" class="level1">
 <h1>Objective</h1>
-<p>Compare a simple equal-weight forecast average with covariance-estimated sum-to-one weights on a later synthetic holdout.</p>
+<p>Compare equal-weight forecast averaging with covariance-estimated sum-to-one weights in a <strong>controlled forecast-error experiment</strong>.</p>
+<p>The three forecast columns are deliberately constructed as the target plus correlated forecast errors. They are not presented as fitted economic models. This isolates the question QM024 is about: what happens when combination weights are estimated from a finite history of correlated forecast errors?</p>
 </section>
 <section id="run" class="level1">
 <h1>Run</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm024_forecast_combination.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>From the QM024 folder:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then vary the actual estimation window and the shared error component:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py <span class="at">--window</span> 60</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py <span class="at">--window</span> 120 <span class="at">--common-scale</span> 1.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="what-to-inspect" class="level1">
+<h1>What to inspect</h1>
+<p>The script reports the training error-correlation matrix, the covariance condition number, standalone component holdout MSEs, equal weights, estimated weights, and both combined holdout MSEs.</p>
 </section>
 <section id="experiment" class="level1">
 <h1>Experiment</h1>
-<p>Change the estimation-window length or error correlation. Estimated weights may become unstable and need not outperform equal weights out of sample.</p>
+<p>Shorten <code>--window</code> to increase estimation noise, or increase <code>--common-scale</code> to make forecast errors more dependent. Estimated weights can become extreme or unstable and need not outperform equal weighting out of sample.</p>
 <p>The data are synthetic and do not establish an empirical advantage for either combination rule.</p>
 
 

@@ -119,8 +119,10 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
-  <li><a href="#run" id="toc-run" class="nav-link" data-scroll-target="#run">Run</a></li>
-  <li><a href="#experiment" id="toc-experiment" class="nav-link" data-scroll-target="#experiment">Experiment</a></li>
+  <li><a href="#part-a-information-boundary-audit" id="toc-part-a-information-boundary-audit" class="nav-link" data-scroll-target="#part-a-information-boundary-audit">Part A — Information-boundary audit</a></li>
+  <li><a href="#part-b-actual-chronos-2-zero-shot-inference" id="toc-part-b-actual-chronos-2-zero-shot-inference" class="nav-link" data-scroll-target="#part-b-actual-chronos-2-zero-shot-inference">Part B — Actual Chronos-2 zero-shot inference</a></li>
+  <li><a href="#offline-contract-check" id="toc-offline-contract-check" class="nav-link" data-scroll-target="#offline-contract-check">Offline contract check</a></li>
+  <li><a href="#interpretation-boundary" id="toc-interpretation-boundary" class="nav-link" data-scroll-target="#interpretation-boundary">Interpretation boundary</a></li>
   </ul>
 </nav>
     </div>
@@ -175,16 +177,43 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <p><a href="../../../70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">← Back to Method article</a></p>
 <section id="objective" class="level1">
 <h1>Objective</h1>
-<p>Audit whether context values and future covariates were actually available at a simulated historical forecast origin.</p>
+<p>Use a two-part lab to separate <strong>information admissibility</strong> from <strong>actual pretrained-model inference</strong>.</p>
+<ul>
+<li><strong>Part A</strong> audits whether context values and future covariates were genuinely available at a simulated historical forecast origin.</li>
+<li><strong>Part B</strong> runs real zero-shot inference with Amazon Chronos-2 on a deterministic synthetic monthly series and compares the result with a seasonal-naive baseline.</li>
+</ul>
+<p>Part B is a <strong>retrospective technology counterfactual</strong>, not a historical real-time OOS claim. A current pretrained model is being applied to a toy historical cutoff.</p>
 </section>
-<section id="run" class="level1">
-<h1>Run</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> python/qm025_tsfm_information_audit.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="experiment" class="level1">
-<h1>Experiment</h1>
+<section id="part-a-information-boundary-audit" class="level1">
+<h1>Part A — Information-boundary audit</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_tsfm_information_audit.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Move the availability date of <code>future_realized_macro</code> to the forecast origin and rerun. Then explain whether that change is a legitimate information assumption or merely a way to make the audit pass.</p>
-<p>The lab does not download or benchmark any pretrained model. It isolates the reusable information-timing contract.</p>
+</section>
+<section id="part-b-actual-chronos-2-zero-shot-inference" class="level1">
+<h1>Part B — Actual Chronos-2 zero-shot inference</h1>
+<p>The actual inference script follows the official Chronos dataframe interface: <code>BaseChronosPipeline.from_pretrained(...)</code> followed by <code>predict_df(...)</code>. The default model ID is <code>amazon/chronos-2</code>.</p>
+<p>Install the optional runtime:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> labs/python/requirements-chronos2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_chronos2_zero_shot.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The first run may download the pretrained checkpoint (roughly 0.5 GB) if it is not already cached. <code>--device auto</code> uses CUDA when available and otherwise CPU.</p>
+<p>For a governed experiment, pin a model revision rather than silently following <code>main</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_chronos2_zero_shot.py <span class="at">--revision</span> <span class="op">&lt;</span>HUGGING_FACE_COMMIT_SHA<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The script reports the model ID/revision request, Chronos package version, device, Chronos-2 RMSE/MAE, seasonal-naive RMSE/MAE, and a toy 10–90% interval coverage diagnostic when those quantiles are returned.</p>
+</section>
+<section id="offline-contract-check" class="level1">
+<h1>Offline contract check</h1>
+<p>The project gate does <strong>not</strong> require network access or a 0.5 GB model download. It validates the inference-data contract with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm025_chronos2_zero_shot.py <span class="at">--check-only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This checks context/holdout separation and forecast timestamps without importing or loading Chronos.</p>
+</section>
+<section id="interpretation-boundary" class="level1">
+<h1>Interpretation boundary</h1>
+<p>One synthetic holdout cannot establish that Chronos-2 is superior to conventional models. The purpose is to experience the real pretrained inference interface while keeping the epistemic boundary explicit:</p>
+<blockquote class="blockquote">
+<p>actual current-model inference + historical toy inputs ≠ historical live track record.</p>
+</blockquote>
+<p>For current API details, use the <a href="https://github.com/amazon-science/chronos-forecasting">official Chronos repository</a> and the <a href="https://huggingface.co/amazon/chronos-2">Amazon Chronos-2 model card</a>.</p>
 
 
 </section>
