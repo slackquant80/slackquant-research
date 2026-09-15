@@ -279,7 +279,10 @@ def main() -> int:
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
         "not the exact construction",
-        "canonical 19-symbol market-data",
+        "19-source-series market snapshot",
+        "18 final decision assets plus the EWJ history bridge",
+        "public Thin-Shiny",
+        "public sessions do not acquire Yahoo/FRED/FX data",
     )
     need(
         "src/app/systems/pds/page.tsx",
