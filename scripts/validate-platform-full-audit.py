@@ -25,7 +25,8 @@ def main() -> int:
     require_build = "--require-build" in sys.argv[1:]
 
     expected_research_slugs = {
-        "adaa", "protection-patience", "price-macro-decision", "beyond-average-accuracy"
+        "adaa", "protection-patience", "price-macro-decision", "beyond-average-accuracy",
+        "second-opinion-portfolio"
     }
     research = need(
         "src/data/research.ts",
@@ -121,6 +122,7 @@ def main() -> int:
         "src/app/research/protection-patience/page.tsx",
         "src/app/research/price-macro-decision/page.tsx",
         "src/app/research/beyond-average-accuracy/page.tsx",
+        "src/app/research/second-opinion-portfolio/page.tsx",
     ]
     for rel in research_detail_pages:
         detail = need(rel, "ResearchPaperHero")
@@ -133,6 +135,16 @@ def main() -> int:
     need(
         "src/app/research/price-macro-decision/page.tsx",
         'label: "F2R System"',
+    )
+    need(
+        "src/app/research/second-opinion-portfolio/page.tsx",
+        'label: "F2R System"',
+        "10.5281/zenodo.22750810",
+    )
+    need(
+        "src/data/research.ts",
+        'ssrnId: "7460378"',
+        'https://doi.org/10.5281/zenodo.22750810',
     )
 
     # PDS released-evidence contract.
@@ -276,6 +288,7 @@ def main() -> int:
         required_out = [
             "out/index.html",
             "out/research/index.html",
+            "out/research/second-opinion-portfolio/index.html",
             "out/systems/index.html",
             "out/systems/pds/index.html",
             "out/systems/pds/dashboard/index.html",
@@ -298,7 +311,7 @@ def main() -> int:
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=4 Systems=4 Methods=18 / exact registry sets=PASS")
+    print("Research=5 Systems=4 Methods=18 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")

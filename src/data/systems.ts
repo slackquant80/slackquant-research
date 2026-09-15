@@ -90,7 +90,7 @@ export const systemItems: SystemItem[] = [
     links: {
       liveDashboard: "https://f2r-forecast-to-rank-allocation.streamlit.app",
       deploymentRepository: "https://github.com/slackquant80/f2r-forecast-to-rank-allocation",
-      relatedResearch: "/research/price-macro-decision/",
+      relatedResearch: "/research/second-opinion-portfolio/",
     },
   },
   {

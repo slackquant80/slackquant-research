@@ -172,23 +172,38 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="evidence">
             <div className="kicker">Related evidence</div>
-            <h2>Research evidence and the live operating system remain separately identified</h2>
+            <h2>Two public research papers document distinct stages of the F2R research lineage</h2>
             <p className="body-copy">
-              The related Investment Research study is the frozen research foundation for the Forecast-to-Rank design family,
-              documenting matched forecasting, ranking, portfolio formation, and the incremental value of macro information.
-              The live system has since evolved through a separate governed model-adoption process to a heterogeneous architecture
-              that includes Chronos-2. That operational evolution is documented as system lineage rather than retrofitted into the frozen paper.
+              The earlier information-set study tests whether historical-vintage macro
+              information adds decision value beyond price information under matched
+              forecasting, ranking, portfolio, and timing rules. The newer model-adoption
+              study keeps the portfolio-side price-data domain and portfolio interface
+              fixed while asking how Chronos-2 changes rankings, Top-4 decisions, and
+              historical portfolio outcomes.
             </p>
-            {item.links.relatedResearch ? (
-              <div className="repro-links documentation-artifacts">
+            <p className="body-copy">
+              Both papers are frozen historical research artifacts. They document the
+              evidence path that informed the F2R design family, while the live system
+              remains separately governed. Historical model-combination settings reported
+              in the paper are research configurations, not disclosures of the current
+              protected production recipe.
+            </p>
+            <div className="repro-links documentation-artifacts">
+              {item.links.relatedResearch ? (
                 <Link className="artifact artifact-primary" href={item.links.relatedResearch}>
-                  <span className="artifact-kicker">RELATED RESEARCH</span>
-                  <strong>The Decision Value of Price and Macro Information</strong>
-                  <small>Matched multi-asset forecasting, ranking, portfolio, and information-timing evidence.</small>
+                  <span className="artifact-kicker">MODEL-ADOPTION RESEARCH</span>
+                  <strong>A Second Opinion for the Portfolio</strong>
+                  <small>Chronos-2 model adoption, forecast integration, changed decisions, and portfolio consequences.</small>
                   <span className="artifact-action">View Research →</span>
                 </Link>
-              </div>
-            ) : null}
+              ) : null}
+              <Link className="artifact" href="/research/price-macro-decision/">
+                <span className="artifact-kicker">INFORMATION-SET RESEARCH</span>
+                <strong>The Decision Value of Price and Macro Information</strong>
+                <small>Matched price-versus-macro evidence with explicit information-timing controls.</small>
+                <span className="artifact-action">View Prior Research →</span>
+              </Link>
+            </div>
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />

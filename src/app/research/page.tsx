@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function ResearchPage() {
-  const investmentResearch = researchItems.filter((item) => item.stream === "investment");
+  const investmentResearch = researchItems.filter((item) => item.stream === "investment").reverse();
   const academicResearch = researchItems.filter((item) => item.stream === "academic");
 
   return (

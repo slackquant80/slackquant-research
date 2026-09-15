@@ -16,7 +16,7 @@ export const researchItems: ResearchItem[] = [
     dateLabel: "August 2026",
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
-    featured: true,
+    featured: false,
     shortSummary:
       "Historical performance and risk still guide strategy choice. ADAA adds a complementary check: whether the selected rules make genuinely different decisions and whether the portfolio depends too heavily on one historically best-performing rule or one precise set of weights.",
     researchQuestion:
@@ -242,6 +242,47 @@ export const researchItems: ResearchItem[] = [
         "https://github.com/slackquant80/price-macro-decision-replication/releases/tag/v1.1",
       archivalRelease: "https://doi.org/10.5281/zenodo.22069742",
       doi: "https://doi.org/10.5281/zenodo.22069742"
+    }
+  },
+  {
+    slug: "second-opinion-portfolio",
+    title: "A Second Opinion for the Portfolio",
+    subtitle:
+      "How a New Forecasting Model Changes Cross-Asset Allocation Decisions",
+    stream: "investment",
+    streamLabel: "Investment Research Series",
+    investmentTrack: "empirical",
+    investmentTrackLabel: "Empirical Research",
+    status: "Public Working Paper",
+    publicVersion: "v0.15",
+    ssrnId: "7460378",
+    dateLabel: "September 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation: "Graduate School of Computing, Yonsei University",
+    featured: true,
+    shortSummary:
+      "A forecasting model can add portfolio value without winning the average prediction-error contest. This study evaluates Chronos-2 inside a matched cross-asset Forecast-to-Rank process and asks which portfolio decisions actually change, how integration changes the result, and whether those changes earn their keep.",
+    researchQuestion:
+      "When a new forecasting model does not minimize point-forecast error, can it still improve a cross-asset allocation process by changing economically relevant portfolio decisions, and how does the forecast-integration interface affect that value?",
+    findings: [
+      "Chronos-2 has a higher point-forecast RMSE (0.0570) than the conventional models (about 0.0550–0.0553), yet its standalone Top-4 portfolio reaches a 15.49% CAGR and 0.962 Sharpe ratio versus about 14.92% and 0.891 for the incumbent ensemble.",
+      "A three-model conventional hybrid with a 20% Chronos-2 model-combination contribution reaches 17.13% CAGR and 0.987 Sharpe with lower cumulative turnover. The 20% figure is a historical research configuration, not a disclosed live-production setting.",
+      "Holding the component models and 80/20 model-combination weights fixed, rank-based integration exceeds standardized-forecast integration by 2.53 percentage points of CAGR and 0.163 Sharpe with nearly identical turnover.",
+      "The selected hybrid differs from the incumbent Top-4 in 58 of 112 monthly decisions. Changed-decision months explain 99.4% of the relative log-wealth gap as an accounting transmission diagnostic, not as an independent causal estimate."
+    ],
+    tags: [
+      "Asset Allocation",
+      "Machine Learning",
+      "Time-Series Foundation Models",
+      "Forecast Integration",
+      "Portfolio Decisions"
+    ],
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7460378",
+      github: "https://github.com/slackquant80/f2r-model-adoption-replication",
+      replication:
+        "https://github.com/slackquant80/f2r-model-adoption-replication/releases/tag/v1.1",
+      archivalRelease: "https://doi.org/10.5281/zenodo.22750810"
     }
   },
   {
