@@ -10,6 +10,8 @@ format:
       - ../../../styles/slackquant-methods.scss
 ---
 
+[← Back to Method article](../article.qmd)
+
 # Objective
 
 Audit whether context values and future covariates were actually available at a simulated historical forecast origin.

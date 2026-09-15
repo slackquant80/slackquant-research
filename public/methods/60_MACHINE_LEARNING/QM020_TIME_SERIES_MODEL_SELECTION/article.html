@@ -400,7 +400,10 @@ window.Quarto = {
 </section>
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
-<p>Run:</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm020_time_series_tuning.py">Python</a>.</p>
+</div>
+<p>From the QM020 folder:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm020_time_series_tuning.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The synthetic series contains a mild regime change. Compare a single full-history tuning decision with repeated nested historical tuning. The exercise is illustrative; neither procedure is guaranteed to dominate in all samples.</p>
 </section>
@@ -434,7 +437,12 @@ window.Quarto = {
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p>Time-series model selection is load-bearing wherever SlackQuant compares forecasting architectures over historical decision dates. In F2R research, the public Method documents the general information-set and tuning discipline without disclosing protected live model settings.</p>
+<p><a href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank Allocation (F2R)</a> applies chronological model-selection discipline when conventional supervised forecasting candidates are compared over historical decision dates.</p>
+<ul>
+<li><a href="https://research.slackquant.com/research/price-macro-decision/">The Decision Value of Price and Macro Information</a> uses time-ordered forecasting evaluation and model-selection logic.</li>
+<li><a href="https://research.slackquant.com/research/second-opinion-portfolio/">F2R Model-Adoption Research</a> compares forecasting architectures under a common historical information and evaluation clock.</li>
+</ul>
+<p>The public Method documents the reusable information-set and tuning discipline without disclosing protected live model settings.</p>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>

@@ -405,7 +405,10 @@ s_{i,t}=\sum_{m=1}^{M} w_m r_{i,m,t},
 </section>
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
-<p>Run:</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm024_forecast_combination.py">Python</a>.</p>
+</div>
+<p>From the QM024 folder:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm024_forecast_combination.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then change the training-sample length and error correlation. Observe how estimated weights become less stable when the estimation sample shrinks or model errors become difficult to distinguish.</p>
 </section>
@@ -439,7 +442,11 @@ s_{i,t}=\sum_{m=1}^{M} w_m r_{i,m,t},
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p>Forecast combination is directly relevant to F2R model-adoption research, where conventional and pretrained forecasting models are integrated before portfolio ranking. Public descriptions distinguish model-combination contribution from portfolio capital allocation and do not expose protected live recipe details.</p>
+<p><a href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank Allocation (F2R)</a> combines heterogeneous forecasting views before they are translated into a common rank-based decision space.</p>
+<ul>
+<li><a href="https://research.slackquant.com/research/second-opinion-portfolio/">F2R Model-Adoption Research</a> examines the decision value of combining conventional and pretrained forecasting components.</li>
+</ul>
+<p>Public descriptions distinguish model-combination contribution from portfolio capital allocation and do not expose protected live recipe details.</p>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>

@@ -423,7 +423,10 @@ z_{jt}=\frac{x_{jt}-\bar x_{j,\text{train}}}{s_{j,\text{train}}}.
 <section id="hands-on-lab" class="level1">
 <h1>Hands-on Lab</h1>
 <p>The lab uses a synthetic time-ordered regression with correlated features. It asks you to change the correlation level and penalty strength, then inspect how coefficient stability and holdout loss respond.</p>
-<p>Run:</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm019_regularized_models.py">Python</a>.</p>
+</div>
+<p>From the QM019 folder:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm019_regularized_models.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="common-mistakes" class="level1">
@@ -454,7 +457,12 @@ z_{jt}=\frac{x_{jt}-\bar x_{j,\text{train}}}{s_{j,\text{train}}}.
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
-<p>Regularized linear forecasting models are part of the F2R forecasting benchmark family and therefore provide a load-bearing conventional reference for the public F2R model-adoption research. The public Method explains the reusable estimation logic, not a protected live production recipe.</p>
+<p><a href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank Allocation (F2R)</a> uses regularized linear models as a conventional forecasting lane within its heterogeneous forecasting architecture.</p>
+<ul>
+<li><a href="https://research.slackquant.com/research/price-macro-decision/">The Decision Value of Price and Macro Information</a> uses regularized linear models in the conventional forecasting benchmark family.</li>
+<li><a href="https://research.slackquant.com/research/second-opinion-portfolio/">F2R Model-Adoption Research</a> uses regularized linear forecasting as a load-bearing reference when evaluating newer pretrained forecasting approaches.</li>
+</ul>
+<p>The public Method explains the reusable estimation logic, not a protected live production recipe.</p>
 </section>
 <section id="references" class="level1">
 <h1>References</h1>

@@ -10,6 +10,8 @@ format:
       - ../../../styles/slackquant-methods.scss
 ---
 
+[← Back to Method article](../article.qmd)
+
 # Objective
 
 Compare a simple equal-weight forecast average with covariance-estimated sum-to-one weights on a later synthetic holdout.

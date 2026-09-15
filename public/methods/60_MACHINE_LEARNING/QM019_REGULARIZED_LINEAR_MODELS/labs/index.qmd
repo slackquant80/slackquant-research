@@ -10,6 +10,8 @@ format:
       - ../../../styles/slackquant-methods.scss
 ---
 
+[← Back to Method article](../article.qmd)
+
 # Objective
 
 Fit Ridge, Lasso, and Elastic Net to a synthetic time-ordered regression with correlated predictors and compare holdout error.

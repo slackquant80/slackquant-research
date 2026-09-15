@@ -10,6 +10,8 @@ format:
       - ../../../styles/slackquant-methods.scss
 ---
 
+[← Back to Method article](../article.qmd)
+
 # Objective
 
 Tune a Ridge penalty using expanding chronological folds, then evaluate the selected procedure on a later holdout block.
