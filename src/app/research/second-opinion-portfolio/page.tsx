@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CitationBox } from "@/components/CitationBox";
+import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
@@ -170,6 +171,26 @@ export default function SecondOpinionPortfolioPage() {
               useful for locating where portfolio divergence enters, but it is not an
               independent causal estimate of the value of Chronos-2.
             </div>
+
+            {item.selectedEvidence?.length ? (
+              <div className="selected-exhibits">
+                <div className="selected-exhibits-head">
+                  <div className="section-title">Selected Exhibits</div>
+                  <p>
+                    Three paper-aligned figures summarize the forecasting-versus-portfolio
+                    distinction, the ensemble ablation, and the changed decisions that
+                    account for the relative wealth gap. Click any figure to inspect the
+                    full-resolution publication-aligned image.
+                  </p>
+                </div>
+
+                <div className="evidence-figure-list">
+                  {item.selectedEvidence.map((figure) => (
+                    <EvidenceFigure key={figure.id} figure={figure} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
 
           <section className="prose-section" id="design">

@@ -277,6 +277,41 @@ export const researchItems: ResearchItem[] = [
       "Forecast Integration",
       "Portfolio Decisions"
     ],
+    selectedEvidence: [
+      {
+        id: "forecast-error-vs-portfolio-sharpe",
+        title: "Forecast Accuracy and Portfolio Value Can Disagree",
+        description:
+          "Chronos-2 has worse point-forecast RMSE than the conventional models, yet its standalone Top-4 portfolio records the strongest Sharpe ratio among the standalone models. The exhibit motivates evaluating model adoption at the decision layer rather than by forecast error alone.",
+        imageUrl:
+          "/assets/f2r-model-adoption/Figure_1_Forecast_Error_vs_Portfolio_Sharpe.png",
+        alt:
+          "Scatter plot comparing point-forecast RMSE with standalone portfolio Sharpe ratios for Ridge, Elastic Net, Random Forest, XGBoost, and Chronos-2.",
+        sourceLabel: "Public working paper · Figure 1"
+      },
+      {
+        id: "ablation-cagr",
+        title: "Chronos-2 Value Depends on Ensemble Context",
+        description:
+          "Removing Random Forest by itself adds only 0.09 percentage points of CAGR. Adding a 20% Chronos-2 model-combination contribution to the incumbent adds 0.61 points, while adding it after Random Forest removal adds 2.12 points; the selected hybrid is 2.21 points above the incumbent. These are descriptive historical contrasts, not causal estimates.",
+        imageUrl:
+          "/assets/f2r-model-adoption/Figure_2_Ablation_Delta_CAGR.png",
+        alt:
+          "Horizontal bar chart showing historical CAGR differences for Random Forest removal, Chronos-2 addition, Chronos-2 addition after Random Forest removal, and the selected hybrid versus the incumbent ensemble.",
+        sourceLabel: "Public working paper · Figure 2"
+      },
+      {
+        id: "boundary-decision-attribution",
+        title: "Boundary Decisions Explain Where the Portfolio Paths Diverge",
+        description:
+          "The largest positive and negative changed-decision months show how Top-4 substitutions transmit into the hybrid-versus-incumbent relative wealth path. The attribution is an accounting diagnostic of where divergence enters, not an independent causal estimate of model value.",
+        imageUrl:
+          "/assets/f2r-model-adoption/Figure_4_Boundary_Decision_Attribution.png",
+        alt:
+          "Horizontal bar chart of the largest positive and negative monthly contributions from changed Top-4 asset decisions to hybrid-versus-incumbent relative wealth.",
+        sourceLabel: "Public working paper · Figure 4"
+      }
+    ],
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7460378",
       github: "https://github.com/slackquant80/f2r-model-adoption-replication",

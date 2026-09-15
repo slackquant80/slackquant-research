@@ -146,6 +146,31 @@ def main() -> int:
         'ssrnId: "7460378"',
         'https://doi.org/10.5281/zenodo.22750810',
     )
+    # F2R_MODEL_ADOPTION_SELECTED_EXHIBITS_GATE_V1
+    need(
+        "src/app/research/second-opinion-portfolio/page.tsx",
+        "EvidenceFigure",
+        "Selected Exhibits",
+        "full-resolution publication-aligned image",
+    )
+    need(
+        "src/data/research.ts",
+        'id: "forecast-error-vs-portfolio-sharpe"',
+        'id: "ablation-cagr"',
+        'id: "boundary-decision-attribution"',
+        "/assets/f2r-model-adoption/Figure_1_Forecast_Error_vs_Portfolio_Sharpe.png",
+        "/assets/f2r-model-adoption/Figure_2_Ablation_Delta_CAGR.png",
+        "/assets/f2r-model-adoption/Figure_4_Boundary_Decision_Attribution.png",
+    )
+    for rel in (
+        "public/assets/f2r-model-adoption/Figure_1_Forecast_Error_vs_Portfolio_Sharpe.png",
+        "public/assets/f2r-model-adoption/Figure_2_Ablation_Delta_CAGR.png",
+        "public/assets/f2r-model-adoption/Figure_4_Boundary_Decision_Attribution.png",
+    ):
+        figure_asset = ROOT / rel
+        if not figure_asset.is_file() or figure_asset.stat().st_size < 10000:
+            raise RuntimeError(f"F2R model-adoption selected exhibit missing/invalid: {rel}")
+
 
     # PDS released-evidence contract.
     # PDS_SYSTEM_DOCUMENTATION_GATE_V1_1
