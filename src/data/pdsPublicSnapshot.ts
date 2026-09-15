@@ -136,8 +136,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
   "completedHoldingMonthCutoff": "2026-08",
   "latestEligibleSignalPeriod": "2026-07",
   "latestReleasedSignalPeriod": "2026-07",
-  "sourceProgramVersion": "0.3.219",
-  "sourceRs03Version": "0.21.89",
+  "sourceProgramVersion": "0.3.220",
+  "sourceRs03Version": "0.21.90",
   "publicComponentIdentity": "ADAA + F2R",
   "latestAssetTargets": [
     {
@@ -3833,8 +3833,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.011216166656988769,
-      "cumulativeWealth": 1.0112161666569888,
+      "netReturn": 0.011215916172943041,
+      "cumulativeWealth": 1.011215916172943,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3843,8 +3843,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0037518445583295534,
-      "cumulativeWealth": 1.0150100925291556,
+      "netReturn": 0.0037521714210335677,
+      "cumulativeWealth": 1.0150101716341013,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3853,8 +3853,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.013668536206106419,
-      "cumulativeWealth": 1.028883794728454,
+      "netReturn": 0.013668366091602602,
+      "cumulativeWealth": 1.0288837022466966,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3863,8 +3863,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0055159920474652235,
-      "cumulativeWealth": 1.0345591095579418,
+      "netReturn": 0.005515778455449594,
+      "cumulativeWealth": 1.034558796804712,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3873,8 +3873,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.009803515659632778,
-      "cumulativeWealth": 1.0447014259893088,
+      "netReturn": 0.009803238271371084,
+      "cumulativeWealth": 1.0447008231955317,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3883,8 +3883,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01452947706277219,
-      "cumulativeWealth": 1.0598803913956658,
+      "netReturn": 0.014529985406655843,
+      "cumulativeWealth": 1.059880310910884,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3893,8 +3893,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.017746388319515916,
-      "cumulativeWealth": 1.0786894403936138,
+      "netReturn": 0.01774635579401629,
+      "cumulativeWealth": 1.0786893240073812,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3903,8 +3903,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.009177324348061289,
-      "cumulativeWealth": 1.0885889232589347,
+      "netReturn": 0.0091771752005807,
+      "cumulativeWealth": 1.0885886449207929,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3913,8 +3913,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.029315301426271034,
-      "cumulativeWealth": 1.1205012356735702,
+      "netReturn": 0.02931541565044382,
+      "cumulativeWealth": 1.1205010735189993,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3923,9 +3923,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.025851112250449004,
-      "cumulativeWealth": 1.0915350324534059,
-      "drawdown": -0.025851112250449004,
+      "netReturn": -0.02585110820501002,
+      "cumulativeWealth": 1.0915348790236297,
+      "drawdown": -0.02585110820501013,
       "seriesRole": "REFERENCE"
     },
     {
@@ -3933,9 +3933,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.013761611144177732,
-      "cumulativeWealth": 1.0765137517865346,
-      "drawdown": -0.03925697044019161,
+      "netReturn": -0.013761647756133422,
+      "cumulativeWealth": 1.0765135605049727,
+      "drawdown": -0.039257002115920536,
       "seriesRole": "REFERENCE"
     },
     {
@@ -3943,9 +3943,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.0006633958654338468,
-      "cumulativeWealth": 1.0757995970145167,
-      "drawdown": -0.0398943233937461,
+      "netReturn": -0.0006632440886851221,
+      "cumulativeWealth": 1.0757995692495783,
+      "drawdown": -0.039894209230012856,
       "seriesRole": "REFERENCE"
     },
     {
@@ -3953,9 +3953,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.017232891161259367,
-      "cumulativeWealth": 1.0943387343811946,
-      "drawdown": -0.02334892676548317,
+      "netReturn": 0.017232610525831804,
+      "cumulativeWealth": 1.094338404230314,
+      "drawdown": -0.023349080074077877,
       "seriesRole": "REFERENCE"
     },
     {
@@ -3963,9 +3963,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0038609998404155466,
-      "cumulativeWealth": 1.098563976060001,
-      "drawdown": -0.01957807712758297,
+      "netReturn": 0.0038612394176662512,
+      "cumulativeWealth": 1.098563906812994,
+      "drawdown": -0.01957799704475993,
       "seriesRole": "REFERENCE"
     },
     {
@@ -3973,8 +3973,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.022111121721210436,
-      "cumulativeWealth": 1.1228544578532005,
+      "netReturn": 0.022110732051825677,
+      "cumulativeWealth": 1.1228539589983428,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3983,8 +3983,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.02142384065029379,
-      "cumulativeWealth": 1.1469103128317195,
+      "netReturn": 0.02142402937889165,
+      "cumulativeWealth": 1.146910015204128,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -3993,8 +3993,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0010885463860081934,
-      "cumulativeWealth": 1.148158777907828,
+      "netReturn": 0.0010886507047236371,
+      "cumulativeWealth": 1.1481585996004346,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4003,9 +4003,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.04403875847239014,
-      "cumulativeWealth": 1.0975952907995905,
-      "drawdown": -0.04403875847239014,
+      "netReturn": -0.04403866666816336,
+      "cumulativeWealth": 1.0975952257504458,
+      "drawdown": -0.04403866666816347,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4013,9 +4013,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.014215712182513718,
-      "cumulativeWealth": 1.1131983895464799,
-      "drawdown": -0.03044908860519513,
+      "netReturn": 0.014215447493134414,
+      "cumulativeWealth": 1.1131980330508162,
+      "drawdown": -0.030449248528717998,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4023,9 +4023,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.04490431222498903,
-      "cumulativeWealth": 1.0632109814939297,
-      "drawdown": -0.07398610544849027,
+      "netReturn": -0.044904279187764296,
+      "cumulativeWealth": 1.0632106777834323,
+      "drawdown": -0.07398622615949113,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4033,9 +4033,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.05168285727674293,
-      "cumulativeWealth": 1.1181607629055461,
-      "drawdown": -0.0261270615001038,
+      "netReturn": 0.05168288575103319,
+      "cumulativeWealth": 1.1181604737725919,
+      "drawdown": -0.02612716208220911,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4043,9 +4043,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.018994183636980466,
-      "cumulativeWealth": 1.1393993137718403,
-      "drawdown": -0.007629140067150875,
+      "netReturn": 0.018994437113108775,
+      "cumulativeWealth": 1.1393993025740292,
+      "drawdown": -0.007628995706214892,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4053,8 +4053,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.019350639188824292,
-      "cumulativeWealth": 1.1614474187846333,
+      "netReturn": 0.019350563682432487,
+      "cumulativeWealth": 1.161447321338207,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4063,8 +4063,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.02371009247271072,
-      "cumulativeWealth": 1.1889854444862082,
+      "netReturn": 0.02371004989794434,
+      "cumulativeWealth": 1.1889852952809696,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4073,9 +4073,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.03061923219446161,
-      "cumulativeWealth": 1.15257962308565,
-      "drawdown": -0.0306192321944615,
+      "netReturn": -0.03061917089316324,
+      "cumulativeWealth": 1.1525795513353034,
+      "drawdown": -0.03061917089316324,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4083,8 +4083,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0461461905009799,
-      "cumulativeWealth": 1.205766781940108,
+      "netReturn": 0.04614612619641445,
+      "cumulativeWealth": 1.205766632762629,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4093,8 +4093,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.00979921689055141,
-      "cumulativeWealth": 1.2175823521557612,
+      "netReturn": 0.009798767139835629,
+      "cumulativeWealth": 1.2175816592220539,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4103,8 +4103,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0010847776093998451,
-      "cumulativeWealth": 1.2189031582289802,
+      "netReturn": 0.0010852530634450908,
+      "cumulativeWealth": 1.218903043447719,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4113,8 +4113,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.009226127288844754,
-      "cumulativeWealth": 1.2301489139195756,
+      "netReturn": 0.009226270319916852,
+      "cumulativeWealth": 1.2301489724203372,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4123,8 +4123,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.014095663835264283,
-      "cumulativeWealth": 1.2474886794775013,
+      "netReturn": 0.014095326306486022,
+      "cumulativeWealth": 1.2474883235921903,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4133,8 +4133,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.021580625979795487,
-      "cumulativeWealth": 1.2744102660833343,
+      "netReturn": 0.021580620147032326,
+      "cumulativeWealth": 1.2744098952414915,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4143,8 +4143,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01724619781594594,
-      "cumulativeWealth": 1.2963889976308798,
+      "netReturn": 0.017246067459556258,
+      "cumulativeWealth": 1.2963884542659523,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4153,8 +4153,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.007873766965196038,
-      "cumulativeWealth": 1.3065964624944695,
+      "netReturn": 0.007873964297556935,
+      "cumulativeWealth": 1.3065961706706075,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4163,9 +4163,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.04116082119694908,
-      "cumulativeWealth": 1.2528158791251685,
-      "drawdown": -0.04116082119694908,
+      "netReturn": -0.04116085360485355,
+      "cumulativeWealth": 1.2528155569689723,
+      "drawdown": -0.041160853604853664,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4173,9 +4173,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.07703012460540282,
-      "cumulativeWealth": 1.1563113158485294,
-      "drawdown": -0.11502032261669026,
+      "netReturn": -0.07702990145700839,
+      "cumulativeWealth": 1.1563112980718453,
+      "drawdown": -0.11502013856479376,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4183,9 +4183,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.08306641830314576,
-      "cumulativeWealth": 1.2523619552994643,
-      "drawdown": -0.041508230545385216,
+      "netReturn": 0.08306658329300043,
+      "cumulativeWealth": 1.2523621268257676,
+      "drawdown": -0.04150788519225823,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4193,9 +4193,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03127753449804671,
-      "cumulativeWealth": 1.2915327495603846,
-      "drawdown": -0.011528971160174595,
+      "netReturn": 0.031277317572906416,
+      "cumulativeWealth": 1.2915326547827777,
+      "drawdown": -0.011528822926289872,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4203,8 +4203,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.013277011004128925,
-      "cumulativeWealth": 1.3086804440884907,
+      "netReturn": 0.013276978859815713,
+      "cumulativeWealth": 1.3086803065370902,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4213,8 +4213,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.04066828220361374,
-      "cumulativeWealth": 1.361902229703032,
+      "netReturn": 0.04066815875743446,
+      "cumulativeWealth": 1.3619019250060687,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4223,8 +4223,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03858352548488986,
-      "cumulativeWealth": 1.4144492190907074,
+      "netReturn": 0.038583398688667225,
+      "cumulativeWealth": 1.4144487299534412,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4233,9 +4233,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.022855379588526126,
-      "cumulativeWealth": 1.382121445279695,
-      "drawdown": -0.022855379588526015,
+      "netReturn": -0.0228554746879136,
+      "cumulativeWealth": 1.3821208328086387,
+      "drawdown": -0.0228554746879136,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4243,9 +4243,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.017193504611416666,
-      "cumulativeWealth": 1.3583579338367406,
-      "drawdown": -0.039655920125591826,
+      "netReturn": -0.01719319723010304,
+      "cumulativeWealth": 1.3583577567343255,
+      "drawdown": -0.03965571323391981,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4253,8 +4253,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.07009305083527018,
-      "cumulativeWealth": 1.453569385545652,
+      "netReturn": 0.07009308541188419,
+      "cumulativeWealth": 1.453569242997,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4263,8 +4263,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.022572103101406782,
-      "cumulativeWealth": 1.4863795035812368,
+      "netReturn": 0.02257191138525494,
+      "cumulativeWealth": 1.4863790791422604,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4273,9 +4273,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.009092411517430232,
-      "cumulativeWealth": 1.4728647294636026,
-      "drawdown": -0.009092411517430232,
+      "netReturn": -0.009092425315706198,
+      "cumulativeWealth": 1.4728642883743313,
+      "drawdown": -0.009092425315706198,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4283,8 +4283,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.010610619197338522,
-      "cumulativeWealth": 1.4884927362371319,
+      "netReturn": 0.010610588741649218,
+      "cumulativeWealth": 1.4884922456105332,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4293,8 +4293,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.02265423485623619,
-      "cumulativeWealth": 1.5222134002656496,
+      "netReturn": 0.022654549032033122,
+      "cumulativeWealth": 1.5222133661725181,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4303,8 +4303,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03467425602870078,
-      "cumulativeWealth": 1.57499501743678,
+      "netReturn": 0.034674168882310674,
+      "cumulativeWealth": 1.5749948495060946,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4313,8 +4313,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.004755109788937784,
-      "cumulativeWealth": 1.5824842916617219,
+      "netReturn": 0.004755030706467878,
+      "cumulativeWealth": 1.5824839983780248,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4323,8 +4323,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.016768188662934946,
-      "cumulativeWealth": 1.6090196868204365,
+      "netReturn": 0.01676809403295021,
+      "cumulativeWealth": 1.6090192388684665,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4333,8 +4333,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.019113713645910524,
-      "cumulativeWealth": 1.639774028364955,
+      "netReturn": 0.019113652125188674,
+      "cumulativeWealth": 1.6397734728629343,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4343,8 +4343,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.017054464701146577,
-      "cumulativeWealth": 1.667739496649562,
+      "netReturn": 0.017054650024467488,
+      "cumulativeWealth": 1.6677392355620173,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4353,9 +4353,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.03163230527623828,
-      "cumulativeWealth": 1.614985051770303,
-      "drawdown": -0.03163230527623828,
+      "netReturn": -0.031632255374579143,
+      "cumulativeWealth": 1.614984882164514,
+      "drawdown": -0.031632255374579255,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4363,8 +4363,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.04206338036752255,
-      "cumulativeWealth": 1.6829167822907805,
+      "netReturn": 0.04206331814441899,
+      "cumulativeWealth": 1.682916505061427,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4373,9 +4373,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.003737612995784567,
-      "cumulativeWealth": 1.6766266906544665,
-      "drawdown": -0.003737612995784567,
+      "netReturn": -0.0037376350338326203,
+      "cumulativeWealth": 1.6766263773730943,
+      "drawdown": -0.0037376350338326203,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4383,8 +4383,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.026313856691528414,
-      "cumulativeWealth": 1.7207452051175396,
+      "netReturn": 0.026313858785993682,
+      "cumulativeWealth": 1.720744887104162,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4393,9 +4393,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.03963912117296464,
-      "cumulativeWealth": 1.6525363774240875,
-      "drawdown": -0.03963912117296464,
+      "netReturn": -0.03963929860843518,
+      "cumulativeWealth": 1.652535766695302,
+      "drawdown": -0.03963929860843518,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4403,9 +4403,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.022292777306689326,
-      "cumulativeWealth": 1.6156967519709693,
-      "drawdown": -0.06104823237871215,
+      "netReturn": -0.022292674700932213,
+      "cumulativeWealth": 1.615696324416708,
+      "drawdown": -0.06104830732011646,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4413,9 +4413,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.011305429803002642,
-      "cumulativeWealth": 1.6339628981833165,
-      "drawdown": -0.05043297908146438,
+      "netReturn": 0.011305489964712256,
+      "cumulativeWealth": 1.6339625629984236,
+      "drawdown": -0.05043299838117443,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4423,9 +4423,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.06788497203560362,
-      "cumulativeWealth": 1.5230413725329282,
-      "drawdown": -0.11489430974245074,
+      "netReturn": -0.06788489708397494,
+      "cumulativeWealth": 1.5230411825702077,
+      "drawdown": -0.11489425656040708,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4433,9 +4433,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0043965338346725336,
-      "cumulativeWealth": 1.5297374754588753,
-      "drawdown": -0.11100291262797213,
+      "netReturn": 0.004396474132613681,
+      "cumulativeWealth": 1.529737193732283,
+      "drawdown": -0.1110029120547471,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4443,9 +4443,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.055688222012656885,
-      "cumulativeWealth": 1.44454911530444,
-      "drawdown": -0.16050957979815106,
+      "netReturn": -0.05568802843703413,
+      "cumulativeWealth": 1.444549145386531,
+      "drawdown": -0.16050940716868278,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4453,9 +4453,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.06540478959737728,
-      "cumulativeWealth": 1.5390295462540045,
-      "drawdown": -0.1056028854958353,
+      "netReturn": 0.06540441640513261,
+      "cumulativeWealth": 1.53902903920907,
+      "drawdown": -0.10560301486695167,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4463,9 +4463,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.03665038671671994,
-      "cumulativeWealth": 1.482623518215337,
-      "drawdown": -0.13838288562073142,
+      "netReturn": -0.03665006014024974,
+      "cumulativeWealth": 1.4826235323644668,
+      "drawdown": -0.13838271816133596,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4473,9 +4473,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.07204756624597997,
-      "cumulativeWealth": 1.3758041020688698,
-      "drawdown": -0.20046030174764184,
+      "netReturn": -0.07204761699926276,
+      "cumulativeWealth": 1.3758040399505775,
+      "drawdown": -0.20046019008319393,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4483,9 +4483,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.043651313098903355,
-      "cumulativeWealth": 1.4358597576910337,
-      "drawdown": -0.16555934404422534,
+      "netReturn": 0.043651277922428955,
+      "cumulativeWealth": 1.4358596444652607,
+      "drawdown": -0.16555925563046947,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4493,9 +4493,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.04858889828312862,
-      "cumulativeWealth": 1.505626601406321,
-      "drawdown": -0.12501479188868303,
+      "netReturn": 0.048588760005932485,
+      "cumulativeWealth": 1.5056262841323869,
+      "drawdown": -0.12501481456312669,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4503,9 +4503,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.038970656647360324,
-      "cumulativeWealth": 1.4469513440837833,
-      "drawdown": -0.15911354000550837,
+      "netReturn": -0.03897064206981904,
+      "cumulativeWealth": 1.446951061122552,
+      "drawdown": -0.15911354904118125,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4513,9 +4513,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.05105341589999668,
-      "cumulativeWealth": 1.520823152840352,
-      "drawdown": -0.11618341383873354,
+      "netReturn": 0.05105347459897369,
+      "cumulativeWealth": 1.5208229403675302,
+      "drawdown": -0.11618337397653411,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4523,9 +4523,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.025748390371948093,
-      "cumulativeWealth": 1.4816644046143217,
-      "drawdown": -0.13894026831641637,
+      "netReturn": -0.025748246763994453,
+      "cumulativeWealth": 1.4816644160146033,
+      "drawdown": -0.13894010255750733,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4533,9 +4533,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03281170790600907,
-      "cumulativeWealth": 1.5302803442732578,
-      "drawdown": -0.110687427910788,
+      "netReturn": 0.032811425729034394,
+      "cumulativeWealth": 1.5302799379560197,
+      "drawdown": -0.11068749968432301,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4543,9 +4543,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.011886892745141875,
-      "cumulativeWealth": 1.5484706225956328,
-      "drawdown": -0.10011626474945723,
+      "netReturn": 0.011887056445455846,
+      "cumulativeWealth": 1.5484704619558516,
+      "drawdown": -0.10011619179542097,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4553,9 +4553,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.001807473176005825,
-      "cumulativeWealth": 1.5456718034814583,
-      "drawdown": -0.10174278046244656,
+      "netReturn": -0.001807403233521243,
+      "cumulativeWealth": 1.5456717514359004,
+      "drawdown": -0.10174264470016336,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4563,9 +4563,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03740710994556995,
-      "cumulativeWealth": 1.6034909185740567,
-      "drawdown": -0.0681415738918032,
+      "netReturn": 0.03740684078604284,
+      "cumulativeWealth": 1.603490448549347,
+      "drawdown": -0.06814167482557054,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4573,9 +4573,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.019578518811098844,
-      "cumulativeWealth": 1.634884895686785,
-      "drawdown": -0.049897166166962936,
+      "netReturn": 0.01957866871952385,
+      "cumulativeWealth": 1.6348846568364155,
+      "drawdown": -0.049897129383450034,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4583,9 +4583,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.012276383506576338,
-      "cumulativeWealth": 1.614814421718225,
-      "drawdown": -0.06156099292578232,
+      "netReturn": -0.012276366746759249,
+      "cumulativeWealth": 1.614814213200442,
+      "drawdown": -0.06156094067028761,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4593,9 +4593,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.038819220802515764,
-      "cumulativeWealth": 1.5521285841264585,
-      "drawdown": -0.0979904639510899,
+      "netReturn": -0.03881911660716697,
+      "cumulativeWealth": 1.5521285519593033,
+      "drawdown": -0.09799031594312779,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4603,9 +4603,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.01930774232057242,
-      "cumulativeWealth": 1.52216048537575,
-      "drawdown": -0.11540623164382136,
+      "netReturn": -0.019307884213268012,
+      "cumulativeWealth": 1.5221602335939657,
+      "drawdown": -0.11540621448214439,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4613,9 +4613,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.07317807736741377,
-      "cumulativeWealth": 1.6335492631401967,
-      "drawdown": -0.0506733604243208,
+      "netReturn": 0.07317805414227552,
+      "cumulativeWealth": 1.6335489575811237,
+      "drawdown": -0.05067336255159827,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4623,9 +4623,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.04099496776691325,
-      "cumulativeWealth": 1.7005165625282939,
-      "drawdown": -0.01175574543464375,
+      "netReturn": 0.04099507305345407,
+      "cumulativeWealth": 1.7005164164335556,
+      "drawdown": -0.011755647697811233,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4633,9 +4633,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.008951340261052154,
-      "cumulativeWealth": 1.7157384648990395,
-      "drawdown": -0.0029096348509993764,
+      "netReturn": 0.008951402763826888,
+      "cumulativeWealth": 1.7157384237835518,
+      "drawdown": -0.002909474471277096,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4643,8 +4643,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.02541365192405487,
-      "cumulativeWealth": 1.7593416450386958,
+      "netReturn": 0.025413796427153024,
+      "cumulativeWealth": 1.7593418508078313,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4653,8 +4653,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.023231394602213795,
-      "cumulativeWealth": 1.8002136050346977,
+      "netReturn": 0.023231044131940104,
+      "cumulativeWealth": 1.8002131989871173,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4663,9 +4663,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.034104973575615816,
-      "cumulativeWealth": 1.7388173676045253,
-      "drawdown": -0.034104973575615816,
+      "netReturn": -0.03410470376858177,
+      "cumulativeWealth": 1.7388174611153706,
+      "drawdown": -0.03410470376858188,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4673,8 +4673,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.03702614533071502,
-      "cumulativeWealth": 1.8031990721610218,
+      "netReturn": 0.037026151641393446,
+      "cumulativeWealth": 1.803199180107331,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4683,8 +4683,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.024710038012467184,
-      "cumulativeWealth": 1.8477561897781662,
+      "netReturn": 0.024710071877247497,
+      "cumulativeWealth": 1.847756361456777,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4693,8 +4693,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.016942164482432576,
-      "cumulativeWealth": 1.8790611790688208,
+      "netReturn": 0.016942059131002773,
+      "cumulativeWealth": 1.8790611589922641,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4703,8 +4703,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.019865107367463386,
-      "cumulativeWealth": 1.9163889311410551,
+      "netReturn": 0.01986514203607137,
+      "cumulativeWealth": 1.9163889758101103,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4713,8 +4713,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.017934123916443667,
-      "cumulativeWealth": 1.9507576877042399,
+      "netReturn": 0.017934156065478657,
+      "cumulativeWealth": 1.9507577947844517,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4723,9 +4723,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.01542909270787396,
-      "cumulativeWealth": 1.9206592664900533,
-      "drawdown": -0.01542909270787396,
+      "netReturn": -0.015429220625117313,
+      "cumulativeWealth": 1.920659122382555,
+      "drawdown": -0.015429220625117313,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4733,8 +4733,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.040224130235992694,
-      "cumulativeWealth": 1.9979161149643154,
+      "netReturn": 0.040223998008780404,
+      "cumulativeWealth": 1.9979157110968169,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4743,9 +4743,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.02244642021348664,
-      "cumulativeWealth": 1.9530700502965297,
-      "drawdown": -0.02244642021348664,
+      "netReturn": -0.02244632393264323,
+      "cumulativeWealth": 1.9530698478554205,
+      "drawdown": -0.02244632393264323,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4753,9 +4753,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01817782482540231,
-      "cumulativeWealth": 1.9885726155425596,
-      "drawdown": -0.004676622482682524,
+      "netReturn": 0.018177889913199463,
+      "cumulativeWealth": 1.9885725365425255,
+      "drawdown": -0.004676460824847406,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4763,9 +4763,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.001332624778287439,
-      "cumulativeWealth": 1.9912226366834556,
-      "drawdown": -0.003350229887394196,
+      "netReturn": 0.0013325570958877542,
+      "cumulativeWealth": 1.9912224229867828,
+      "drawdown": -0.0033501353800153844,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4773,9 +4773,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.033536762237211915,
-      "cumulativeWealth": 1.9244434765556484,
-      "drawdown": -0.036774636261432514,
+      "netReturn": -0.03353657140069077,
+      "cumulativeWealth": 1.92444365002363,
+      "drawdown": -0.03677435472633239,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4783,9 +4783,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.003477851538346899,
-      "cumulativeWealth": 1.9177505478502477,
-      "drawdown": -0.040124591074485405,
+      "netReturn": -0.0034780160457017484,
+      "cumulativeWealth": 1.9177504041297988,
+      "drawdown": -0.04012446897622568,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4793,9 +4793,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.035279410513615606,
-      "cumulativeWealth": 1.9854076566905678,
-      "drawdown": -0.006260752481077492,
+      "netReturn": 0.03527941227642706,
+      "cumulativeWealth": 1.9854075112803786,
+      "drawdown": -0.006260624383183533,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4803,8 +4803,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.036653163002451805,
-      "cumulativeWealth": 2.058179127157563,
+      "netReturn": 0.03665316331454549,
+      "cumulativeWealth": 2.058178977037264,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4813,8 +4813,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.012763130339157547,
-      "cumulativeWealth": 2.0844479356188086,
+      "netReturn": 0.01276319026772299,
+      "cumulativeWealth": 2.084447906926218,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4823,8 +4823,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01707300705893755,
-      "cumulativeWealth": 2.1200357299376162,
+      "netReturn": 0.017072947277527506,
+      "cumulativeWealth": 2.120035576143922,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4833,8 +4833,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-09",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.025879398329060166,
-      "cumulativeWealth": 2.1749009790645117,
+      "netReturn": 0.025879366293793282,
+      "cumulativeWealth": 2.1749007533748235,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4843,8 +4843,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-10",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01676419804680629,
-      "cumulativeWealth": 2.211361449809742,
+      "netReturn": 0.016764285347301344,
+      "cumulativeWealth": 2.2113614102064596,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4853,8 +4853,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-11",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0035929190645784814,
-      "cumulativeWealth": 2.2193066925214375,
+      "netReturn": 0.003592833337731749,
+      "cumulativeWealth": 2.2193064632028228,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4863,9 +4863,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-12",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.000637446237385042,
-      "cumulativeWealth": 2.2178920038206864,
-      "drawdown": -0.000637446237385042,
+      "netReturn": -0.0006373837347118938,
+      "cumulativeWealth": 2.217891913360836,
+      "drawdown": -0.0006373837347120048,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4873,8 +4873,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-01",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.009843865930270868,
-      "cumulativeWealth": 2.239724635354117,
+      "netReturn": 0.009843803086639902,
+      "cumulativeWealth": 2.239724404623411,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4883,8 +4883,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-02",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0012072962140143861,
-      "cumulativeWealth": 2.242428646426815,
+      "netReturn": 0.00120732801848078,
+      "cumulativeWealth": 2.242428486650788,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4893,9 +4893,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-03",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.036805928883673955,
-      "cumulativeWealth": 2.1598939771397165,
-      "drawdown": -0.036805928883673955,
+      "netReturn": -0.03680589807189605,
+      "cumulativeWealth": 2.1598938923376028,
+      "drawdown": -0.03680589807189616,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4903,8 +4903,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-04",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.0637067667189748,
-      "cumulativeWealth": 2.2974938388790753,
+      "netReturn": 0.0637067666660176,
+      "cumulativeWealth": 2.297493748560111,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4913,8 +4913,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-05",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.032749930795649806,
-      "cumulativeWealth": 2.372736603105797,
+      "netReturn": 0.03274986805979663,
+      "cumulativeWealth": 2.372736365693662,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4923,9 +4923,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-06",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.005158589337513786,
-      "cumulativeWealth": 2.360496629364287,
-      "drawdown": -0.005158589337513786,
+      "netReturn": -0.005158558027863913,
+      "cumulativeWealth": 2.3604964674664086,
+      "drawdown": -0.005158558027863913,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4933,9 +4933,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-07",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": -0.004977150316338053,
-      "cumulativeWealth": 2.3487480828187315,
-      "drawdown": -0.01011006457929875,
+      "netReturn": -0.004977119165288424,
+      "cumulativeWealth": 2.348747995258586,
+      "drawdown": -0.010110002435126497,
       "seriesRole": "REFERENCE"
     },
     {
@@ -4943,8 +4943,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-08",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "netReturn": 0.01763789645151026,
-      "cumulativeWealth": 2.3901750582941714,
+      "netReturn": 0.01763786476833329,
+      "cumulativeWealth": 2.390174894773851,
       "drawdown": 0.0,
       "seriesRole": "REFERENCE"
     },
@@ -4953,8 +4953,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00015342945603546987,
-      "cumulativeWealth": 1.0001534294560355,
+      "netReturn": 0.00015259496976893772,
+      "cumulativeWealth": 1.000152594969769,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -4963,8 +4963,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0010281638041498287,
-      "cumulativeWealth": 1.0011817510107985,
+      "netReturn": 0.0010291028148587955,
+      "cumulativeWealth": 1.0011818548205407,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -4973,8 +4973,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.000328582807972877,
-      "cumulativeWealth": 1.001510722121837,
+      "netReturn": 0.0003275408402487745,
+      "cumulativeWealth": 1.0015097827665105,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -4983,8 +4983,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0011378936282953056,
-      "cumulativeWealth": 1.0026503347912088,
+      "netReturn": 0.0011383108030065259,
+      "cumulativeWealth": 1.0026498121715504,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -4993,8 +4993,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0007216361218767009,
-      "cumulativeWealth": 1.0033738834904058,
+      "netReturn": 0.0007218442512060275,
+      "cumulativeWealth": 1.0033735691744392,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5003,8 +5003,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0007000134617971554,
-      "cumulativeWealth": 1.0040762587160648,
+      "netReturn": 0.0007000133890298077,
+      "cumulativeWealth": 1.00407594410706,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5013,8 +5013,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0005471327263797399,
-      "cumulativeWealth": 1.0046256216969893,
+      "netReturn": 0.0005470287901683246,
+      "cumulativeWealth": 1.0046252025560019,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5023,8 +5023,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2017-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.000744200262961181,
-      "cumulativeWealth": 1.0053732643488338,
+      "netReturn": 0.0007436811500538543,
+      "cumulativeWealth": 1.0053723233820118,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5033,8 +5033,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0013126902171431976,
-      "cumulativeWealth": 1.0066930079975218,
+      "netReturn": 0.0013130021343541465,
+      "cumulativeWealth": 1.006692379388433,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5043,8 +5043,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0008308435139030568,
-      "cumulativeWealth": 1.0075294123537082,
+      "netReturn": 0.0008313617330120149,
+      "cumulativeWealth": 1.0075293049095715,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5053,8 +5053,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.001301288575907611,
-      "cumulativeWealth": 1.008840498867895,
+      "netReturn": 0.0013008740784741235,
+      "cumulativeWealth": 1.0088399736656315,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5063,8 +5063,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0010391609956184045,
-      "cumulativeWealth": 1.0098888465651188,
+      "netReturn": 0.001039264491883296,
+      "cumulativeWealth": 1.0098884252282547,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5073,8 +5073,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0014985111456737865,
-      "cumulativeWealth": 1.0114021762575882,
+      "netReturn": 0.001498924271635893,
+      "cumulativeWealth": 1.0114021715004735,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5083,8 +5083,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.001486678163258981,
-      "cumulativeWealth": 1.012905805787303,
+      "netReturn": 0.0014862650423490553,
+      "cumulativeWealth": 1.0129053831917305,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5093,8 +5093,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0013891174336604362,
-      "cumulativeWealth": 1.0143128509007782,
+      "netReturn": 0.0013889114859317875,
+      "cumulativeWealth": 1.0143122191126077,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5103,8 +5103,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0015856543322925187,
-      "cumulativeWealth": 1.015921200467109,
+      "netReturn": 0.0015859631515249273,
+      "cumulativeWealth": 1.0159208809162619,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5113,8 +5113,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.001399778565174259,
-      "cumulativeWealth": 1.017343265187429,
+      "netReturn": 0.0013996757532479531,
+      "cumulativeWealth": 1.0173428407404987,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5123,8 +5123,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0017057036342760235,
-      "cumulativeWealth": 1.0190785512921654,
+      "netReturn": 0.001706113733123571,
+      "cumulativeWealth": 1.019078543332381,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5133,8 +5133,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0018592925169873542,
-      "cumulativeWealth": 1.0209733164168053,
+      "netReturn": 0.0018588823554275269,
+      "cumulativeWealth": 1.0209728904553763,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5143,8 +5143,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2018-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 7.688595989940872e-05,
-      "cumulativeWealth": 1.0210518149302696,
+      "netReturn": 7.668168418284438e-05,
+      "cumulativeWealth": 1.0210511803761215,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5153,8 +5153,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0017492582936806667,
-      "cumulativeWealth": 1.0228378982858142,
+      "netReturn": 0.0017489521939813013,
+      "cumulativeWealth": 1.0228369500782075,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5163,8 +5163,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0018482030409232575,
-      "cumulativeWealth": 1.0247283103997975,
+      "netReturn": 0.0018486106001531777,
+      "cumulativeWealth": 1.0247277773063503,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5173,8 +5173,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0017498916859517433,
-      "cumulativeWealth": 1.0265214739505255,
+      "netReturn": 0.0017493832908241913,
+      "cumulativeWealth": 1.0265204189576136,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5183,8 +5183,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0019248453236611063,
-      "cumulativeWealth": 1.028497369009297,
+      "netReturn": 0.0019253530616936132,
+      "cumulativeWealth": 1.0284968331891446,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5193,8 +5193,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.002122100018515649,
-      "cumulativeWealth": 1.0306799432951148,
+      "netReturn": 0.0021214921755552396,
+      "cumulativeWealth": 1.0306787811733387,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5203,8 +5203,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0018151487946203027,
-      "cumulativeWealth": 1.0325507807518262,
+      "netReturn": 0.0018159576979643877,
+      "cumulativeWealth": 1.032550450240139,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5213,8 +5213,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0018044988136891593,
-      "cumulativeWealth": 1.0344140174107666,
+      "netReturn": 0.0018043972477244097,
+      "cumulativeWealth": 1.034413581430689,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5223,8 +5223,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0016951564886815707,
-      "cumulativeWealth": 1.0361675110443636,
+      "netReturn": 0.0016946526943377727,
+      "cumulativeWealth": 1.03616655319352,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5233,8 +5233,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0016182294796915908,
-      "cumulativeWealth": 1.0378442678566342,
+      "netReturn": 0.001618631749721322,
+      "cumulativeWealth": 1.0378437252745183,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5243,8 +5243,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0016069871939632385,
-      "cumulativeWealth": 1.039512070304408,
+      "netReturn": 0.0016070871953404176,
+      "cumulativeWealth": 1.0395116306361714,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5253,8 +5253,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0010827606771375287,
-      "cumulativeWealth": 1.0406376130975434,
+      "netReturn": 0.0010823597004001595,
+      "cumulativeWealth": 1.0406367561332692,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5263,8 +5263,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2019-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0011160083361450024,
-      "cumulativeWealth": 1.0417989733486663,
+      "netReturn": 0.0011156082296068792,
+      "cumulativeWealth": 1.041797699062443,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5273,8 +5273,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0012028140351554306,
-      "cumulativeWealth": 1.0430520637756207,
+      "netReturn": 0.0012032144084304086,
+      "cumulativeWealth": 1.0430512050646246,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5283,8 +5283,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0011816040706997821,
-      "cumulativeWealth": 1.0442845383401298,
+      "netReturn": 0.0011812048968744548,
+      "cumulativeWealth": 1.0442832622557376,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5293,8 +5293,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0020446529389337442,
-      "cumulativeWealth": 1.04641973779053,
+      "netReturn": 0.002045152484104751,
+      "cumulativeWealth": 1.046418980763649,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5303,9 +5303,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00019661531119830045,
-      "cumulativeWealth": 1.0462139956481402,
-      "drawdown": -0.00019661531119830045,
+      "netReturn": -0.00019611780281969526,
+      "cumulativeWealth": 1.0462137593723129,
+      "drawdown": -0.00019611780281969526,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5313,9 +5313,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00017485882414047804,
-      "cumulativeWealth": 1.046031055899062,
-      "drawdown": -0.0003714397554166471,
+      "netReturn": -0.00017525682190377978,
+      "cumulativeWealth": 1.0460304032738132,
+      "drawdown": -0.0003713402537406374,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5323,9 +5323,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -2.220446049250313e-16,
-      "cumulativeWealth": 1.0460310558990618,
-      "drawdown": -0.0003714397554167581,
+      "netReturn": 0.0,
+      "cumulativeWealth": 1.0460304032738132,
+      "drawdown": -0.0003713402537406374,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5333,9 +5333,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00010939297450240915,
-      "cumulativeWealth": 1.0461454843476885,
-      "drawdown": -0.00026208741381406053,
+      "netReturn": 0.00010909434769823534,
+      "cumulativeWealth": 1.046144519278331,
+      "drawdown": -0.0002622864171650807,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5344,8 +5344,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
       "netReturn": 0.0,
-      "cumulativeWealth": 1.0461454843476885,
-      "drawdown": -0.00026208741381406053,
+      "cumulativeWealth": 1.046144519278331,
+      "drawdown": -0.0002622864171650807,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5353,9 +5353,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00021866249021629258,
-      "cumulativeWealth": 1.0459167315709526,
-      "drawdown": -0.00048069259534377906,
+      "netReturn": -0.0002183639504007573,
+      "cumulativeWealth": 1.0459160790284112,
+      "drawdown": -0.00048059309366765834,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5363,9 +5363,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00010930538221476382,
-      "cumulativeWealth": 1.0460310558990618,
-      "drawdown": -0.0003714397554167581,
+      "netReturn": 0.00010930537133369,
+      "cumulativeWealth": 1.0460304032738132,
+      "drawdown": -0.0003713402537406374,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5373,9 +5373,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010929343585397433,
-      "cumulativeWealth": 1.0459167315709526,
-      "drawdown": -0.00048069259534377906,
+      "netReturn": -0.00010929342497523198,
+      "cumulativeWealth": 1.0459160790284112,
+      "drawdown": -0.00048059309366765834,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5383,9 +5383,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2020-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 3.305044343937524e-05,
-      "cumulativeWealth": 1.0459512995827316,
-      "drawdown": -0.0004476580390078144,
+      "netReturn": 3.26522420741604e-05,
+      "cumulativeWealth": 1.045950230533413,
+      "drawdown": -0.00044795654403551044,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5393,9 +5393,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 1.1102230246251565e-15,
-      "cumulativeWealth": 1.0459512995827327,
-      "drawdown": -0.0004476580390068152,
+      "netReturn": 0.0,
+      "cumulativeWealth": 1.045950230533413,
+      "drawdown": -0.00044795654403551044,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5403,9 +5403,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010930176974199846,
-      "cumulativeWealth": 1.0458369752546244,
-      "drawdown": -0.000556910878932837,
+      "netReturn": -0.00010910270984842985,
+      "cumulativeWealth": 1.0458361145288952,
+      "drawdown": -0.0005570103806110671,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5413,9 +5413,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010921416080444946,
-      "cumulativeWealth": 1.0457227550470336,
-      "drawdown": -0.0006660642171830711,
+      "netReturn": -0.00010901505741733875,
+      "cumulativeWealth": 1.0457221026448207,
+      "drawdown": -0.0006659647155098369,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5424,8 +5424,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
       "netReturn": 2.220446049250313e-16,
-      "cumulativeWealth": 1.0457227550470338,
-      "drawdown": -0.000666064217182849,
+      "cumulativeWealth": 1.045722102644821,
+      "drawdown": -0.0006659647155096149,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5433,9 +5433,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010912652184724703,
-      "cumulativeWealth": 1.045608638959959,
-      "drawdown": -0.0007751180537587388,
+      "netReturn": -0.00010932564695087521,
+      "cumulativeWealth": 1.0456077783994184,
+      "drawdown": -0.0007752175554370799,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5443,9 +5443,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00021887433665535028,
-      "cumulativeWealth": 1.0453797820627055,
-      "drawdown": -0.000993822736964245,
+      "netReturn": -0.00021907351619177007,
+      "cumulativeWealth": 1.045378713426847,
+      "drawdown": -0.0009941212419931622,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5453,9 +5453,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010926192523685874,
-      "cumulativeWealth": 1.0452655618551137,
-      "drawdown": -0.0011029760752155893,
+      "netReturn": -0.00010916235719360401,
+      "cumulativeWealth": 1.0452645974223294,
+      "drawdown": -0.0011031750785686079,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5463,9 +5463,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010937347625428195,
-      "cumulativeWealth": 1.0451512375270047,
-      "drawdown": -0.0012122289151422772,
+      "netReturn": -0.00010957272117395611,
+      "cumulativeWealth": 1.045150064936043,
+      "drawdown": -0.0012126269218473151,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5473,9 +5473,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00010938544012062401,
-      "cumulativeWealth": 1.045265561855114,
-      "drawdown": -0.0011029760752151452,
+      "netReturn": 0.00010958472866962055,
+      "cumulativeWealth": 1.045264597422328,
+      "drawdown": -0.0011031750785699401,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5483,9 +5483,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010937347625428195,
-      "cumulativeWealth": 1.0451512375270051,
-      "drawdown": -0.001212228915141944,
+      "netReturn": -0.00010957272117373407,
+      "cumulativeWealth": 1.045150064936042,
+      "drawdown": -0.0012126269218483143,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5493,9 +5493,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00021877088024091496,
-      "cumulativeWealth": 1.0449225888707865,
-      "drawdown": -0.001430734594995986,
+      "netReturn": -0.00021827285501496707,
+      "cumulativeWealth": 1.0449219370474492,
+      "drawdown": -0.001430635093323085,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5503,9 +5503,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2021-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0,
-      "cumulativeWealth": 1.0449225888707865,
-      "drawdown": -0.001430734594995986,
+      "netReturn": 4.440892098500626e-16,
+      "cumulativeWealth": 1.0449219370474496,
+      "drawdown": -0.0014306350933226408,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5513,9 +5513,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 4.440892098500626e-16,
-      "cumulativeWealth": 1.044922588870787,
-      "drawdown": -0.001430734594995542,
+      "netReturn": 6.661338147750939e-16,
+      "cumulativeWealth": 1.0449219370474503,
+      "drawdown": -0.0014306350933219747,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5523,9 +5523,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.000218519818691143,
-      "cumulativeWealth": 1.0446942525761207,
-      "drawdown": -0.0016489417698223319,
+      "netReturn": -0.0002189183738375844,
+      "cumulativeWealth": 1.0446931844362046,
+      "drawdown": -0.0016492402748514712,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5533,9 +5533,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.000459659680411173,
-      "cumulativeWealth": 1.0451744564023873,
-      "drawdown": -0.0011900400414580625,
+      "netReturn": 0.000459460485750407,
+      "cumulativeWealth": 1.0451731796741859,
+      "drawdown": -0.0011905375498387771,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5543,9 +5543,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.00010958225054380488,
-      "cumulativeWealth": 1.0450599238332439,
-      "drawdown": -0.0012994918847357706,
+      "netReturn": -0.00010938306457286551,
+      "cumulativeWealth": 1.0450588554287839,
+      "drawdown": -0.001299790389765909,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5553,9 +5553,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00032798573122594377,
-      "cumulativeWealth": 1.0454026885765373,
-      "drawdown": -0.000971932368305839,
+      "netReturn": 0.00032828472278456644,
+      "cumulativeWealth": 1.0454019322854318,
+      "drawdown": -0.0009719323683091696,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5563,9 +5563,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0007768681338058414,
-      "cumulativeWealth": 1.0462148286122874,
-      "drawdown": -0.00019581929778500484,
+      "netReturn": 0.0007767685353263776,
+      "cumulativeWealth": 1.0462139676132005,
+      "drawdown": -0.00019591879946490032,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5573,8 +5573,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0003607642190368576,
-      "cumulativeWealth": 1.0465922654878765,
+      "netReturn": 0.00036076425493947184,
+      "cumulativeWealth": 1.0465914042157338,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5583,8 +5583,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.001937276723958048,
-      "cumulativeWealth": 1.0486198043232806,
+      "netReturn": 0.0019374758872536813,
+      "cumulativeWealth": 1.0486191498252089,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5593,8 +5593,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.002067377789286562,
-      "cumulativeWealth": 1.0507876976161445,
+      "netReturn": 0.0020676754627275695,
+      "cumulativeWealth": 1.0507873539110486,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5603,8 +5603,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0015857062694901725,
-      "cumulativeWealth": 1.0524539382561575,
+      "netReturn": 0.001585408376921782,
+      "cumulativeWealth": 1.0524532809843026,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5613,8 +5613,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0031515518939584375,
-      "cumulativeWealth": 1.0557708014585727,
+      "netReturn": 0.0031517494445258976,
+      "cumulativeWealth": 1.0557703500280342,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5623,8 +5623,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2022-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0036259755034864227,
-      "cumulativeWealth": 1.0595990005219578,
+      "netReturn": 0.00362557994929924,
+      "cumulativeWealth": 1.0595981298401604,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5633,8 +5633,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.002842484945206225,
-      "cumulativeWealth": 1.062610894728897,
+      "netReturn": 0.002842583488606998,
+      "cumulativeWealth": 1.062610125988603,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5643,8 +5643,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0034576162505517427,
-      "cumulativeWealth": 1.066284995426525,
+      "netReturn": 0.0034578122216597507,
+      "cumulativeWealth": 1.0662844322691056,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5653,8 +5653,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0039909683481076375,
-      "cumulativeWealth": 1.0705405050933343,
+      "netReturn": 0.003990967568688442,
+      "cumulativeWealth": 1.070539938857289,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5663,8 +5663,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003630609748697111,
-      "cumulativeWealth": 1.0744272198875013,
+      "netReturn": 0.0036305117827268862,
+      "cumulativeWealth": 1.07442654671919,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5673,8 +5673,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003751499771345479,
-      "cumulativeWealth": 1.0784579333572366,
+      "netReturn": 0.003751402499875711,
+      "cumulativeWealth": 1.0784571531524851,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5683,8 +5683,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004606293720134547,
-      "cumulativeWealth": 1.0834256273630893,
+      "netReturn": 0.004606197174396254,
+      "cumulativeWealth": 1.0834247394440435,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5693,8 +5693,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0038600754831863426,
-      "cumulativeWealth": 1.0876077320651294,
+      "netReturn": 0.0038602680602899397,
+      "cumulativeWealth": 1.0876070493614474,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5703,8 +5703,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004967133724985251,
-      "cumulativeWealth": 1.0930100251106247,
+      "netReturn": 0.004967133249464295,
+      "cumulativeWealth": 1.0930093384986823,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5713,8 +5713,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003990837097466615,
-      "cumulativeWealth": 1.0973720500667392,
+      "netReturn": 0.003990931977638779,
+      "cumulativeWealth": 1.0973714644195545,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5723,8 +5723,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004309621354680493,
-      "cumulativeWealth": 1.1021013080877364,
+      "netReturn": 0.00430952565519771,
+      "cumulativeWealth": 1.1021006148987524,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5733,8 +5733,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004681685977578454,
-      "cumulativeWealth": 1.1072610003276817,
+      "netReturn": 0.004681874484346205,
+      "cumulativeWealth": 1.1072605116468293,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5743,9 +5743,9 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2023-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": -0.0003382896407464475,
-      "cumulativeWealth": 1.1068864254016684,
-      "drawdown": -0.0003382896407463365,
+      "netReturn": -0.00033932098930766763,
+      "cumulativeWealth": 1.106884794914596,
+      "drawdown": -0.00033932098930766763,
       "seriesRole": "CASH_COMPARATOR"
     },
     {
@@ -5753,8 +5753,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004267086346512627,
-      "cumulativeWealth": 1.11160960535464,
+      "netReturn": 0.004267462880207962,
+      "cumulativeWealth": 1.1116083846895606,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5763,8 +5763,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0044433529604657185,
-      "cumulativeWealth": 1.1165488791854747,
+      "netReturn": 0.004443260138634608,
+      "cumulativeWealth": 1.1165475499150237,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5773,8 +5773,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004101598831757869,
-      "cumulativeWealth": 1.1211285147639425,
+      "netReturn": 0.004101785240552935,
+      "cumulativeWealth": 1.1211273881756407,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5783,8 +5783,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0043220569859232505,
-      "cumulativeWealth": 1.1259740960932958,
+      "netReturn": 0.004322056985922806,
+      "cumulativeWealth": 1.1259729646358148,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5793,8 +5793,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0045730618472508144,
-      "cumulativeWealth": 1.1311232452731328,
+      "netReturn": 0.004573061847251481,
+      "cumulativeWealth": 1.1311221086414274,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5803,8 +5803,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003992674187341061,
-      "cumulativeWealth": 1.1356394518572364,
+      "netReturn": 0.003992582559706248,
+      "cumulativeWealth": 1.1356382070452873,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5813,8 +5813,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004508404569624425,
-      "cumulativeWealth": 1.1407593739514352,
+      "netReturn": 0.00450849624433447,
+      "cumulativeWealth": 1.1407582276366737,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5823,8 +5823,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004617273113235676,
-      "cumulativeWealth": 1.1460265715374527,
+      "netReturn": 0.004617182259589958,
+      "cumulativeWealth": 1.146025316287799,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5833,8 +5833,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004221917834482891,
-      "cumulativeWealth": 1.150865001558618,
+      "netReturn": 0.004222099088467823,
+      "cumulativeWealth": 1.1508639487310586,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5843,8 +5843,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003947959234950282,
-      "cumulativeWealth": 1.1554085696697023,
+      "netReturn": 0.003947958879413571,
+      "cumulativeWealth": 1.1554075122764482,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5853,8 +5853,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003707551907924378,
-      "cumulativeWealth": 1.1596923069166134,
+      "netReturn": 0.0037074618736283593,
+      "cumulativeWealth": 1.159691141576717,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5863,8 +5863,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2024-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.004031229944727599,
-      "cumulativeWealth": 1.164367293270926,
+      "netReturn": 0.004031051203957858,
+      "cumulativeWealth": 1.164365915949189,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5873,8 +5873,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003500023499051652,
-      "cumulativeWealth": 1.1684426061589013,
+      "netReturn": 0.003500024122136791,
+      "cumulativeWealth": 1.168441224742005,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5883,8 +5883,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003237412847840737,
-      "cumulativeWealth": 1.1722253372640445,
+      "netReturn": 0.003237768226638238,
+      "cumulativeWealth": 1.172224366614169,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5893,8 +5893,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003270200697327752,
-      "cumulativeWealth": 1.1760587493793906,
+      "netReturn": 0.0032700232893565495,
+      "cumulativeWealth": 1.1760575675933485,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5903,8 +5903,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003402218430425208,
-      "cumulativeWealth": 1.1800599581317919,
+      "netReturn": 0.0034024828104508575,
+      "cumulativeWealth": 1.1800590832511855,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5913,8 +5913,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-05",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0036323848743546883,
-      "cumulativeWealth": 1.1843463900745415,
+      "netReturn": 0.0036320326059104957,
+      "cumulativeWealth": 1.1843450963184545,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5923,8 +5923,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-06",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00334690730048659,
-      "cumulativeWealth": 1.1883102876537868,
+      "netReturn": 0.003346907593374082,
+      "cumulativeWealth": 1.188308989914498,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5933,8 +5933,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0035657369683970153,
-      "cumulativeWealth": 1.1925474895764003,
+      "netReturn": 0.003565824497485437,
+      "cumulativeWealth": 1.1925462912213174,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5943,8 +5943,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-08",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003707677339427118,
-      "cumulativeWealth": 1.1969690708796934,
+      "netReturn": 0.003707677339427784,
+      "cumulativeWealth": 1.1969678680814972,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5953,8 +5953,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-09",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003302347542314399,
-      "cumulativeWealth": 1.2009218787491394,
+      "netReturn": 0.0033025207166266224,
+      "cumulativeWealth": 1.2009208792629729,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5963,8 +5963,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-10",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0035105991130213177,
-      "cumulativeWealth": 1.205137834031484,
+      "netReturn": 0.003510598507076912,
+      "cumulativeWealth": 1.205136830308831,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5973,8 +5973,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-11",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.00287576215566121,
-      "cumulativeWealth": 1.2086035238069472,
+      "netReturn": 0.0028755036603420603,
+      "cumulativeWealth": 1.2086022056755972,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5983,8 +5983,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2025-12",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003351938156535894,
-      "cumulativeWealth": 1.2126546880745195,
+      "netReturn": 0.0033520241976203735,
+      "cumulativeWealth": 1.2126534695143192,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -5993,8 +5993,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-01",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.002954855991687877,
-      "cumulativeWealth": 1.2162379080454249,
+      "netReturn": 0.0029547705245311917,
+      "cumulativeWealth": 1.2162365822425105,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6003,8 +6003,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-02",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0026702232148103633,
-      "cumulativeWealth": 1.2194855347422202,
+      "netReturn": 0.002670223442354569,
+      "cumulativeWealth": 1.2194842056758637,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6013,8 +6013,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-03",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.0028781328112321702,
-      "cumulativeWealth": 1.222995376072585,
+      "netReturn": 0.0028782180442665783,
+      "cumulativeWealth": 1.2229941471213381,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6023,8 +6023,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-04",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.002889109940243495,
-      "cumulativeWealth": 1.226528744170468,
+      "netReturn": 0.002889109940243939,
+      "cumulativeWealth": 1.2265275116686465,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6034,7 +6034,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
       "netReturn": 0.003174003356017474,
-      "cumulativeWealth": 1.230421750520717,
+      "cumulativeWealth": 1.2304205141069304,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6044,7 +6044,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
       "netReturn": 0.002724433002230686,
-      "cumulativeWealth": 1.233773952144498,
+      "cumulativeWealth": 1.233772712362185,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6053,8 +6053,8 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "holdingMonth": "2026-07",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "netReturn": 0.003370919035780018,
-      "cumulativeWealth": 1.2379329042456313,
+      "netReturn": 0.00337091903578024,
+      "cumulativeWealth": 1.237931660284113,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6064,7 +6064,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
       "netReturn": 0.0027678474251318086,
-      "cumulativeWealth": 1.2413593136471335,
+      "cumulativeWealth": 1.2413580662425197,
       "drawdown": 0.0,
       "seriesRole": "CASH_COMPARATOR"
     }
@@ -6121,13 +6121,13 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "months": 112,
       "startHoldingMonth": "2017-05",
       "endHoldingMonth": "2026-08",
-      "cagr": 0.0978576700655549,
-      "annVol": 0.11483081497503965,
-      "sharpeRf0": 0.872440718787112,
-      "maxDrawdown": -0.21630695943326417,
-      "calmar": 0.452401856703766,
-      "cumulativeReturn": 1.390175058294183,
-      "terminalWealth": 2.390175058294183,
+      "cagr": 0.09785766201823409,
+      "annVol": 0.11483080243222914,
+      "sharpeRf0": 0.8724407398278967,
+      "maxDrawdown": -0.2163070448009018,
+      "calmar": 0.45240164095582946,
+      "cumulativeReturn": 1.3901748947738577,
+      "terminalWealth": 2.3901748947738577,
       "seriesRole": "REFERENCE"
     },
     {
@@ -6136,13 +6136,13 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "months": 112,
       "startHoldingMonth": "2017-05",
       "endHoldingMonth": "2026-08",
-      "cagr": 0.023435428995314034,
-      "annVol": 0.0029682924852900486,
-      "sharpeRf0": 7.822632704032808,
-      "maxDrawdown": -0.004474473916887045,
-      "calmar": 5.237583105997497,
-      "cumulativeReturn": 0.24135931364712548,
-      "terminalWealth": 1.2413593136471255,
+      "cagr": 0.023435318807466077,
+      "annVol": 0.0029682756014647468,
+      "sharpeRf0": 7.822640830578833,
+      "maxDrawdown": -0.004474473916887156,
+      "calmar": 5.237558480119553,
+      "cumulativeReturn": 0.241358066242519,
+      "terminalWealth": 1.241358066242519,
       "seriesRole": "CASH_COMPARATOR"
     }
   ],
@@ -6391,7 +6391,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2017",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.08858892325893475,
+      "annualReturn": 0.08858864492079288,
       "monthsObserved": 8,
       "seriesRole": "REFERENCE"
     },
@@ -6399,7 +6399,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2018",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": -0.02331269519905621,
+      "annualReturn": -0.02331272446738275,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6407,7 +6407,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2019",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.2193149056919157,
+      "annualReturn": 0.21931474293377695,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6415,7 +6415,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2020",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.14655362418036555,
+      "annualReturn": 0.14655377734283026,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6423,7 +6423,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2021",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.15767554717461407,
+      "annualReturn": 0.1576756637998069,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6431,7 +6431,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2022",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": -0.15911354000550826,
+      "annualReturn": -0.15911354904118125,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6439,7 +6439,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2023",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.17524101240948697,
+      "annualReturn": 0.17524114126865253,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6447,7 +6447,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2024",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.148515747116714,
+      "annualReturn": 0.1485157267411379,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6455,7 +6455,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2025",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.13559265500177453,
+      "annualReturn": 0.13559272639235398,
       "monthsObserved": 12,
       "seriesRole": "REFERENCE"
     },
@@ -6463,7 +6463,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2026",
       "seriesId": "SPY_AGG_60_40",
       "displayName": "60/40",
-      "annualReturn": 0.07767873917066215,
+      "annualReturn": 0.07767870939749688,
       "monthsObserved": 8,
       "seriesRole": "REFERENCE"
     },
@@ -6471,7 +6471,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2017",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.005373264348833784,
+      "annualReturn": 0.005372323382011768,
       "monthsObserved": 8,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6479,7 +6479,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2018",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.015594755835873775,
+      "annualReturn": 0.015595075206931153,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6487,7 +6487,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2019",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.02031939820783113,
+      "annualReturn": 0.020318784293142933,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6495,7 +6495,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2020",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.003985726939927936,
+      "annualReturn": 0.003985928817761275,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6503,7 +6503,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2021",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": -0.000983516835205811,
+      "annualReturn": -0.000983118943851502,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6511,7 +6511,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2022",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.014045453517309348,
+      "annualReturn": 0.014045252829297805,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6519,7 +6519,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2023",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.04462766089475023,
+      "annualReturn": 0.044626980496434765,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6527,7 +6527,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2024",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.05193023109701511,
+      "annualReturn": 0.051930536311169506,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6535,7 +6535,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2025",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.041470930249118965,
+      "annualReturn": 0.04147111565505268,
       "monthsObserved": 12,
       "seriesRole": "CASH_COMPARATOR"
     },
@@ -6543,7 +6543,7 @@ export const pdsPublicSnapshot: PdsPublicSnapshot | null = {
       "year": "2026",
       "seriesId": "BIL_CASH",
       "displayName": "BIL Cash",
-      "annualReturn": 0.02367089811708234,
+      "annualReturn": 0.02367089811708256,
       "monthsObserved": 8,
       "seriesRole": "CASH_COMPARATOR"
     }
