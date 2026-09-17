@@ -183,7 +183,7 @@ export default function HomePage() {
               {supportingSystems.length ? (
                 <div className="home-system-supporting" aria-label="Supporting SlackQuant systems">
                   {supportingSystems.map((system) => (
-                    <Link className="home-system-mini" href={`/systems/${system.slug}/`} key={system.slug}>
+                    <Link className={`home-system-mini ${system.systemGroup === "equity-alpha" ? "home-system-mini-equity-alpha" : ""}`} href={`/systems/${system.slug}/`} key={system.slug}>
                       <div className="kicker">{system.category}</div>
                       <h3>{system.title}</h3>
                       <p>{system.role}</p>

@@ -6,7 +6,7 @@ export function SystemCard({ item }: { item: SystemItem }) {
   const dashboardIsFirstPartyApp = Boolean(item.links.publicDashboard);
 
   return (
-    <article className={`system-card ${item.prominence === "flagship" ? "system-card-flagship" : ""}`}>
+    <article className={`system-card ${item.prominence === "flagship" ? "system-card-flagship" : ""} ${item.systemGroup === "equity-alpha" ? "system-card-equity-alpha" : ""}`}>
       <div className="card-kicker-row">
         <div className="kicker">SlackQuant Systems</div>
         <span className="track-chip">{item.category}</span>

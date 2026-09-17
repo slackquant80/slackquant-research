@@ -1,4 +1,8 @@
-export type SystemGroupKey = "portfolio-decision" | "portfolio-strategy" | "risk-scenario";
+export type SystemGroupKey =
+  | "portfolio-decision"
+  | "portfolio-strategy"
+  | "equity-alpha"
+  | "risk-scenario";
 
 export type SystemItem = {
   slug: string;
@@ -93,6 +97,23 @@ export const systemItems: SystemItem[] = [
       relatedResearch: "/research/second-opinion-portfolio/",
     },
   },
+
+  {
+    slug: "equity-alpha",
+    title: "Equity Alpha",
+    subtitle: "Benchmark-Aware Equity ETF Alpha System",
+    category: "Equity Alpha System",
+    systemGroup: "equity-alpha",
+    prominence: "standard",
+    status: "Public live · research-use operating view",
+    dateLabel: "Official signal 2026-08 · holding 2026-09",
+    shortSummary:
+      "A benchmark-aware global equity ETF alpha system that combines a broad point-in-time opportunity set with an independent static sleeve, translates machine-learning and multi-signal evidence into ranked selections, and expresses the result as an ACWI-relative active portfolio. Official, current-performance, and provisional Preview clocks remain explicitly separated.",
+    role: "Global Equity ETF Selection, Active Portfolio Construction, and ACWI-Relative Risk Budgeting",
+    links: {
+      publicDashboard: "/dashboards/equity-alpha/",
+    },
+  },
   {
     slug: "scenario-stress-lab",
     title: "Multi-Asset Scenario Stress Lab",
@@ -137,9 +158,16 @@ export const systemGroupDefinitions: Array<{
   {
     key: "portfolio-strategy",
     kicker: "Strategy layer",
-    title: "Portfolio Strategy Systems",
+    title: "Multi-Asset Portfolio Strategy Systems",
     description:
-      "Independent portfolio strategies that generate allocation decisions under their own defined decision rules and evidence standards.",
+      "Independent multi-asset strategies that generate allocation decisions under their own defined decision rules, timing contracts, and evidence standards.",
+  },
+  {
+    key: "equity-alpha",
+    kicker: "Equity alpha layer",
+    title: "Equity Alpha Systems",
+    description:
+      "Benchmark-aware equity selection and active-portfolio systems. These systems operate in the equity alpha domain rather than the multi-asset allocation domain, while retaining the same SlackQuant standards for timing, evidence, and public-state separation.",
   },
   {
     key: "risk-scenario",

@@ -29,7 +29,7 @@ export default function SystemsPage() {
           <div className="eyebrow">Systems</div>
           <h1>Operational systems organized by role in the investment process.</h1>
           <p className="hero-copy">
-            SlackQuant publishes distinct systems across portfolio strategy, risk analysis, and portfolio-level
+            SlackQuant publishes distinct systems across multi-asset portfolio strategy, equity alpha, risk analysis, and portfolio-level
             decision governance. Each system has a defined operating role and evidence record; related research
             remains separately versioned under Research.
           </p>
@@ -42,8 +42,8 @@ export default function SystemsPage() {
             <div className="kicker">Role-based system architecture</div>
             <h2>From strategy engines to portfolio operating systems</h2>
             <p>
-              Systems are grouped by the function they perform in the investment process. Strategy systems generate
-              portfolio decisions, risk systems support diagnosis and stress analysis, and portfolio operating systems
+              Systems are grouped by the function they perform in the investment process. Multi-asset strategy and equity-alpha systems generate
+              portfolio decisions in different opportunity domains, risk systems support diagnosis and stress analysis, and portfolio operating systems
               govern how independent providers are evaluated, admitted, integrated, and monitored at the
               portfolio level.
             </p>
@@ -82,8 +82,7 @@ export default function SystemsPage() {
           </div>
 
           <p className="systems-rollout-note">
-            Presentation hierarchy reflects operating scope, not performance ranking. PDS occupies the portfolio-level
-            operating layer; ADAA, F2R, and the Stress Lab retain independent system identities and operating roles.
+            Presentation hierarchy reflects operating scope, not performance ranking. PDS occupies the portfolio-level operating layer; ADAA and F2R form the multi-asset strategy family, Equity Alpha is presented as a separate equity-alpha family, and the Stress Lab retains its independent risk-system role.
           </p>
         </div>
       </section>
