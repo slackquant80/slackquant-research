@@ -88,12 +88,12 @@ function rollingMetric(pr,br,w,kind){
  const out=new Array(pr.length).fill(null);
  for(let i=w-1;i<pr.length;i++){
   const ex=[];
-  for(let j=i-w+1;j<=i;j++){
-   if(Number.isFinite(pr[j])&&Number.isFinite(br[j]))ex.push(pr[j]-br[j]);
+  for(let k=i-w+1;k<=i;k++){
+   if(Number.isFinite(pr[k])&&Number.isFinite(br[k]))ex.push(pr[k]-br[k]);
   }
   if(ex.length!==w)continue;
   const sd=stdev(ex); if(!(sd>0))continue;
-  const ar=mean(ex)*12, te=sd*Math.sqrt(12);
+  const ar=mean(ex)*252, te=sd*Math.sqrt(252);
   out[i]=kind==='te'?te:ar/te;
  }
  return out;
@@ -102,51 +102,59 @@ function profileKey(a){return Number(a).toFixed(4)}
 function buildProfile(a){
  a=clamp(Number(a),0,1);
  const key=profileKey(a); if(profileCache.has(key))return profileCache.get(key);
- const rows=D.performanceRows||[], rate=Number(D.profileConfig?.allocationCostBpsPerSide??10)/10000;
- let prevAlphaRet=null,prevBmRet=null,wealth=1,bwealth=1,totalAllocCost=0;
- const pr=[],br=[],wealths=[],bwealths=[],rel=[],dd=[],bdd=[],allocCost=[],monthly=[];
- rows.forEach((r,i)=>{
-  const ar=Number(r.alphaNetReturn), bm=Number(r.benchmarkReturn);
+ const auth=D.dailyPerformanceAuthority||{};
+ const periods=auth.periods||[];
+ if(!periods.length){
+  const emptyMetrics={cumulative:null,cagr:null,vol:null,sharpe:null,mdd:null,activeReturn:null,te:null,ir:null,calmar:null,allocationCostDrag:null};
+  const empty={alphaWeight:a,coreWeight:1-a,dates:[],portfolioReturn:[],benchmarkReturn:[],portfolioWealth:[],benchmarkWealth:[],relativeWealth:[],portfolioDrawdown:[],benchmarkDrawdown:[],rollingTE12:[],rollingTE24:[],rollingIR12:[],rollingIR24:[],monthly:[],support:{start:'—',end:'—',holdingStart:'—',holdingEnd:'—',dailyObservations:0,completedMonths:0},benchmarkMetrics:{cumulative:null,cagr:null,vol:null,sharpe:null,mdd:null,calmar:null},metrics:emptyMetrics,unavailable:true};
+  profileCache.set(key,empty);return empty;
+ }
+ const rate=Number(D.profileConfig?.allocationCostBpsPerSide??10)/10000;
+ let prevAlphaRet=null,prevBmRet=null,wealthStart=1,bwealthStart=1,totalAllocCost=0;
+ const navByDate=new Map(),bnavByDate=new Map(),monthly=[];
+ navByDate.set(String(auth.baselineDate),1);bnavByDate.set(String(auth.baselineDate),1);
+ periods.forEach((r,i)=>{
   let preAlpha=a;
   if(i>0){
    const den=a*(1+prevAlphaRet)+(1-a)*(1+prevBmRet);
    preAlpha=den>0?a*(1+prevAlphaRet)/den:a;
   }
-  const ow=Math.abs(a-preAlpha);
-  const ac=2*ow*rate;
-  const ret=a*ar+(1-a)*bm-ac;
-  wealth*=1+ret;bwealth*=1+bm;totalAllocCost+=ac;
-  pr.push(ret);br.push(bm);wealths.push(wealth);bwealths.push(bwealth);
-  rel.push(wealth/bwealth-1);
-  const pw=Math.max(...wealths); const pb=Math.max(...bwealths);
-  dd.push(wealth/pw-1); bdd.push(bwealth/pb-1);
-  allocCost.push(ac);
-  monthly.push({
-    month:r.holdingMonth,
-    holdingMonth:r.holdingMonth,
-    signalMonth:r.signalMonth,
-    portfolio:ret,benchmark:bm,active:ret-bm,
-    alphaReturn:ar,alphaTurnover:Number(r.alphaTurnover),
-    selectedTickers:r.selectedTickers||[]
+  const ow=Math.abs(a-preAlpha), ac=2*ow*rate; totalAllocCost+=ac;
+  const pts=r.points||[];
+  pts.forEach(pt=>{
+   const af=Number(pt.alphaNetFactor),bf=Number(pt.benchmarkFactor);
+   const pf=a*af+(1-a)*bf-ac;
+   navByDate.set(String(pt.date),wealthStart*pf);
+   bnavByDate.set(String(pt.date),bwealthStart*bf);
   });
-  prevAlphaRet=ar;prevBmRet=bm;
+  const last=pts[pts.length-1];
+  if(!last)return;
+  const af=Number(last.alphaNetFactor),bf=Number(last.benchmarkFactor);
+  const ret=a*(af-1)+(1-a)*(bf-1)-ac;
+  monthly.push({month:r.holdingMonth,holdingMonth:r.holdingMonth,signalMonth:r.signalMonth,portfolio:ret,benchmark:bf-1,active:ret-(bf-1),alphaReturn:af-1});
+  wealthStart*=1+ret;bwealthStart*=bf;prevAlphaRet=af-1;prevBmRet=bf-1;
  });
- const ex=pr.map((x,i)=>x-br[i]), n=pr.length;
- const years=n/12, vol=(stdev(pr)||0)*Math.sqrt(12), te=(stdev(ex)||0)*Math.sqrt(12);
- const active=(mean(ex)||0)*12, ir=te>0?active/te:null;
- const cagr=n?Math.pow(wealth,1/years)-1:null;
+ const dates=[...navByDate.keys()].sort();
+ const nw=dates.map(d=>Number(navByDate.get(d))),bw=dates.map(d=>Number(bnavByDate.get(d)));
+ const pr=new Array(dates.length).fill(null),br=new Array(dates.length).fill(null);
+ for(let i=1;i<dates.length;i++){pr[i]=nw[i]/nw[i-1]-1;br[i]=bw[i]/bw[i-1]-1;}
+ const rr=pr.filter(Number.isFinite),bb=br.filter(Number.isFinite),ex=pr.map((x,i)=>Number.isFinite(x)&&Number.isFinite(br[i])?x-br[i]:null).filter(Number.isFinite);
+ const n=rr.length, years=n/252, vol=(stdev(rr)||0)*Math.sqrt(252),te=(stdev(ex)||0)*Math.sqrt(252),active=(mean(ex)||0)*252,ir=te>0?active/te:null;
+ const cagr=n&&nw.length?Math.pow(nw[nw.length-1]/nw[0],1/years)-1:null;
  const p={
-  alphaWeight:a,coreWeight:1-a,portfolioReturn:pr,benchmarkReturn:br,
-  portfolioWealth:wealths,benchmarkWealth:bwealths,relativeWealth:rel,
-  portfolioDrawdown:dd,benchmarkDrawdown:bdd,
-  rollingTE12:rollingMetric(pr,br,12,'te'),rollingTE24:rollingMetric(pr,br,24,'te'),
-  rollingIR12:rollingMetric(pr,br,12,'ir'),rollingIR24:rollingMetric(pr,br,24,'ir'),
+  alphaWeight:a,coreWeight:1-a,dates,portfolioReturn:pr,benchmarkReturn:br,
+  portfolioWealth:nw,benchmarkWealth:bw,relativeWealth:nw.map((x,i)=>x/bw[i]-1),
+  portfolioDrawdown:(()=>{let pk=1;return nw.map(x=>{pk=Math.max(pk,x);return x/pk-1})})(),
+  benchmarkDrawdown:(()=>{let pk=1;return bw.map(x=>{pk=Math.max(pk,x);return x/pk-1})})(),
+  rollingTE12:rollingMetric(pr,br,252,'te'),rollingTE24:rollingMetric(pr,br,504,'te'),
+  rollingIR12:rollingMetric(pr,br,252,'ir'),rollingIR24:rollingMetric(pr,br,504,'ir'),
   monthly,
-  metrics:{
-   cagr,vol,mdd:mddFromWealth(wealths),activeReturn:active,te,ir,
-   allocationCostDrag:n?totalAllocCost/years:null
-  }
+  support:{start:dates[0],end:dates[dates.length-1],holdingStart:monthly.length?monthly[0].holdingMonth:null,holdingEnd:monthly.length?monthly[monthly.length-1].holdingMonth:null,dailyObservations:n,completedMonths:monthly.length},
+  benchmarkMetrics:{cumulative:bw[bw.length-1]/bw[0]-1,cagr:n?Math.pow(bw[bw.length-1]/bw[0],1/years)-1:null,vol:(stdev(bb)||0)*Math.sqrt(252),sharpe:(stdev(bb)||0)>0?(mean(bb)/(stdev(bb)||1))*Math.sqrt(252):null,mdd:mddFromWealth(bw)},
+  metrics:{cumulative:nw[nw.length-1]/nw[0]-1,cagr,vol,sharpe:(stdev(rr)||0)>0?(mean(rr)/(stdev(rr)||1))*Math.sqrt(252):null,mdd:mddFromWealth(nw),activeReturn:active,te,ir,calmar:null,allocationCostDrag:years>0?totalAllocCost/years:null}
  };
+ p.metrics.calmar=p.metrics.mdd<0&&p.metrics.cagr!=null?p.metrics.cagr/Math.abs(p.metrics.mdd):null;
+ p.benchmarkMetrics.calmar=p.benchmarkMetrics.mdd<0&&p.benchmarkMetrics.cagr!=null?p.benchmarkMetrics.cagr/Math.abs(p.benchmarkMetrics.mdd):null;
  profileCache.set(key,p);return p;
 }
 function currentProfile(){return buildProfile(alphaWeight)}
@@ -453,7 +461,7 @@ function renderCockpit(){
  const core=1-alphaWeight,donut=$('#allocationDonut');if(donut)donut.style.background=`conic-gradient(var(--accent2) 0 ${core*100}%,var(--accent) ${core*100}% 100%)`;
  $('#donutTE').textContent=pct(m.te,2);
  $('#allocationSummary').innerHTML=`<div class="status-row"><span>ACWI core</span><b>${pct(core,0)}</b></div><div class="status-row"><span>Alpha sleeve</span><b>${pct(alphaWeight,0)}</b></div><div class="status-row"><span>Profile IR</span><b>${num(m.ir,2)}</b></div><div class="status-row"><span>Allocation cost drag</span><b>${pct(m.allocationCostDrag,3)}</b></div>`;
- svgLine($('#cockpitWealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:P.monthly.map(r=>r.holdingMonth||r.month),format:v=>num(v,2)});
+ svgLine($('#cockpitWealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:P.dates,format:v=>num(v,2)});
  const dm=D.model?.developmentMetrics||{},bm=D.model?.temporalBridgeMetrics||{},fm=D.model||{};
  const modelCombined=Number(fm.combinedIR??fm.combined_ir??fm.ir);
  const modelDev=Number(fm.developmentIR??fm.development_ir??dm.ir);
@@ -489,35 +497,24 @@ function renderPerformance(){
  const slider=$('#alphaWeightSlider');slider.value=String(Math.round(alphaWeight*100));slider.oninput=()=>setAlphaWeight(Number(slider.value)/100);
  $('#alphaWeightLabel').textContent=pct(alphaWeight,0);$('#coreWeightLabel').textContent=`ACWI core ${pct(1-alphaWeight,0)}`;$('#sliderTE').textContent=pct(P.metrics.te,2);
  $('#profileMetrics').innerHTML=metricCards(P.metrics);
- const n=P.portfolioReturn.length, yearsN=n/12;
- const pLast=P.portfolioWealth.length?P.portfolioWealth[P.portfolioWealth.length-1]:null;
- const bLast=P.benchmarkWealth.length?P.benchmarkWealth[P.benchmarkWealth.length-1]:null;
- const pCum=pLast==null?null:pLast-1, bCum=bLast==null?null:bLast-1;
- const pSd=stdev(P.portfolioReturn), bSd=stdev(P.benchmarkReturn);
- const pSharpe=pSd>0?mean(P.portfolioReturn)/pSd*Math.sqrt(12):null;
- const bSharpe=bSd>0?mean(P.benchmarkReturn)/bSd*Math.sqrt(12):null;
- const bVol=(bSd||0)*Math.sqrt(12);
- const bCagr=n&&bLast!=null?Math.pow(bLast,1/yearsN)-1:null;
- const bMdd=mddFromWealth(P.benchmarkWealth);
- const pCalmar=P.metrics.mdd<0&&P.metrics.cagr!=null?P.metrics.cagr/Math.abs(P.metrics.mdd):null;
- const bCalmar=bMdd<0&&bCagr!=null?bCagr/Math.abs(bMdd):null;
- const firstMonth=P.monthly.length?(P.monthly[0].holdingMonth||P.monthly[0].month):'—';
- const lastMonth=P.monthly.length?(P.monthly[P.monthly.length-1].holdingMonth||P.monthly[P.monthly.length-1].month):'—';
- $('#performanceSummaryPeriod').textContent=`Holding ${firstMonth} – ${lastMonth} · ${n} completed months · current MTD excluded`;
+ const bm=P.benchmarkMetrics||{};
+ $('#performanceSummaryPeriod').textContent=P.unavailable?'Daily performance authority not built yet · run [1] Refresh local':`Holding ${P.support.holdingStart} – ${P.support.holdingEnd} · ${P.support.completedMonths} completed months · daily path ${P.support.start} – ${P.support.end} · ${P.support.dailyObservations} observations · 252D`;
  $('#performanceSummaryBody').innerHTML=[
-  {name:`Investor portfolio · ${profileLabel()}`,cum:pCum,cagr:P.metrics.cagr,vol:P.metrics.vol,sh:pSharpe,mdd:P.metrics.mdd,cal:pCalmar,active:P.metrics.activeReturn,te:P.metrics.te,ir:P.metrics.ir,primary:true},
-  {name:'ACWI ETF · benchmark',cum:bCum,cagr:bCagr,vol:bVol,sh:bSharpe,mdd:bMdd,cal:bCalmar,active:null,te:null,ir:null,primary:false}
+  {name:`Investor portfolio · ${profileLabel()}`,cum:P.metrics.cumulative,cagr:P.metrics.cagr,vol:P.metrics.vol,sh:P.metrics.sharpe,mdd:P.metrics.mdd,cal:P.metrics.calmar,active:P.metrics.activeReturn,te:P.metrics.te,ir:P.metrics.ir,primary:true},
+  {name:'ACWI ETF · benchmark',cum:bm.cumulative,cagr:bm.cagr,vol:bm.vol,sh:bm.sharpe,mdd:bm.mdd,cal:bm.calmar,active:null,te:null,ir:null,primary:false}
  ].map(r=>`<tr class="${r.primary?'selected-row':''}"><td><b>${esc(r.name)}</b></td><td class="num">${pct(r.cum,2)}</td><td class="num">${pct(r.cagr,2)}</td><td class="num">${pct(r.vol,2)}</td><td class="num">${num(r.sh,2)}</td><td class="num">${pct(r.mdd,2)}</td><td class="num">${num(r.cal,2)}</td><td class="num">${r.active==null?'—':pct(r.active,2)}</td><td class="num">${r.te==null?'—':pct(r.te,2)}</td><td class="num">${r.ir==null?'—':num(r.ir,2)}</td></tr>`).join('');
- const completedLabels=P.monthly.map(r=>r.holdingMonth||r.month);
- svgLine($('#wealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:completedLabels,format:v=>num(v,2)});
- svgLine($('#relativeChart'),[{name:'Relative wealth',values:P.relativeWealth}],{labels:completedLabels,includeZero:true,format:v=>pct(v,0)});
- svgLine($('#drawdownChart'),[{name:'Portfolio',values:P.portfolioDrawdown},{name:'ACWI ETF',values:P.benchmarkDrawdown}],{labels:completedLabels,includeZero:true,format:v=>pct(v,0)});
- svgLine($('#teChart'),[{name:'Rolling 12M TE',values:P.rollingTE12},{name:'Rolling 24M TE',values:P.rollingTE24}],{labels:completedLabels,includeZero:true,format:v=>pct(v,1)});
- svgLine($('#irChart'),[{name:'Rolling 12M IR',values:P.rollingIR12},{name:'Rolling 24M IR',values:P.rollingIR24}],{labels:completedLabels,includeZero:true,format:v=>num(v,2)});
- let months=P.monthly.slice(-12),years=annualRows(P);
- groupedReturnBars($('#monthlyReturnBars'),months,'month');groupedReturnBars($('#annualReturnBars'),years,'year');
- $('#recentMonthlyBody').innerHTML=months.map(r=>`<tr><td>${esc(r.month)}</td><td class="num">${pct(r.portfolio,2)}</td><td class="num">${pct(r.benchmark,2)}</td><td class="num ${r.active>=0?'goodtext':'badtext'}">${pct(r.active,2)}</td></tr>`).join('');
- $('#annualBody').innerHTML=years.slice().reverse().map(r=>`<tr><td>${r.year}</td><td class="num">${pct(r.portfolio,1)}</td><td class="num">${pct(r.benchmark,1)}</td><td class="num ${r.active>=0?'goodtext':'badtext'}">${pct(r.active,1)}</td></tr>`).join('');
+ svgLine($('#wealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:P.dates,format:v=>num(v,2)});
+ svgLine($('#relativeChart'),[{name:'Relative wealth',values:P.relativeWealth}],{labels:P.dates,includeZero:true,format:v=>pct(v,0)});
+ svgLine($('#drawdownChart'),[{name:'Portfolio',values:P.portfolioDrawdown},{name:'ACWI ETF',values:P.benchmarkDrawdown}],{labels:P.dates,includeZero:true,format:v=>pct(v,0)});
+ svgLine($('#teChart'),[{name:'Rolling 1Y TE',values:P.rollingTE12},{name:'Rolling 2Y TE',values:P.rollingTE24}],{labels:P.dates,includeZero:true,format:v=>pct(v,1)});
+ svgLine($('#irChart'),[{name:'Rolling 1Y IR',values:P.rollingIR12},{name:'Rolling 2Y IR',values:P.rollingIR24}],{labels:P.dates,includeZero:true,format:v=>num(v,2)});
+ const monthlyRows=P.monthly.slice(-12);
+ const groups={};P.monthly.forEach(r=>{const y=String(r.holdingMonth).slice(0,4);(groups[y]??=[]).push(r)});
+ const annualRows=Object.keys(groups).sort().map(y=>{const z=groups[y];const pr=z.reduce((w,r)=>w*(1+r.portfolio),1)-1,br=z.reduce((w,r)=>w*(1+r.benchmark),1)-1;return {year:Number(y),portfolio:pr,benchmark:br,active:pr-br}});
+ groupedReturnBars($('#monthlyReturnBars'),monthlyRows,'holdingMonth');
+ groupedReturnBars($('#annualReturnBars'),annualRows,'year');
+ $('#recentMonthlyBody').innerHTML=monthlyRows.map(r=>`<tr><td>${esc(r.holdingMonth)}</td><td class="num">${pct(r.portfolio,2)}</td><td class="num">${pct(r.benchmark,2)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,2)}</td></tr>`).join('');
+ $('#annualBody').innerHTML=annualRows.slice().reverse().map(r=>`<tr><td>${r.year}</td><td class="num">${pct(r.portfolio,1)}</td><td class="num">${pct(r.benchmark,1)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,1)}</td></tr>`).join('');
 }
 function renderHoldings(){
  const h=investorHoldings(),ph=previewInvestorHoldings(),pm=L.preview?.meta||{};
