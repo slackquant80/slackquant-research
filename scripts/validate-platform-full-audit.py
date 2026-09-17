@@ -102,19 +102,41 @@ def main() -> int:
         "Open Dashboard ↗",
         "GitHub Repository",
     )
-    need(
+    equity_alpha = need(
         "src/app/systems/equity-alpha/page.tsx",
         "Open Equity Alpha Dashboard ↗",
-        "Equity alpha family",
-        "ACWI is the benchmark rather than an alpha candidate",
+        "REX2",
+        "Ridge + ElasticNet",
+        "Chronos-2",
+        "ACWI defines the active-risk frame",
         "Preview",
+        'target="_blank"',
+        'rel="noopener noreferrer"',
     )
+    if '<Link\n                className="btn primary"' in equity_alpha:
+        raise RuntimeError("Equity Alpha dashboard CTA must use an explicit external anchor")
     need(
         "src/data/systems.ts",
         'slug: "equity-alpha"',
         'systemGroup: "equity-alpha"',
         'publicDashboard: "/dashboards/equity-alpha/"',
-        'title: "Equity Alpha Systems"',
+        'title: "Equity Alpha Strategies"',
+        'kicker: "Portfolio operating layer"',
+        'kicker: "Investment strategy layer"',
+        'kicker: "Risk & analytics layer"',
+    )
+    need(
+        "src/app/systems/page.tsx",
+        "Three-layer system architecture",
+        "Clear authority. Distinct strategy domains.",
+        "Multi-Asset Strategies",
+        "Equity Alpha Strategies",
+    )
+    need(
+        "src/components/SystemCard.tsx",
+        'target="_blank"',
+        'rel="noopener noreferrer"',
+        "data-sq-dashboard-app",
     )
     need(
         "public/dashboards/equity-alpha/index.html",
@@ -372,7 +394,7 @@ def main() -> int:
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
-    print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning=PASS")
+    print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning + three-layer taxonomy=PASS")
     print("About research links / shared research-detail hero=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")

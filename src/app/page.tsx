@@ -144,7 +144,7 @@ export default function HomePage() {
             <>
               <article className="home-system-feature">
                 <div className="home-system-feature-copy">
-                  <div className="kicker">Operating layer · Flagship</div>
+                  <div className="kicker">Portfolio operating layer · Flagship</div>
                   <h2>{featuredSystem.title}</h2>
                   <div className="home-system-feature-subtitle">{featuredSystem.subtitle}</div>
                   <p>{featuredSystem.shortSummary}</p>

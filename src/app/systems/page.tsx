@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { SystemCard } from "@/components/SystemCard";
-import { systemGroupDefinitions, systemItems } from "@/data/systems";
+import { systemGroupDefinitions, systemItems, systemLayerDefinitions } from "@/data/systems";
 import { pdsPublicSnapshot } from "@/data/pdsPublicSnapshot";
 
 export const metadata: Metadata = {
   title: "Systems",
   description:
-    "Operational investment and decision systems published by SlackQuant, organized by their role in the portfolio decision process.",
+    "Operational investment systems from SlackQuant, organized into portfolio operating, investment strategy, and risk & analytics layers.",
   alternates: { canonical: "/systems/" },
 };
 
@@ -27,11 +27,11 @@ export default function SystemsPage() {
       <section className="index-hero systems-index-hero">
         <div className="shell">
           <div className="eyebrow">Systems</div>
-          <h1>Operational systems organized by role in the investment process.</h1>
+          <h1>Investment systems, organized by operating role.</h1>
           <p className="hero-copy">
-            SlackQuant publishes distinct systems across multi-asset portfolio strategy, equity alpha, risk analysis, and portfolio-level
-            decision governance. Each system has a defined operating role and evidence record; related research
-            remains separately versioned under Research.
+            SlackQuant separates portfolio operating infrastructure, investment strategy engines, and risk & analytics systems.
+            Strategy engines are further grouped by opportunity domain—multi-asset and equity alpha—while related research remains
+            independently versioned under Research.
           </p>
         </div>
       </section>
@@ -39,42 +39,62 @@ export default function SystemsPage() {
       <section className="section">
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
-            <div className="kicker">Role-based system architecture</div>
-            <h2>From strategy engines to portfolio operating systems</h2>
+            <div className="kicker">Three-layer system architecture</div>
+            <h2>Clear authority. Distinct strategy domains.</h2>
             <p>
-              Systems are grouped by the function they perform in the investment process. Multi-asset strategy and equity-alpha systems generate
-              portfolio decisions in different opportunity domains, risk systems support diagnosis and stress analysis, and portfolio operating systems
-              govern how independent providers are evaluated, admitted, integrated, and monitored at the
-              portfolio level.
+              The hierarchy distinguishes where a system sits in the investment process from the market domain in which a strategy operates.
+              Portfolio Operations governs integration and authority; Investment Strategies generates positions; Risk & Analytics supports diagnosis
+              and stress interpretation.
             </p>
           </div>
 
-          <div className="systems-group-stack">
-            {systemGroupDefinitions.map((group) => {
-              const items = systemItems.filter((item) => item.systemGroup === group.key);
-              if (!items.length) return null;
+          <div className="systems-layer-stack">
+            {systemLayerDefinitions.map((layer) => {
+              const families = systemGroupDefinitions.filter((group) => layer.groupKeys.includes(group.key));
+              const layerItems = systemItems.filter((item) => layer.groupKeys.includes(item.systemGroup));
+              if (!layerItems.length) return null;
 
               return (
-                <section className="systems-group" key={group.key}>
-                  <div className="systems-group-head">
-                    <div className="kicker">{group.kicker}</div>
-                    <h2>{group.title}</h2>
-                    <p>{group.description}</p>
+                <section className={`systems-layer systems-layer-${layer.key}`} key={layer.key}>
+                  <div className="systems-layer-head">
+                    <div className="kicker">{layer.kicker}</div>
+                    <h2>{layer.title}</h2>
+                    <p>{layer.description}</p>
                   </div>
-                  <div className="research-list">
-                    {items.map((item) => (
-                      <SystemCard
-                        key={item.slug}
-                        item={
-                          item.slug === "pds" && pdsPublicSnapshot?.publicAsOfDate
-                            ? {
-                                ...item,
-                                dateLabel: `Updated ${formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)}`,
-                              }
-                            : item
-                        }
-                      />
-                    ))}
+
+                  <div className="systems-family-stack">
+                    {families.map((family) => {
+                      const items = systemItems.filter((item) => item.systemGroup === family.key);
+                      if (!items.length) return null;
+                      const showFamilyHeading = families.length > 1;
+
+                      return (
+                        <section className={`systems-family systems-family-${family.key}`} key={family.key}>
+                          {showFamilyHeading ? (
+                            <div className="systems-family-head">
+                              <div className="kicker">{family.kicker}</div>
+                              <h3>{family.title}</h3>
+                              <p>{family.description}</p>
+                            </div>
+                          ) : null}
+                          <div className="research-list">
+                            {items.map((item) => (
+                              <SystemCard
+                                key={item.slug}
+                                item={
+                                  item.slug === "pds" && pdsPublicSnapshot?.publicAsOfDate
+                                    ? {
+                                        ...item,
+                                        dateLabel: `Updated ${formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)}`,
+                                      }
+                                    : item
+                                }
+                              />
+                            ))}
+                          </div>
+                        </section>
+                      );
+                    })}
                   </div>
                 </section>
               );
@@ -82,7 +102,8 @@ export default function SystemsPage() {
           </div>
 
           <p className="systems-rollout-note">
-            Presentation hierarchy reflects operating scope, not performance ranking. PDS occupies the portfolio-level operating layer; ADAA and F2R form the multi-asset strategy family, Equity Alpha is presented as a separate equity-alpha family, and the Stress Lab retains its independent risk-system role.
+            The three layers describe operating authority, not performance ranking. Multi-Asset Strategies and Equity Alpha Strategies are peer families
+            inside the Investment Strategy Layer; PDS remains the portfolio operating layer, while the Stress Lab remains a risk & analytics system.
           </p>
         </div>
       </section>

@@ -25,21 +25,15 @@ export function SystemCard({ item }: { item: SystemItem }) {
         </Link>
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
           {dashboardHref ? (
-            dashboardIsFirstPartyApp ? (
-              <Link
-                className="strong-link"
-                href={dashboardHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-sq-dashboard-app="true"
-              >
-                Open Dashboard ↗
-              </Link>
-            ) : (
-              <a className="strong-link" href={dashboardHref} target="_blank" rel="noopener noreferrer">
-                Open Dashboard ↗
-              </a>
-            )
+            <a
+              className="strong-link"
+              href={dashboardHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}
+            >
+              Open Dashboard ↗
+            </a>
           ) : null}
           {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
           {item.links.whitePaper ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}

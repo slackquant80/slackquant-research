@@ -40,7 +40,7 @@ export const systemItems: SystemItem[] = [
     slug: "pds",
     title: "Portfolio Decision System",
     subtitle: "A Governed Multi-Strategy Portfolio Operating System",
-    category: "Portfolio Decision & Operating System",
+    category: "Portfolio Operating System",
     systemGroup: "portfolio-decision",
     prominence: "flagship",
     status: "Public architecture · protected current decision state",
@@ -57,7 +57,7 @@ export const systemItems: SystemItem[] = [
     slug: "adaa",
     title: "ADAA",
     subtitle: "Autonomous Dynamic Asset Allocation",
-    category: "Portfolio Strategy System",
+    category: "Multi-Asset Strategy",
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
@@ -82,7 +82,7 @@ export const systemItems: SystemItem[] = [
     slug: "f2r",
     title: "Forecast-to-Rank Allocation (F2R)",
     subtitle: "Machine-Learning Cross-Asset Portfolio Strategy",
-    category: "Portfolio Strategy System",
+    category: "Multi-Asset Strategy",
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
@@ -101,15 +101,15 @@ export const systemItems: SystemItem[] = [
   {
     slug: "equity-alpha",
     title: "Equity Alpha",
-    subtitle: "Benchmark-Aware Equity ETF Alpha System",
-    category: "Equity Alpha System",
+    subtitle: "Machine-Learning Equity ETF Selection & Active Portfolio Construction",
+    category: "Equity Alpha Strategy",
     systemGroup: "equity-alpha",
     prominence: "standard",
     status: "Public live · research-use operating view",
     dateLabel: "Official signal 2026-08 · holding 2026-09",
     shortSummary:
-      "A benchmark-aware global equity ETF alpha system that combines a broad point-in-time opportunity set with an independent static sleeve, translates machine-learning and multi-signal evidence into ranked selections, and expresses the result as an ACWI-relative active portfolio. Official, current-performance, and provisional Preview clocks remain explicitly separated.",
-    role: "Global Equity ETF Selection, Active Portfolio Construction, and ACWI-Relative Risk Budgeting",
+      "A benchmark-aware global equity ETF strategy that combines REX2 regularized cross-sectional machine learning, Chronos-2 pretrained time-series intelligence, and complementary multi-signal evidence. Forecasts are translated into ranked ETF selections and an ACWI-relative active portfolio with explicit Official, current-performance, and Preview clocks.",
+    role: "Machine-Learning Equity ETF Selection and ACWI-Relative Active Portfolio Construction",
     links: {
       publicDashboard: "/dashboards/equity-alpha/",
     },
@@ -119,7 +119,7 @@ export const systemItems: SystemItem[] = [
     title: "Multi-Asset Scenario Stress Lab",
     subtitle:
       "Evidence-Constrained Scenario Analysis for Portfolio Stress Decision Support",
-    category: "Risk & Scenario System",
+    category: "Risk & Analytics System",
     systemGroup: "risk-scenario",
     prominence: "standard",
     status: "Public live · validated baseline v1",
@@ -150,31 +150,64 @@ export const systemGroupDefinitions: Array<{
 }> = [
   {
     key: "portfolio-decision",
-    kicker: "Operating layer",
-    title: "Portfolio Decision & Operating Systems",
+    kicker: "Portfolio operations",
+    title: "Portfolio Operations",
     description:
-      "Portfolio-level systems that qualify providers, govern portfolio admission and integration, form portfolio decisions, and monitor those decisions over time.",
+      "Portfolio-level governance, provider qualification, strategy integration, decision authority, and ongoing monitoring.",
   },
   {
     key: "portfolio-strategy",
-    kicker: "Strategy layer",
-    title: "Multi-Asset Portfolio Strategy Systems",
+    kicker: "Multi-asset family",
+    title: "Multi-Asset Strategies",
     description:
-      "Independent multi-asset strategies that generate allocation decisions under their own defined decision rules, timing contracts, and evidence standards.",
+      "Cross-asset strategy engines that generate portfolio allocations under independent decision architectures, timing contracts, and evidence standards.",
   },
   {
     key: "equity-alpha",
-    kicker: "Equity alpha layer",
-    title: "Equity Alpha Systems",
+    kicker: "Equity alpha family",
+    title: "Equity Alpha Strategies",
     description:
-      "Benchmark-aware equity selection and active-portfolio systems. These systems operate in the equity alpha domain rather than the multi-asset allocation domain, while retaining the same SlackQuant standards for timing, evidence, and public-state separation.",
+      "Benchmark-aware equity selection and active-portfolio systems that operate within the equity opportunity set rather than across asset classes.",
   },
   {
     key: "risk-scenario",
-    kicker: "Risk & analytics layer",
-    title: "Risk & Scenario Systems",
+    kicker: "Risk analysis",
+    title: "Risk & Scenario Analysis",
     description:
-      "Decision-support systems that diagnose portfolio risk, stress structure, and scenario behavior without becoming a portfolio strategy by themselves.",
+      "Decision-support systems for diagnosing portfolio risk, stress structure, and scenario behavior without becoming portfolio strategies themselves.",
+  },
+];
+
+export const systemLayerDefinitions: Array<{
+  key: "portfolio-operating" | "investment-strategy" | "risk-analytics";
+  kicker: string;
+  title: string;
+  description: string;
+  groupKeys: SystemGroupKey[];
+}> = [
+  {
+    key: "portfolio-operating",
+    kicker: "Portfolio operating layer",
+    title: "Portfolio Operations",
+    description:
+      "The portfolio-level operating layer governs which strategy providers are admitted, how approved decisions are integrated, and how portfolio authority and monitoring remain traceable over time.",
+    groupKeys: ["portfolio-decision"],
+  },
+  {
+    key: "investment-strategy",
+    kicker: "Investment strategy layer",
+    title: "Investment Strategies",
+    description:
+      "Independent strategy engines generate investable decisions. They are grouped by opportunity domain so multi-asset allocation and benchmark-relative equity alpha remain conceptually distinct without being treated as different operating layers.",
+    groupKeys: ["portfolio-strategy", "equity-alpha"],
+  },
+  {
+    key: "risk-analytics",
+    kicker: "Risk & analytics layer",
+    title: "Risk & Scenario Analysis",
+    description:
+      "Analytical systems support portfolio diagnosis, scenario analysis, and stress interpretation without carrying standalone allocation authority.",
+    groupKeys: ["risk-scenario"],
   },
 ];
 
