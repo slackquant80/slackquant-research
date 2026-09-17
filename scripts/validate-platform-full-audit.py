@@ -68,7 +68,7 @@ def main() -> int:
         'QM027',
     )
     ids = set(re.findall(r'id:\s*"(QM\d{3})"', methods))
-    expected_method_ids = {f"QM{i:03d}" for i in range(1, 23)} | {"QM024", "QM025"}
+    expected_method_ids = {f"QM{i:03d}" for i in range(1, 21)} | {"QM024", "QM025", "QM026", "QM027"}
     if ids != expected_method_ids:
         raise RuntimeError(f"Methods registry mismatch: {sorted(ids)}")
 
@@ -367,13 +367,13 @@ def main() -> int:
     need(
         "public/methods/80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html",
         "Point-in-Time Dynamic Universe Construction",
-        "Governed Candidate-Pool Expansion",
+        "Separate monthly variation from candidate-pool expansion",
         "Equity Alpha",
     )
     need(
         "public/methods/40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html",
         "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers",
-        "Hold Buffers and Hysteresis",
+        "Add an incumbent hold buffer",
         "Equity Alpha",
     )
     if "paper-driven rather than encyclopedic" in mi:
