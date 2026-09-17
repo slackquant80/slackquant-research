@@ -42,7 +42,7 @@ def main() -> int:
             f"expected={sorted(expected_research_slugs)} found={research_slugs}"
         )
 
-    expected_system_slugs = {"pds", "adaa", "f2r", "scenario-stress-lab"}
+    expected_system_slugs = {"pds", "adaa", "f2r", "equity-alpha", "scenario-stress-lab"}
     systems = need(
         "src/data/systems.ts",
         *[f'slug: "{slug}"' for slug in sorted(expected_system_slugs)],
@@ -101,6 +101,27 @@ def main() -> int:
         "src/app/systems/f2r/page.tsx",
         "Open Dashboard ↗",
         "GitHub Repository",
+    )
+    need(
+        "src/app/systems/equity-alpha/page.tsx",
+        "Open Equity Alpha Dashboard ↗",
+        "Equity alpha family",
+        "ACWI is the benchmark rather than an alpha candidate",
+        "Preview",
+    )
+    need(
+        "src/data/systems.ts",
+        'slug: "equity-alpha"',
+        'systemGroup: "equity-alpha"',
+        'publicDashboard: "/dashboards/equity-alpha/"',
+        'title: "Equity Alpha Systems"',
+    )
+    need(
+        "public/dashboards/equity-alpha/index.html",
+        "Equity Alpha",
+        "assets/styles.css",
+        "data/dashboard_data.js",
+        "data/live_overlay.js",
     )
 
     # RESEARCH_DETAIL_HERO_CONSISTENCY_GATE_V1
@@ -323,6 +344,12 @@ def main() -> int:
             "out/systems/pds/dashboard/index.html",
             "out/systems/adaa/index.html",
             "out/systems/f2r/index.html",
+            "out/systems/equity-alpha/index.html",
+            "out/dashboards/equity-alpha/index.html",
+            "out/dashboards/equity-alpha/assets/app.js",
+            "out/dashboards/equity-alpha/assets/styles.css",
+            "out/dashboards/equity-alpha/data/dashboard_data.js",
+            "out/dashboards/equity-alpha/data/live_overlay.js",
             "out/systems/scenario-stress-lab/index.html",
             "out/systems/scenario-stress-lab/guide/index.html",
             "out/about/index.html",
@@ -340,12 +367,12 @@ def main() -> int:
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=5 Systems=4 Methods=22 / exact registry sets=PASS")
+    print("Research=5 Systems=5 Methods=22 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
-    print("PDS / ADAA / F2R system-page editorial positioning=PASS")
+    print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning=PASS")
     print("About research links / shared research-detail hero=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")
