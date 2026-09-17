@@ -24,6 +24,7 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM013: "Defines benchmark-relative measures used to judge the portfolio value of F2R's heterogeneous Forecast-to-Rank decision process beyond same-universe and external comparators.",
     QM019: "Defines the regularized linear-model family that anchors F2R's conventional supervised forecasting lane, including scaling and tuning controls for correlated predictors.",
     QM020: "Defines chronological model-selection and hyperparameter-tuning discipline used when F2R compares conventional supervised candidates without leaking future information.",
+    QM027: "Explains the rank-to-portfolio translation used after heterogeneous forecasts enter a common decision space, including Top-K selection, persistence, and the distinction between ranks and portfolio weights.",
     QM024: "Explains how heterogeneous predictive views can be combined or aggregated without confusing forecast weights, forecast scales, rank aggregation, and downstream portfolio weights.",
     QM025: "Defines the evaluation boundary for Chronos-2 and other pretrained time-series foundation models, separating inference-time information from pretraining knowledge and historical-evaluation claims.",
   },
@@ -34,6 +35,19 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM011: "Provides strategy-similarity and decision-diversification concepts used when PDS evaluates how independently owned providers complement one another.",
     QM013: "Defines benchmark-relative portfolio measures used to separate absolute PDS Core performance from relative performance evidence.",
     QM014: "Defines information-timing and data-availability discipline used when PDS governs provider inputs that depend on macroeconomic information.",
+  },
+  "equity-alpha-system": {
+    QM001: "Defines the genuinely out-of-sample evidence boundary used to distinguish historical model evaluation from current forward operation in Equity Alpha.",
+    QM003: "Explains the look-ahead, survivorship, and data-leakage controls required when Equity Alpha reconstructs point-in-time ETF opportunity sets and model inputs.",
+    QM007: "Defines the monthly signal, execution, holding-period, and weight-drift accounting needed to interpret Equity Alpha portfolio paths.",
+    QM009: "Explains turnover and transaction-cost accounting used when ranked selections, entry rules, and hold buffers are translated into net portfolio performance.",
+    QM013: "Defines active return, tracking error, information ratio, and relative-wealth measures used to evaluate Equity Alpha against ACWI.",
+    QM019: "Defines the Ridge and Elastic Net model family used inside the REX2 regularized cross-sectional forecasting lane.",
+    QM020: "Explains chronological model-selection discipline used when cross-sectional forecasting candidates and tuning choices are evaluated on time-ordered data.",
+    QM026: "Defines point-in-time dynamic-universe construction, including listing history, liquidity/history gates, survivorship control, exposure deduplication, and governed expansion of the model-ready candidate pool.",
+    QM027: "Explains how cross-sectional forecasts become ranks, how Top-K entry and hold buffers create path-dependent selections, and why rank diagnostics are not expected returns or probabilities.",
+    QM024: "Explains how heterogeneous predictive views can be combined in a common decision space without confusing raw forecast scales, normalized rank strength, and downstream portfolio weights.",
+    QM025: "Defines the evaluation boundary for Chronos-2 and other pretrained time-series foundation models, separating inference-time information from pretrained knowledge and historical-evaluation claims.",
   },
   "scenario-stress-lab": {
     QM001: "Defines the out-of-sample information boundary used when the Stress Lab evaluates scenario-generation methods without leaking future market information.",
@@ -228,6 +242,24 @@ export const quantitativeMethods: QuantitativeMethod[] = [
       "Explains chronological model selection and hyperparameter tuning for time-ordered data, including nested evaluation, gap design, target maturity, and leakage control.",
   },
   {
+    id: "QM026",
+    title: "Point-in-Time Dynamic Universe Construction",
+    category: "Data & Research Design",
+    level: "Advanced",
+    href: "/methods/80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html",
+    researchContext:
+      "Explains how an investable universe can evolve through time without survivorship bias, including listing history, eligibility gates, exposure deduplication, representative selection, and governed candidate-pool expansion.",
+  },
+  {
+    id: "QM027",
+    title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html",
+    researchContext:
+      "Explains the translation from cross-sectional scores to ranks and portfolio selections, including normalized rank strength, Top-K entry, incumbent hold buffers, turnover trade-offs, and path dependence.",
+  },
+  {
     id: "QM024",
     title: "Forecast Combination and Model Averaging",
     category: "Machine Learning",
@@ -251,11 +283,12 @@ const artifactMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014"],
-  "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM024", "QM025"],
+  "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
+  "equity-alpha-system": ["QM001", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM026", "QM027", "QM024", "QM025"],
   "pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014", "QM019", "QM020"],
-  "second-opinion-portfolio": ["QM001", "QM003", "QM007", "QM009", "QM011", "QM019", "QM020", "QM024", "QM025"],
+  "second-opinion-portfolio": ["QM001", "QM003", "QM007", "QM009", "QM011", "QM019", "QM020", "QM027", "QM024", "QM025"],
   "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 };
 

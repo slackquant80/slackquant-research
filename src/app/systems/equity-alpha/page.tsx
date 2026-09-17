@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MethodsUsed } from "@/components/MethodsUsed";
 import { getSystem } from "@/data/systems";
 
 const item = getSystem("equity-alpha");
@@ -21,7 +22,7 @@ export default function EquityAlphaSystemPage() {
         <div className="shell">
           <div className="paper-track-row">
             <div className="eyebrow">SlackQuant Systems</div>
-            <span className="track-chip equity-alpha-track-chip">Equity Alpha Strategy</span>
+            <span className="track-chip equity-alpha-track-chip">{item.category}</span>
           </div>
           <h1 className="paper-title">{item.title}</h1>
           <div className="paper-subtitle">{item.subtitle}</div>
@@ -40,7 +41,7 @@ export default function EquityAlphaSystemPage() {
                 rel="noopener noreferrer"
                 data-sq-dashboard-app="true"
               >
-                Open Equity Alpha Dashboard ↗
+                Open Dashboard ↗
               </a>
             ) : null}
             <Link className="btn soft" href="/systems/">Explore All Systems</Link>
@@ -54,9 +55,11 @@ export default function EquityAlphaSystemPage() {
           <a href="#overview">Overview</a>
           <a href="#models">Model Stack</a>
           <a href="#architecture">Portfolio Architecture</a>
+          <a href="#universe">Universe Evolution</a>
           <a href="#clocks">Operating Clocks</a>
           <a href="#benchmark">Benchmark-Aware Risk</a>
           <a href="#public">Public Dashboard</a>
+          <a href="#methods">Quantitative Methods</a>
           <a href="#boundary">Operating Boundary</a>
         </aside>
 
@@ -128,6 +131,29 @@ export default function EquityAlphaSystemPage() {
             </div>
           </section>
 
+          <section className="prose-section" id="universe">
+            <div className="kicker">Universe evolution</div>
+            <h2>Monthly point-in-time change is automatic; candidate-pool expansion is governed</h2>
+            <p className="body-copy">
+              The Broad engine is dynamic every month inside its governed model-ready candidate pool. At each completed signal month, market eligibility and exposure representation are rebuilt from information available at that time, so eligible ETFs can enter or leave the monthly opportunity set and the representative wrapper for an exposure can change as liquidity and history evolve.
+            </p>
+            <p className="body-copy">
+              The outer candidate pool is intentionally more conservative. A newly listed ETF or a wrapper that has never accumulated enough model-ready history is not promoted automatically merely because it becomes tradable. SlackQuant therefore separates <strong>monthly PIT maintenance</strong> from a lower-frequency <strong>Universe Expansion Audit</strong>. The latter reviews newly available wrappers, classification and exposure identity, listing history, liquidity, duplicate exposure, and model-readiness before any canonical pool revision. This keeps the live system adaptive without silently rewriting its historical information set.
+            </p>
+            <div className="dual equity-alpha-dual">
+              <div className="dual-card">
+                <div className="kicker">Monthly</div>
+                <h3>Dynamic PIT maintenance</h3>
+                <p>Re-evaluate eligibility and exposure representatives on the completed signal-month clock using the existing governed candidate pool.</p>
+              </div>
+              <div className="dual-card operational">
+                <div className="kicker">Periodic governance</div>
+                <h3>Universe Expansion Audit</h3>
+                <p>Review new listings and previously non-model-ready wrappers before expanding the canonical candidate pool. Promotion is explicit and versioned rather than automatic.</p>
+              </div>
+            </div>
+          </section>
+
           <section className="prose-section" id="clocks">
             <div className="kicker">Operating discipline</div>
             <h2>Historical evidence, current performance, Official holdings, and Preview stay on separate clocks</h2>
@@ -178,14 +204,16 @@ export default function EquityAlphaSystemPage() {
                   rel="noopener noreferrer"
                   data-sq-dashboard-app="true"
                 >
-                  <span className="artifact-kicker">PUBLIC DASHBOARD</span>
-                  <strong>Equity Alpha Operating View</strong>
+                  <span className="artifact-kicker">LIVE</span>
+                  <strong>Operational Dashboard</strong>
                   <small>Official portfolio, current performance, Preview, Broad / Static universe intelligence, portfolio history, and active risk.</small>
                   <span className="artifact-action">Open Dashboard ↗</span>
                 </a>
               </div>
             ) : null}
           </section>
+
+          <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Operating boundary</div>

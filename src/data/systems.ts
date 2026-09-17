@@ -110,6 +110,7 @@ export const systemItems: SystemItem[] = [
     shortSummary:
       "A benchmark-aware global equity ETF strategy that combines REX2 regularized cross-sectional machine learning, Chronos-2 pretrained time-series intelligence, and complementary multi-signal evidence. Forecasts are translated into ranked ETF selections and an ACWI-relative active portfolio with explicit Official, current-performance, and Preview clocks.",
     role: "Machine-Learning Equity ETF Selection and ACWI-Relative Active Portfolio Construction",
+    methodsKey: "equity-alpha-system",
     links: {
       publicDashboard: "/dashboards/equity-alpha/",
     },

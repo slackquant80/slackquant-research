@@ -63,9 +63,12 @@ def main() -> int:
         '"f2r-system"',
         '"pds-system"',
         '"scenario-stress-lab"',
+        '"equity-alpha-system"',
+        'QM026',
+        'QM027',
     )
     ids = set(re.findall(r'id:\s*"(QM\d{3})"', methods))
-    expected_method_ids = {f"QM{i:03d}" for i in range(1, 19)} | {"QM019", "QM020", "QM024", "QM025"}
+    expected_method_ids = {f"QM{i:03d}" for i in range(1, 23)} | {"QM024", "QM025"}
     if ids != expected_method_ids:
         raise RuntimeError(f"Methods registry mismatch: {sorted(ids)}")
 
@@ -104,7 +107,7 @@ def main() -> int:
     )
     equity_alpha = need(
         "src/app/systems/equity-alpha/page.tsx",
-        "Open Equity Alpha Dashboard ↗",
+        "Open Dashboard ↗",
         "REX2",
         "Ridge + ElasticNet",
         "Chronos-2",
@@ -115,10 +118,21 @@ def main() -> int:
     )
     if '<Link\n                className="btn primary"' in equity_alpha:
         raise RuntimeError("Equity Alpha dashboard CTA must use an explicit external anchor")
+    for token in (
+        "Open Dashboard ↗",
+        "Universe Expansion Audit",
+        "MethodsUsed",
+        'researchSlug={item.methodsKey ?? item.slug}',
+    ):
+        if token not in equity_alpha:
+            raise RuntimeError(f"Equity Alpha editorial/method contract missing: {token}")
+    if "Open Equity Alpha Dashboard" in equity_alpha:
+        raise RuntimeError("Equity Alpha top dashboard CTA wording must match peer systems")
     need(
         "src/data/systems.ts",
         'slug: "equity-alpha"',
         'systemGroup: "equity-alpha"',
+        'methodsKey: "equity-alpha-system"',
         'publicDashboard: "/dashboards/equity-alpha/"',
         'title: "Equity Alpha Strategies"',
         'kicker: "Portfolio operating layer"',
@@ -343,12 +357,30 @@ def main() -> int:
     )
 
     # Methods mirror.
-    mi = need("public/methods/index.html", "application-driven rather than encyclopedic", "Future additions")
+    mi = need(
+        "public/methods/index.html",
+        "application-driven rather than encyclopedic",
+        "Future additions",
+        "QM026",
+        "QM027",
+    )
+    need(
+        "public/methods/80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html",
+        "Point-in-Time Dynamic Universe Construction",
+        "Governed Candidate-Pool Expansion",
+        "Equity Alpha",
+    )
+    need(
+        "public/methods/40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html",
+        "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers",
+        "Hold Buffers and Hysteresis",
+        "Equity Alpha",
+    )
     if "paper-driven rather than encyclopedic" in mi:
         raise RuntimeError("stale Methods principle remains")
     articles = sorted((ROOT / "public/methods").rglob("article.html"))
-    if len(articles) != 22:
-        raise RuntimeError(f"expected 22 Method articles; found {len(articles)}")
+    if len(articles) != 24:
+        raise RuntimeError(f"expected 24 Method articles; found {len(articles)}")
 
     old_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/methods\\/");'
     new_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/");'
@@ -396,8 +428,16 @@ def main() -> int:
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=5 Systems=5 Methods=22 / exact registry sets=PASS")
+    print("Research=5 Systems=5 Methods=24 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
+
+    for stale in [
+        "public/methods/80_DATA_RESEARCH_DESIGN/QM021_POINT_IN_TIME_DYNAMIC_UNIVERSE",
+        "public/methods/40_PORTFOLIO_METHODS/QM022_CROSS_SECTIONAL_RANKING_TOPK",
+    ]:
+        if (ROOT / stale).exists():
+            raise RuntimeError(f"Stale pre-canonical Equity Alpha Method path must not exist: {stale}")
+
     print("Methods whole-host first-party navigation=PASS")
     print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")

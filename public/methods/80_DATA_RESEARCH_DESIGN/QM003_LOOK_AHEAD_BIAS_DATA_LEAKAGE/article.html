@@ -558,16 +558,18 @@ Figure&nbsp;2: The future-aware centered feature appears to improve RMSE in both
 <li><a href="../../10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">QM002 — Rolling vs Expanding Windows</a>: how the admissible estimation sample changes across repeated forecast origins.</li>
 <li><a href="../../10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">QM004 — Diebold–Mariano Test</a>: why formal comparison is meaningful only after the forecast pipelines respect the information boundary.</li>
 <li><a href="../../20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">QM006 — Block Bootstrap</a>: dependence-aware resampling once the underlying time-series design is valid.</li>
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html">QM026 — Point-in-Time Dynamic Universe Construction</a></li>
 </ul>
 </section>
 <section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
 <ul>
-<li><a href="https://research.slackquant.com/research/beyond-average-accuracy/">Beyond Average Accuracy</a>: uses a dated FRED-MD snapshot and repeated pseudo-out-of-sample protocol to preserve the historical information boundary.</li>
-<li><a href="https://research.slackquant.com/research/price-macro-decision/">The Decision Value of Price and Macro Information</a>: separates dated inputs and forecast formation from later portfolio outcomes.</li>
-<li><a href="https://research.slackquant.com/research/second-opinion-portfolio/">A Second Opinion for the Portfolio</a>: keeps downstream historical inputs and portfolio evaluation behind explicit information boundaries while distinguishing current pretrained knowledge from historical real-time availability.</li>
-<li><a href="https://research.slackquant.com/systems/scenario-stress-lab/">Multi-Asset Scenario Stress Lab</a>: applies timing and leakage controls when conditioning, evaluating, and comparing scenario models.</li>
-<li><a href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank Allocation (F2R)</a>: applies leakage controls to forecasting inputs, model development, and the historical rank-to-portfolio validation path.</li>
+<li><p><a href="https://research.slackquant.com/systems/equity-alpha/">Equity Alpha</a> — benchmark-aware global equity ETF alpha system using point-in-time selection, rank-based decisions, and active-risk evaluation.</p></li>
+<li><p><a href="https://research.slackquant.com/research/beyond-average-accuracy/">Beyond Average Accuracy</a>: uses a dated FRED-MD snapshot and repeated pseudo-out-of-sample protocol to preserve the historical information boundary.</p></li>
+<li><p><a href="https://research.slackquant.com/research/price-macro-decision/">The Decision Value of Price and Macro Information</a>: separates dated inputs and forecast formation from later portfolio outcomes.</p></li>
+<li><p><a href="https://research.slackquant.com/research/second-opinion-portfolio/">A Second Opinion for the Portfolio</a>: keeps downstream historical inputs and portfolio evaluation behind explicit information boundaries while distinguishing current pretrained knowledge from historical real-time availability.</p></li>
+<li><p><a href="https://research.slackquant.com/systems/scenario-stress-lab/">Multi-Asset Scenario Stress Lab</a>: applies timing and leakage controls when conditioning, evaluating, and comparing scenario models.</p></li>
+<li><p><a href="https://research.slackquant.com/systems/f2r/">Forecast-to-Rank Allocation (F2R)</a>: applies leakage controls to forecasting inputs, model development, and the historical rank-to-portfolio validation path.</p></li>
 </ul>
 <p>QM003 explains the general leakage mechanisms; the linked artifacts define the application-specific information clocks and validation protocols.</p>
 </section>
@@ -1159,6 +1161,8 @@ Varma, Sudhir, and Richard Simon. 2006. <span>“Bias in Error Estimation When U
       { id: "QM020", title: "Time-Series Model Selection and Hyperparameter Tuning", path: "60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html", folder: "QM020_TIME_SERIES_MODEL_SELECTION" },
       { id: "QM024", title: "Forecast Combination and Model Averaging", path: "60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html", folder: "QM024_FORECAST_COMBINATION_MODEL_AVERAGING" },
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
+      { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
+      { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
     ];
 
     const init = () => {
