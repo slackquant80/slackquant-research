@@ -3,7 +3,10 @@
 import { useEffect } from "react";
 
 const CANONICAL_HOST = "research.slackquant.com";
-const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set(["/systems/pds/dashboard/"]);
+const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set([
+  "/systems/pds/dashboard/",
+  "/dashboards/equity-alpha/",
+]);
 const FIRST_PARTY_FULLSIZE_ASSET_EXTENSIONS = [".png", ".jpg", ".jpeg", ".svg", ".webp"];
 
 function secureNewTabAnchor(anchor: HTMLAnchorElement) {

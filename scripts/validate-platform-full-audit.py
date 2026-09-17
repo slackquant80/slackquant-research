@@ -139,6 +139,13 @@ def main() -> int:
         "data-sq-dashboard-app",
     )
     need(
+        "src/components/ExternalLinkPolicy.tsx",
+        '"/systems/pds/dashboard/"',
+        '"/dashboards/equity-alpha/"',
+        'anchor.dataset.sqDashboardApp === "true"',
+        'secureNewTabAnchor(anchor)',
+    )
+    need(
         "public/dashboards/equity-alpha/index.html",
         "Equity Alpha",
         "assets/styles.css",
