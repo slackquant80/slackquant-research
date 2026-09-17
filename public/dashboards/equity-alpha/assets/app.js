@@ -489,6 +489,25 @@ function renderPerformance(){
  const slider=$('#alphaWeightSlider');slider.value=String(Math.round(alphaWeight*100));slider.oninput=()=>setAlphaWeight(Number(slider.value)/100);
  $('#alphaWeightLabel').textContent=pct(alphaWeight,0);$('#coreWeightLabel').textContent=`ACWI core ${pct(1-alphaWeight,0)}`;$('#sliderTE').textContent=pct(P.metrics.te,2);
  $('#profileMetrics').innerHTML=metricCards(P.metrics);
+ const n=P.portfolioReturn.length, yearsN=n/12;
+ const pLast=P.portfolioWealth.length?P.portfolioWealth[P.portfolioWealth.length-1]:null;
+ const bLast=P.benchmarkWealth.length?P.benchmarkWealth[P.benchmarkWealth.length-1]:null;
+ const pCum=pLast==null?null:pLast-1, bCum=bLast==null?null:bLast-1;
+ const pSd=stdev(P.portfolioReturn), bSd=stdev(P.benchmarkReturn);
+ const pSharpe=pSd>0?mean(P.portfolioReturn)/pSd*Math.sqrt(12):null;
+ const bSharpe=bSd>0?mean(P.benchmarkReturn)/bSd*Math.sqrt(12):null;
+ const bVol=(bSd||0)*Math.sqrt(12);
+ const bCagr=n&&bLast!=null?Math.pow(bLast,1/yearsN)-1:null;
+ const bMdd=mddFromWealth(P.benchmarkWealth);
+ const pCalmar=P.metrics.mdd<0&&P.metrics.cagr!=null?P.metrics.cagr/Math.abs(P.metrics.mdd):null;
+ const bCalmar=bMdd<0&&bCagr!=null?bCagr/Math.abs(bMdd):null;
+ const firstMonth=P.monthly.length?(P.monthly[0].holdingMonth||P.monthly[0].month):'—';
+ const lastMonth=P.monthly.length?(P.monthly[P.monthly.length-1].holdingMonth||P.monthly[P.monthly.length-1].month):'—';
+ $('#performanceSummaryPeriod').textContent=`Holding ${firstMonth} – ${lastMonth} · ${n} completed months · current MTD excluded`;
+ $('#performanceSummaryBody').innerHTML=[
+  {name:`Investor portfolio · ${profileLabel()}`,cum:pCum,cagr:P.metrics.cagr,vol:P.metrics.vol,sh:pSharpe,mdd:P.metrics.mdd,cal:pCalmar,active:P.metrics.activeReturn,te:P.metrics.te,ir:P.metrics.ir,primary:true},
+  {name:'ACWI ETF · benchmark',cum:bCum,cagr:bCagr,vol:bVol,sh:bSharpe,mdd:bMdd,cal:bCalmar,active:null,te:null,ir:null,primary:false}
+ ].map(r=>`<tr class="${r.primary?'selected-row':''}"><td><b>${esc(r.name)}</b></td><td class="num">${pct(r.cum,2)}</td><td class="num">${pct(r.cagr,2)}</td><td class="num">${pct(r.vol,2)}</td><td class="num">${num(r.sh,2)}</td><td class="num">${pct(r.mdd,2)}</td><td class="num">${num(r.cal,2)}</td><td class="num">${r.active==null?'—':pct(r.active,2)}</td><td class="num">${r.te==null?'—':pct(r.te,2)}</td><td class="num">${r.ir==null?'—':num(r.ir,2)}</td></tr>`).join('');
  const completedLabels=P.monthly.map(r=>r.holdingMonth||r.month);
  svgLine($('#wealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:completedLabels,format:v=>num(v,2)});
  svgLine($('#relativeChart'),[{name:'Relative wealth',values:P.relativeWealth}],{labels:completedLabels,includeZero:true,format:v=>pct(v,0)});

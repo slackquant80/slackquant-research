@@ -153,6 +153,19 @@
   <div class="metric-strip" id="profileMetrics"></div>
  </section>
 
+ <section class="panel section">
+  <div class="panel-title">
+   <div><h3>Completed performance summary</h3><p id="performanceSummaryPeriod">Completed history only · current MTD excluded</p></div>
+   <span class="badge dark">COMMON SUPPORT</span>
+  </div>
+  <div class="tablewrap">
+   <table class="tbl performance-summary-table">
+    <thead><tr><th>Series</th><th class="num">Cumulative</th><th class="num">CAGR</th><th class="num">Ann. vol</th><th class="num">Sharpe · rf=0</th><th class="num">MDD</th><th class="num">Calmar</th><th class="num">Active return</th><th class="num">TE</th><th class="num">IR</th></tr></thead>
+    <tbody id="performanceSummaryBody"></tbody>
+   </table>
+  </div>
+ </section>
+
  <div class="grid cols2 section">
   <section class="chart"><div class="panel-title"><div><h3>Completed cumulative wealth</h3><p>Closed holding months only · current MTD is excluded and shown separately</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="wealthChart"></div></section>
   <section class="chart"><div class="panel-title"><div><h3>Completed cumulative active wealth</h3><p>Closed holding months only · current MTD excluded</p></div></div><div id="relativeChart"></div></section>
