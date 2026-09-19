@@ -27,5 +27,17 @@
       "public_strategy_id": "ADAA",
       "system_class": "Portfolio Strategy System"
     }
+  ],
+  "public_variants": [
+    {
+      "display_name": "PDS Core",
+      "variant_id": "PDS_CORE"
+    },
+    {
+      "display_name": "PDS Adaptive",
+      "rl_expansion": "Reinforcement Learning",
+      "subtitle": "RL-Assisted Adaptive Defense",
+      "variant_id": "PDS_ADAPTIVE"
+    }
   ]
 }

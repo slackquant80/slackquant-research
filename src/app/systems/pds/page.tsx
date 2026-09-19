@@ -75,7 +75,7 @@ export default function PdsSystemPage() {
             </Link>
             <a
               className="btn soft"
-              href="/resources/systems/pds/PDS_System_Documentation_v1.1.pdf"
+              href="/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -91,6 +91,7 @@ export default function PdsSystemPage() {
         <aside className="toc">
           <strong>On this page</strong>
           <a href="#decision-state">System Role & Public State</a>
+          <a href="#variants">PDS Core / PDS Adaptive</a>
           <a href="#orchestration">What PDS Orchestrates</a>
           <a href="#architecture">Decision Architecture</a>
           <a href="#adoption">Evidence-Gated Adoption</a>
@@ -132,6 +133,34 @@ export default function PdsSystemPage() {
             <div className="boundary-note">
               <b>Why the delay exists:</b> released history makes the portfolio decision process inspectable without
               publishing a live feed of decision-sensitive portfolio instructions.
+            </div>
+          </section>
+
+          <section className="prose-section" id="variants">
+            <div className="kicker">Parallel operating variants</div>
+            <h2>PDS Core remains canonical; PDS Adaptive adds selective defense.</h2>
+            <p className="body-copy">
+              PDS operates two explicitly separated variants. PDS Core is the original canonical portfolio.
+              PDS Adaptive is a parallel Core-based variant with RL-Assisted Adaptive Defense. RL means Reinforcement Learning,
+              and it is used selectively as part of the risk-control layer rather than as a standalone alpha or full
+              portfolio-selection engine.
+            </p>
+            <div className="dual pds-provider-dual">
+              <div className="dual-card">
+                <div className="kicker">Canonical original variant</div>
+                <h3>PDS Core</h3>
+                <p>Original PDS portfolio integrating the admitted provider systems under the governed Core allocation and accounting contract.</p>
+              </div>
+              <div className="dual-card">
+                <div className="kicker">Parallel risk-control variant</div>
+                <h3>PDS Adaptive</h3>
+                <p><strong>RL-Assisted Adaptive Defense.</strong> In normal conditions it remains aligned with PDS Core; under governed defensive conditions it may reduce risk exposure and move the residual allocation to BIL.</p>
+              </div>
+            </div>
+            <div className="boundary-note">
+              <b>Architecture-visible / recipe-protected:</b> the Adaptive role is public, while the current Adaptive state,
+              current risk budget, frozen-policy artifacts, model seeds, thresholds, and exact controller recipe remain private.
+              Adaptive operation never rewrites PDS Core authority or historical Core results.
             </div>
           </section>
 

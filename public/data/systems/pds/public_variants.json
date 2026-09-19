@@ -1,0 +1,25 @@
+{
+  "backtested_vs_operational_history": "SEPARATE",
+  "contract_id": "PDS_PUBLIC_VARIANTS_V1_0",
+  "current_adaptive_risk_budget": "PRIVATE_NOT_EXPORTED",
+  "current_adaptive_state": "PRIVATE_NOT_EXPORTED",
+  "recipe_policy": "ARCHITECTURE_VISIBLE_RECIPE_PROTECTED",
+  "variants": [
+    {
+      "display_name": "PDS Core",
+      "role": "CANONICAL_ORIGINAL_VARIANT",
+      "subtitle": "Original PDS portfolio",
+      "variant_id": "PDS_CORE"
+    },
+    {
+      "description": "Uses reinforcement learning selectively as part of the risk-control layer on top of PDS Core.",
+      "display_name": "PDS Adaptive",
+      "full_portfolio_selection_engine": false,
+      "rl_expansion": "Reinforcement Learning",
+      "role": "PARALLEL_SELECTIVE_RISK_CONTROL_VARIANT",
+      "standalone_alpha_engine": false,
+      "subtitle": "RL-Assisted Adaptive Defense",
+      "variant_id": "PDS_ADAPTIVE"
+    }
+  ]
+}

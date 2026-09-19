@@ -39,6 +39,9 @@ export type PdsPublicPerformanceSummary = {
   months: number;
   startHoldingMonth: string;
   endHoldingMonth: string;
+  startDate: string;
+  endDate: string;
+  days: number;
   cagr: number | null;
   annVol: number | null;
   sharpeRf0: number | null;
@@ -75,6 +78,9 @@ export type PdsPublicFxPerformanceSummary = {
   months: number;
   startHoldingMonth: string;
   endHoldingMonth: string;
+  startDate: string;
+  endDate: string;
+  days: number;
   cagr: number | null;
   annVol: number | null;
   sharpeRf0: number | null;

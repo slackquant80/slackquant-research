@@ -103,24 +103,25 @@ function buildProfile(a){
  a=clamp(Number(a),0,1);
  const key=profileKey(a); if(profileCache.has(key))return profileCache.get(key);
  const auth=D.dailyPerformanceAuthority||{};
- const periods=auth.periods||[];
- if(!periods.length){
+ const periods=auth.periods||[],completedEnd=String(auth.receipt?.supportEnd||'');
+ if(!periods.length||!completedEnd){
   const emptyMetrics={cumulative:null,cagr:null,vol:null,sharpe:null,mdd:null,activeReturn:null,te:null,ir:null,calmar:null,allocationCostDrag:null};
   const empty={alphaWeight:a,coreWeight:1-a,dates:[],portfolioReturn:[],benchmarkReturn:[],portfolioWealth:[],benchmarkWealth:[],relativeWealth:[],portfolioDrawdown:[],benchmarkDrawdown:[],rollingTE12:[],rollingTE24:[],rollingIR12:[],rollingIR24:[],monthly:[],support:{start:'—',end:'—',holdingStart:'—',holdingEnd:'—',dailyObservations:0,completedMonths:0},benchmarkMetrics:{cumulative:null,cagr:null,vol:null,sharpe:null,mdd:null,calmar:null},metrics:emptyMetrics,unavailable:true};
   profileCache.set(key,empty);return empty;
  }
  const rate=Number(D.profileConfig?.allocationCostBpsPerSide??10)/10000;
  let prevAlphaRet=null,prevBmRet=null,wealthStart=1,bwealthStart=1,totalAllocCost=0;
- const navByDate=new Map(),bnavByDate=new Map(),monthly=[];
+ const navByDate=new Map(),bnavByDate=new Map();
  navByDate.set(String(auth.baselineDate),1);bnavByDate.set(String(auth.baselineDate),1);
  periods.forEach((r,i)=>{
+  const pts=(r.points||[]).filter(pt=>String(pt.date)<=completedEnd);
+  if(!pts.length)return;
   let preAlpha=a;
-  if(i>0){
+  if(i>0&&prevAlphaRet!=null&&prevBmRet!=null){
    const den=a*(1+prevAlphaRet)+(1-a)*(1+prevBmRet);
    preAlpha=den>0?a*(1+prevAlphaRet)/den:a;
   }
-  const ow=Math.abs(a-preAlpha), ac=2*ow*rate; totalAllocCost+=ac;
-  const pts=r.points||[];
+  const ow=Math.abs(a-preAlpha),ac=2*ow*rate;totalAllocCost+=ac;
   pts.forEach(pt=>{
    const af=Number(pt.alphaNetFactor),bf=Number(pt.benchmarkFactor);
    const pf=a*af+(1-a)*bf-ac;
@@ -128,19 +129,26 @@ function buildProfile(a){
    bnavByDate.set(String(pt.date),bwealthStart*bf);
   });
   const last=pts[pts.length-1];
-  if(!last)return;
   const af=Number(last.alphaNetFactor),bf=Number(last.benchmarkFactor);
   const ret=a*(af-1)+(1-a)*(bf-1)-ac;
-  monthly.push({month:r.holdingMonth,holdingMonth:r.holdingMonth,signalMonth:r.signalMonth,portfolio:ret,benchmark:bf-1,active:ret-(bf-1),alphaReturn:af-1});
   wealthStart*=1+ret;bwealthStart*=bf;prevAlphaRet=af-1;prevBmRet=bf-1;
  });
- const dates=[...navByDate.keys()].sort();
+ const dates=[...navByDate.keys()].filter(d=>d<=completedEnd).sort();
  const nw=dates.map(d=>Number(navByDate.get(d))),bw=dates.map(d=>Number(bnavByDate.get(d)));
  const pr=new Array(dates.length).fill(null),br=new Array(dates.length).fill(null);
  for(let i=1;i<dates.length;i++){pr[i]=nw[i]/nw[i-1]-1;br[i]=bw[i]/bw[i-1]-1;}
  const rr=pr.filter(Number.isFinite),bb=br.filter(Number.isFinite),ex=pr.map((x,i)=>Number.isFinite(x)&&Number.isFinite(br[i])?x-br[i]:null).filter(Number.isFinite);
- const n=rr.length, years=n/252, vol=(stdev(rr)||0)*Math.sqrt(252),te=(stdev(ex)||0)*Math.sqrt(252),active=(mean(ex)||0)*252,ir=te>0?active/te:null;
+ const n=rr.length,years=n/252,vol=(stdev(rr)||0)*Math.sqrt(252),te=(stdev(ex)||0)*Math.sqrt(252),active=(mean(ex)||0)*252,ir=te>0?active/te:null;
  const cagr=n&&nw.length?Math.pow(nw[nw.length-1]/nw[0],1/years)-1:null;
+ // Calendar-month returns are sampled from the exact completed daily path.
+ const monthEndIdx=[];let lastMonth=null;
+ dates.forEach((d,i)=>{const m=String(d).slice(0,7);if(m!==lastMonth){monthEndIdx.push({month:m,idx:i});lastMonth=m}else monthEndIdx[monthEndIdx.length-1].idx=i});
+ const monthly=[];
+ for(let j=1;j<monthEndIdx.length;j++){
+  const cur=monthEndIdx[j],prev=monthEndIdx[j-1],pi=prev.idx,ci=cur.idx;
+  const portfolio=nw[ci]/nw[pi]-1,benchmark=bw[ci]/bw[pi]-1;
+  monthly.push({month:cur.month,holdingMonth:cur.month,startDate:dates[pi],endDate:dates[ci],portfolio,benchmark,active:portfolio-benchmark});
+ }
  const p={
   alphaWeight:a,coreWeight:1-a,dates,portfolioReturn:pr,benchmarkReturn:br,
   portfolioWealth:nw,benchmarkWealth:bw,relativeWealth:nw.map((x,i)=>x/bw[i]-1),
@@ -149,7 +157,7 @@ function buildProfile(a){
   rollingTE12:rollingMetric(pr,br,252,'te'),rollingTE24:rollingMetric(pr,br,504,'te'),
   rollingIR12:rollingMetric(pr,br,252,'ir'),rollingIR24:rollingMetric(pr,br,504,'ir'),
   monthly,
-  support:{start:dates[0],end:dates[dates.length-1],holdingStart:monthly.length?monthly[0].holdingMonth:null,holdingEnd:monthly.length?monthly[monthly.length-1].holdingMonth:null,dailyObservations:n,completedMonths:monthly.length},
+  support:{start:dates[0],end:dates[dates.length-1],holdingStart:monthly.length?monthly[0].month:null,holdingEnd:monthly.length?monthly[monthly.length-1].month:null,dailyObservations:n,completedMonths:monthly.length},
   benchmarkMetrics:{cumulative:bw[bw.length-1]/bw[0]-1,cagr:n?Math.pow(bw[bw.length-1]/bw[0],1/years)-1:null,vol:(stdev(bb)||0)*Math.sqrt(252),sharpe:(stdev(bb)||0)>0?(mean(bb)/(stdev(bb)||1))*Math.sqrt(252):null,mdd:mddFromWealth(bw)},
   metrics:{cumulative:nw[nw.length-1]/nw[0]-1,cagr,vol,sharpe:(stdev(rr)||0)>0?(mean(rr)/(stdev(rr)||1))*Math.sqrt(252):null,mdd:mddFromWealth(nw),activeReturn:active,te,ir,calmar:null,allocationCostDrag:years>0?totalAllocCost/years:null}
  };
@@ -274,7 +282,7 @@ function annualRows(P){
  return Object.keys(groups).sort().map(y=>{const rr=groups[y],pr=rr.reduce((w,r)=>w*(1+r.portfolio),1)-1,br=rr.reduce((w,r)=>w*(1+r.benchmark),1)-1;return{year:Number(y),portfolio:pr,benchmark:br,active:pr-br}});
 }
 function metricCards(m){
- return `<div class="mini"><span>Active return vs ACWI</span><b>${pct(m.activeReturn,2)}</b></div><div class="mini"><span>Tracking error</span><b>${pct(m.te,2)}</b></div><div class="mini"><span>Information ratio</span><b>${num(m.ir,2)}</b></div><div class="mini"><span>CAGR</span><b>${pct(m.cagr,2)}</b></div><div class="mini"><span>Volatility</span><b>${pct(m.vol,2)}</b></div><div class="mini"><span>Max drawdown</span><b>${pct(m.mdd,2)}</b></div>`;
+ return `<div class="mini"><span>Active return vs ACWI</span><b>${pct(m.activeReturn,2)}</b></div><div class="mini"><span>Tracking error</span><b>${pct(m.te,2)}</b></div><div class="mini"><span>Portfolio IR · daily</span><b>${num(m.ir,2)}</b></div><div class="mini"><span>CAGR</span><b>${pct(m.cagr,2)}</b></div><div class="mini"><span>Volatility</span><b>${pct(m.vol,2)}</b></div><div class="mini"><span>Max drawdown</span><b>${pct(m.mdd,2)}</b></div>`;
 }
 
 function liveProfile(a){
@@ -282,7 +290,7 @@ function liveProfile(a){
  const rows=D.performanceRows||[],last=rows.length?rows[rows.length-1]:null,rate=Number(D.profileConfig?.allocationCostBpsPerSide??10)/10000;let cost=0;
  if(last){const pa=Number(last.alphaNetReturn),pb=Number(last.benchmarkReturn),den=a*(1+pa)+(1-a)*(1+pb),pre=den>0?a*(1+pa)/den:a;cost=2*Math.abs(a-pre)*rate}
  const mtd=a*Number(cur.alphaMtd)+(1-a)*Number(cur.benchmarkMtd)-cost,bm=Number(cur.benchmarkMtd),yr=Number(String(L.meta?.holdingMonth||'').slice(0,4));let fy=1,fb=1;
- currentProfile().monthly.forEach(r=>{const src=(D.performanceRows||[]).find(x=>x.signalMonth===r.signalMonth);if(src&&Number(String(src.holdingMonth).slice(0,4))===yr){fy*=1+r.portfolio;fb*=1+r.benchmark}});fy*=1+mtd;fb*=1+bm;
+ currentProfile().monthly.forEach(r=>{if(Number(String(r.month).slice(0,4))===yr){fy*=1+r.portfolio;fb*=1+r.benchmark}});fy*=1+mtd;fb*=1+bm;
  return {mtd,benchmarkMtd:bm,activeMtd:mtd-bm,ytd:fy-1,benchmarkYtd:fb-1,activeYtd:fy-fb,allocationCost:cost};
 }
 
@@ -420,24 +428,26 @@ function previewHoldingCard(x){
 }
 function renderCockpit(){
  const P=currentProfile(),m=P.metrics,h=investorHoldings(),LP=liveProfile(alphaWeight),lm=L.meta||{};
+ const marketThrough=String(lm.marketDataThrough||'—'),mtdStart=String(lm.mtdBaselineDate||'—'),ytdStart=/^\d{4}/.test(marketThrough)?`${marketThrough.slice(0,4)}-01-01`:'—',histSupport=`${P.support.start||'—'} → ${P.support.end||'—'}`;
  $('#liveKpis').innerHTML=[
-  ['Current MTD · Portfolio',LP?pct(LP.mtd,2):'—','current investor profile'],
-  ['Current MTD · ACWI',LP?pct(LP.benchmarkMtd,2):'—','benchmark'],
-  ['Current MTD · Excess',LP?pct(LP.activeMtd,2):'—','portfolio − ACWI'],
-  ['Current YTD · Portfolio',LP?pct(LP.ytd,2):'—','including current MTD'],
-  ['Current YTD · ACWI',LP?pct(LP.benchmarkYtd,2):'—','benchmark'],
-  ['Current YTD · Excess',LP?pct(LP.activeYtd,2):'—','portfolio − ACWI']
+  ['Current MTD · Portfolio',LP?pct(LP.mtd,2):'—',`${mtdStart} → ${marketThrough} · provisional · execution-day stitched`],
+  ['Current MTD · ACWI',LP?pct(LP.benchmarkMtd,2):'—',`${mtdStart} → ${marketThrough} · provisional · execution-day stitched`],
+  ['Current MTD · Excess',LP?pct(LP.activeMtd,2):'—',`${mtdStart} → ${marketThrough} · provisional · execution-day stitched`],
+  ['Current YTD · Portfolio',LP?pct(LP.ytd,2):'—',`${ytdStart} → ${marketThrough} · includes provisional MTD`],
+  ['Current YTD · ACWI',LP?pct(LP.benchmarkYtd,2):'—',`${ytdStart} → ${marketThrough} · includes provisional MTD`],
+  ['Current YTD · Excess',LP?pct(LP.activeYtd,2):'—',`${ytdStart} → ${marketThrough} · includes provisional MTD`]
  ].map((x,i)=>`<div class="kpi ${i===2||i===5?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
  $('#mtdPanelPortfolio').textContent=LP?pct(LP.mtd,2):'—';
  $('#mtdPanelAcwi').textContent=LP?pct(LP.benchmarkMtd,2):'—';
  $('#mtdPanelExcess').textContent=LP?pct(LP.activeMtd,2):'—';
- $('#mtdPanelAsOf').textContent=(L.meta?.marketDataThrough||'—')+' · separate from completed history';
+ $('#mtdPanelAsOf').textContent=`${mtdStart} → ${marketThrough} · provisional · execution-day stitched · separate from completed history`;
  $('#cockpitKpis').innerHTML=[
-  ['Information ratio',num(m.ir,2),profileLabel()],
-  ['Active return',pct(m.activeReturn,2),'annualized vs ACWI'],
-  ['Tracking error',pct(m.te,2),'profile realized TE'],
-  ['CAGR',pct(m.cagr,2),'historical net profile']
+  ['Portfolio IR · daily',num(m.ir,2),histSupport],
+  ['Active return',pct(m.activeReturn,2),histSupport],
+  ['Tracking error',pct(m.te,2),histSupport],
+  ['CAGR',pct(m.cagr,2),histSupport]
  ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
+ $('#cockpitCompletedSupport').innerHTML=`<strong>Completed daily support:</strong> ${P.support.start} → ${P.support.end} · Portfolio IR / Active Return / TE / CAGR use the completed daily path · Current MTD excluded`;
  const ah=alphaBaseHoldings(),broadN=ah.filter(x=>x.inBroad).length,staticN=ah.filter(x=>x.inStatic).length,overlapN=ah.filter(x=>x.inBroad&&x.inStatic).length;
  $('#cockpitProfileContext').textContent=`OFFICIAL PORTFOLIO · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · ${ah.length} unique alpha names`;
  $('#officialPortfolioLegend').innerHTML=`<span><b>Broad 90%</b> · ${broadN} positions</span><span><b>Static anchor 10%</b> · ${staticN} positions</span><span><b>Overlap merged</b> · ${overlapN}</span>`;
@@ -456,12 +466,13 @@ function renderCockpit(){
    ['Preview as-of',pm.previewAsOf||'—'],
    ['Candidate signal',pm.prospectiveSignalMonth||'—'],
    ['Candidate holding',pm.prospectiveHoldingMonth||'—'],
-   ['Static 10%',staticPreviewActive?`Intramonth candidate · Static-v1${pm.staticPreviewStatus==='ACTIVE_DEGRADED_SOURCE_COVERAGE'?' · reduced source coverage':''}`:'Preview unavailable · current Official carried']
+   ['Static 10%',staticPreviewActive?`Intramonth candidate · Static-v1${pm.staticPreviewStatus==='ACTIVE_DEGRADED_SOURCE_COVERAGE'?' · reduced source coverage':''}`:'Fixed anchor · current Official weights carried']
  ].map(x=>`<div class="status-row"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join(''):'<div class="status-row"><span>Status</span><b>Unavailable</b></div>';
  const core=1-alphaWeight,donut=$('#allocationDonut');if(donut)donut.style.background=`conic-gradient(var(--accent2) 0 ${core*100}%,var(--accent) ${core*100}% 100%)`;
  $('#donutTE').textContent=pct(m.te,2);
- $('#allocationSummary').innerHTML=`<div class="status-row"><span>ACWI core</span><b>${pct(core,0)}</b></div><div class="status-row"><span>Alpha sleeve</span><b>${pct(alphaWeight,0)}</b></div><div class="status-row"><span>Profile IR</span><b>${num(m.ir,2)}</b></div><div class="status-row"><span>Allocation cost drag</span><b>${pct(m.allocationCostDrag,3)}</b></div>`;
+ $('#allocationSummary').innerHTML=`<div class="status-row"><span>ACWI core</span><b>${pct(core,0)}</b></div><div class="status-row"><span>Alpha sleeve</span><b>${pct(alphaWeight,0)}</b></div><div class="status-row"><span>Portfolio IR · daily</span><b>${num(m.ir,2)}</b></div><div class="status-row"><span>Allocation cost drag</span><b>${pct(m.allocationCostDrag,3)}</b></div>`;
  svgLine($('#cockpitWealthChart'),[{name:'Investor portfolio',values:P.portfolioWealth},{name:'ACWI ETF',values:P.benchmarkWealth}],{labels:P.dates,format:v=>num(v,2)});
+ const cws=$('#cockpitWealthSupport');if(cws)cws.textContent=`Completed daily support ${P.support.start} → ${P.support.end} · Current MTD excluded and shown separately`;
  const dm=D.model?.developmentMetrics||{},bm=D.model?.temporalBridgeMetrics||{},fm=D.model||{};
  const modelCombined=Number(fm.combinedIR??fm.combined_ir??fm.ir);
  const modelDev=Number(fm.developmentIR??fm.development_ir??dm.ir);
@@ -472,15 +483,15 @@ function renderCockpit(){
  $('#regularizationSummary').innerHTML=[
   ['Broad engine',`${pct(D.model?.legacyBroadWeight??1,0)} · ${D.model?.selected_lane_id||D.model?.selectedLaneId||'—'}`],
   ['Static-74 anchor',pct(sw,0)],
-  ['Broad robust-floor IR',num(D.model?.robust_floor_ir,2)],
-  ['Selection objective','Maximize weaker of Development / Bridge IR'],
+  ['Broad robust-floor IR · monthly',num(D.model?.robust_floor_ir,2)],
+  ['Selection objective','Maximize weaker of Development / Bridge IR · monthly'],
   ['Static mix search','Only 0% / 10% / 20%; smallest passing risk gate']
  ].map(x=>`<div class="status-row"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join('');
  $('#evidenceMap').innerHTML=[
   ['Selected lane',D.model?.selectedLaneId||D.model?.selected_lane_id||'—'],
-  ['Broad combined IR',num(modelCombined,2)],
-  ['Development IR',num(modelDev,2)],
-  ['Temporal-bridge IR',num(modelBridge,2)],
+  ['Broad selection IR · monthly',num(modelCombined,3)],
+  ['Development selection IR · monthly',num(modelDev,3)],
+  ['Temporal-bridge selection IR · monthly',num(modelBridge,3)],
   ['Current official signal',L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'],
   ['Current holding month',L.meta?.holdingMonth||'—'],
   ['Market data through',L.meta?.marketDataThrough||'—'],
@@ -497,8 +508,10 @@ function renderPerformance(){
  const slider=$('#alphaWeightSlider');slider.value=String(Math.round(alphaWeight*100));slider.oninput=()=>setAlphaWeight(Number(slider.value)/100);
  $('#alphaWeightLabel').textContent=pct(alphaWeight,0);$('#coreWeightLabel').textContent=`ACWI core ${pct(1-alphaWeight,0)}`;$('#sliderTE').textContent=pct(P.metrics.te,2);
  $('#profileMetrics').innerHTML=metricCards(P.metrics);
+ $('#performanceControllerSupport').innerHTML=`<strong>Completed daily support:</strong> ${P.support.start} → ${P.support.end} · All historical risk/return metrics above use this common support · Current MTD excluded`;
+ $('#performanceChartSupport').innerHTML=`<strong>Chart support:</strong> ${P.support.start} → ${P.support.end} completed daily path · Current MTD excluded · Rolling 1Y/2Y charts begin only after their required lookback`;
  const bm=P.benchmarkMetrics||{};
- $('#performanceSummaryPeriod').textContent=P.unavailable?'Daily performance authority not built yet · run [1] Refresh local':`Holding ${P.support.holdingStart} – ${P.support.holdingEnd} · ${P.support.completedMonths} completed months · daily path ${P.support.start} – ${P.support.end} · ${P.support.dailyObservations} observations · 252D`;
+ $('#performanceSummaryPeriod').textContent=P.unavailable?'Daily performance authority not built yet · run [1] Refresh local':`Completed calendar months ${P.support.holdingStart} → ${P.support.holdingEnd} · ${P.support.completedMonths} months · completed daily support ${P.support.start} → ${P.support.end} · ${P.support.dailyObservations} observations · annualization: 252D`;
  $('#performanceSummaryBody').innerHTML=[
   {name:`Investor portfolio · ${profileLabel()}`,cum:P.metrics.cumulative,cagr:P.metrics.cagr,vol:P.metrics.vol,sh:P.metrics.sharpe,mdd:P.metrics.mdd,cal:P.metrics.calmar,active:P.metrics.activeReturn,te:P.metrics.te,ir:P.metrics.ir,primary:true},
   {name:'ACWI ETF · benchmark',cum:bm.cumulative,cagr:bm.cagr,vol:bm.vol,sh:bm.sharpe,mdd:bm.mdd,cal:bm.calmar,active:null,te:null,ir:null,primary:false}
@@ -507,19 +520,26 @@ function renderPerformance(){
  svgLine($('#relativeChart'),[{name:'Relative wealth',values:P.relativeWealth}],{labels:P.dates,includeZero:true,format:v=>pct(v,0)});
  svgLine($('#drawdownChart'),[{name:'Portfolio',values:P.portfolioDrawdown},{name:'ACWI ETF',values:P.benchmarkDrawdown}],{labels:P.dates,includeZero:true,format:v=>pct(v,0)});
  svgLine($('#teChart'),[{name:'Rolling 1Y TE',values:P.rollingTE12},{name:'Rolling 2Y TE',values:P.rollingTE24}],{labels:P.dates,includeZero:true,format:v=>pct(v,1)});
+ const teNote=$('#teChartSupport');if(teNote)teNote.textContent=`1Y / 2Y annualized active risk · plotted through ${P.support.end} · completed daily path · annualization: 252D`;
  svgLine($('#irChart'),[{name:'Rolling 1Y IR',values:P.rollingIR12},{name:'Rolling 2Y IR',values:P.rollingIR24}],{labels:P.dates,includeZero:true,format:v=>num(v,2)});
+ const irNote=$('#irChartSupport');if(irNote)irNote.textContent=`1Y / 2Y benchmark-relative efficiency · plotted through ${P.support.end} · completed daily path · annualization: 252D`;
  const monthlyRows=P.monthly.slice(-12);
- const groups={};P.monthly.forEach(r=>{const y=String(r.holdingMonth).slice(0,4);(groups[y]??=[]).push(r)});
+ const fullMonthlyRows=P.monthly.slice().reverse();
+ const groups={};P.monthly.forEach(r=>{const y=String(r.month).slice(0,4);(groups[y]??=[]).push(r)});
  const annualRows=Object.keys(groups).sort().map(y=>{const z=groups[y];const pr=z.reduce((w,r)=>w*(1+r.portfolio),1)-1,br=z.reduce((w,r)=>w*(1+r.benchmark),1)-1;return {year:Number(y),portfolio:pr,benchmark:br,active:pr-br}});
- groupedReturnBars($('#monthlyReturnBars'),monthlyRows,'holdingMonth');
- groupedReturnBars($('#annualReturnBars'),annualRows,'year');
- $('#recentMonthlyBody').innerHTML=monthlyRows.map(r=>`<tr><td>${esc(r.holdingMonth)}</td><td class="num">${pct(r.portfolio,2)}</td><td class="num">${pct(r.benchmark,2)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,2)}</td></tr>`).join('');
- $('#annualBody').innerHTML=annualRows.slice().reverse().map(r=>`<tr><td>${r.year}</td><td class="num">${pct(r.portfolio,1)}</td><td class="num">${pct(r.benchmark,1)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,1)}</td></tr>`).join('');
+ const endYear=String(P.support.end||'').slice(0,4),endMonth=String(P.support.end||'').slice(5,7);
+ const annualDisplayRows=annualRows.map(r=>({...r,yearLabel:(String(r.year)===endYear&&endMonth!=='12')?`${r.year} YTD`:String(r.year)}));
+ groupedReturnBars($('#monthlyReturnBars'),monthlyRows,'month');
+ groupedReturnBars($('#annualReturnBars'),annualDisplayRows.map(r=>({...r,year:r.yearLabel})),'year');
+ $('#recentMonthlyBody').innerHTML=fullMonthlyRows.map(r=>`<tr><td>${esc(r.holdingMonth||r.month||'—')}</td><td class="num">${pct(r.portfolio,2)}</td><td class="num">${pct(r.benchmark,2)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,2)}</td></tr>`).join('');
+ $('#annualBody').innerHTML=annualDisplayRows.slice().reverse().map(r=>`<tr><td>${esc(r.yearLabel)}</td><td class="num">${pct(r.portfolio,1)}</td><td class="num">${pct(r.benchmark,1)}</td><td class="num ${r.active>=0?'up':'down'}">${pct(r.active,1)}</td></tr>`).join('');
+ const mrn=$('#recentMonthlyBody')?.closest('section')?.querySelector('.panel-title p');if(mrn&&monthlyRows.length)mrn.textContent=`Chart: latest 12 completed months ${monthlyRows[0].month} → ${monthlyRows.at(-1).month} · Table: full completed monthly history ${P.support.holdingStart} → ${P.support.holdingEnd} (${P.support.completedMonths} months), latest first · Current MTD excluded`;
+ const arn=$('#annualBody')?.closest('section')?.querySelector('.panel-title p');if(arn)arn.textContent=`Completed calendar support ${P.support.start} → ${P.support.end} · latest row is YTD completed through ${P.support.end}`;
 }
 function renderHoldings(){
  const h=investorHoldings(),ph=previewInvestorHoldings(),pm=L.preview?.meta||{};
- $('#holdingProfileContext').textContent=`OFFICIAL PORTFOLIO · ${profileLabel()}`;
- $('#holdingsSignalContext').textContent=`Month-end finalized Official portfolio · Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · MTD through ${L.meta?.marketDataThrough||'—'}`;
+ $('#holdingProfileContext').textContent=`OFFICIAL PORTFOLIO · ${profileLabel()} · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}`;
+ $('#holdingsSignalContext').textContent=`Official target: Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · Current wt as-of ${L.meta?.marketDataThrough||'—'} · Holding MTD ${L.meta?.mtdBaselineDate||'—'} → ${L.meta?.marketDataThrough||'—'} provisional / execution-day stitched`;
  const barRows=h.map(x=>({label:`${x.ticker} · ${x.roleFamily}`,weight:x.targetWeight,isCore:x.status==='CORE'}));
  bars($('#holdingBars'),barRows,'weight','label',v=>pct(v,2),'isCore');
  const roles={};h.forEach(x=>roles[x.roleFamily]=(roles[x.roleFamily]||0)+Number(x.targetWeight||0));
@@ -553,9 +573,9 @@ function renderUniverse(){
  }else{
   $('#universeKpis').innerHTML=[
    ['Latest PIT universe',latest.length||U.latestCount||'—',L.meta?.signalMonth?`signal ${L.meta.signalMonth}`:(U.latestMonth||'current')],
-   ['Historical rep union',U.historicalUnionCount??'—','unique PIT representatives'],
-   ['Scored latest',latest.filter(x=>x.isScored).length||U.scoredCount||'—','frozen live model score available'],
-   ['Selected now',selected.size,'current 90/10 alpha sleeve']
+   ['Historical PIT union',U.historicalUnionCount??'—','unique PIT representatives'],
+   ['Scored in latest snapshot',latest.filter(x=>x.isScored).length||U.scoredCount||'—','frozen live model score available'],
+   ['Selected in Official alpha sleeve',selected.size,'current 90/10 alpha sleeve']
   ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
  }
  const roleRows=isStatic?staticRows:latest,roleCounts={};roleRows.forEach(x=>{const k=prettyRole(x.roleFamily||'Unclassified')||'Unclassified';roleCounts[k]=(roleCounts[k]||0)+1});
@@ -566,6 +586,7 @@ function renderUniverse(){
  const roleHtml=Object.entries(roleCounts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="status-row"><span>${esc(k)}</span><b>${v}</b></div>`).join('');
  rc.innerHTML=roleHtml+`<div class="status-row"><span><b>Total universe</b></span><b>${roleRows.length}</b></div>`;
  svgLine($('#breadthChart'),[{name:'PIT representatives',values:(U.breadth||[]).map(x=>x.count)}],{labels:(U.breadth||[]).map(x=>x.month),format:v=>num(v,0)});
+ const breadth=U.breadth||[],breadthNote=$('#universeBreadthSupport');if(breadthNote&&breadth.length)breadthNote.textContent=`Monthly PIT investable exposure representatives · ${breadth[0].month} → ${breadth.at(-1).month}`;
  const engines=[['broad','Broad 90%'],['static','Static-v1 10%']];
  $('#universeEngineTabs').innerHTML=engines.map(([k,l])=>`<button data-e="${k}" class="${universeEngine===k?'active':''}">${l}</button>`).join('');
  $('#universeEngineTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{universeEngine=b.dataset.e;renderUniverse()});
@@ -583,7 +604,7 @@ function renderUniverse(){
  renderUniverseTable();
 }
 function renderUniverseTable(){
- const U=D.universe||{},isStatic=universeEngine==='static',rows=isStatic?effectiveStaticUniverse():((universeView==='latest'?effectiveLatestUniverse():U.historicalUnion)||[]),q=String($('#universeSearch')?.value||'').trim().toUpperCase(),role=$('#universeRoleFilter')?.value||'';
+ const U=D.universe||{},latest=effectiveLatestUniverse(),isStatic=universeEngine==='static',rows=isStatic?effectiveStaticUniverse():((universeView==='latest'?latest:U.historicalUnion)||[]),q=String($('#universeSearch')?.value||'').trim().toUpperCase(),role=$('#universeRoleFilter')?.value||'';
  const filtered=rows.filter(r=>(!role||r.roleFamily===role)&&(!q||[r.ticker,r.name,r.roleFamily,r.exposure].some(x=>String(x||'').toUpperCase().includes(q))));
  if(isStatic){
   $('#universeInventoryTitle').textContent='Static-v1 10% universe ranking';
@@ -596,7 +617,7 @@ function renderUniverseTable(){
   $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedStatic?'selected-row':''}"><td class="num"><b>${r.staticRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.staticScore==null?'—':num(r.staticScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td class="num">${r.multiSignalRank??'—'}</td><td><span class="pill ${staticDecisionClass(r.staticState)}">${esc(staticDecisionLabel(r.staticState))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td></tr>`).join('');
  }else{
   $('#universeInventoryTitle').textContent='Broad 90% universe ranking';
-  $('#universeInventoryNote').innerHTML='<b>Broad rank</b> is the 90% Broad-engine rank. <b>Blend strength</b> is an internal normalized ranking diagnostic, not an expected return or probability. Lower rank is stronger.';
+  $('#universeInventoryNote').innerHTML=`<b>Signal ${esc(L.meta?.signalMonth||'—')}</b> · Latest PIT ${latest.length} · Scored ${latest.filter(x=>x.isScored).length}. <b>Broad rank</b> is the 90% Broad-engine rank; <b>Blend strength</b> is a normalized ranking diagnostic, not an expected return or probability. Lower rank is stronger.`;
   $('#universeTableHead').innerHTML='<tr><th class="num">Broad rank</th><th>ETF</th><th>Name</th><th class="num">Blend strength</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Rank band</th><th>Current broad state</th><th>Role family</th><th>Exposure</th><th class="num">Rep months</th><th>60M ready</th></tr>';
   $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedComposite?'selected-row':''}"><td class="num"><b>${r.finalRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.finalScore==null?'—':num(r.finalScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td>${r.rankZone?`<span class="pill ${String(r.rankZone).includes('TOP10')?'good':'muted'}">${esc(rankBandLabel(r.rankZone))}</span>`:'—'}</td><td><span class="pill ${rankDecisionClass(r.portfolioStatus)}">${esc(rankDecisionLabel(r.portfolioStatus,r.unscoredReason))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td><td class="num">${r.representativeMonths??'—'}</td><td>${r.modelReadyProxy?'<span class="pill good">YES</span>':'<span class="pill muted">NO</span>'}</td></tr>`).join('');
  }
@@ -636,20 +657,21 @@ function renderHistory(){
  $('#historySleeveTabs').innerHTML=[['broad','Broad 90%'],['static','Static-v1 10%']].map(([k,l])=>`<button data-h="${k}" class="${historySleeve===k?'active':''}">${l}</button>`).join('');
  $('#historySleeveTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{historySleeve=b.dataset.h;renderHistory()});
  $('#historyHeatmapTitle').textContent=historySleeve==='static'?'Static-v1 10% selection heatmap':'Broad 90% selection heatmap';
- $('#historyHeatmapNote').textContent=`Last 36 ${historySleeve==='static'?'Static-v1':'Broad'} decisions · completed history plus the current Official open holding month`;
+ const histStart=months[0]?.signalMonth||'—',histEnd=months.at(-1)?.signalMonth||'—';
+ $('#historyHeatmapNote').textContent=`Last ${months.length} ${historySleeve==='static'?'Static-v1':'Broad'} decisions · signal history ${histStart} → ${histEnd} · completed history plus current Official open month`;
 
  const P=currentProfile(),LP=liveProfile(alphaWeight);
- $('#historyProfileContext').textContent=`${profileLabel()} · completed through ${D.meta?.performanceThroughHoldingMonth||'—'}; current Official ${officialSignal||'—'} → ${officialHolding||'—'} shown separately`;
- const pmap=new Map(P.monthly.map(x=>[x.signalMonth,x]));
+ $('#historyProfileContext').textContent=`${profileLabel()} · completed performance through ${D.meta?.performanceThroughCompletedDate||currentProfile().support.end||'—'} · current Official ${officialSignal||'—'} → ${officialHolding||'—'}; Current MTD ${L.meta?.mtdBaselineDate||'—'} → ${L.meta?.marketDataThrough||'—'} shown separately`;
+ const pmap=new Map(P.monthly.map(x=>[x.month,x]));
  $('#historyBody').innerHTML=rows.slice().reverse().map(r=>{
    const open=r._state==='OFFICIAL_OPEN';
-   const pr=pmap.get(r.signalMonth);
+   const pr=pmap.get(r.holdingMonth);
    const ret=open?(LP?LP.mtd:null):pr?.portfolio;
    const active=open?(LP?LP.activeMtd:null):pr?.active;
    const state=open?'<span class="pill warn">OPEN · OFFICIAL</span>':'<span class="pill muted">COMPLETED</span>';
    const broad=(r.selectedTickers||[]).join(', ')||'—';
    const stat=(r.staticSelectedTickers||[]).join(', ')||'—';
-   return `<tr class="${open?'history-open-row':''}"><td>${state}</td><td>${esc(r.signalMonth)}</td><td>${esc(r.holdingMonth)}</td><td>${pct(1-alphaWeight,0)} / ${pct(alphaWeight,0)}</td><td>${esc(broad)}</td><td>${esc(stat)}</td><td class="num">${r.alphaTurnover==null?'—':pct(r.alphaTurnover,1)}</td><td class="num">${ret==null?'—':pct(ret,2)}${open?' <small>MTD</small>':''}</td><td class="num ${active!=null&&active>=0?'goodtext':'badtext'}">${active==null?'—':pct(active,2)}${open?' <small>MTD</small>':''}</td></tr>`;
+   return `<tr class="${open?'history-open-row':''}"><td>${state}</td><td>${esc(r.signalMonth)}</td><td>${esc(r.holdingMonth||r.month||'—')}</td><td>${pct(1-alphaWeight,0)} / ${pct(alphaWeight,0)}</td><td>${esc(broad)}</td><td>${esc(stat)}</td><td class="num">${r.alphaTurnover==null?'—':pct(r.alphaTurnover,1)}</td><td class="num">${ret==null?'—':pct(ret,2)}${open?' <small>MTD</small>':''}</td><td class="num ${active!=null&&active>=0?'goodtext':'badtext'}">${active==null?'—':pct(active,2)}${open?' <small>MTD</small>':''}</td></tr>`;
  }).join('');
 }
 
@@ -659,10 +681,12 @@ function renderRisk(){
  $('#riskKpis').innerHTML=[
   ['Selected TE',pct(P.metrics.te,2),profileLabel()],
   ['Full-alpha TE',pct(buildProfile(1).metrics.te,2),'Alpha 100%'],
-  ['Selected IR',num(P.metrics.ir,2),'after profile translation'],
+  ['Selected portfolio IR · daily',num(P.metrics.ir,2),'after profile translation'],
   ['Allocation cost drag',pct(P.metrics.allocationCostDrag,3),'core/sleeve rebalancing']
  ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
+ $('#riskSupportStrip').innerHTML=`<strong>Completed daily support:</strong> ${P.support.start} → ${P.support.end} · TE / Active Return / Portfolio IR / CAGR / MDD use the same completed daily path · Current MTD excluded`;
  $('#riskProfileBody').innerHTML=ladder.map(({a,p})=>`<tr><td>Core ${pct(1-a,0)} / Alpha ${pct(a,0)}</td><td class="num">${pct(1-a,0)}</td><td class="num">${pct(a,0)}</td><td class="num">${pct(p.metrics.te,2)}</td><td class="num">${pct(p.metrics.activeReturn,2)}</td><td class="num">${num(p.metrics.ir,2)}</td><td class="num">${pct(p.metrics.cagr,2)}</td><td class="num">${pct(p.metrics.mdd,2)}</td></tr>`).join('');
+ const rpn=$('#riskProfileBody')?.closest('section')?.querySelector('.panel-title p');if(rpn)rpn.textContent=`Same alpha model, different ACWI core weights · exact daily support ${currentProfile().support.start} → ${currentProfile().support.end}`;
  const frontier=[];for(let i=0;i<=20;i++){const a=i/20,p=buildProfile(a);frontier.push({label:`Alpha ${pct(a,0)}`,te:p.metrics.te})}
  bars($('#riskBars'),frontier,'te','label',v=>pct(v,2));
 }
@@ -672,13 +696,16 @@ function renderRobustness(){
  const dev=Number(m.developmentIR??m.development_ir);
  const bridge=Number(m.temporalBridgeIR??m.temporal_bridge_ir);
  const floor=Number(m.robustFloorIR??m.robust_floor_ir);
+ const histRows=D.performanceRows||[],monthlyStart=histRows[0]?.holdingMonth||currentProfile().support.holdingStart||'—',monthlyEnd=D.meta?.performanceThroughHoldingMonth||currentProfile().support.holdingEnd||'—';
  $('#robustKpis').innerHTML=[
-  ['Broad combined IR',num(combined,2),`${p.length} lanes in near-optimal plateau`],
-  ['Development IR',num(dev,2),'selected Broad lane'],
-  ['Temporal-bridge IR',num(bridge,2),'selected Broad lane'],
-  ['Robust floor IR',num(floor,2),'min(Development, Bridge)']
+  ['Broad selection IR · monthly',num(combined,2),`${p.length} lanes in near-optimal plateau`],
+  ['Development selection IR · monthly',num(dev,2),'selected Broad lane'],
+  ['Temporal-bridge selection IR · monthly',num(bridge,2),'selected Broad lane'],
+  ['Robust floor IR · monthly',num(floor,2),'min(Development, Bridge)']
  ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
+ $('#robustnessBasisStrip').innerHTML=`<strong>Selection / robustness metric basis:</strong> completed monthly returns ${monthlyStart} → ${monthlyEnd}. Selection IRs here are monthly-return IRs and are <b>not</b> the completed daily portfolio IR shown on Performance.`;
  $('#costBody').innerHTML=c.map(x=>`<tr><td>${x.cost_bps_per_side} bp</td><td class="num">${num(x.ir,2)}</td><td class="num">${pct(x.active_return,2)}</td><td class="num">${pct(x.te,2)}</td><td class="num">${pct(x.cagr,2)}</td><td class="num">${pct(x.mdd,2)}</td></tr>`).join('');
+ const csn=$('#costBody')?.closest('section')?.querySelector('.panel-title p');if(csn)csn.textContent=`Final alpha model · completed monthly returns ${monthlyStart} → ${monthlyEnd} · IR / Active / TE / CAGR / MDD derived from monthly observations`;
  $('#plateauBody').innerHTML=p.map(x=>`<tr><td>${esc(x.lane_id)}</td><td class="num">${pct(x.rex2_weight,1)}</td><td class="num">${pct(x.chronos_weight,1)}</td><td class="num">${x.hold_rank}</td><td class="num">${num(x.ir__COMBINED,2)}</td><td class="num">${num(x.ir__DEVELOPMENT,2)}</td><td class="num">${num(x.ir__TEMPORAL_BRIDGE,2)}</td><td class="num">${pct(x.avg_one_way_turnover__COMBINED,1)}</td></tr>`).join('');
 }
 function renderMethod(){
@@ -703,11 +730,11 @@ function renderMethod(){
   ['Final alpha merge',`${pct(broadW,0)} Broad + ${pct(staticW,0)} Static; overlaps merged by weight`],
   ['Benchmark',D.meta?.benchmark],
   ['Evidence mode',D.meta?.evidenceMode],
-  ['Completed performance through',D.meta?.performanceThroughHoldingMonth||'—'],
+  ['Completed performance through',D.meta?.performanceThroughCompletedDate||currentProfile().support.end||'—'],
   ['Current Official',`Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}`],
   ['Market data through',L.meta?.marketDataThrough||'—'],
   ['Preview',pm.status==='PREVIEW'?`Signal ${pm.prospectiveSignalMonth} → Holding ${pm.prospectiveHoldingMonth} · NOT EXECUTED`:'Unavailable'],
-  ['Static Preview state',staticPreview],
+  ['Static Preview state',String(staticPreview).startsWith('ACTIVE')?(staticPreview==='ACTIVE'?'Intramonth candidate':'Intramonth candidate · reduced source coverage'):'Fixed anchor · current Official weights carried'],
   ['Historical model contract',D.meta?.historicalModelVersion||D.meta?.version],
   ['Claim boundary',D.meta?.claimBoundary]
  ].map(x=>`<div class="status-row"><span>${esc(x[0])}</span><b style="max-width:68%;text-align:right">${esc(x[1]||'—')}</b></div>`).join('');
@@ -718,7 +745,7 @@ $$('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.page));
 
 $('#statusTrack').textContent=D.meta?.track||'Global / ACWI';
 $('#statusSignal').textContent=`Official Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} · Holding ${L.meta?.holdingMonth||'—'} · Market through ${L.meta?.marketDataThrough||'—'}`;
-$('#evidenceThrough').textContent=`COMPLETED PERFORMANCE: through ${D.meta?.performanceThroughHoldingMonth||'—'} month-end only. CURRENT MTD/YTD: separate through ${L.meta?.marketDataThrough||'—'}. OFFICIAL PORTFOLIO: Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}. PREVIEW: ${L.preview?.meta?.status==='PREVIEW'?`Candidate Signal ${L.preview.meta.prospectiveSignalMonth} → Holding ${L.preview.meta.prospectiveHoldingMonth} · NOT EXECUTED`:'Unavailable'}.`;
+$('#evidenceThrough').textContent=`COMPLETED PERFORMANCE: through ${D.meta?.performanceThroughCompletedDate||currentProfile().support.end||'—'} close. CURRENT MTD/YTD: separate through ${L.meta?.marketDataThrough||'—'}. OFFICIAL PORTFOLIO: Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}. PREVIEW: ${L.preview?.meta?.status==='PREVIEW'?`Candidate Signal ${L.preview.meta.prospectiveSignalMonth} → Holding ${L.preview.meta.prospectiveHoldingMonth} · NOT EXECUTED`:'Unavailable'}.`;
 $('#footerModel').textContent=`${D.model?.selectedLaneId||D.model?.selected_lane_id||'—'} · Operating ${D.meta?.version||'—'} · Historical model ${D.meta?.historicalModelVersion||'—'}`;
 
 renderGlobalProfileControl();

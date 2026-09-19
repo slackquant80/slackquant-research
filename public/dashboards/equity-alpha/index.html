@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SlackQuant Equity Alpha · Live Research Dashboard</title>
-<link rel="stylesheet" href="assets/styles.css?v=7d08ec907853">
+<link rel="stylesheet" href="assets/styles.css?v=a5bef3169287">
 </head>
 <body>
 <div class="app">
@@ -58,6 +58,7 @@
 <section class="page" id="page-cockpit">
  <div class="grid cols6 live-strip" id="liveKpis"></div>
  <div class="grid cols4 section" id="cockpitKpis"></div>
+ <div class="support-strip" id="cockpitCompletedSupport"></div>
 
  <div class="grid cols2 section">
   <section class="panel">
@@ -125,7 +126,7 @@
 
  <div class="grid cols2 section">
   <section class="chart">
-   <div class="panel-title"><div><h3>Completed cumulative wealth</h3><p>Closed holding months only · current MTD is excluded and shown separately</p></div></div>
+   <div class="panel-title"><div><h3>Completed cumulative wealth</h3><p id="cockpitWealthSupport">Completed daily path · current MTD excluded</p></div></div>
    <div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div>
    <div id="cockpitWealthChart"></div>
   </section>
@@ -151,6 +152,7 @@
     <div class="te-readout"><span>Realized historical TE</span><b id="sliderTE">—</b></div>
   </div>
   <div class="metric-strip" id="profileMetrics"></div>
+  <div class="support-strip" id="performanceControllerSupport"></div>
  </section>
 
  <section class="panel section">
@@ -160,26 +162,27 @@
   </div>
   <div class="tablewrap">
    <table class="tbl performance-summary-table">
-    <thead><tr><th>Series</th><th class="num">Cumulative</th><th class="num">CAGR</th><th class="num">Ann. vol</th><th class="num">Sharpe · rf=0</th><th class="num">MDD</th><th class="num">Calmar</th><th class="num">Active return</th><th class="num">TE</th><th class="num">IR</th></tr></thead>
+    <thead><tr><th>Series</th><th class="num">Cumulative</th><th class="num">CAGR</th><th class="num">Ann. vol</th><th class="num">Sharpe · rf=0</th><th class="num">MDD</th><th class="num">Calmar</th><th class="num">Active return</th><th class="num">TE</th><th class="num">IR · daily</th></tr></thead>
     <tbody id="performanceSummaryBody"></tbody>
    </table>
   </div>
  </section>
 
+ <div class="support-strip section" id="performanceChartSupport"></div>
  <div class="grid cols2 section">
-  <section class="chart"><div class="panel-title"><div><h3>Completed cumulative wealth</h3><p>Closed holding months only · current MTD is excluded and shown separately</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="wealthChart"></div></section>
-  <section class="chart"><div class="panel-title"><div><h3>Completed cumulative active wealth</h3><p>Closed holding months only · current MTD excluded</p></div></div><div id="relativeChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Completed cumulative wealth</h3><p>Uses the completed daily support shown above</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="wealthChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Relative wealth vs ACWI</h3><p>Uses the completed daily support shown above</p></div></div><div id="relativeChart"></div></section>
  </div>
 
  <div class="grid cols2 section">
-  <section class="chart"><div class="panel-title"><div><h3>Completed drawdown</h3><p>Closed holding months only · current MTD excluded</p></div></div><div id="drawdownChart"></div></section>
-  <section class="chart"><div class="panel-title"><div><h3>Rolling tracking error</h3><p>1Y and 2Y annualized active risk · completed daily path · 252D</p></div></div><div id="teChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Completed drawdown</h3><p>Uses the completed daily support shown above</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="drawdownChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Rolling tracking error</h3><p id="teChartSupport">1Y and 2Y annualized active risk · completed daily path · annualization 252D</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y TE</span><span class="b"><i></i>Rolling 2Y TE</span></div><div id="teChart"></div></section>
  </div>
 
- <section class="chart section"><div class="panel-title"><div><h3>Rolling information ratio</h3><p>1Y and 2Y benchmark-relative efficiency · completed daily path · 252D</p></div></div><div id="irChart"></div></section>
+ <section class="chart section"><div class="panel-title"><div><h3>Rolling information ratio</h3><p id="irChartSupport">1Y and 2Y benchmark-relative efficiency · completed daily path · annualization 252D</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y IR</span><span class="b"><i></i>Rolling 2Y IR</span></div><div id="irChart"></div></section>
 
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Recent monthly returns</h3><p>Profile vs ACWI ETF</p></div></div><div id="monthlyReturnBars"></div><div class="tablewrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>Month</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="recentMonthlyBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Monthly returns</h3><p>Chart: latest 12 completed months · Table: full completed history, latest first</p></div></div><div id="monthlyReturnBars"></div><div class="tablewrap monthly-history-table" style="margin-top:12px"><table class="tbl"><thead><tr><th>Month</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="recentMonthlyBody"></tbody></table></div></section>
   <section class="panel"><div class="panel-title"><div><h3>Calendar-year returns</h3><p>Profile vs ACWI ETF</p></div></div><div id="annualReturnBars"></div><div class="tablewrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>Year</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="annualBody"></tbody></table></div></section>
  </div>
 </section>
@@ -210,7 +213,7 @@
 
  <div class="grid cols2 section">
   <section class="chart">
-    <div class="panel-title"><div><h3>PIT representative breadth</h3><p>Monthly point-in-time investable exposure representatives</p></div></div>
+    <div class="panel-title"><div><h3>PIT representative breadth</h3><p id="universeBreadthSupport">Monthly point-in-time investable exposure representatives</p></div></div>
     <div id="breadthChart"></div>
   </section>
   <section class="panel">
@@ -255,8 +258,9 @@
 
 <section class="page" id="page-risk">
  <div class="grid cols4" id="riskKpis"></div>
+ <div class="support-strip" id="riskSupportStrip"></div>
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Static core / sleeve profile ladder</h3><p>Same alpha model, different ACWI core weights</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Profile</th><th class="num">Core</th><th class="num">Alpha</th><th class="num">TE</th><th class="num">Active</th><th class="num">IR</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="riskProfileBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Static core / sleeve profile ladder</h3><p>Same alpha model, different ACWI core weights</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Profile</th><th class="num">Core</th><th class="num">Alpha</th><th class="num">TE</th><th class="num">Active</th><th class="num">IR · daily</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="riskProfileBody"></tbody></table></div></section>
   <section class="panel"><div class="panel-title"><div><h3>TE budget map</h3><p>Historical realized TE across alpha-sleeve weights</p></div></div><div id="riskBars"></div></section>
  </div>
  <div class="notice section"><strong>Risk-budget interpretation.</strong> Core weight changes portfolio risk and performance only; it does not change ETF selection, model scores, or the underlying Broad-PIT alpha engine.</div>
@@ -264,9 +268,10 @@
 
 <section class="page" id="page-robustness">
  <div class="grid cols4" id="robustKpis"></div>
+ <div class="support-strip" id="robustnessBasisStrip"></div>
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Transaction-cost stress</h3><p>Final alpha model · Broad 90% + Static 10%</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Cost / side</th><th class="num">IR</th><th class="num">Active</th><th class="num">TE</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="costBody"></tbody></table></div></section>
-  <section class="panel"><div class="panel-title"><div><h3>Near-optimal plateau</h3><p>Broad-engine selector neighborhood · Static regularization is evaluated separately</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Lane</th><th class="num">REX2</th><th class="num">Chronos</th><th class="num">Hold</th><th class="num">All IR</th><th class="num">Dev IR</th><th class="num">Bridge IR</th><th class="num">Turnover</th></tr></thead><tbody id="plateauBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Transaction-cost stress</h3><p>Final alpha model · Broad 90% + Static 10%</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Cost / side</th><th class="num">IR · monthly</th><th class="num">Active</th><th class="num">TE</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="costBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Near-optimal plateau</h3><p>Broad-engine selector neighborhood · Static regularization is evaluated separately</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Lane</th><th class="num">REX2</th><th class="num">Chronos</th><th class="num">Hold</th><th class="num">All IR · monthly</th><th class="num">Dev IR · monthly</th><th class="num">Bridge IR · monthly</th><th class="num">Turnover</th></tr></thead><tbody id="plateauBody"></tbody></table></div></section>
  </div>
 </section>
 
@@ -297,8 +302,8 @@
 </div>
 </div>
 
-<script src="data/dashboard_data.js?v=dcc258ba6a40"></script>
-<script src="data/live_overlay.js?v=1d4f3da2985c"></script>
-<script src="assets/app.js?v=6583602aaa2e"></script>
+<script src="data/dashboard_data.js?v=3acee7a9ab37"></script>
+<script src="data/live_overlay.js?v=67d68028be2a"></script>
+<script src="assets/app.js?v=11560c74f611"></script>
 </body>
 </html>

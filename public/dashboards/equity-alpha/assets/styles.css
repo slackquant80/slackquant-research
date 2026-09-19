@@ -192,3 +192,7 @@ display:flex;align-items:center;justify-content:space-between;padding:15px 24px}
  .rank-rule-note,.rank-weight-note,.portfolio-legend{max-width:100%;overflow-wrap:anywhere}
  .holding-card-top,.holding-card-bottom{min-width:0}
 }
+
+.support-strip{margin-top:10px;padding:8px 11px;border:1px solid rgba(139,172,190,.22);border-radius:9px;background:rgba(9,25,34,.65);color:#8fb0c1;font-size:11px;line-height:1.45}.support-strip strong{color:#dceaf0}.support-strip.section{margin-top:15px}
+
+.monthly-history-table{max-height:590px}

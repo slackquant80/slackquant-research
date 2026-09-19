@@ -3,6 +3,8 @@
   "completed_holding_month_cutoff": "2026-08",
   "contract_id": "PDS_PUBLIC_EXPORT_CONTRACT_V3_RECIPE_PROTECTED",
   "core_performance_definition": "CURRENT_GOVERNED_CORE__DAILY_RISK_METRICS__PROVIDER_COMPOSITION_PRIVATE",
+  "current_adaptive_risk_budget": "PRIVATE_NOT_EXPORTED",
+  "current_adaptive_state": "PRIVATE_NOT_EXPORTED",
   "current_decision_state": "WITHHELD_BY_POLICY",
   "current_fx_overlay": "PRIVATE_NOT_EXPORTED",
   "delay_policy_id": "PDS_COMPLETED_HOLDING_MONTH_DELAY_POLICY_V1_0",

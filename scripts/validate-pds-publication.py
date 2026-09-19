@@ -4,7 +4,7 @@ import csv,json,re,hashlib,zipfile
 from pathlib import Path
 
 APP=Path(__file__).resolve().parents[1]
-SYSTEMS=APP/'src/data/systems.ts';SYSTEM_CARD=APP/'src/components/SystemCard.tsx';SYSTEMS_PAGE=APP/'src/app/systems/page.tsx';METHODS=APP/'src/data/methods.ts';METHODS_USED=APP/'src/components/MethodsUsed.tsx';SITEMAP=APP/'src/app/sitemap.ts';PDS_PAGE=APP/'src/app/systems/pds/page.tsx';PDS_DASHBOARD=APP/'src/app/systems/pds/dashboard/page.tsx';F2R_PAGE=APP/'src/app/systems/f2r/page.tsx';SNAPSHOT=APP/'src/data/pdsPublicSnapshot.ts';BINDER=APP/'scripts/bind-pds-public-export.py';DATA=APP/'public/data/systems/pds';PUBLIC_DASHBOARD=APP/'public/assets/systems/pds/Portfolio_Decision_System_Public.html';PUBLIC_DASHBOARD_RECEIPT=APP/'public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json';PDS_DOCUMENTATION=APP/'public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf';LEGACY_PDS_DOCUMENTATION=APP/'public/resources/systems/pds/PDS_System_Documentation_v1.0.pdf';PDS_DOCUMENTATION_SHA256='aabf84c310be7a55ff583383bcf91968776869f2631472f954bd55926621a017';F2R_DOCUMENTATION=APP/'public/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf';LEGACY_F2R_DOCUMENTATION=APP/'public/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf';F2R_DOCUMENTATION_SHA256='971337d86361071ba88ce328dbf615e8a862ea199df5cca6b87c710666849cea'
+SYSTEMS=APP/'src/data/systems.ts';SYSTEM_CARD=APP/'src/components/SystemCard.tsx';SYSTEMS_PAGE=APP/'src/app/systems/page.tsx';METHODS=APP/'src/data/methods.ts';METHODS_USED=APP/'src/components/MethodsUsed.tsx';SITEMAP=APP/'src/app/sitemap.ts';PDS_PAGE=APP/'src/app/systems/pds/page.tsx';PDS_DASHBOARD=APP/'src/app/systems/pds/dashboard/page.tsx';F2R_PAGE=APP/'src/app/systems/f2r/page.tsx';SNAPSHOT=APP/'src/data/pdsPublicSnapshot.ts';BINDER=APP/'scripts/bind-pds-public-export.py';DATA=APP/'public/data/systems/pds';PUBLIC_DASHBOARD=APP/'public/assets/systems/pds/Portfolio_Decision_System_Public.html';PUBLIC_DASHBOARD_RECEIPT=APP/'public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json';PDS_DOCUMENTATION=APP/'public/resources/systems/pds/PDS_System_Documentation_v1.2.pdf';LEGACY_PDS_DOCUMENTATIONS=[APP/'public/resources/systems/pds/PDS_System_Documentation_v1.0.pdf',APP/'public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf'];PDS_DOCUMENTATION_SHA256='7d8d823fb20e51fb8cc6b36355e5ca8fa02ea27c0655659b4440d7d74c2ecf48';F2R_DOCUMENTATION=APP/'public/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf';LEGACY_F2R_DOCUMENTATION=APP/'public/resources/systems/f2r/F2R_System_Documentation_v1.0.pdf';F2R_DOCUMENTATION_SHA256='971337d86361071ba88ce328dbf615e8a862ea199df5cca6b87c710666849cea'
 PDS_METHOD_ARTICLES=[
     APP/'public/methods/40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html',
     APP/'public/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html',
@@ -70,10 +70,10 @@ def main()->int:
     require(methods_used,'getMethodContextForArtifact(method, researchSlug, context)','system methods copy')
     require(sitemap,'"/systems/pds/dashboard/",','PDS dashboard sitemap')
     for article in PDS_METHOD_ARTICLES: need(article)
-    for tok in ['governed strategic allocation','Exact provider composition weights are not part of the public disclosure layer.','/systems/pds/dashboard/','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS sits above individual strategies.','A portfolio operating system, not another strategy model','Portfolio Integration & Allocation','const recentReturnRows =','Recent 12-Month Released Returns','PDS + Dynamic FX (5bp)','historical comparison series only','<th>PDS + Dynamic FX (5bp)</th><th>PDS Core</th><th>F2R</th><th>ADAA</th>','/resources/systems/pds/PDS_System_Documentation_v1.1.pdf','System Documentation ↗','Chronos-2']:require(pds,tok,'PDS page')
+    for tok in ['governed strategic allocation','Exact provider composition weights are not part of the public disclosure layer.','/systems/pds/dashboard/','/systems/adaa/','/systems/f2r/','pdsPublicSnapshot','Public / delayed / private','PDS sits above individual strategies.','A portfolio operating system, not another strategy model','Portfolio Integration & Allocation','const recentReturnRows =','Recent 12-Month Released Returns','PDS + Dynamic FX (5bp)','historical comparison series only','<th>PDS + Dynamic FX (5bp)</th><th>PDS Core</th><th>F2R</th><th>ADAA</th>','/resources/systems/pds/PDS_System_Documentation_v1.2.pdf','System Documentation ↗','Chronos-2','PDS Adaptive','RL-Assisted Adaptive Defense','RL means Reinforcement Learning','selectively as part of the risk-control layer']:require(pds,tok,'PDS page')
     if not PDS_DOCUMENTATION.is_file() or PDS_DOCUMENTATION.read_bytes()[:5] != b'%PDF-':raise RuntimeError('PDS System Documentation PDF missing or invalid')
-    if LEGACY_PDS_DOCUMENTATION.exists():raise RuntimeError('retired recipe-revealing PDS System Documentation v1.0 remains publicly addressable')
-    if hashlib.sha256(PDS_DOCUMENTATION.read_bytes()).hexdigest()!=PDS_DOCUMENTATION_SHA256:raise RuntimeError('PDS System Documentation v1.1 differs from the recipe-protection-approved source artifact')
+    if any(x.exists() for x in LEGACY_PDS_DOCUMENTATIONS):raise RuntimeError('superseded PDS System Documentation v1.0/v1.1 remains publicly addressable')
+    if hashlib.sha256(PDS_DOCUMENTATION.read_bytes()).hexdigest()!=PDS_DOCUMENTATION_SHA256:raise RuntimeError('PDS System Documentation v1.2 differs from the page-reviewed recipe-protection-approved source artifact')
     protected_mix_patterns=[r'fixed\s+25%\s+F2R\s*/\s*75%\s+ADAA',r'F2R\s+25%',r'ADAA\s+75%',r'25/75',r'provider-weight history']
     for pat in protected_mix_patterns:
         if re.search(pat,pds,re.I):raise RuntimeError(f'PDS public narrative leaks protected provider recipe: {pat}')
@@ -90,14 +90,18 @@ def main()->int:
     leak=re.compile(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\')
     if leak.search(pds+'\n'+f2r+'\n'+public_html):raise RuntimeError('private/internal PDS or F2R identity leaked onto a public surface')
     if 'export const pdsPublicSnapshot: PdsPublicSnapshot | null = null;' in snapshot:raise RuntimeError('PDS governed delayed snapshot is not bound')
-    required={'public_active_core_asset_targets.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv','public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'}
+    required={'public_active_core_asset_targets.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_variants.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv','public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'}
     missing=[x for x in sorted(required) if not (DATA/x).is_file()]
     if missing:raise RuntimeError('PDS public data binding incomplete: '+', '.join(missing))
     disclosure=json.loads((DATA/'public_disclosure_state.json').read_text(encoding='utf-8'));manifest=json.loads((DATA/'public_export_manifest.json').read_text(encoding='utf-8'));receipt=json.loads((DATA/'PDS_PUBLIC_BINDING_RECEIPT.json').read_text(encoding='utf-8'));dash=json.loads(PUBLIC_DASHBOARD_RECEIPT.read_text(encoding='utf-8'))
     if disclosure.get('current_decision_state')!='WITHHELD_BY_POLICY':raise RuntimeError('current decision disclosure boundary is not protected')
     if disclosure.get('public_component_identity')!='ADAA + F2R':raise RuntimeError('public component identity mismatch')
     if disclosure.get('historical_fx_spot_sensitivity')!='DELAYED_PUBLIC_NON_CANONICAL':raise RuntimeError('historical FX public layer is not explicitly delayed/non-canonical')
-    for k in ['intramonth_preview','shadow_monitor_state','current_fx_overlay','account_holdings']:
+    variants=json.loads((DATA/'public_variants.json').read_text(encoding='utf-8'))
+    vids={v.get('variant_id') for v in variants.get('variants',[])}
+    if vids!={'PDS_CORE','PDS_ADAPTIVE'}:raise RuntimeError(f'PDS public variant inventory mismatch: {sorted(vids)}')
+    if variants.get('current_adaptive_state')!='PRIVATE_NOT_EXPORTED' or variants.get('current_adaptive_risk_budget')!='PRIVATE_NOT_EXPORTED':raise RuntimeError('PDS Adaptive current state/risk budget leaked into public variant metadata')
+    for k in ['intramonth_preview','shadow_monitor_state','current_fx_overlay','current_adaptive_state','current_adaptive_risk_budget','account_holdings']:
         if disclosure.get(k)!='PRIVATE_NOT_EXPORTED':raise RuntimeError(f'protected public boundary mismatch: {k}')
     if manifest.get('no_private_leakage_scan')!='PASS':raise RuntimeError('source exporter leakage scan not PASS')
     if manifest.get('active_core_policy')!='GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED':raise RuntimeError('public Core disclosure policy is not recipe-protected')
@@ -114,7 +118,7 @@ def main()->int:
     if retired.exists():raise RuntimeError('retired provider-weight artifact is still public: public_active_core_strategy_weights.csv')
     for protected_key in ['provider_composition_weights','provider_weight_history','integration_formula']:
         if disclosure.get(protected_key)!='PRIVATE_NOT_EXPORTED':raise RuntimeError(f'public disclosure contract does not protect {protected_key}')
-    recipe_leak=re.compile(r'(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history')
+    recipe_leak=re.compile(r'(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history|ENS_ENS_Q25|RISK_ONLY_PPO|F55|R80|V85|seed(?:11|23|37|53|71)')
     if recipe_leak.search(pds+'\n'+public_html+'\n'+snapshot):raise RuntimeError('exact provider recipe leaked into public UI/payload')
     for path in sorted(DATA.iterdir()):
         if not path.is_file():continue

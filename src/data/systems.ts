@@ -46,7 +46,7 @@ export const systemItems: SystemItem[] = [
     status: "Public architecture · protected current decision state",
     dateLabel: "Updated with latest public release",
     shortSummary:
-      "SlackQuant's governed portfolio operating layer for qualifying independent strategy providers, deciding portfolio admission, integrating approved sources, forming traceable portfolio targets, and monitoring whether each role remains justified. ADAA and F2R are the current Active Core providers; the architecture is broader than any current provider configuration, and exact integration parameters remain protected.",
+      "SlackQuant's governed portfolio operating layer for qualifying independent strategy providers. PDS Core remains the canonical original portfolio, while PDS Adaptive adds RL-Assisted Adaptive Defense as a parallel selective risk-control variant. ADAA and F2R are the current Active Core providers; exact integration and Adaptive controller parameters remain protected.",
     role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
     methodsKey: "pds-system",
     links: {

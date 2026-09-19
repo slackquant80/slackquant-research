@@ -2,7 +2,7 @@
   "active_core_policy": "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED",
   "active_core_public_identity": "ADAA + F2R",
   "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
-  "bound_at": "2026-09-18T10:44:51.380549+09:00",
+  "bound_at": "2026-09-18T05:16:51.602454+00:00",
   "bound_files_sha256": {
     "public_active_core_asset_targets.csv": "6551a042f8bdf6bf3cec9e0782979eafc0bfe2d6a3076f8ff84bb2aabc6612f4",
     "public_core_calendar_returns.csv": "c03d34af43566f9d95c80454a2232c6887695889cdff659bddfd635cf1dbd04d",
@@ -10,19 +10,20 @@
     "public_core_performance_path.csv": "e40273c5003ac78bff4cd313c2b39c063f5753b93895f0240cf1d99ab2994b74",
     "public_core_performance_summary.csv": "90dabc963d4ce9d9f32bb94ac7dd89943f9a80734e663b279c2fa5890cca4b9a",
     "public_core_strategy_roster.csv": "776e141068fca5747d9bcaf973096f19bfd3c17b4faced57e335462e7a62d8c1",
-    "public_disclosure_state.json": "74c6c3e87326ef134e059b207d8fb7211def2ac8e200d63d9095c6d8bc9f667a",
-    "public_export_manifest.json": "390afe854ea1867ffd4e8e99d77a66d4b41791c05247094ab3fb58a00cc02572",
+    "public_disclosure_state.json": "c560dcc694704142040d215174e0d9534038091f595752ace7b997f2623daad1",
+    "public_export_manifest.json": "c0caf16e7b3ea24db74ba5c1672e9dbee059d21944acecdf4f58d6ef7b03e1c7",
     "public_fx_calendar_returns.csv": "d4214cdc2e7ed7058113e7f59dd00537ebb8b8cadd0522278a17c2d60a7f5f86",
     "public_fx_hedge_history.csv": "2c94d1585b661d227f8b26d4ca06b1fabf2156e2abe6d24a1a2478c8e536170c",
     "public_fx_performance_path.csv": "7d6a8d75973ad89bcfec1d6171f58772b0e063f130f5d1bc80e6ea252fec6dd0",
     "public_fx_performance_summary.csv": "8026ced2c8448485792c5a07a07a6c92c106f3eea17afe567c5bb1f58245fa7f",
     "public_recent_12m_returns.csv": "18981769cd14cfc61429588a8a3410beafce390a9aeacec1214f0c5b7fc9efaf",
     "public_recent_12m_returns.xlsx": "42695693f76d3ceff39ee67ecbc98ee6777393f447f9809a542b51b8fbabfa40",
-    "public_system_identity.json": "7ebe6ff7e7fec0ca8a96a4473af0ff7ff89911ca4bf7072dfe4bdb4ccc7c62ae"
+    "public_system_identity.json": "a8b43911065fa8d92048f69f8acf88da551238c5739907cd26bdcf176230358a",
+    "public_variants.json": "5d4f5a098309e4a28be83662b0c8d1ba73ab9758afb34aee0b48cf0781da3ae0"
   },
   "completed_holding_month_cutoff": "2026-08",
   "latest_released_signal_period": "2026-07",
   "public_as_of_date": "2026-09-18",
-  "source_export_manifest_sha256": "390afe854ea1867ffd4e8e99d77a66d4b41791c05247094ab3fb58a00cc02572",
+  "source_export_manifest_sha256": "c0caf16e7b3ea24db74ba5c1672e9dbee059d21944acecdf4f58d6ef7b03e1c7",
   "status": "PDS_SLACKQUANT_PUBLIC_BINDING_PASS"
 }
