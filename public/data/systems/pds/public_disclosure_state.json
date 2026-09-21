@@ -1,5 +1,6 @@
 {
   "account_holdings": "PRIVATE_NOT_EXPORTED",
+  "adaptive_historical_performance": "DELAYED_SELECTION_AWARE_COMMON_SUPPORT",
   "completed_holding_month_cutoff": "2026-08",
   "contract_id": "PDS_PUBLIC_EXPORT_CONTRACT_V3_RECIPE_PROTECTED",
   "core_performance_definition": "CURRENT_GOVERNED_CORE__DAILY_RISK_METRICS__PROVIDER_COMPOSITION_PRIVATE",
@@ -17,7 +18,7 @@
   "performance_clock": "REALIZED_HOLDING_MONTH",
   "provider_composition_weights": "PRIVATE_NOT_EXPORTED",
   "provider_weight_history": "PRIVATE_NOT_EXPORTED",
-  "public_as_of_date": "2026-09-18",
+  "public_as_of_date": "2026-09-21",
   "public_component_identity": "ADAA + F2R",
   "public_model_id": "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL_V3_RECIPE_PROTECTED",
   "shadow_monitor_state": "PRIVATE_NOT_EXPORTED"

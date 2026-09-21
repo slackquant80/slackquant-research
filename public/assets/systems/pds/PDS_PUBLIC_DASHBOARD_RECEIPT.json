@@ -1,18 +1,28 @@
 {
-  "artifact": "PDS_PUBLIC_DASHBOARD_PRODUCT_V3",
-  "completed_holding": "2026-08",
-  "data_profile": "GOVERNED_DELAYED_PUBLIC_SAFE",
-  "html_sha256": "7315666731c346774ada5c1e0e03c4de33f70fc87ee6ba983b825acb038cf301",
-  "investor_view_authority": "DELAYED_PUBLIC_NON_CANONICAL_SPOT_SENSITIVITY",
+  "artifact": "PDS_PUBLIC_CANONICAL_MIRROR_V1",
+  "canonical_current_values_embedded": true,
+  "environment_specific_values_embedded": false,
+  "html_sha256": "3d50951a0867874223cfb6fc2e8cc4d11c280458bcc5ebfc7251701d827c1e8c",
+  "official_mark_through": "2026-09-18",
+  "official_signal_period": "2026-08",
   "page_contract": [
-    "overview",
-    "performance",
-    "portfolio",
-    "investor",
-    "system"
+    "core",
+    "adaptive",
+    "preview",
+    "fxperf",
+    "coreperf",
+    "weights"
   ],
-  "presentation_contract": "RS03_PUBLIC_PRODUCT_V3__LOCAL_VISUAL_FAMILY",
-  "private_current_values_embedded": false,
-  "released_signal": "2026-07",
+  "presentation_contract": "RS03_CANONICAL_LOCAL_INFORMATION__PUBLIC_SANITIZED_MIRROR",
+  "preview_source_through": "2026-09-18",
+  "public_policy": "CANONICAL_LOCAL_INFORMATION__ENVIRONMENT_ONLY_SUPPRESSED",
+  "sanitization": {
+    "absolute_path_scan": "PASS",
+    "legacy_delayed_dashboard_scan": "PASS",
+    "local_storage_token_scan": "PASS",
+    "removed_sensitive_keys": 128,
+    "scrubbed_sensitive_strings": 580
+  },
+  "source_private_dashboard_sha256": "de0c0f87b6d22616e83b1c2d3893246692c1b68d696b49b3f34103ee2ba553c8",
   "status": "PASS"
 }

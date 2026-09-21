@@ -17,6 +17,7 @@ EXPECTED = {
     "public_core_monthly_returns.csv",
     "public_core_strategy_roster.csv",
     "public_system_identity.json",
+    "public_variants.json",
     "public_disclosure_state.json",
     "public_export_manifest.json",
     "public_core_performance_path.csv",
@@ -40,6 +41,7 @@ PROHIBITED = [
     re.compile(r"FIXED_25_75"),
     re.compile(r"(?i)f2r_weight"),
     re.compile(r"(?i)adaa_weight"),
+    re.compile(r"ENS_ENS_Q25"), re.compile(r"RISK_ONLY_PPO"), re.compile(r"(?i)F55|R80|V85"),
 ]
 
 
@@ -217,6 +219,7 @@ def main() -> int:
     core_summary_snapshot = [
         {"seriesId": r["series_id"], "displayName": r["display_name"], "months": inum(r["months"]),
          "startHoldingMonth": r["start_holding_month"], "endHoldingMonth": r["end_holding_month"],
+         "startDate": r.get("start_date", ""), "endDate": r.get("end_date", ""), "days": inum(r.get("days") or 0),
          "cagr": fnum(r.get("cagr"), optional=True), "annVol": fnum(r.get("ann_vol"), optional=True),
          "sharpeRf0": fnum(r.get("sharpe_rf0"), optional=True), "maxDrawdown": fnum(r.get("max_drawdown"), optional=True),
          "calmar": fnum(r.get("calmar"), optional=True), "cumulativeReturn": fnum(r.get("cumulative_return"), optional=True),
@@ -239,6 +242,7 @@ def main() -> int:
     fx_summary_snapshot = [
         {"seriesId": r["series_id"], "displayName": r["display_name"], "months": inum(r["months"]),
          "startHoldingMonth": r["start_holding_month"], "endHoldingMonth": r["end_holding_month"],
+         "startDate": r.get("start_date", ""), "endDate": r.get("end_date", ""), "days": inum(r.get("days") or 0),
          "cagr": fnum(r.get("cagr"), optional=True), "annVol": fnum(r.get("ann_vol"), optional=True),
          "sharpeRf0": fnum(r.get("sharpe_rf0"), optional=True), "maxDrawdown": fnum(r.get("max_drawdown"), optional=True),
          "calmar": fnum(r.get("calmar"), optional=True), "cumulativeReturn": fnum(r.get("cumulative_return"), optional=True),

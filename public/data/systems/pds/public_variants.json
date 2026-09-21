@@ -3,6 +3,8 @@
   "contract_id": "PDS_PUBLIC_VARIANTS_V1_0",
   "current_adaptive_risk_budget": "PRIVATE_NOT_EXPORTED",
   "current_adaptive_state": "PRIVATE_NOT_EXPORTED",
+  "historical_future_inference_source": false,
+  "historical_performance_publication": "DELAYED_SELECTION_AWARE_COMMON_SUPPORT_ONLY",
   "recipe_policy": "ARCHITECTURE_VISIBLE_RECIPE_PROTECTED",
   "variants": [
     {

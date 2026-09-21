@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { pdsPublicSnapshot } from "@/data/pdsPublicSnapshot";
 
 export const metadata: Metadata = {
   title: "PDS Public Dashboard — Portfolio Decision System",
-  description: "Delayed public operating dashboard for SlackQuant's Portfolio Decision System.",
+  description: "Validated public operational dashboard for SlackQuant's Portfolio Decision System.",
 };
 
 export default function PdsDashboardPage() {
-  const dashboardVersion = pdsPublicSnapshot
-    ? `${pdsPublicSnapshot.sourceProgramVersion}-${pdsPublicSnapshot.publicAsOfDate}`
-    : "latest";
+  // Replaced with the validated canonical-mirror SHA during the governed PDS publish pipeline.
+  const dashboardVersion = "3d50951a08678742";
 
   return (
     <iframe

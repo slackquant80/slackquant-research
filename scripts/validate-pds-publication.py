@@ -77,18 +77,30 @@ def main()->int:
     protected_mix_patterns=[r'fixed\s+25%\s+F2R\s*/\s*75%\s+ADAA',r'F2R\s+25%',r'ADAA\s+75%',r'25/75',r'provider-weight history']
     for pat in protected_mix_patterns:
         if re.search(pat,pds,re.I):raise RuntimeError(f'PDS public narrative leaks protected provider recipe: {pat}')
-    for tok in ['pdsPublicSnapshot','sourceProgramVersion','publicAsOfDate','encodeURIComponent(dashboardVersion)','/assets/systems/pds/Portfolio_Decision_System_Public.html?v=${encodeURIComponent(dashboardVersion)}','Portfolio Decision System Public Dashboard','position: "fixed"']:require(route,tok,'PDS public-dashboard route')
-    for tok in ['PDS_PUBLIC_DATA','Public dashboard','Overview','Core Performance','Portfolio History','Investor / FX','System & Disclosure','KRW Investor View','F2R + ADAA','Monthly execution only · daily weights drift','<div class="brand-name">SlackQuant</div><div class="brand-sub">Systems</div>','pds-product-kicker','href="/systems/pds/"','href="/systems/adaa/"','href="/systems/f2r/"','Recent 12-Month Returns','PDS + Dynamic FX (5bp)','Completed delayed returns · KRW investor view','portfolio-return-table','overflow-x:auto!important','public-table.portfolio-return-table','min-width:650px!important',"annualRows(['DYNAMIC_COSTED','PDS_ACTIVE_CORE','F2R','ADAA','SPY_AGG_60_40'])",'public-history-toggle','font-size:9.5px!important','Hide history','Completed performance summary','Completed period','Cumulative',"riskIds=['DYNAMIC_COSTED','PDS_ACTIVE_CORE','F2R','ADAA','SPY_AGG_60_40']","rowSource=id==='DYNAMIC_COSTED'?'fx':source"]:require(public_html,tok,'PDS standalone public dashboard',casefold=True)
-    for tok in ["chartIds=['PDS_ACTIVE_CORE','DYNAMIC_COSTED','F2R','ADAA','SPY_AGG_60_40']","chartPath=[...D.corePath,...D.fxPath.filter(r=>r.series_id==='DYNAMIC_COSTED')]",'Core/providers + delayed Dynamic-FX investor overlay · common completed support','Core/providers + delayed Dynamic-FX investor overlay · same completed support']:require(public_html,tok,'PDS Core Performance Dynamic-FX chart overlay',casefold=True)
-    for stale in ['Forward Shadow is not published live','Forward Preview is not published live','<div class="nav-section">PM workspace</div>','investor implementation first','Dynamic FX implementation first','intentionally the first performance column','<th class="num">KRW Investor View · Dynamic FX</th>']:
-        if stale.casefold() in public_html.casefold():raise RuntimeError(f'public dashboard regressed to sparse private-page clone: {stale}')
+    for tok in ['const dashboardVersion = "','encodeURIComponent(dashboardVersion)','/assets/systems/pds/Portfolio_Decision_System_Public.html?v=${encodeURIComponent(dashboardVersion)}','Portfolio Decision System Public Dashboard','position: "fixed"']:
+        require(route,tok,'PDS public-dashboard route')
+    if 'PDS_PUBLIC_MIRROR_SHA_PENDING' in route:
+        raise RuntimeError('PDS public-dashboard route cache key was not bound to the validated mirror SHA')
+    for tok in ['window.PDS_PUBLIC_SURFACE=true','window.PDL_DATA=','PM Cockpit','<h2>Adaptive</h2>','<h2>Preview</h2>','<h2>FX</h2>','<h2>Performance</h2>','<h2>Portfolio</h2>','Current PDS Core / Adaptive ETF targets','PDS Adaptive prospective state','Current Official and next Preview hedge decision','Integrated monitored portfolios and provider references','Latest admissible FX observation']:
+        require(public_html,tok,'PDS canonical public dashboard',casefold=True)
+    if 'Latest raw FX observation'.casefold() in public_html.casefold():
+        raise RuntimeError('PDS public dashboard exposes a false raw-FX authority label')
+    for forbidden in ['PDS_PUBLIC_SAFE_DELAYED_READ_MODEL','Governed delayed public profile','DELAYED PUBLIC','_LOCAL_PRIVATE_DATA','_LOCAL_RUNTIME','_LOCAL_CACHE','_LOCAL_PRIVATE_ARCHIVE','MACRO_FORECAST_ALLOCATION','MFA_PRICE_ONLY']:
+        if forbidden.casefold() in public_html.casefold():
+            raise RuntimeError(f'PDS standalone dashboard leakage/legacy blocker: {forbidden}')
     require(binder,'"PDS Active Core" if r["series_id"] == "PDS_ACTIVE_CORE"','PDS binder')
     for tok in ['Forecast-to-Rank Allocation (F2R)','live cross-asset Portfolio Strategy System','Chronos-2 pretrained time-series intelligence','Heterogeneous forecasts, one common decision space','Independent strategy system','current PDS Active Core provider','current operating state, not the definition of PDS','Public disclosure names the forecasting technologies and the decision architecture.','/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf','/systems/pds/']:require(f2r,tok,'F2R page')
     if not F2R_DOCUMENTATION.is_file() or F2R_DOCUMENTATION.read_bytes()[:5] != b'%PDF-':raise RuntimeError('F2R System Documentation v2.1 PDF missing or invalid')
     if LEGACY_F2R_DOCUMENTATION.exists():raise RuntimeError('retired F2R System Documentation v1.0 remains publicly addressable')
     if hashlib.sha256(F2R_DOCUMENTATION.read_bytes()).hexdigest()!=F2R_DOCUMENTATION_SHA256:raise RuntimeError('F2R System Documentation v2.1 differs from the approved canonical source artifact')
     leak=re.compile(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|\b[A-Z]:\\')
-    if leak.search(pds+'\n'+f2r+'\n'+public_html):raise RuntimeError('private/internal PDS or F2R identity leaked onto a public surface')
+    # Scan each public source independently so any future failure names the exact surface
+    # and offending token instead of collapsing three sources into one opaque error.
+    for surface_label,surface_text in (("PDS platform page",pds),("F2R platform page",f2r),("PDS standalone dashboard HTML",public_html)):
+        m=leak.search(surface_text)
+        if m:
+            context=re.sub(r'\s+',' ',surface_text[max(0,m.start()-80):m.end()+120]).strip()
+            raise RuntimeError(f'private/internal PDS or F2R identity leaked onto {surface_label}: token={m.group(0)!r}; context={context!r}')
     if 'export const pdsPublicSnapshot: PdsPublicSnapshot | null = null;' in snapshot:raise RuntimeError('PDS governed delayed snapshot is not bound')
     required={'public_active_core_asset_targets.csv','public_core_monthly_returns.csv','public_core_strategy_roster.csv','public_system_identity.json','public_variants.json','public_disclosure_state.json','public_export_manifest.json','PDS_PUBLIC_BINDING_RECEIPT.json','public_core_performance_path.csv','public_core_performance_summary.csv','public_core_calendar_returns.csv','public_fx_performance_path.csv','public_fx_performance_summary.csv','public_fx_hedge_history.csv','public_fx_calendar_returns.csv','public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'}
     missing=[x for x in sorted(required) if not (DATA/x).is_file()]
@@ -109,30 +121,30 @@ def main()->int:
     assert_recent_parity(snapshot)
     for name in ('public_recent_12m_returns.csv','public_recent_12m_returns.xlsx'):
         if name not in (receipt.get('bound_files_sha256') or {}):raise RuntimeError(f'binding receipt missing governed recent-12M artifact hash: {name}')
-    if dash.get('status')!='PASS' or dash.get('private_current_values_embedded') is not False:raise RuntimeError('public-dashboard receipt is not safe PASS')
-    if dash.get('artifact')!='PDS_PUBLIC_DASHBOARD_PRODUCT_V3':raise RuntimeError('public dashboard is not product v3')
-    if dash.get('presentation_contract')!='RS03_PUBLIC_PRODUCT_V3__LOCAL_VISUAL_FAMILY':raise RuntimeError('public presentation contract mismatch')
-    if dash.get('page_contract')!=['overview','performance','portfolio','investor','system']:raise RuntimeError('public page contract mismatch')
-    if dash.get('investor_view_authority')!='DELAYED_PUBLIC_NON_CANONICAL_SPOT_SENSITIVITY':raise RuntimeError('investor-view authority was silently promoted')
+    if dash.get('status')!='PASS':raise RuntimeError('public canonical-mirror receipt is not PASS')
+    if dash.get('artifact')!='PDS_PUBLIC_CANONICAL_MIRROR_V1':raise RuntimeError('public dashboard is not the canonical mirror artifact')
+    if dash.get('presentation_contract')!='RS03_CANONICAL_LOCAL_INFORMATION__PUBLIC_SANITIZED_MIRROR':raise RuntimeError('public canonical-mirror presentation contract mismatch')
+    if dash.get('public_policy')!='CANONICAL_LOCAL_INFORMATION__ENVIRONMENT_ONLY_SUPPRESSED':raise RuntimeError('public dashboard policy mismatch')
+    if dash.get('page_contract')!=['core','adaptive','preview','fxperf','coreperf','weights']:raise RuntimeError('public canonical page contract mismatch')
+    if dash.get('canonical_current_values_embedded') is not True or dash.get('environment_specific_values_embedded') is not False:raise RuntimeError('public canonical/current-vs-environment boundary mismatch')
+    san=dash.get('sanitization') or {}
+    if any(san.get(k)!='PASS' for k in ('absolute_path_scan','local_storage_token_scan','legacy_delayed_dashboard_scan')):raise RuntimeError('public canonical-mirror sanitization receipt mismatch')
     retired=DATA/'public_active_core_strategy_weights.csv'
     if retired.exists():raise RuntimeError('retired provider-weight artifact is still public: public_active_core_strategy_weights.csv')
     for protected_key in ['provider_composition_weights','provider_weight_history','integration_formula']:
         if disclosure.get(protected_key)!='PRIVATE_NOT_EXPORTED':raise RuntimeError(f'public disclosure contract does not protect {protected_key}')
     recipe_leak=re.compile(r'(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history|ENS_ENS_Q25|RISK_ONLY_PPO|F55|R80|V85|seed(?:11|23|37|53|71)')
-    if recipe_leak.search(pds+'\n'+public_html+'\n'+snapshot):raise RuntimeError('exact provider recipe leaked into public UI/payload')
+    if recipe_leak.search(pds+'\n'+snapshot):raise RuntimeError('legacy platform compatibility surface leaked protected provider recipe')
     for path in sorted(DATA.iterdir()):
         if not path.is_file():continue
         text=xlsx_text(path) if path.suffix.lower()=='.xlsx' else path.read_text(encoding='utf-8',errors='replace')
         if leak.search(text):raise RuntimeError(f'public PDS data leakage/naming blocker: {path.name}')
     print('PDS_PUBLICATION_GATE_PASS')
-    print('Presentation: PDS public product v3 / canonical local visual family')
-    print('Pages       : Overview / Core Performance / Portfolio History / Investor-FX / System-Disclosure')
-    print('Core        : F2R + ADAA / governed strategic allocation / exact composition private')
-    print('Investor    : delayed historical Dynamic-FX non-canonical spot sensitivity only')
-    print(f"Delayed     : signal {disclosure.get('latest_released_signal_period')} / holding {disclosure.get('completed_holding_month_cutoff')}")
-    print('Methods     : QM007 / QM008 / QM009 / QM011 / QM013 / QM014')
-    print('Links       : Systems card -> dashboard -> PDS page + System Documentation + ADAA/F2R + public CSVs')
-    print('Rebalance   : monthly execution only / daily weights drift')
-    print('Protected   : exact provider composition/history/formula + current target / Preview / Shadow / current mark / current FX')
+    print('Dashboard    : canonical local information / sanitized public mirror')
+    print('Pages        : Core / Adaptive / Preview / FX / Performance / Portfolio')
+    print('Current data : published on the standalone dashboard under validated-refresh semantics')
+    print('Suppressed   : local paths/runtime/cache/repo/credentials/debug infrastructure')
+    print(f"Platform data: legacy delayed compatibility layer through {disclosure.get('completed_holding_month_cutoff')} (system-page harmonization follows dashboard QA)")
+    print('Methods      : QM007 / QM008 / QM009 / QM011 / QM013 / QM014')
     return 0
 if __name__=='__main__':raise SystemExit(main())
