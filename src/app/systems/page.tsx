@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SystemCard } from "@/components/SystemCard";
 import { systemGroupDefinitions, systemItems, systemLayerDefinitions } from "@/data/systems";
-import { pdsPublicSnapshot } from "@/data/pdsPublicSnapshot";
+import { pdsCanonicalSummary } from "@/data/pdsCanonicalSummary";
 
 export const metadata: Metadata = {
   title: "Systems",
@@ -82,10 +82,10 @@ export default function SystemsPage() {
                               <SystemCard
                                 key={item.slug}
                                 item={
-                                  item.slug === "pds" && pdsPublicSnapshot?.publicAsOfDate
+                                  item.slug === "pds" && pdsCanonicalSummary.markThrough
                                     ? {
                                         ...item,
-                                        dateLabel: `Updated ${formatPdsPublicDate(pdsPublicSnapshot.publicAsOfDate)}`,
+                                        dateLabel: `Operational data through ${formatPdsPublicDate(pdsCanonicalSummary.markThrough)}`,
                                       }
                                     : item
                                 }

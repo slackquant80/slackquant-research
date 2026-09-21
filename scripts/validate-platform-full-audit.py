@@ -237,93 +237,77 @@ def main() -> int:
             raise RuntimeError(f"F2R model-adoption selected exhibit missing/invalid: {rel}")
 
 
-    # PDS released-evidence contract.
-    # PDS_SYSTEM_DOCUMENTATION_GATE_V1_2
+    # PDS canonical operational-platform contract.
+    # PDS_CANONICAL_PLATFORM_GATE_V1
     pds = need(
         "src/app/systems/pds/page.tsx",
-        "Recent 12-Month Released Returns",
+        "PDS_CANONICAL_PLATFORM_PAGE_V1",
+        "Reinforcement-Learning Adaptive Risk Control",
+        "Current Active Core",
+        "ADAA + F2R",
+        "Dynamic FX Overlay",
+        "Four monitored portfolio views",
+        "validated public operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "System Documentation ↗",
-        "PDS + Dynamic FX (5bp)",
-        "historical comparison series only",
-        "public_recent_12m_returns.xlsx",
-        "public_recent_12m_returns.csv",
-        "PDS Adaptive",
-        "RL-Assisted Adaptive Defense",
-        "RL means Reinforcement Learning",
-        "selectively as part of the risk-control layer",
     )
-    if "Recent released PDS Core and provider monthly returns" in pds:
-        raise RuntimeError("stale PDS recent-table wording remains")
-    for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv"):
+    for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv", "DELAYED PUBLIC", "protected current decision state"):
         if forbidden in pds:
-            raise RuntimeError(f"PDS recipe-protection regression in landing source: {forbidden}")
+            raise RuntimeError(f"PDS platform landing regression: {forbidden}")
     for required in (
-        "The current Core integrates F2R and ADAA under a governed strategic allocation.",
-        "Exact provider composition weights are not part of the public disclosure layer.",
+        "the platform emphasizes their roles and system architecture rather than reducing the design to a single allocation ratio.",
+        "the PDS dashboard is now the validated public operating view.",
     ):
         if required not in pds:
-            raise RuntimeError(f"PDS recipe-protection disclosure missing from landing source: {required}")
+            raise RuntimeError(f"PDS current-platform disclosure missing: {required}")
+
+    pds_summary = need(
+        "src/data/pdsCanonicalSummary.ts",
+        "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
+        '"label": "PDS Core + Dynamic FX"',
+        '"label": "PDS Core"',
+        '"label": "PDS Adaptive + Dynamic FX"',
+        '"label": "PDS Adaptive"',
+        '"officialSignal":',
+        '"markThrough":',
+        '"adaptiveState":',
+    )
+    need(
+        "scripts/bind-pds-canonical-summary.py",
+        "PDS_CANONICAL_PLATFORM_SUMMARY_BIND_PASS",
+        "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
+        "ADAPTIVE_DYNAMIC_COSTED",
+    )
+    systems_index = need(
+        "src/app/systems/page.tsx",
+        'import { pdsCanonicalSummary } from "@/data/pdsCanonicalSummary";',
+        "pdsCanonicalSummary.markThrough",
+        "Operational data through",
+    )
+    if "pdsPublicSnapshot" in systems_index or "pdsPublicSnapshot" in pds:
+        raise RuntimeError("PDS platform still depends on legacy delayed snapshot binding")
 
     pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
     if not pds_documentation.is_file() or pds_documentation.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("PDS System Documentation PDF missing or invalid")
 
-    recent = ROOT / "public/data/systems/pds/public_recent_12m_returns.csv"
-    with recent.open("r", encoding="utf-8-sig", newline="") as f:
-        rows = list(csv.DictReader(f))
-    if len(rows) != 12:
-        raise RuntimeError(f"PDS recent return CSV must have 12 rows; found {len(rows)}")
-    # PDS_RECENT_12M_PARITY_GATE_V2
-    core_path = ROOT / "public/data/systems/pds/public_core_monthly_returns.csv"
-    fx_path = ROOT / "public/data/systems/pds/public_fx_performance_path.csv"
-    with core_path.open("r", encoding="utf-8-sig", newline="") as f:
-        core_rows = list(csv.DictReader(f))
-    with fx_path.open("r", encoding="utf-8-sig", newline="") as f:
-        fx_rows = list(csv.DictReader(f))
-    core = {(r.get("period", ""), r.get("series_id", "")): r for r in core_rows}
-    dyn = {r.get("holding_month", ""): r for r in fx_rows if r.get("series_id") == "DYNAMIC_COSTED"}
-    periods = sorted(p for p in dyn if all((p, sid) in core for sid in ("PDS_ACTIVE_CORE", "F2R", "ADAA")))[-12:]
-    expected_periods = list(reversed(periods))
-    if [r.get("holding_month") for r in rows] != expected_periods:
-        raise RuntimeError("PDS recent return CSV periods are stale versus governed public data")
-    for r in rows:
-        p = r["holding_month"]
-        expected = {"dynamic_fx_5bp": float(dyn[p]["net_return"]), "pds_core": float(core[(p, "PDS_ACTIVE_CORE")]["net_return"]), "f2r": float(core[(p, "F2R")]["net_return"]), "adaa": float(core[(p, "ADAA")]["net_return"])}
-        for key, value in expected.items():
-            if abs(float(r[key]) - value) > 1e-12:
-                raise RuntimeError(f"PDS recent return CSV is stale: {p} {key}")
-        if r.get("dynamic_fx_layer_status") != dyn[p].get("layer_status"):
-            raise RuntimeError(f"PDS recent return CSV Dynamic-FX authority mismatch: {p}")
-    recent_xlsx = ROOT / "public/data/systems/pds/public_recent_12m_returns.xlsx"
-    if not recent_xlsx.is_file():
-        raise RuntimeError("PDS recent return XLSX missing")
-    csv_sha = hashlib.sha256(recent.read_bytes()).hexdigest()
-    with zipfile.ZipFile(recent_xlsx) as z:
-        xlsx_text = "\n".join(z.read(n).decode("utf-8", errors="replace") for n in sorted(z.namelist()) if n.endswith(".xml") or n.endswith(".rels"))
-    if csv_sha not in xlsx_text:
-        raise RuntimeError("PDS recent return XLSX checksum is stale versus CSV")
-    if "Governed strategic allocation; exact provider composition private" not in xlsx_text:
-        raise RuntimeError("PDS recent return XLSX recipe-protected policy metadata missing")
-    if re.search(r"(?i)F2R\s*25%|ADAA\s*75%|25/75|FIXED_25_75|f2r_weight|adaa_weight|provider-weight history", xlsx_text):
-        raise RuntimeError("PDS recent return XLSX leaks protected provider recipe")
-
-    # PDS_RECIPE_PROTECTION_GATE_V1
-    retired_weights = ROOT / "public/data/systems/pds/public_active_core_strategy_weights.csv"
-    if retired_weights.exists():
-        raise RuntimeError("PDS retired provider-weight artifact must not exist in the public tree")
-
-    disclosure = json.loads(need("public/data/systems/pds/public_disclosure_state.json"))
-    if disclosure.get("current_decision_state") != "WITHHELD_BY_POLICY":
-        raise RuntimeError("PDS current decision disclosure boundary regression")
-    for key in ("provider_composition_weights", "provider_weight_history", "integration_formula"):
-        if disclosure.get(key) != "PRIVATE_NOT_EXPORTED":
-            raise RuntimeError(f"PDS recipe-protection disclosure regression: {key}={disclosure.get(key)!r}")
-    manifest = json.loads(need("public/data/systems/pds/public_export_manifest.json"))
-    if manifest.get("active_core_policy") != "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED":
-        raise RuntimeError("PDS public Active Core policy is not recipe-protected")
-    if manifest.get("recipe_protection_scan") != "PASS":
-        raise RuntimeError("PDS public recipe-protection scan is not PASS")
+    public_dashboard = need(
+        "public/assets/systems/pds/Portfolio_Decision_System_Public.html",
+        "window.PDS_PUBLIC_SURFACE=true",
+        "PM Cockpit",
+        "<h2>Adaptive</h2>",
+        "<h2>Preview</h2>",
+        "<h2>FX</h2>",
+        "<h2>Performance</h2>",
+        "<h2>Portfolio</h2>",
+        "Latest admissible FX observation",
+    )
+    for forbidden in ("DELAYED PUBLIC", "_LOCAL_PRIVATE_DATA", "_LOCAL_RUNTIME", "_LOCAL_CACHE", "MACRO_FORECAST_ALLOCATION", "MFA_PRICE_ONLY", "Latest raw FX observation"):
+        if forbidden.casefold() in public_dashboard.casefold():
+            raise RuntimeError(f"PDS canonical public dashboard stale/private leakage: {forbidden}")
+    receipt = json.loads(need("public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"))
+    if receipt.get("status") != "PASS" or receipt.get("public_policy") != "CANONICAL_LOCAL_INFORMATION__ENVIRONMENT_ONLY_SUPPRESSED" or not receipt.get("canonical_current_values_embedded"):
+        raise RuntimeError("PDS canonical public dashboard receipt is not current-policy PASS")
 
     # F2R_CURRENT_ARCHITECTURE_GATE_V2_1
     f2r = need(
@@ -355,9 +339,9 @@ def main() -> int:
     )
     need(
         "src/app/systems/pds/page.tsx",
-        "A portfolio operating system, not another strategy model",
-        "Chronos-2",
-        "The current Core integrates F2R and ADAA under a governed strategic allocation.",
+        "Multi-strategy Core, reinforcement-learning adaptive defense, and Dynamic FX.",
+        "Chronos-2 pretrained time-series intelligence",
+        "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
     )
 
     # Methods mirror.
@@ -443,7 +427,7 @@ def main() -> int:
             raise RuntimeError(f"Stale pre-canonical Equity Alpha Method path must not exist: {stale}")
 
     print("Methods whole-host first-party navigation=PASS")
-    print("PDS 12-month released table / recipe-protected Core / protected current state=PASS")
+    print("PDS canonical operational platform / four-portfolio summary / current dashboard=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
     print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning + three-layer taxonomy=PASS")
     print("About research links / shared research-detail hero=PASS")

@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = "https://research.slackquant.com"
 SYSTEM_METHODS = {
     "adaa": ["QM007", "QM009", "QM010", "QM011", "QM014"],
-    "f2r": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013"],
+    "f2r": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
     "pds": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
     "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 }
@@ -89,7 +89,7 @@ def audit_static(require_build: bool) -> list[Check]:
     layout = text(ROOT / "src/app/layout.tsx")
 
     identities = {
-        "PDS registry identity": ['slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"', 'status: "Public architecture · protected current decision state"'],
+        "PDS registry identity": ['slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"', 'status: "Public operational dashboard"'],
         "ADAA registry identity": ['slug: "adaa"', 'title: "ADAA"', 'systemGroup: "portfolio-strategy"', 'status: "Public live"'],
         "F2R formal identity": ['slug: "f2r"', 'title: "Forecast-to-Rank Allocation (F2R)"', 'subtitle: "Machine-Learning Cross-Asset Portfolio Strategy"', 'systemGroup: "portfolio-strategy"'],
     }
@@ -124,7 +124,7 @@ def audit_static(require_build: bool) -> list[Check]:
 
     expected_map_literals = {
         "adaa-system": '["QM007", "QM009", "QM010", "QM011", "QM014"]',
-        "f2r-system": '["QM001", "QM002", "QM003", "QM007", "QM009", "QM013"]',
+        "f2r-system": '["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"]',
         "pds-system": '["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"]',
     }
     for key, arr in expected_map_literals.items(): add(c, f"Method mapping {key}", f'"{key}": {arr}' in methods, arr)
@@ -133,7 +133,8 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "No paper-only wording in system contexts", not re.search(r"(?i)\bpaper\b|this research|used in the paper", sys_context_block), "systemMethodContext is system-native")
 
     hrefs = parse_methods(methods)
-    add(c, "Method registry completeness", len(hrefs) == 18 and set(hrefs) == {f"QM{i:03d}" for i in range(1,19)}, f"{len(hrefs)} method hrefs")
+    expected_method_ids = {*(f"QM{i:03d}" for i in range(1,21)), "QM024", "QM025", "QM026", "QM027"}
+    add(c, "Method registry completeness", len(hrefs) == 24 and set(hrefs) == expected_method_ids, f"{len(hrefs)} method hrefs")
     missing_dest = []
     reverse_missing = []
     canonical_missing = []
@@ -182,19 +183,26 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "Rendered Methods mobile overflow containment", bool(method_css_files) and table_mobile and math_mobile, "wide tables and display math use local horizontal scroll on small viewports")
 
     adaa = text(SYSTEM_PAGE_FILES["adaa"])
-    adaa_required = ["refreshes source data before deployment", "canonical 19-ETF", "public-safe bundled snapshot", "Public Shiny sessions auto-run", "not the authority that refreshes source data"]
-    add(c, "ADAA v3.93 public runtime parity", all(x in adaa for x in adaa_required), "pre-deploy refresh → validated bundle → public consumer")
+    adaa_required = [
+        "refreshes and validates the canonical ADAA source state before deployment",
+        "19-source-series market snapshot",
+        "public Thin-Shiny",
+        "public sessions do not acquire Yahoo/FRED/FX data",
+        "public application reads the validated released bundle",
+    ]
+    add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-deploy refresh → validated bundle → public consumer")
     adaa_forbidden = ["live implementation refreshes current data", "public session refreshes source data", "public Shiny refreshes source data"]
     add(c, "No stale ADAA runtime authority wording", not any(x.lower() in adaa.lower() for x in adaa_forbidden), "none")
 
     f2r = text(SYSTEM_PAGE_FILES["f2r"])
     add(c, "F2R identity on page", "Forecast-to-Rank Allocation (F2R)" in systems and "item.title" in f2r, "registry-driven formal identity")
-    pds_disclosure = ROOT / "public/data/systems/pds/public_disclosure_state.json"
-    if pds_disclosure.is_file():
-        d = json.loads(text(pds_disclosure))
-        ok = d.get("current_decision_state") == "WITHHELD_BY_POLICY" and all(d.get(k) == "PRIVATE_NOT_EXPORTED" for k in ["intramonth_preview","shadow_monitor_state","current_fx_overlay","account_holdings"])
-        add(c, "PDS disclosure boundary", ok, "current decision/preview/shadow/current FX/account holdings protected")
-    else: add(c, "PDS disclosure boundary", False, "public disclosure receipt missing")
+    pds_summary = ROOT / "src/data/pdsCanonicalSummary.ts"
+    pds_public_dashboard = ROOT / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
+    if pds_summary.is_file() and pds_public_dashboard.is_file():
+        st = text(pds_summary); dh = text(pds_public_dashboard)
+        ok = all(tok in st for tok in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1", '"officialSignal":', '"adaptiveState":', '"performance": [']) and all(tok in dh for tok in ["window.PDS_PUBLIC_SURFACE=true", "PM Cockpit", "<h2>Adaptive</h2>", "<h2>Preview</h2>", "<h2>FX</h2>"])
+        add(c, "PDS disclosure boundary", ok, "current operational dashboard public / environment-only infrastructure suppressed")
+    else: add(c, "PDS disclosure boundary", False, "canonical PDS summary/dashboard missing")
 
     public_system_text = "\n".join(text(p) for p in SYSTEM_PAGE_FILES.values())
     leak = re.search(r'(?i)\bMFA\b|macro\s+forecast\s+allocation|_LOCAL_PRIVATE_DATA|[A-Z]:\\', public_system_text)
@@ -209,7 +217,7 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "Existing validator contradiction scan", not contradictions, "none", "; ".join(contradictions))
 
     out = ROOT / "out"
-    if out.is_dir():
+    if require_build and out.is_dir():
         sitemap_file = out / "sitemap.xml"; robots_file = out / "robots.txt"
         add(c, "Built root sitemap exists", sitemap_file.is_file(), "out/sitemap.xml")
         add(c, "Built robots exists", robots_file.is_file(), "out/robots.txt")

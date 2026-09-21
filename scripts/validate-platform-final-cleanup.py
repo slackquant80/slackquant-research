@@ -17,17 +17,15 @@ def main():
     for p in ["src/app/research/page.tsx","src/app/about/page.tsx","src/app/research/adaa/page.tsx","src/app/research/beyond-average-accuracy/page.tsx","src/app/research/price-macro-decision/page.tsx","src/app/research/protection-patience/page.tsx"]:
         need(p, "description:")
     pds=(ROOT/"src/app/systems/pds/page.tsx").read_text(encoding="utf-8-sig")
-    for token in ["slice(0, 12)","PDS + Dynamic FX (5bp)","Recent 12-Month Released Returns","public_recent_12m_returns.csv","12-month table Excel (.xlsx)"]:
+    for token in ["PDS_CANONICAL_PLATFORM_PAGE_V1","Reinforcement-Learning Adaptive Risk Control","Four monitored portfolio views","validated public operating view"]:
         if token not in pds: raise RuntimeError(f"PDS cleanup token missing: {token}")
-    derived=ROOT/"public/data/systems/pds/public_recent_12m_returns.csv"
-    if not derived.is_file(): raise RuntimeError("derived PDS 12-month CSV missing")
-    with derived.open("r",encoding="utf-8-sig",newline="") as f: rows=list(csv.DictReader(f))
-    if len(rows)!=12: raise RuntimeError(f"derived PDS CSV must contain 12 rows, found {len(rows)}")
-    if rows[0]["holding_month"] < rows[-1]["holding_month"]: raise RuntimeError("derived PDS CSV is not newest-first")
+    summary=(ROOT/"src/data/pdsCanonicalSummary.ts").read_text(encoding="utf-8-sig")
+    for token in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1",'"label": "PDS Core + Dynamic FX"','"label": "PDS Adaptive + Dynamic FX"']:
+        if token not in summary: raise RuntimeError(f"PDS canonical summary token missing: {token}")
     print("PLATFORM_FINAL_CLEANUP_PASS")
     print("Internal-link static audit target: 0 broken links")
     print("PDF navigation: first-party PDFs + external HTTP(S) -> secure new tab")
-    print("PDS table: 12 months / Dynamic FX before Core / exact derived CSV")
+    print("PDS platform: canonical current-state summary / four-portfolio performance table")
     return 0
 
 if __name__=="__main__": raise SystemExit(main())
