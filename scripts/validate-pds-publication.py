@@ -95,7 +95,8 @@ def main() -> int:
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",
-        "Four monitored portfolio views",
+        "Recent Completed Monthly Returns",
+        "Recent completed performance and four monitored portfolio views.",
         "validated public operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "/systems/pds/dashboard/",
@@ -128,7 +129,9 @@ def main() -> int:
     require(summary_text, 'contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1"', "PDS canonical summary")
     require(summary_text, '"label": "PDS Core + Dynamic FX"', "PDS canonical summary")
     require(summary_text, '"label": "PDS Adaptive + Dynamic FX"', "PDS canonical summary")
+    require(summary_text, '"recentMonthlyReturns": [', "PDS canonical summary")
     require(binder, "PDS_CANONICAL_PLATFORM_SUMMARY_BIND_PASS", "PDS canonical summary binder")
+    require(binder, "recent_monthly_returns", "PDS canonical summary binder")
 
     # Canonical public dashboard safety and identity.
     required_dashboard = [
@@ -209,6 +212,23 @@ def main() -> int:
     ]:
         if not close(summary.get(key), value):
             raise RuntimeError(f"PDS canonical platform summary FX mismatch: {key}")
+
+    recent = summary.get("recentMonthlyReturns", [])
+    if len(recent) != 12:
+        raise RuntimeError(f"PDS canonical platform summary recent monthly return row count mismatch: {len(recent)}")
+    fx_monthly = {str(r.get("holding_month")): r for r in data["fx_operational_sensitivity"]["monthly"]}
+    core_periods = sorted({
+        str(r.get("calendar_month"))
+        for r in data["core_daily_performance"]["monthly"]
+        if str(r.get("series_id")) == "PDS_CORE_FIXED_CURRENT_POLICY" and r.get("net_return") is not None
+    })[-12:]
+    if [str(r.get("holdingMonth")) for r in recent] != core_periods:
+        raise RuntimeError("PDS canonical platform summary recent monthly holding-month lineage mismatch")
+    for row in recent:
+        month = str(row["holdingMonth"])
+        source = fx_monthly.get(month)
+        if source is None or not close(row["coreDynamicFx"], source["dynamic_costed_return"]) or not close(row["adaptiveDynamicFx"], source["adaptive_dynamic_costed_return"]):
+            raise RuntimeError(f"PDS canonical platform summary recent monthly return mismatch: {month}")
 
     core_rows = data["core_daily_performance"]["summary"]
     fx_rows = data["fx_operational_sensitivity"]["summary"]

@@ -200,7 +200,7 @@ def audit_static(require_build: bool) -> list[Check]:
     pds_public_dashboard = ROOT / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
     if pds_summary.is_file() and pds_public_dashboard.is_file():
         st = text(pds_summary); dh = text(pds_public_dashboard)
-        ok = all(tok in st for tok in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1", '"officialSignal":', '"adaptiveState":', '"performance": [']) and all(tok in dh for tok in ["window.PDS_PUBLIC_SURFACE=true", "PM Cockpit", "<h2>Adaptive</h2>", "<h2>Preview</h2>", "<h2>FX</h2>"])
+        ok = all(tok in st for tok in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1", '"officialSignal":', '"adaptiveState":', '"recentMonthlyReturns": [', '"performance": [']) and all(tok in dh for tok in ["window.PDS_PUBLIC_SURFACE=true", "PM Cockpit", "<h2>Adaptive</h2>", "<h2>Preview</h2>", "<h2>FX</h2>"])
         add(c, "PDS disclosure boundary", ok, "current operational dashboard public / environment-only infrastructure suppressed")
     else: add(c, "PDS disclosure boundary", False, "canonical PDS summary/dashboard missing")
 

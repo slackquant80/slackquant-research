@@ -246,7 +246,8 @@ def main() -> int:
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",
-        "Four monitored portfolio views",
+        "Recent Completed Monthly Returns",
+        "Recent completed performance and four monitored portfolio views.",
         "validated public operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "System Documentation ↗",
@@ -264,6 +265,7 @@ def main() -> int:
     pds_summary = need(
         "src/data/pdsCanonicalSummary.ts",
         "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
+        '"recentMonthlyReturns": [',
         '"label": "PDS Core + Dynamic FX"',
         '"label": "PDS Core"',
         '"label": "PDS Adaptive + Dynamic FX"',
@@ -414,6 +416,11 @@ def main() -> int:
         built_f2r_doc = ROOT / "out/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
         if not built_f2r_doc.is_file() or built_f2r_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
+
+        built_pds = (ROOT / "out/systems/pds/index.html").read_text(encoding="utf-8-sig", errors="replace")
+        for token in ["Recent Completed Monthly Returns", "Core + Dynamic FX", "Adaptive + Dynamic FX"]:
+            if token not in built_pds:
+                raise RuntimeError(f"built PDS recent-month chart missing token: {token}")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
     print("Research=5 Systems=5 Methods=24 / exact registry sets=PASS")

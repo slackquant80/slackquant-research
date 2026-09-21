@@ -49,6 +49,47 @@ def perf(row: dict[str, Any], *, label: str, evidence: str) -> dict[str, Any]:
     }
 
 
+def recent_monthly_returns(data: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
+    core_monthly = data["core_daily_performance"]["monthly"]
+    fx_monthly = data["fx_operational_sensitivity"]["monthly"]
+    periods = sorted({
+        str(r.get("calendar_month", ""))
+        for r in core_monthly
+        if str(r.get("series_id")) == "PDS_CORE_FIXED_CURRENT_POLICY"
+        and re_match_month(str(r.get("calendar_month", "")))
+        and r.get("net_return") is not None
+    })[-limit:]
+    if len(periods) != limit:
+        raise RuntimeError(f"expected {limit} completed PDS Core months for platform chart; found {len(periods)}")
+
+    fx_by_month: dict[str, dict[str, Any]] = {}
+    for row in fx_monthly:
+        month = str(row.get("holding_month", ""))
+        if month not in periods:
+            continue
+        if month in fx_by_month:
+            raise RuntimeError(f"duplicate FX monthly row for {month}")
+        fx_by_month[month] = row
+
+    out: list[dict[str, Any]] = []
+    for month in periods:
+        row = fx_by_month.get(month)
+        if row is None:
+            raise RuntimeError(f"missing FX monthly row for recent completed month {month}")
+        if row.get("dynamic_costed_return") is None or row.get("adaptive_dynamic_costed_return") is None:
+            raise RuntimeError(f"missing Core/Adaptive Dynamic-FX return for recent completed month {month}")
+        out.append({
+            "holdingMonth": month,
+            "coreDynamicFx": num(row["dynamic_costed_return"]),
+            "adaptiveDynamicFx": num(row["adaptive_dynamic_costed_return"]),
+        })
+    return out
+
+
+def re_match_month(value: str) -> bool:
+    return len(value) == 7 and value[:4].isdigit() and value[4] == "-" and value[5:].isdigit() and 1 <= int(value[5:]) <= 12
+
+
 def build_summary(data: dict[str, Any]) -> dict[str, Any]:
     meta = data["meta"]
     mark = data["current_mark"]["manifest"]
@@ -89,6 +130,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
         "officialFxZscore": num(official_fx["zscore"]),
         "previewFxHedge": num(preview_fx["hedge_ratio"]),
         "previewFxZscore": num(preview_fx["zscore"]),
+        "recentMonthlyReturns": recent_monthly_returns(data, 12),
         "performance": [
             perf(core_fx, label="PDS Core + Dynamic FX", evidence="Operational full support"),
             perf(core, label="PDS Core", evidence="Operational full support"),
@@ -100,7 +142,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
 
 def render_ts(summary: dict[str, Any]) -> str:
     payload = json.dumps(summary, ensure_ascii=False, indent=2)
-    return f'''export type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n  evidenceClass: string;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewSignal: string;\n  previewHolding: string;\n  previewThrough: string;\n  adaptivePreviewState: string;\n  adaptivePreviewRiskBudget: number;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxHedge: number;\n  previewFxZscore: number;\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the validated canonical PDS public dashboard.\n// Do not hand-edit numerical values; refresh through the governed PDS publication pipeline.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
+    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n  evidenceClass: string;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewSignal: string;\n  previewHolding: string;\n  previewThrough: string;\n  adaptivePreviewState: string;\n  adaptivePreviewRiskBudget: number;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxHedge: number;\n  previewFxZscore: number;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the validated canonical PDS public dashboard.\n// Do not hand-edit numerical values; refresh through the governed PDS publication pipeline.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
 
 
 def main() -> int:

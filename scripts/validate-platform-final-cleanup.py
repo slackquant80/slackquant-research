@@ -17,7 +17,7 @@ def main():
     for p in ["src/app/research/page.tsx","src/app/about/page.tsx","src/app/research/adaa/page.tsx","src/app/research/beyond-average-accuracy/page.tsx","src/app/research/price-macro-decision/page.tsx","src/app/research/protection-patience/page.tsx"]:
         need(p, "description:")
     pds=(ROOT/"src/app/systems/pds/page.tsx").read_text(encoding="utf-8-sig")
-    for token in ["PDS_CANONICAL_PLATFORM_PAGE_V1","Reinforcement-Learning Adaptive Risk Control","Four monitored portfolio views","validated public operating view"]:
+    for token in ["PDS_CANONICAL_PLATFORM_PAGE_V1","Reinforcement-Learning Adaptive Risk Control","Recent completed performance and four monitored portfolio views.","validated public operating view"]:
         if token not in pds: raise RuntimeError(f"PDS cleanup token missing: {token}")
     summary=(ROOT/"src/data/pdsCanonicalSummary.ts").read_text(encoding="utf-8-sig")
     for token in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1",'"label": "PDS Core + Dynamic FX"','"label": "PDS Adaptive + Dynamic FX"']:

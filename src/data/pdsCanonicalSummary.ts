@@ -1,3 +1,9 @@
+export type PdsCanonicalMonthlyReturnRow = {
+  holdingMonth: string;
+  coreDynamicFx: number;
+  adaptiveDynamicFx: number;
+};
+
 export type PdsCanonicalPerformanceRow = {
   label: string;
   supportStart: string;
@@ -32,6 +38,7 @@ export type PdsCanonicalSummary = {
   officialFxZscore: number;
   previewFxHedge: number;
   previewFxZscore: number;
+  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];
   performance: PdsCanonicalPerformanceRow[];
 };
 
@@ -61,6 +68,68 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "officialFxZscore": 0.24941947094137737,
   "previewFxHedge": 0.5,
   "previewFxZscore": 0.36876034902500954,
+  "recentMonthlyReturns": [
+    {
+      "holdingMonth": "2025-09",
+      "coreDynamicFx": 0.07355900764141787,
+      "adaptiveDynamicFx": 0.07355900764141787
+    },
+    {
+      "holdingMonth": "2025-10",
+      "coreDynamicFx": 0.050561895952934144,
+      "adaptiveDynamicFx": 0.05056189595293392
+    },
+    {
+      "holdingMonth": "2025-11",
+      "coreDynamicFx": 0.011664379167662942,
+      "adaptiveDynamicFx": 0.011664379167663164
+    },
+    {
+      "holdingMonth": "2025-12",
+      "coreDynamicFx": 0.011720319641570942,
+      "adaptiveDynamicFx": 0.011720319641570942
+    },
+    {
+      "holdingMonth": "2026-01",
+      "coreDynamicFx": 0.07131811504061591,
+      "adaptiveDynamicFx": 0.07131811504061658
+    },
+    {
+      "holdingMonth": "2026-02",
+      "coreDynamicFx": 0.053556369184104335,
+      "adaptiveDynamicFx": 0.05355636918410478
+    },
+    {
+      "holdingMonth": "2026-03",
+      "coreDynamicFx": -0.05253881997978804,
+      "adaptiveDynamicFx": -0.019368238284913963
+    },
+    {
+      "holdingMonth": "2026-04",
+      "coreDynamicFx": 0.08283401362029075,
+      "adaptiveDynamicFx": 0.07703105142590161
+    },
+    {
+      "holdingMonth": "2026-05",
+      "coreDynamicFx": 0.07552314898626977,
+      "adaptiveDynamicFx": 0.07552314898627022
+    },
+    {
+      "holdingMonth": "2026-06",
+      "coreDynamicFx": -0.00634916502585936,
+      "adaptiveDynamicFx": 0.011009022881295794
+    },
+    {
+      "holdingMonth": "2026-07",
+      "coreDynamicFx": -0.05786895063313491,
+      "adaptiveDynamicFx": -0.03386550445454273
+    },
+    {
+      "holdingMonth": "2026-08",
+      "coreDynamicFx": 0.034807315340836587,
+      "adaptiveDynamicFx": 0.029984256749902016
+    }
+  ],
   "performance": [
     {
       "label": "PDS Core + Dynamic FX",

@@ -33,6 +33,85 @@ function num(value: number, digits = 2) {
   return value.toFixed(digits);
 }
 
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+
+function compactMonth(period: string) {
+  const [year, month] = period.split("-");
+  const index = Number(month) - 1;
+  if (!year || index < 0 || index >= MONTH_LABELS.length) return period;
+  return `${MONTH_LABELS[index]} '${year.slice(-2)}`;
+}
+
+function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.recentMonthlyReturns }) {
+  if (!rows.length) return null;
+  const width = 820;
+  const height = 310;
+  const left = 52;
+  const right = 18;
+  const top = 24;
+  const bottom = 48;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const zeroY = top + plotHeight / 2;
+  const halfHeight = plotHeight / 2;
+  const maxObservedPct = Math.max(
+    ...rows.flatMap((row) => [Math.abs(row.coreDynamicFx * 100), Math.abs(row.adaptiveDynamicFx * 100)]),
+  );
+  const axisMaxPct = Math.max(5, Math.ceil(maxObservedPct / 5) * 5);
+  const groupWidth = plotWidth / rows.length;
+  const barWidth = Math.min(17, groupWidth * 0.28);
+  const gap = 3;
+  const ticks = [axisMaxPct, axisMaxPct / 2, 0, -axisMaxPct / 2, -axisMaxPct];
+  const yForTick = (tick: number) => zeroY - (tick / axisMaxPct) * halfHeight;
+  const barGeometry = (value: number) => {
+    const pctValue = value * 100;
+    const h = Math.max(1, (Math.abs(pctValue) / axisMaxPct) * halfHeight);
+    return { pctValue, height: h, y: pctValue >= 0 ? zeroY - h : zeroY };
+  };
+
+  return (
+    <figure className="pds-monthly-figure">
+      <figcaption className="pds-monthly-chart-head">
+        <div>
+          <h3>Recent Completed Monthly Returns</h3>
+          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · completed holding months only · current MTD excluded</p>
+        </div>
+        <div className="pds-monthly-legend" aria-label="Chart legend">
+          <span><i className="pds-legend-swatch core" />Core + Dynamic FX</span>
+          <span><i className="pds-legend-swatch adaptive" />Adaptive + Dynamic FX</span>
+        </div>
+      </figcaption>
+      <div className="pds-monthly-chart-scroll" role="region" aria-label="Recent completed monthly returns chart" tabIndex={0}>
+        <svg className="pds-monthly-svg" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Twelve completed holding-month returns for PDS Core plus Dynamic FX and PDS Adaptive plus Dynamic FX">
+          {ticks.map((tick) => (
+            <g key={tick}>
+              <line className={tick === 0 ? "pds-chart-zero" : "pds-chart-grid"} x1={left} x2={width - right} y1={yForTick(tick)} y2={yForTick(tick)} />
+              <text className="pds-chart-axis-label" x={left - 8} y={yForTick(tick) + 4} textAnchor="end">{tick.toFixed(tick % 1 ? 1 : 0)}%</text>
+            </g>
+          ))}
+          {rows.map((row, index) => {
+            const center = left + groupWidth * (index + 0.5);
+            const core = barGeometry(row.coreDynamicFx);
+            const adaptive = barGeometry(row.adaptiveDynamicFx);
+            return (
+              <g key={row.holdingMonth}>
+                <rect className="pds-chart-bar core" x={center - barWidth - gap / 2} y={core.y} width={barWidth} height={core.height} rx={1.5}>
+                  <title>{`${row.holdingMonth} · PDS Core + Dynamic FX: ${core.pctValue.toFixed(2)}%`}</title>
+                </rect>
+                <rect className="pds-chart-bar adaptive" x={center + gap / 2} y={adaptive.y} width={barWidth} height={adaptive.height} rx={1.5}>
+                  <title>{`${row.holdingMonth} · PDS Adaptive + Dynamic FX: ${adaptive.pctValue.toFixed(2)}%`}</title>
+                </rect>
+                <text className="pds-chart-month-label" x={center} y={height - 18} textAnchor="middle">{compactMonth(row.holdingMonth)}</text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      <div className="pds-monthly-chart-note">Detailed Core / Adaptive / provider comparisons remain available in the operational dashboard.</div>
+    </figure>
+  );
+}
+
 export default function PdsSystemPage() {
   if (!item) notFound();
 
@@ -85,7 +164,7 @@ export default function PdsSystemPage() {
           <a href="#architecture">Decision Architecture</a>
           <a href="#adoption">Evidence-Gated Adoption</a>
           <a href="#providers">Strategy Provider Layer</a>
-          <a href="#performance">Four-Portfolio Performance</a>
+          <a href="#performance">Performance Evidence</a>
           <a href="#monitoring">Monitoring & Governance</a>
           <a href="#methods">Quantitative Methods</a>
           <a href="#boundary">Disclosure Boundary</a>
@@ -228,12 +307,13 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="performance">
             <div className="kicker">Integrated performance evidence</div>
-            <h2>Four monitored portfolio views, shown with their governed support.</h2>
+            <h2>Recent completed performance and four monitored portfolio views.</h2>
             <p className="body-copy">
-              The table below summarizes the same four portfolio views used in the operational dashboard. Core variants retain
-              their full operational support; Adaptive variants use the approved frozen-policy evidence window. The current
-              incomplete month is excluded from cumulative and full-period risk statistics.
+              The chart shows the most recent 12 completed holding months for the two Dynamic-FX portfolio views; current MTD is
+              deliberately excluded. The table then summarizes the same four portfolio views used in the operational dashboard.
+              Core variants retain their full operational support; Adaptive variants use the approved frozen-policy evidence window.
             </p>
+            <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
               <table className="evidence-table pds-public-table">
                 <thead>
