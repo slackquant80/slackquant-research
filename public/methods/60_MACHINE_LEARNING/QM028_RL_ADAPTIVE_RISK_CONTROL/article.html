@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.">
+<meta name="description" content="A practical guide to using reinforcement learning as a selective portfolio risk-control layer rather than as a standalone alpha engine.">
 
-<title>Quantitative Methods – SlackQuant Research</title>
+<title>Reinforcement Learning for Adaptive Portfolio Risk Control – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -27,21 +27,75 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -68,18 +122,75 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
-<link rel="canonical" href="https://research.slackquant.com/methods/">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="canonical" href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html">
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
+  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
+  <ul class="collapse">
+  <li><a href="#separate-tuning-from-evaluation" id="toc-separate-tuning-from-evaluation" class="nav-link" data-scroll-target="#separate-tuning-from-evaluation">Separate tuning from evaluation</a></li>
+  <li><a href="#expanding-and-rolling-validation" id="toc-expanding-and-rolling-validation" class="nav-link" data-scroll-target="#expanding-and-rolling-validation">Expanding and rolling validation</a></li>
+  <li><a href="#the-role-of-a-gap" id="toc-the-role-of-a-gap" class="nav-link" data-scroll-target="#the-role-of-a-gap">The role of a gap</a></li>
+  </ul></li>
+  <li><a href="#is-ordinary-k-fold-always-wrong-for-time-series" id="toc-is-ordinary-k-fold-always-wrong-for-time-series" class="nav-link" data-scroll-target="#is-ordinary-k-fold-always-wrong-for-time-series">Is Ordinary K-Fold Always Wrong for Time Series?</a></li>
+  <li><a href="#preprocessing-belongs-inside-the-fold" id="toc-preprocessing-belongs-inside-the-fold" class="nav-link" data-scroll-target="#preprocessing-belongs-inside-the-fold">Preprocessing Belongs Inside the Fold</a></li>
+  <li><a href="#nested-historical-evaluation" id="toc-nested-historical-evaluation" class="nav-link" data-scroll-target="#nested-historical-evaluation">Nested Historical Evaluation</a></li>
+  <li><a href="#how-to-choose-the-objective" id="toc-how-to-choose-the-objective" class="nav-link" data-scroll-target="#how-to-choose-the-objective">How to Choose the Objective</a></li>
+  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
@@ -107,307 +218,304 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
     }
   })();
 </script>
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Quantitative Methods</h1>
-<p class="subtitle lead">A practical methods library for applied quantitative research and investment practice</p>
+<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">Reinforcement Learning for Adaptive Portfolio Risk Control</h1></div></header>
+<div class="method-kicker"><p>QM028 · Machine Learning · Advanced</p></div>
+<div class="method-kicker">
+<p>QM028 · Machine Learning · Advanced</p>
 </div>
-
-<div>
-  <div class="description">
-    Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.
-  </div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> Reinforcement learning (RL) treats a
+sequence of decisions as a control problem: an agent observes a state,
+chooses an action, receives a reward, and learns a policy that seeks to
+improve cumulative reward <span class="citation"
+data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>. In
+portfolio applications, the action does not have to be security
+selection. A narrower and often more governable use is <strong>adaptive
+risk control</strong>: start from an existing portfolio and let a frozen
+policy choose among a bounded set of risk budgets or defensive
+actions.</p>
+<p><strong>Use it for.</strong> State-dependent exposure control,
+defensive overlays, drawdown-aware risk budgets, or other sequential
+decisions in which the action today changes the distribution of future
+portfolio outcomes.</p>
+<p><strong>It does not establish.</strong> That RL is intrinsically
+superior to a fixed rule, that historical policy optimization proves
+live robustness, or that an RL risk controller is the same thing as an
+RL alpha or full portfolio-selection engine.</p>
 </div>
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<div class="sq-index-intro">
-<p>This library explains the statistical, econometric, portfolio, data-design, machine-learning, and foundation-model methods used across SlackQuant research and investment systems. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice.</p>
+<h1 id="the-question">The Question</h1>
+<p>Suppose a portfolio already has a validated strategic target. The
+research question is not necessarily</p>
+<blockquote>
+<p>Which assets should an RL agent buy?</p>
+</blockquote>
+<p>A more restricted question can be</p>
+<blockquote>
+<p>Given the current portfolio and a defined market state, should the
+system keep the normal risk budget or move to a governed defensive
+budget?</p>
+</blockquote>
+<p>That distinction changes the problem materially. The underlying alpha
+or allocation engine remains intact. RL acts on a bounded
+<strong>control layer</strong> around it.</p>
+<h1 id="why-it-matters">Why It Matters</h1>
+<p>Portfolio decisions are sequential. A defensive choice changes not
+only the next-period return but also future wealth, drawdown, turnover,
+recovery path, and the state seen by later decisions. RL provides a
+language for optimizing such sequences rather than treating each month
+as an unrelated prediction problem <span class="citation"
+data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>.</p>
+<p>But financial RL has unusually severe validation challenges:</p>
+<ul>
+<li>market data are limited and nonstationary;</li>
+<li>actions cannot be freely explored in historical data;</li>
+<li>reward functions embed economic preferences;</li>
+<li>transaction costs and turnover can dominate small gross
+improvements;</li>
+<li>repeated experimentation can overfit the same history; and</li>
+<li>a policy learned from historical data may be asked to act in states
+poorly represented in its training sample.</li>
+</ul>
+<p>These concerns are especially important in offline or batch settings,
+where a policy is learned from a fixed historical dataset rather than
+through unconstrained live exploration <span class="citation"
+data-cites="levine2020offline">(Levine et al. 2020)</span>.</p>
+<h1 id="the-rl-formulation">The RL Formulation</h1>
+<p>A standard Markov decision process is described by states <span
+class="math inline"><em>s</em><sub><em>t</em></sub></span>, actions
+<span class="math inline"><em>a</em><sub><em>t</em></sub></span>,
+rewards <span
+class="math inline"><em>r</em><sub><em>t</em> + 1</sub></span>,
+transition dynamics, and a discount factor <span
+class="math inline"><em>γ</em></span>.</p>
+<p>A policy <span
+class="math inline"><em>π</em>(<em>a</em> ∣ <em>s</em>)</span> maps the
+current state to an action distribution. Its discounted return from time
+<span class="math inline"><em>t</em></span> is</p>
+<p><span class="math display">$$
+G_t = \sum_{k=0}^{\infty}\gamma^k r_{t+k+1},
+$$</span></p>
+<p>and the objective is to find a policy that improves expected
+cumulative return under the declared environment and reward definition
+<span class="citation" data-cites="suttonbarto2018">(Sutton and Barto
+2018)</span>.</p>
+<p>In a portfolio risk-control design, the action can be deliberately
+narrow. For example,</p>
+<p><span
+class="math display"><em>a</em><sub><em>t</em></sub> ∈ {1.00, 0.75, 0.50},</span></p>
+<p>where the action is a <strong>risk-budget multiplier</strong> applied
+to a pre-existing core portfolio. The residual may be assigned to a
+declared defensive asset or cash proxy. The exact action set is a design
+choice, not a universal RL convention.</p>
+<h1 id="state-design">State Design</h1>
+<p>The state should contain only information admissible at the decision
+time. Examples can include:</p>
+<ul>
+<li>recent portfolio volatility or drawdown;</li>
+<li>cross-asset risk indicators;</li>
+<li>trend or stress measures;</li>
+<li>current exposure state; and</li>
+<li>other point-in-time variables justified by the use case.</li>
+</ul>
+<p>The state is not automatically Markov just because it is called a
+state. If relevant history is omitted, the environment can remain
+partially observed. Adding more variables is also not automatically
+better: a larger state space can increase estimation error and make
+historical coverage thinner.</p>
+<div class="callout-important"
+title="State construction is an information-boundary problem">
+<p>Every state variable must obey the same point-in-time discipline as a
+forecasting feature. A risk controller trained on revised, backfilled,
+or future-known information can look robust historically while being
+impossible to reproduce live.</p>
 </div>
-<section id="current-articles" class="level2">
-<h2 class="anchored" data-anchor-id="current-articles">Current articles</h2>
-<div id="sq-method-discovery" class="sq-method-discovery">
-<div class="sq-method-search-field">
-<p><label class="sq-method-search-label" for="sq-method-search">Search methods</label> <input id="sq-method-search" class="sq-method-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search methods…" aria-controls="sq-method-catalog"></p>
+<h1
+id="action-design-control-the-risk-layer-not-necessarily-the-portfolio">Action
+Design: Control the Risk Layer, Not Necessarily the Portfolio</h1>
+<p>A useful governance pattern is to separate:</p>
+<ol type="1">
+<li><strong>Core decision</strong> — the portfolio that would be held
+without the adaptive controller;</li>
+<li><strong>Adaptive action</strong> — the bounded change in risk budget
+or defensive exposure; and</li>
+<li><strong>implementation</strong> — turnover, cost, execution timing,
+and the actual post-action portfolio.</li>
+</ol>
+<p>This preserves attribution. If the adaptive portfolio outperforms or
+underperforms, the difference can be traced to the control action rather
+than being confounded with a completely different alpha engine.</p>
+<h1 id="reward-design">Reward Design</h1>
+<p>The reward determines what the agent is actually being trained to
+prefer. A simple return-only reward can encourage undesirable tail risk
+or turnover. A stylized risk-aware reward might be</p>
+<p><span
+class="math display"><em>r</em><sub><em>t</em> + 1</sub> = <em>R</em><sub><em>t</em> + 1</sub><sup>adaptive</sup> − <em>λ</em><sub>risk</sub> ℛ<sub><em>t</em> + 1</sub> − <em>λ</em><sub>turn</sub> <em>τ</em><sub><em>t</em></sub>,</span></p>
+<p>where <span class="math inline">ℛ<sub><em>t</em> + 1</sub></span> is
+a declared risk penalty and <span
+class="math inline"><em>τ</em><sub><em>t</em></sub></span> is turnover
+or a transaction-cost proxy.</p>
+<p>The coefficients <span
+class="math inline"><em>λ</em><sub>risk</sub></span> and <span
+class="math inline"><em>λ</em><sub>turn</sub></span> are preference
+parameters. They are not discovered economic truths. If they are
+repeatedly changed after inspecting the same history, they become
+another source of research overfitting.</p>
+<h1 id="rl-is-not-the-same-as-supervised-forecasting">RL Is Not the Same
+as Supervised Forecasting</h1>
+<p>Supervised learning typically estimates a target such as next-period
+return or volatility. RL instead evaluates <strong>actions through their
+downstream consequences</strong>. That distinction is why direct
+reinforcement approaches have long been considered for trading and
+asset-allocation problems <span class="citation"
+data-cites="moodysaffell2001">(Moody and Saffell 2001)</span>.</p>
+<p>But an RL policy can still use forecasts or supervised-model outputs
+inside its state. The categories are not mutually exclusive.</p>
+<h1 id="offline-evaluation-and-the-coverage-problem">Offline Evaluation
+and the Coverage Problem</h1>
+<p>Financial research is commonly offline: the historical record
+contains the actions that actually occurred, not every action the new
+policy might have taken. This creates a support problem. A policy can
+recommend actions in regions where the data provide little evidence
+about the resulting transition or reward.</p>
+<p>Offline RL research emphasizes that distribution shift between the
+historical behavior data and the candidate policy can produce severe
+value-estimation error <span class="citation"
+data-cites="levine2020offline">(Levine et al. 2020)</span>. In
+investment work, this is one reason to prefer bounded action spaces,
+conservative policy changes, explicit historical coverage diagnostics,
+and independent forward monitoring.</p>
+<h1 id="chronological-evaluation">Chronological Evaluation</h1>
+<p>An admissible workflow should preserve chronology:</p>
+<ol type="1">
+<li>construct the state using information available at each historical
+decision point;</li>
+<li>select the training window without using future rewards;</li>
+<li>tune state definitions, rewards, and policy hyperparameters only
+inside the research window;</li>
+<li>freeze the candidate policy before evaluating the next untouched
+block; and</li>
+<li>keep any later live or forward record separate from the historical
+selection sample.</li>
+</ol>
+<p>Repeatedly rebuilding a policy after viewing the same evaluation
+period turns that period into development data.</p>
+<h1 id="policy-freeze-and-deployment-governance">Policy Freeze and
+Deployment Governance</h1>
+<p>A production or forward-shadow controller should be identified by a
+frozen bundle: model/policy artifact, state schema, action mapping,
+preprocessing, relevant code version, and decision clock. If the frozen
+bundle or required state inputs fail integrity checks, a fail-closed
+design should not silently substitute a newly fitted policy.</p>
+<p>The operational question is therefore broader than “does the model
+run?” It includes:</p>
+<ul>
+<li>can the exact policy be reconstructed;</li>
+<li>are state inputs admissible and complete;</li>
+<li>is the action mapped to the portfolio exactly as tested;</li>
+<li>are costs charged once and at the right time; and</li>
+<li>is the fallback authority explicit?</li>
+</ul>
+<h1 id="comparing-core-and-adaptive-portfolios">Comparing Core and
+Adaptive Portfolios</h1>
+<p>The cleanest comparison holds the core portfolio and market path
+fixed and changes only the adaptive risk-control decision. Useful
+diagnostics include:</p>
+<ul>
+<li>common-support return and volatility;</li>
+<li>maximum drawdown and recovery behavior;</li>
+<li>turnover and cost difference;</li>
+<li>frequency and duration of defensive actions;</li>
+<li>opportunity cost during false defensive states; and</li>
+<li>performance conditional on declared stress states.</li>
+</ul>
+<p>A better backtest does not by itself establish that the controller is
+independently validated. Selection-aware historical evidence and
+post-freeze forward evidence should be labeled separately.</p>
+<h1 id="failure-modes">Failure Modes</h1>
+<h2 id="reward-hacking">Reward hacking</h2>
+<p>The policy exploits an unintended property of the reward rather than
+the economic objective.</p>
+<h2 id="state-leakage">State leakage</h2>
+<p>The controller uses revised, contemporaneously unavailable, or
+future-derived inputs.</p>
+<h2 id="historical-overfitting">Historical overfitting</h2>
+<p>State variables, reward penalties, action levels, and hyperparameters
+are repeatedly changed against the same history.</p>
+<h2 id="unsupported-actions">Unsupported actions</h2>
+<p>The policy takes actions in states where the historical data contain
+little or no comparable experience.</p>
+<h2 id="cost-understatement">Cost understatement</h2>
+<p>The adaptive target is compared gross of turnover or is charged
+inconsistently relative to the core portfolio.</p>
+<h2 id="authority-ambiguity">Authority ambiguity</h2>
+<p>A controller failure silently replaces the core decision rather than
+failing within its own bounded layer.</p>
+<h1 id="hands-on-lab">Hands-on Lab</h1>
+<p>The accompanying lab uses synthetic monthly core returns and a simple
+two-state environment to illustrate why a risk-budget action changes
+both return and downside exposure. The example is deliberately small and
+is <strong>not</strong> evidence that RL improves live investment
+results.</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a
+href="labs/index.html">lab guide</a>. Direct source: <a
+href="labs/python/qm028_rl_risk_control.py">Python</a>.</p>
 </div>
-<div class="sq-method-filter-bar">
-<div id="sq-method-filters" class="sq-method-filters" role="group" aria-label="Filter methods by topic">
-
+<h1 id="what-to-report">What to Report</h1>
+<p>A credible adaptive-risk-control study should report at least:</p>
+<ul>
+<li>the state variables and their information timing;</li>
+<li>the action space and portfolio mapping;</li>
+<li>reward definition and cost treatment;</li>
+<li>training, validation, and frozen-policy periods;</li>
+<li>policy-freeze identity;</li>
+<li>core-versus-adaptive comparisons on common support;</li>
+<li>action frequency and state coverage; and</li>
+<li>limitations of historical/offline evidence.</li>
+</ul>
+<h1 id="used-in-slackquant-research">Used in SlackQuant Research</h1>
+<ul>
+<li><a href="https://research.slackquant.com/systems/pds/">Portfolio
+Decision System (PDS)</a> uses RL-assisted adaptive risk control as a
+bounded defense layer on top of PDS Core. The public Method explains the
+general control and validation framework, not the protected production
+controller recipe.</li>
+</ul>
+<h1 id="related-methods">Related Methods</h1>
+<ul>
+<li><a
+href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003
+— Look-Ahead Bias and Data Leakage</a></li>
+<li><a
+href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007
+— Portfolio Backtesting and Rebalancing</a></li>
+<li><a
+href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">QM009
+— Turnover, Transaction Costs, and Net Performance</a></li>
+<li><a href="../QM020_TIME_SERIES_MODEL_SELECTION/article.html">QM020 —
+Time-Series Model Selection and Hyperparameter Tuning</a></li>
+</ul>
+<h1 id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-levine2020offline" class="csl-entry" role="listitem">
+Levine, Sergey, Aviral Kumar, George Tucker, and Justin Fu. 2020.
+<span>“Offline Reinforcement Learning: Tutorial, Review, and
+Perspectives on Open Problems.”</span> <em>arXiv Preprint
+arXiv:2005.01643</em>. <a
+href="https://doi.org/10.48550/arXiv.2005.01643">https://doi.org/10.48550/arXiv.2005.01643</a>.
 </div>
-<div id="sq-method-result-count" class="sq-method-result-count" aria-live="polite">
-
+<div id="ref-moodysaffell2001" class="csl-entry" role="listitem">
+Moody, John, and Matthew Saffell. 2001. <span>“Learning to Trade via
+Direct Reinforcement.”</span> <em>IEEE Transactions on Neural
+Networks</em> 12 (4): 875–89. <a
+href="https://doi.org/10.1109/72.935097">https://doi.org/10.1109/72.935097</a>.
+</div>
+<div id="ref-suttonbarto2018" class="csl-entry" role="listitem">
+Sutton, Richard S., and Andrew G. Barto. 2018. <em>Reinforcement
+Learning: An Introduction</em>. 2nd ed. Cambridge, MA: MIT Press.
 </div>
 </div>
-<div id="sq-method-empty" class="sq-method-empty" role="status" hidden="">
-No published Methods match this search.
-</div>
-</div>
-<div id="sq-method-catalog">
-<section id="core-methods" class="level3 sq-method-group" data-method-group="core">
-<h3 class="anchored" data-anchor-id="core-methods">Core Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM001 · Forecast Evaluation · Foundation
-</div>
-<section id="out-of-sample-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="out-of-sample-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">Out-of-Sample Forecast Evaluation</a></h3>
-<p>Can a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM002 · Forecast Evaluation · Foundation
-</div>
-<section id="rolling-vs-expanding-windows" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-vs-expanding-windows"><a href="./10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">Rolling vs Expanding Windows</a></h3>
-<p>How much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM003 · DATA &amp; RESEARCH DESIGN · FOUNDATION
-</div>
-<section id="look-ahead-bias-and-data-leakage" class="level3">
-<h3 class="anchored" data-anchor-id="look-ahead-bias-and-data-leakage"><a href="./80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">Look-Ahead Bias and Data Leakage</a></h3>
-<p>When can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM004 · FORECAST EVALUATION · INTERMEDIATE
-</div>
-<section id="dieboldmariano-test" class="level3">
-<h3 class="anchored" data-anchor-id="dieboldmariano-test"><a href="./10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">Diebold–Mariano Test</a></h3>
-<p>Does a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM005 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="model-confidence-set" class="level3">
-<h3 class="anchored" data-anchor-id="model-confidence-set"><a href="./10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">Model Confidence Set</a></h3>
-<p>When does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM006 · STATISTICAL INFERENCE · INTERMEDIATE
-</div>
-<section id="block-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="block-bootstrap"><a href="./20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">Block Bootstrap</a></h3>
-<p>How should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM015 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="multivariate-probabilistic-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="multivariate-probabilistic-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">Multivariate Probabilistic Forecast Evaluation</a></h3>
-<p>How should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.</p>
-</section>
-</div>
-</section>
-<section id="investment-methods" class="level3 sq-method-group" data-method-group="investment">
-<h3 class="anchored" data-anchor-id="investment-methods">Investment Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM007 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="portfolio-backtesting-and-rebalancing" class="level3">
-<h3 class="anchored" data-anchor-id="portfolio-backtesting-and-rebalancing"><a href="./40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">Portfolio Backtesting and Rebalancing</a></h3>
-<p>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM008 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="drawdown-underwater-duration-and-recovery" class="level3">
-<h3 class="anchored" data-anchor-id="drawdown-underwater-duration-and-recovery"><a href="./40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">Drawdown, Underwater Duration, and Recovery</a></h3>
-<p>How deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM009 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="turnover-transaction-costs-and-net-performance" class="level3">
-<h3 class="anchored" data-anchor-id="turnover-transaction-costs-and-net-performance"><a href="./40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">Turnover, Transaction Costs, and Net Performance</a></h3>
-<p>How much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM010 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="momentum-and-trend-signals" class="level3">
-<h3 class="anchored" data-anchor-id="momentum-and-trend-signals"><a href="./40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html">Momentum and Trend Signals</a></h3>
-<p>How should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM011 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="strategy-similarity-and-decision-diversification" class="level3">
-<h3 class="anchored" data-anchor-id="strategy-similarity-and-decision-diversification"><a href="./40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html">Strategy Similarity and Decision Diversification</a></h3>
-<p>Do multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM012 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="rolling-holding-period-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-holding-period-analysis"><a href="./40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html">Rolling Holding-Period Analysis</a></h3>
-<p>What do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM013 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="benchmark-relative-portfolio-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="benchmark-relative-portfolio-evaluation"><a href="./40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html">Benchmark-Relative Portfolio Evaluation</a></h3>
-<p>How should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM027 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="cross-sectional-ranking-top-k-selection-and-hold-buffers" class="level3">
-<h3 class="anchored" data-anchor-id="cross-sectional-ranking-top-k-selection-and-hold-buffers"><a href="./40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html">Cross-Sectional Ranking, Top-K Selection, and Hold Buffers</a></h3>
-<p>How should heterogeneous model outputs become stable portfolio membership? It separates ordinal rank from normalized rank strength, defines Top-K entry and incumbent hold buffers, and makes the turnover/path-dependence trade-off explicit.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM029 · PORTFOLIO METHODS · INTERMEDIATE</div>
-<h3 class="anchored"><a href="./40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html">Dynamic Currency Hedging and FX Overlay Accounting</a></h3>
-<p>How should a currency overlay be timed, accounted for, and separated from the underlying portfolio? It distinguishes raw versus admissible FX observations, base-currency wealth, hedge ratios, overlay costs, Official decisions, and Preview states.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM016 · TIME-SERIES METHODS · INTERMEDIATE
-</div>
-<section id="ewma-t-scenario-simulation" class="level3">
-<h3 class="anchored" data-anchor-id="ewma-t-scenario-simulation"><a href="./30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html">EWMA-t Scenario Simulation</a></h3>
-<p>How can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM017 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="scenario-based-portfolio-stress-testing" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-based-portfolio-stress-testing"><a href="./40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html">Scenario-Based Portfolio Stress Testing</a></h3>
-<p>How should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.</p>
-</section>
-</div>
-</section>
-</div>
-<section id="machine-learning-methods" class="level3 sq-method-group" data-method-group="machine_learning">
-<h3 class="anchored" data-anchor-id="machine-learning-methods">Machine Learning Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM019 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="regularized-linear-models-ridge-lasso-and-elastic-net" class="level3">
-<h3 class="anchored" data-anchor-id="regularized-linear-models-ridge-lasso-and-elastic-net"><a href="./60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">Regularized Linear Models: Ridge, Lasso, and Elastic Net</a></h3>
-<p>How can a linear predictor remain stable when features are numerous, noisy, or correlated? It compares Ridge, Lasso, and Elastic Net, makes scaling and penalty conventions explicit, and treats preprocessing and penalty selection as part of the leakage-controlled forecasting procedure.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM020 · MACHINE LEARNING · ADVANCED
-</div>
-<section id="time-series-model-selection-and-hyperparameter-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="time-series-model-selection-and-hyperparameter-tuning"><a href="./60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html">Time-Series Model Selection and Hyperparameter Tuning</a></h3>
-<p>How should hyperparameters be selected when the tuning procedure itself must respect historical information sets? It covers chronological folds, nested evaluation, target maturity, gap design, fold-local preprocessing, and the important conditions under which ordinary K-fold is not automatically invalid.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM028 · MACHINE LEARNING · ADVANCED</div>
-<h3 class="anchored"><a href="./60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html">Reinforcement Learning for Adaptive Portfolio Risk Control</a></h3>
-<p>How can reinforcement learning be used as a bounded risk-control layer without becoming the alpha engine? It covers state/action/reward design, offline coverage, chronological evaluation, policy freezing, and Core-versus-Adaptive attribution.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM024 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="forecast-combination-and-model-averaging" class="level3">
-<h3 class="anchored" data-anchor-id="forecast-combination-and-model-averaging"><a href="./60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">Forecast Combination and Model Averaging</a></h3>
-<p>When should several models be combined instead of forcing a single winner? It separates equal and estimated combinations, forecast-scale compatibility, rank aggregation, weight-estimation risk, and model-combination weights from downstream portfolio allocations.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM025 · AI &amp; FOUNDATION MODELS · ADVANCED
-</div>
-<section id="pretrained-time-series-foundation-models" class="level3">
-<h3 class="anchored" data-anchor-id="pretrained-time-series-foundation-models"><a href="./70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">Pretrained Time-Series Foundation Models</a></h3>
-<p>How should pretrained forecasting models be evaluated without confusing zero-shot inference with information-free prediction? It separates downstream inference timing from pretrained knowledge, distinguishes model architectures, audits future covariates and pretraining overlap, and separates retrospective technology counterfactuals from historical real-time OOS claims.</p>
-</section>
-</div>
-</section>
-<section id="research-design-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
-<h3 class="anchored" data-anchor-id="research-design-technical-methods">Research Design &amp; Technical Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
-</div>
-<section id="information-timing-data-vintages-and-real-time-macro-data" class="level3">
-<h3 class="anchored" data-anchor-id="information-timing-data-vintages-and-real-time-macro-data"><a href="./80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">Information Timing, Data Vintages, and Real-Time Macro Data</a></h3>
-<p>Which macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM026 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="point-in-time-dynamic-universe-construction" class="level3">
-<h3 class="anchored" data-anchor-id="point-in-time-dynamic-universe-construction"><a href="./80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html">Point-in-Time Dynamic Universe Construction</a></h3>
-<p>How should an investable opportunity set evolve without backfilling future constituents into the past? It separates listing availability, liquidity/history eligibility, exposure representative selection, model readiness, and prospective candidate-pool governance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="stress-archetypes-and-representative-scenario-geometry" class="level3">
-<h3 class="anchored" data-anchor-id="stress-archetypes-and-representative-scenario-geometry"><a href="./80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html">Stress Archetypes and Representative Scenario Geometry</a></h3>
-<p>How can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks.</p>
-</section>
-</div>
-</section>
-</section>
-<section id="library-principles" class="level2">
-<h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
-<p>The library is <strong>application-driven rather than encyclopedic</strong>. Methods are added when they materially support SlackQuant research, investment systems, or applied quantitative practice.</p>
-<p>Each computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence.</p>
-</section>
-<section id="future-additions" class="level2">
-<h2 class="anchored" data-anchor-id="future-additions">Future additions</h2>
-<p>Future additions are added when they materially support active SlackQuant research, investment systems, or applied quantitative practice.</p>
-
-
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -972,8 +1080,6 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
-      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
-      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1110,5 +1216,5 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
 
 
 
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

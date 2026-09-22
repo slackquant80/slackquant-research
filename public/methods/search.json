@@ -1524,5 +1524,19 @@
     "title": "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers",
     "section": "7. Measure turnover after the decision rule",
     "text": "7. Measure turnover after the decision rule\nThe hold buffer should be judged by its portfolio consequences, not only by how often ranks change. Let target weights be \\(w_t^*\\) and pre-trade drifted weights be \\(w_t^-\\). One-way turnover under a common convention is\n\\[\nTO_t=\\frac12\\sum_i|w_{i,t}^*-w_{i,t}^-|.\n\\]\nSee QM009 for turnover and transaction-cost conventions.\nA wider hold buffer may reduce turnover, but it can also retain weaker-ranked incumbents longer. That is a trade-off, not a free improvement."
+  },
+  {
+    "objectID": "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html",
+    "href": "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html",
+    "title": "Reinforcement Learning for Adaptive Portfolio Risk Control",
+    "section": "",
+    "text": "RL adaptive portfolio risk control state action reward offline evaluation policy freeze PDS"
+  },
+  {
+    "objectID": "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html",
+    "href": "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html",
+    "title": "Dynamic Currency Hedging and FX Overlay Accounting",
+    "section": "",
+    "text": "dynamic currency hedging FX overlay base-currency accounting raw admissible observation PDS ADAA"
   }
 ]

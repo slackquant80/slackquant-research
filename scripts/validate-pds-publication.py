@@ -96,7 +96,7 @@ def main() -> int:
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed performance and four monitored portfolio views.",
+        "Recent completed returns and four monitored portfolio views.",
         "validated public operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "/systems/pds/dashboard/",

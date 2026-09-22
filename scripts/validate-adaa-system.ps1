@@ -33,7 +33,7 @@ foreach ($token in @(
   }
 }
 
-$mapping = '"adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014"]'
+$mapping = '"adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"]'
 if ($methodsData -notmatch [regex]::Escape($mapping)) {
   throw "ADAA system Methods mapping mismatch"
 }
@@ -100,5 +100,5 @@ if ($systemCard -notmatch 'evidenceLabel') {
 Write-Host "ADAA_SYSTEM_PUBLICATION_GATE_PASS" -ForegroundColor Green
 Write-Host "System  : /systems/adaa/ | Portfolio Strategy System | Public live"
 Write-Host "Links   : live dashboard / Research / SSRN / replication / DOI"
-Write-Host "Methods : QM007 / QM009 / QM010 / QM011 / QM014"
+Write-Host "Methods : QM007 / QM009 / QM010 / QM011 / QM014 / QM029"
 Write-Host "Boundary: official / MTD / preview separation preserved"

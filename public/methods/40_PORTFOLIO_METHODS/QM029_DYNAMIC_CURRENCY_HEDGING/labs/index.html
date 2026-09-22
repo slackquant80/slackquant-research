@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.">
 
-<title>Quantitative Methods – SlackQuant Research</title>
+<title>QM029 Hands-on Lab: FX Overlay Accounting – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -27,21 +26,56 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -69,17 +103,28 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<link rel="canonical" href="https://research.slackquant.com/methods/">
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/labs/">
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
+  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
+  <li><a href="#audit-questions" id="toc-audit-questions" class="nav-link" data-scroll-target="#audit-questions">Audit questions</a></li>
+  <li><a href="#return-to-the-article" id="toc-return-to-the-article" class="nav-link" data-scroll-target="#return-to-the-article">Return to the article</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
@@ -107,307 +152,29 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
     }
   })();
 </script>
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Quantitative Methods</h1>
-<p class="subtitle lead">A practical methods library for applied quantitative research and investment practice</p>
-</div>
-
-<div>
-  <div class="description">
-    Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.
-  </div>
-</div>
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<div class="sq-index-intro">
-<p>This library explains the statistical, econometric, portfolio, data-design, machine-learning, and foundation-model methods used across SlackQuant research and investment systems. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice.</p>
-</div>
-<section id="current-articles" class="level2">
-<h2 class="anchored" data-anchor-id="current-articles">Current articles</h2>
-<div id="sq-method-discovery" class="sq-method-discovery">
-<div class="sq-method-search-field">
-<p><label class="sq-method-search-label" for="sq-method-search">Search methods</label> <input id="sq-method-search" class="sq-method-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search methods…" aria-controls="sq-method-catalog"></p>
-</div>
-<div class="sq-method-filter-bar">
-<div id="sq-method-filters" class="sq-method-filters" role="group" aria-label="Filter methods by topic">
-
-</div>
-<div id="sq-method-result-count" class="sq-method-result-count" aria-live="polite">
-
-</div>
-</div>
-<div id="sq-method-empty" class="sq-method-empty" role="status" hidden="">
-No published Methods match this search.
-</div>
-</div>
-<div id="sq-method-catalog">
-<section id="core-methods" class="level3 sq-method-group" data-method-group="core">
-<h3 class="anchored" data-anchor-id="core-methods">Core Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM001 · Forecast Evaluation · Foundation
-</div>
-<section id="out-of-sample-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="out-of-sample-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">Out-of-Sample Forecast Evaluation</a></h3>
-<p>Can a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM002 · Forecast Evaluation · Foundation
-</div>
-<section id="rolling-vs-expanding-windows" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-vs-expanding-windows"><a href="./10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">Rolling vs Expanding Windows</a></h3>
-<p>How much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM003 · DATA &amp; RESEARCH DESIGN · FOUNDATION
-</div>
-<section id="look-ahead-bias-and-data-leakage" class="level3">
-<h3 class="anchored" data-anchor-id="look-ahead-bias-and-data-leakage"><a href="./80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">Look-Ahead Bias and Data Leakage</a></h3>
-<p>When can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM004 · FORECAST EVALUATION · INTERMEDIATE
-</div>
-<section id="dieboldmariano-test" class="level3">
-<h3 class="anchored" data-anchor-id="dieboldmariano-test"><a href="./10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">Diebold–Mariano Test</a></h3>
-<p>Does a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM005 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="model-confidence-set" class="level3">
-<h3 class="anchored" data-anchor-id="model-confidence-set"><a href="./10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">Model Confidence Set</a></h3>
-<p>When does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM006 · STATISTICAL INFERENCE · INTERMEDIATE
-</div>
-<section id="block-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="block-bootstrap"><a href="./20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">Block Bootstrap</a></h3>
-<p>How should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM015 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="multivariate-probabilistic-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="multivariate-probabilistic-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">Multivariate Probabilistic Forecast Evaluation</a></h3>
-<p>How should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.</p>
-</section>
-</div>
-</section>
-<section id="investment-methods" class="level3 sq-method-group" data-method-group="investment">
-<h3 class="anchored" data-anchor-id="investment-methods">Investment Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM007 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="portfolio-backtesting-and-rebalancing" class="level3">
-<h3 class="anchored" data-anchor-id="portfolio-backtesting-and-rebalancing"><a href="./40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">Portfolio Backtesting and Rebalancing</a></h3>
-<p>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM008 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="drawdown-underwater-duration-and-recovery" class="level3">
-<h3 class="anchored" data-anchor-id="drawdown-underwater-duration-and-recovery"><a href="./40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">Drawdown, Underwater Duration, and Recovery</a></h3>
-<p>How deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM009 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="turnover-transaction-costs-and-net-performance" class="level3">
-<h3 class="anchored" data-anchor-id="turnover-transaction-costs-and-net-performance"><a href="./40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">Turnover, Transaction Costs, and Net Performance</a></h3>
-<p>How much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM010 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="momentum-and-trend-signals" class="level3">
-<h3 class="anchored" data-anchor-id="momentum-and-trend-signals"><a href="./40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html">Momentum and Trend Signals</a></h3>
-<p>How should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM011 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="strategy-similarity-and-decision-diversification" class="level3">
-<h3 class="anchored" data-anchor-id="strategy-similarity-and-decision-diversification"><a href="./40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html">Strategy Similarity and Decision Diversification</a></h3>
-<p>Do multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM012 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="rolling-holding-period-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-holding-period-analysis"><a href="./40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html">Rolling Holding-Period Analysis</a></h3>
-<p>What do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM013 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="benchmark-relative-portfolio-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="benchmark-relative-portfolio-evaluation"><a href="./40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html">Benchmark-Relative Portfolio Evaluation</a></h3>
-<p>How should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM027 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="cross-sectional-ranking-top-k-selection-and-hold-buffers" class="level3">
-<h3 class="anchored" data-anchor-id="cross-sectional-ranking-top-k-selection-and-hold-buffers"><a href="./40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html">Cross-Sectional Ranking, Top-K Selection, and Hold Buffers</a></h3>
-<p>How should heterogeneous model outputs become stable portfolio membership? It separates ordinal rank from normalized rank strength, defines Top-K entry and incumbent hold buffers, and makes the turnover/path-dependence trade-off explicit.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM029 · PORTFOLIO METHODS · INTERMEDIATE</div>
-<h3 class="anchored"><a href="./40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html">Dynamic Currency Hedging and FX Overlay Accounting</a></h3>
-<p>How should a currency overlay be timed, accounted for, and separated from the underlying portfolio? It distinguishes raw versus admissible FX observations, base-currency wealth, hedge ratios, overlay costs, Official decisions, and Preview states.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM016 · TIME-SERIES METHODS · INTERMEDIATE
-</div>
-<section id="ewma-t-scenario-simulation" class="level3">
-<h3 class="anchored" data-anchor-id="ewma-t-scenario-simulation"><a href="./30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html">EWMA-t Scenario Simulation</a></h3>
-<p>How can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM017 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="scenario-based-portfolio-stress-testing" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-based-portfolio-stress-testing"><a href="./40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html">Scenario-Based Portfolio Stress Testing</a></h3>
-<p>How should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.</p>
-</section>
-</div>
-</section>
-</div>
-<section id="machine-learning-methods" class="level3 sq-method-group" data-method-group="machine_learning">
-<h3 class="anchored" data-anchor-id="machine-learning-methods">Machine Learning Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM019 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="regularized-linear-models-ridge-lasso-and-elastic-net" class="level3">
-<h3 class="anchored" data-anchor-id="regularized-linear-models-ridge-lasso-and-elastic-net"><a href="./60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">Regularized Linear Models: Ridge, Lasso, and Elastic Net</a></h3>
-<p>How can a linear predictor remain stable when features are numerous, noisy, or correlated? It compares Ridge, Lasso, and Elastic Net, makes scaling and penalty conventions explicit, and treats preprocessing and penalty selection as part of the leakage-controlled forecasting procedure.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM020 · MACHINE LEARNING · ADVANCED
-</div>
-<section id="time-series-model-selection-and-hyperparameter-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="time-series-model-selection-and-hyperparameter-tuning"><a href="./60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html">Time-Series Model Selection and Hyperparameter Tuning</a></h3>
-<p>How should hyperparameters be selected when the tuning procedure itself must respect historical information sets? It covers chronological folds, nested evaluation, target maturity, gap design, fold-local preprocessing, and the important conditions under which ordinary K-fold is not automatically invalid.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM028 · MACHINE LEARNING · ADVANCED</div>
-<h3 class="anchored"><a href="./60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html">Reinforcement Learning for Adaptive Portfolio Risk Control</a></h3>
-<p>How can reinforcement learning be used as a bounded risk-control layer without becoming the alpha engine? It covers state/action/reward design, offline coverage, chronological evaluation, policy freezing, and Core-versus-Adaptive attribution.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM024 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="forecast-combination-and-model-averaging" class="level3">
-<h3 class="anchored" data-anchor-id="forecast-combination-and-model-averaging"><a href="./60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">Forecast Combination and Model Averaging</a></h3>
-<p>When should several models be combined instead of forcing a single winner? It separates equal and estimated combinations, forecast-scale compatibility, rank aggregation, weight-estimation risk, and model-combination weights from downstream portfolio allocations.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM025 · AI &amp; FOUNDATION MODELS · ADVANCED
-</div>
-<section id="pretrained-time-series-foundation-models" class="level3">
-<h3 class="anchored" data-anchor-id="pretrained-time-series-foundation-models"><a href="./70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">Pretrained Time-Series Foundation Models</a></h3>
-<p>How should pretrained forecasting models be evaluated without confusing zero-shot inference with information-free prediction? It separates downstream inference timing from pretrained knowledge, distinguishes model architectures, audits future covariates and pretraining overlap, and separates retrospective technology counterfactuals from historical real-time OOS claims.</p>
-</section>
-</div>
-</section>
-<section id="research-design-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
-<h3 class="anchored" data-anchor-id="research-design-technical-methods">Research Design &amp; Technical Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
-</div>
-<section id="information-timing-data-vintages-and-real-time-macro-data" class="level3">
-<h3 class="anchored" data-anchor-id="information-timing-data-vintages-and-real-time-macro-data"><a href="./80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">Information Timing, Data Vintages, and Real-Time Macro Data</a></h3>
-<p>Which macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM026 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="point-in-time-dynamic-universe-construction" class="level3">
-<h3 class="anchored" data-anchor-id="point-in-time-dynamic-universe-construction"><a href="./80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html">Point-in-Time Dynamic Universe Construction</a></h3>
-<p>How should an investable opportunity set evolve without backfilling future constituents into the past? It separates listing availability, liquidity/history eligibility, exposure representative selection, model readiness, and prospective candidate-pool governance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="stress-archetypes-and-representative-scenario-geometry" class="level3">
-<h3 class="anchored" data-anchor-id="stress-archetypes-and-representative-scenario-geometry"><a href="./80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html">Stress Archetypes and Representative Scenario Geometry</a></h3>
-<p>How can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks.</p>
-</section>
-</div>
-</section>
-</section>
-<section id="library-principles" class="level2">
-<h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
-<p>The library is <strong>application-driven rather than encyclopedic</strong>. Methods are added when they materially support SlackQuant research, investment systems, or applied quantitative practice.</p>
-<p>Each computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence.</p>
-</section>
-<section id="future-additions" class="level2">
-<h2 class="anchored" data-anchor-id="future-additions">Future additions</h2>
-<p>Future additions are added when they materially support active SlackQuant research, investment systems, or applied quantitative practice.</p>
-
-
-</section>
+<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">QM029 Hands-on Lab: FX Overlay Accounting</h1></div></header>
+<div class="method-kicker"><p>QM029 · Hands-on Lab</p></div>
+<h1 id="objective">Objective</h1>
+<p>Verify base-currency return accounting for an unhedged portfolio,
+apply a stylized partial hedge, and demonstrate why the latest raw FX
+observation can differ from the latest admissible observation.</p>
+<h1 id="run">Run</h1>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm029_fx_overlay.py</span></code></pre></div>
+<h1 id="what-to-inspect">What to inspect</h1>
+<ul>
+<li>Does exact KRW wealth equal
+<code>(1 + USD return) * (1 + FX return) - 1</code>?</li>
+<li>How does a partial hedge change the FX contribution?</li>
+<li>Which FX timestamp is raw and which is admissible after the
+common-close cap?</li>
+<li>Why would using the raw-but-inadmissible observation create an
+information-clock mismatch?</li>
+</ul>
+<h1 id="interpretation-boundary">Interpretation boundary</h1>
+<p>The hedge formula in the lab is stylized and excludes
+instrument-specific forward pricing details. It is for accounting and
+timing verification, not a recommendation for any hedge ratio.</p>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -972,8 +739,6 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
-      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
-      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1110,5 +875,5 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
 
 
 
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

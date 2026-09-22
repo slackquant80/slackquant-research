@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.">
+<meta name="description" content="A practical guide to dynamic currency hedging, base-currency return accounting, FX information clocks, and cost-aware overlay implementation.">
 
-<title>Quantitative Methods – SlackQuant Research</title>
+<title>Dynamic Currency Hedging and FX Overlay Accounting – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -27,21 +27,75 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -68,18 +122,76 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
-<link rel="canonical" href="https://research.slackquant.com/methods/">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html">
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
+  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
+  <ul class="collapse">
+  <li><a href="#create-a-cross-sectional-score" id="toc-create-a-cross-sectional-score" class="nav-link" data-scroll-target="#create-a-cross-sectional-score">1. Create a cross-sectional score</a></li>
+  <li><a href="#distinguish-ordinal-rank-from-normalized-rank-strength" id="toc-distinguish-ordinal-rank-from-normalized-rank-strength" class="nav-link" data-scroll-target="#distinguish-ordinal-rank-from-normalized-rank-strength">2. Distinguish ordinal rank from normalized rank strength</a></li>
+  <li><a href="#combine-heterogeneous-rank-views-carefully" id="toc-combine-heterogeneous-rank-views-carefully" class="nav-link" data-scroll-target="#combine-heterogeneous-rank-views-carefully">3. Combine heterogeneous rank views carefully</a></li>
+  <li><a href="#apply-a-top-k-entry-rule" id="toc-apply-a-top-k-entry-rule" class="nav-link" data-scroll-target="#apply-a-top-k-entry-rule">4. Apply a Top-K entry rule</a></li>
+  <li><a href="#add-an-incumbent-hold-buffer" id="toc-add-an-incumbent-hold-buffer" class="nav-link" data-scroll-target="#add-an-incumbent-hold-buffer">5. Add an incumbent hold buffer</a></li>
+  <li><a href="#define-the-full-slot-case-explicitly" id="toc-define-the-full-slot-case-explicitly" class="nav-link" data-scroll-target="#define-the-full-slot-case-explicitly">6. Define the full-slot case explicitly</a></li>
+  <li><a href="#measure-turnover-after-the-decision-rule" id="toc-measure-turnover-after-the-decision-rule" class="nav-link" data-scroll-target="#measure-turnover-after-the-decision-rule">7. Measure turnover after the decision rule</a></li>
+  </ul></li>
+  <li><a href="#rank-is-not-expected-return" id="toc-rank-is-not-expected-return" class="nav-link" data-scroll-target="#rank-is-not-expected-return">Rank Is Not Expected Return</a></li>
+  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
@@ -107,307 +219,264 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
     }
   })();
 </script>
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Quantitative Methods</h1>
-<p class="subtitle lead">A practical methods library for applied quantitative research and investment practice</p>
+<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">Dynamic Currency Hedging and FX Overlay Accounting</h1></div></header>
+<div class="method-kicker"><p>QM029 · Portfolio Methods · Intermediate</p></div>
+<div class="method-kicker">
+<p>QM029 · Portfolio Methods · Intermediate</p>
 </div>
-
-<div>
-  <div class="description">
-    Practical explanations of statistical, econometric, portfolio, time-series, data-design, machine-learning, and foundation-model methods used in quantitative research and investment practice.
-  </div>
+<div class="method-orientation">
+<p><strong>Core idea.</strong> A currency overlay changes the investor’s
+base-currency exposure without changing the underlying asset-selection
+decision. The hedge ratio, FX information clock, hedge instrument,
+transaction costs, and attribution must therefore be specified
+separately from the underlying portfolio.</p>
+<p><strong>Use it for.</strong> Partial or dynamic FX hedging,
+base-currency portfolio reporting, overlay performance attribution, and
+systems that update a hedge decision on a slower or different clock from
+the asset portfolio.</p>
+<p><strong>It does not establish.</strong> That a particular hedge ratio
+is optimal, that currency hedging is costless, or that the newest raw FX
+quote is automatically admissible for a strategy decision.</p>
 </div>
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<div class="sq-index-intro">
-<p>This library explains the statistical, econometric, portfolio, data-design, machine-learning, and foundation-model methods used across SlackQuant research and investment systems. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice.</p>
+<h1 id="the-question">The Question</h1>
+<p>A USD portfolio can be a different investment experience for a
+KRW-based investor because changes in USD/KRW affect base-currency
+wealth. Currency exposure is therefore an explicit portfolio decision,
+not merely a reporting conversion.</p>
+<p>Classic work on international portfolios shows that hedging can
+materially alter portfolio risk and that the appropriate hedge depends
+on the investor, asset mix, and covariance structure rather than on a
+universal constant <span class="citation"
+data-cites="peroldschulman1988 black1990 campbell2010">(Perold and
+Schulman 1988; Black 1990; Campbell, Serfaty-de Medeiros, and Viceira
+2010)</span>.</p>
+<p>A practical system must answer four separate questions:</p>
+<ol type="1">
+<li>What is the underlying portfolio return?</li>
+<li>What fraction of currency exposure is hedged?</li>
+<li>Which FX observation is admissible when the hedge decision is
+made?</li>
+<li>How are hedge costs and overlay attribution recorded?</li>
+</ol>
+<h1 id="unhedged-base-currency-return">Unhedged Base-Currency
+Return</h1>
+<p>Let <span
+class="math inline"><em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup></span>
+be the USD return of an asset portfolio over a holding interval and let
+<span
+class="math inline"><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub></span>
+be the return of USD measured in KRW over the same interval. Ignoring
+cash flows, the KRW wealth return of the unhedged portfolio is</p>
+<p><span
+class="math display">1 + <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = (1 + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup>)(1 + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>).</span></p>
+<p>Therefore</p>
+<p><span
+class="math display"><em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup> + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>.</span></p>
+<p>The interaction term is exact and should not be silently dropped when
+full wealth accounting is required.</p>
+<h1 id="a-partial-hedge">A Partial Hedge</h1>
+<p>Let <span
+class="math inline"><em>h</em><sub><em>t</em></sub> ∈ [0, 1]</span>
+denote the hedge ratio chosen at the decision time, where <span
+class="math inline"><em>h</em><sub><em>t</em></sub> = 0</span> is
+unhedged and <span
+class="math inline"><em>h</em><sub><em>t</em></sub> = 1</span> is fully
+hedged under the declared hedge instrument.</p>
+<p>A practical implementation should model the actual hedge leg
+directly. For intuition, a stylized approximation is</p>
+<p><span
+class="math display"><em>R</em><sub><em>H</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> ≈ <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> − <em>h</em><sub><em>t</em></sub><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>c</em><em>a</em><em>r</em><em>r</em><em>y</em>, <em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup> − <em>C</em><sub><em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup>,</span></p>
+<p>where the carry/forward component and trading cost depend on the
+chosen instrument and convention. This equation is an accounting guide,
+<strong>not</strong> a universal pricing identity for every hedge
+implementation.</p>
+<h1 id="why-the-overlay-should-stay-separate">Why the Overlay Should
+Stay Separate</h1>
+<p>The asset portfolio and the hedge answer different questions.</p>
+<ul>
+<li><strong>Underlying portfolio:</strong> which assets and weights
+should be held?</li>
+<li><strong>FX overlay:</strong> how much of the resulting
+foreign-currency exposure should the base-currency investor hedge?</li>
+</ul>
+<p>Keeping the layers separate makes attribution clearer. A change in
+KRW performance can then be decomposed into underlying USD portfolio
+performance, currency movement, hedge effect, and hedge cost rather than
+being misread as a change in asset selection.</p>
+<h1 id="static-versus-dynamic-hedging">Static versus Dynamic
+Hedging</h1>
+<p>A static hedge holds a fixed ratio such as 0%, 50%, or 100% subject
+to rebalancing. A dynamic hedge changes <span
+class="math inline"><em>h</em><sub><em>t</em></sub></span> using a
+declared information set and decision rule.</p>
+<p>Research on global currency hedging emphasizes that optimal or
+risk-minimizing currency positions depend on asset-currency covariance
+and portfolio composition <span class="citation"
+data-cites="campbell2010">(Campbell, Serfaty-de Medeiros, and Viceira
+2010)</span>. This does not imply that every tactical signal improves
+outcomes. A dynamic rule creates an additional model-selection and
+timing problem that must be evaluated separately.</p>
+<h1 id="the-fx-information-clock">The FX Information Clock</h1>
+<p>Dynamic hedging is particularly vulnerable to clock ambiguity because
+FX markets and ETF markets do not share a single universal close.</p>
+<p>Three timestamps should be distinguished:</p>
+<h2 id="latest-raw-fx-observation">Latest raw FX observation</h2>
+<p>The newest timestamp available from the raw FX feed. It is a
+<strong>data-freshness</strong> fact.</p>
+<h2 id="latest-admissible-fx-observation">Latest admissible FX
+observation</h2>
+<p>The newest FX observation that the strategy is actually allowed to
+use after applying its decision clock, common market calendar, and
+information-availability rules. It is a
+<strong>decision-information</strong> fact.</p>
+<h2 id="portfolio-market-through">Portfolio market-through</h2>
+<p>The latest market date through which the portfolio performance or
+preview is evaluated under the portfolio’s own common-close
+convention.</p>
+<p>The raw observation can be newer than the admissible observation. If
+the portfolio decision is defined at a common ETF close, using a later
+FX print merely because the feed contains it can introduce an
+information mismatch.</p>
+<div class="callout-important"
+title="Freshest is not the same as admissible">
+<p>A feed can contain an FX observation dated after the latest common
+ETF close. That observation can be useful for monitoring feed freshness
+while still being excluded from the hedge decision and strategy
+z-score.</p>
 </div>
-<section id="current-articles" class="level2">
-<h2 class="anchored" data-anchor-id="current-articles">Current articles</h2>
-<div id="sq-method-discovery" class="sq-method-discovery">
-<div class="sq-method-search-field">
-<p><label class="sq-method-search-label" for="sq-method-search">Search methods</label> <input id="sq-method-search" class="sq-method-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search methods…" aria-controls="sq-method-catalog"></p>
+<h1 id="signal-holding-and-execution-timing">Signal, Holding, and
+Execution Timing</h1>
+<p>A dynamic overlay needs the same temporal labels as any other trading
+rule:</p>
+<ul>
+<li><strong>signal period:</strong> when the hedge decision is
+formed;</li>
+<li><strong>execution time:</strong> when the new hedge ratio becomes
+effective;</li>
+<li><strong>holding interval:</strong> the returns earned under that
+hedge ratio; and</li>
+<li><strong>preview:</strong> a provisional next-period decision that is
+not yet the current official holding.</li>
+</ul>
+<p>The hedge return applied over an interval must use the hedge ratio
+that was actually in force for that interval, not a ratio computed after
+observing its realized FX move.</p>
+<h1 id="hedge-rebalancing-and-turnover">Hedge Rebalancing and
+Turnover</h1>
+<p>Even if the target hedge ratio is unchanged, underlying
+foreign-currency notional can move with portfolio value. An
+implementation should define whether the hedge notional is reset
+monthly, drifted between decisions, or adjusted under another
+convention.</p>
+<p>If <span class="math inline"><em>N</em><sub><em>t</em></sub></span>
+is the foreign-currency notional and <span
+class="math inline"><em>h</em><sub><em>t</em></sub></span> the target
+hedge ratio, the target hedge notional is</p>
+<p><span
+class="math display"><em>H</em><sub><em>t</em></sub> = <em>h</em><sub><em>t</em></sub><em>N</em><sub><em>t</em></sub>.</span></p>
+<p>A simple traded-notional measure at a rebalance is</p>
+<p><span
+class="math display"><em>Δ</em><em>H</em><sub><em>t</em></sub> = |<em>H</em><sub><em>t</em></sub> − <em>H</em><sub><em>t</em><sup>−</sup></sub>|,</span></p>
+<p>where <span
+class="math inline"><em>H</em><sub><em>t</em><sup>−</sup></sub></span>
+is the hedge notional immediately before trading. The cost model should
+then match the instrument and denominator used in the quoted
+transaction-cost assumption.</p>
+<h1 id="avoiding-double-counting">Avoiding Double Counting</h1>
+<p>Two common accounting errors are:</p>
+<ol type="1">
+<li>converting the USD portfolio to KRW and then adding the full FX
+return again; and</li>
+<li>charging portfolio turnover costs and hedge costs on the same
+notional without distinguishing their sources.</li>
+</ol>
+<p>The clean solution is a layered wealth ledger: underlying portfolio
+wealth, FX translation, hedge P&amp;L/carry, and hedge transaction cost
+are recorded separately before being combined into investor
+base-currency wealth.</p>
+<h1 id="performance-attribution">Performance Attribution</h1>
+<p>Useful comparisons include:</p>
+<ul>
+<li>USD underlying portfolio;</li>
+<li>base-currency unhedged portfolio;</li>
+<li>fixed benchmark hedge ratios;</li>
+<li>dynamic hedge before cost; and</li>
+<li>dynamic hedge after cost.</li>
+</ul>
+<p>A dynamic overlay can improve one metric and worsen another. Report
+return, volatility, drawdown, turnover/cost, and the support window
+rather than reducing the decision to a single performance ratio.</p>
+<h1 id="failure-modes">Failure Modes</h1>
+<h2 id="rawadmissible-clock-leakage">Raw/admissible clock leakage</h2>
+<p>The hedge signal uses a raw FX observation that was newer than the
+portfolio’s admissible decision cutoff.</p>
+<h2 id="mixed-close-comparison">Mixed-close comparison</h2>
+<p>Two hedge rules are compared using different market-through
+clocks.</p>
+<h2 id="previewofficial-confusion">Preview/official confusion</h2>
+<p>A provisional next-period hedge is presented as if it were already in
+force.</p>
+<h2 id="cost-omission">Cost omission</h2>
+<p>Dynamic hedge changes are evaluated gross while a fixed hedge
+comparator is effectively costless or vice versa.</p>
+<h2 id="base-currency-double-counting">Base-currency double
+counting</h2>
+<p>FX translation and hedge P&amp;L are combined inconsistently.</p>
+<h1 id="hands-on-lab">Hands-on Lab</h1>
+<p>The accompanying synthetic lab demonstrates exact unhedged
+base-currency wealth, a stylized partial hedge, and the distinction
+between raw and admissible FX timestamps. It is an accounting and timing
+exercise, not evidence for a particular hedge rule.</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a
+href="labs/index.html">lab guide</a>. Direct source: <a
+href="labs/python/qm029_fx_overlay.py">Python</a>.</p>
 </div>
-<div class="sq-method-filter-bar">
-<div id="sq-method-filters" class="sq-method-filters" role="group" aria-label="Filter methods by topic">
-
+<h1 id="used-in-slackquant-research">Used in SlackQuant Research</h1>
+<ul>
+<li><a href="https://research.slackquant.com/systems/pds/">Portfolio
+Decision System (PDS)</a> uses a separately governed Dynamic FX overlay
+with explicit Official and Preview hedge states. This Method documents
+the general accounting and timing framework rather than the protected
+production signal recipe.</li>
+<li><a href="https://research.slackquant.com/systems/adaa/">ADAA</a>
+uses the same raw-versus-admissible FX-clock distinction when FX
+information is aligned to the strategy’s common market calendar.</li>
+</ul>
+<h1 id="related-methods">Related Methods</h1>
+<ul>
+<li><a
+href="../QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 —
+Portfolio Backtesting and Rebalancing</a></li>
+<li><a href="../QM009_TURNOVER_COSTS/article.html">QM009 — Turnover,
+Transaction Costs, and Net Performance</a></li>
+<li><a href="../QM013_BENCHMARK_RELATIVE/article.html">QM013 —
+Benchmark-Relative Portfolio Evaluation</a></li>
+<li><a
+href="../../80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">QM014
+— Information Timing, Data Vintages, and Real-Time Macro Data</a></li>
+</ul>
+<h1 id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-black1990" class="csl-entry" role="listitem">
+Black, Fischer. 1990. <span>“Equilibrium Exchange Rate Hedging.”</span>
+<em>The Journal of Finance</em> 45 (3): 899–907. <a
+href="https://doi.org/10.1111/j.1540-6261.1990.tb05111.x">https://doi.org/10.1111/j.1540-6261.1990.tb05111.x</a>.
 </div>
-<div id="sq-method-result-count" class="sq-method-result-count" aria-live="polite">
-
+<div id="ref-campbell2010" class="csl-entry" role="listitem">
+Campbell, John Y., Karine Serfaty-de Medeiros, and Luis M. Viceira.
+2010. <span>“Global Currency Hedging.”</span> <em>The Journal of
+Finance</em> 65 (1): 87–121. <a
+href="https://doi.org/10.1111/j.1540-6261.2009.01524.x">https://doi.org/10.1111/j.1540-6261.2009.01524.x</a>.
+</div>
+<div id="ref-peroldschulman1988" class="csl-entry" role="listitem">
+Perold, André F., and Evan C. Schulman. 1988. <span>“The Free Lunch in
+Currency Hedging: Implications for Investment Policy and Performance
+Standards.”</span> <em>Financial Analysts Journal</em> 44 (3): 45–50. <a
+href="https://doi.org/10.2469/faj.v44.n3.45">https://doi.org/10.2469/faj.v44.n3.45</a>.
 </div>
 </div>
-<div id="sq-method-empty" class="sq-method-empty" role="status" hidden="">
-No published Methods match this search.
-</div>
-</div>
-<div id="sq-method-catalog">
-<section id="core-methods" class="level3 sq-method-group" data-method-group="core">
-<h3 class="anchored" data-anchor-id="core-methods">Core Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM001 · Forecast Evaluation · Foundation
-</div>
-<section id="out-of-sample-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="out-of-sample-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM001_OUT_OF_SAMPLE_EVALUATION/article.html">Out-of-Sample Forecast Evaluation</a></h3>
-<p>Can a forecasting procedure predict outcomes that were unavailable when each forecast was made? It covers information sets, repeated forecast origins, pseudo-out-of-sample versus genuine real-time evaluation, leakage boundaries, and a small example that separates development fit from held-out performance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM002 · Forecast Evaluation · Foundation
-</div>
-<section id="rolling-vs-expanding-windows" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-vs-expanding-windows"><a href="./10_FORECAST_EVALUATION/QM002_ROLLING_VS_EXPANDING_WINDOWS/article.html">Rolling vs Expanding Windows</a></h3>
-<p>How much historical data should a repeated forecasting procedure carry forward? It separates rolling forecast origins from rolling estimation windows, explains the adaptation-versus-estimation trade-off, and shows how the two window designs respond differently after a structural break.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM003 · DATA &amp; RESEARCH DESIGN · FOUNDATION
-</div>
-<section id="look-ahead-bias-and-data-leakage" class="level3">
-<h3 class="anchored" data-anchor-id="look-ahead-bias-and-data-leakage"><a href="./80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">Look-Ahead Bias and Data Leakage</a></h3>
-<p>When can a historical test accidentally see the future? It distinguishes look-ahead bias from broader data leakage, maps common contamination paths, and shows how a centered feature can appear stronger simply because it crosses the forecast-origin information boundary.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM004 · FORECAST EVALUATION · INTERMEDIATE
-</div>
-<section id="dieboldmariano-test" class="level3">
-<h3 class="anchored" data-anchor-id="dieboldmariano-test"><a href="./10_FORECAST_EVALUATION/QM004_DIEBOLD_MARIANO_TEST/article.html">Diebold–Mariano Test</a></h3>
-<p>Does a lower realized forecast loss represent a statistically distinguishable advantage? It builds the test from paired loss differentials, explains long-run variance and the HLN small-sample adjustment, and shows why a lower RMSE need not imply statistically distinguishable predictive accuracy.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM005 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="model-confidence-set" class="level3">
-<h3 class="anchored" data-anchor-id="model-confidence-set"><a href="./10_FORECAST_EVALUATION/QM005_MODEL_CONFIDENCE_SET/article.html">Model Confidence Set</a></h3>
-<p>When does the evidence justify a single winning model, and when should uncertainty remain set-valued? It explains sequential equal-performance testing, elimination rules, and bootstrap uncertainty, then shows how five ranked models can narrow to a two-model confidence set rather than a forced single winner.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM006 · STATISTICAL INFERENCE · INTERMEDIATE
-</div>
-<section id="block-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="block-bootstrap"><a href="./20_STATISTICAL_INFERENCE/QM006_BLOCK_BOOTSTRAP/article.html">Block Bootstrap</a></h3>
-<p>How should uncertainty be resampled when observations are serially dependent? It explains moving-block bootstrap intuition and block-length sensitivity, then shows how IID resampling can erase serial dependence that matters for uncertainty estimates.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM015 · FORECAST EVALUATION · ADVANCED
-</div>
-<section id="multivariate-probabilistic-forecast-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="multivariate-probabilistic-forecast-evaluation"><a href="./10_FORECAST_EVALUATION/QM015_MULTIVARIATE_PROBABILISTIC_EVALUATION/article.html">Multivariate Probabilistic Forecast Evaluation</a></h3>
-<p>How should a joint predictive distribution be evaluated beyond point accuracy? It combines proper scoring rules, marginal calibration, dependence diagnostics, portfolio-tail calibration, and dependence-aware inference while explaining why no single score can establish overall model quality.</p>
-</section>
-</div>
-</section>
-<section id="investment-methods" class="level3 sq-method-group" data-method-group="investment">
-<h3 class="anchored" data-anchor-id="investment-methods">Investment Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM007 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="portfolio-backtesting-and-rebalancing" class="level3">
-<h3 class="anchored" data-anchor-id="portfolio-backtesting-and-rebalancing"><a href="./40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">Portfolio Backtesting and Rebalancing</a></h3>
-<p>Which weights earn each period’s returns, how do those weights drift, and when does a rebalance affect the portfolio? It explains gross wealth accounting, pre-trade weight drift, buy-and-hold versus periodic rebalancing, explicit turnover conventions, and the information timing needed to avoid hidden rebalancing or look-ahead.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM008 · PORTFOLIO METHODS · FOUNDATION
-</div>
-<section id="drawdown-underwater-duration-and-recovery" class="level3">
-<h3 class="anchored" data-anchor-id="drawdown-underwater-duration-and-recovery"><a href="./40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">Drawdown, Underwater Duration, and Recovery</a></h3>
-<p>How deep is a portfolio below its running peak, how long has it been underwater, and has recovery actually occurred? It separates peak-normalized drawdown from alternative conventions, distinguishes current underwater age from completed peak-to-recovery duration, and treats unrecovered terminal episodes as censored rather than complete.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM009 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="turnover-transaction-costs-and-net-performance" class="level3">
-<h3 class="anchored" data-anchor-id="turnover-transaction-costs-and-net-performance"><a href="./40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">Turnover, Transaction Costs, and Net Performance</a></h3>
-<p>How much rebalancing does a strategy require after portfolio weights drift, and how do declared transaction-cost assumptions change net wealth? It distinguishes full-L1 from one-way turnover, matches each cost quote to its traded-notional denominator, and applies modeled costs multiplicatively to the portfolio wealth path.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM010 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="momentum-and-trend-signals" class="level3">
-<h3 class="anchored" data-anchor-id="momentum-and-trend-signals"><a href="./40_PORTFOLIO_METHODS/QM010_MOMENTUM_TREND/article.html">Momentum and Trend Signals</a></h3>
-<p>How should past-return momentum be defined and timed before it becomes a portfolio decision? It separates time-series/absolute from cross-sectional momentum, makes lookback and optional skip-month conventions explicit, and audits signal-to-holding-period timing and parameter sensitivity.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM011 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="strategy-similarity-and-decision-diversification" class="level3">
-<h3 class="anchored" data-anchor-id="strategy-similarity-and-decision-diversification"><a href="./40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/article.html">Strategy Similarity and Decision Diversification</a></h3>
-<p>Do multiple strategies really make different decisions, or merely carry different labels? It separates return correlation from holdings/exposure similarity and evaluates what, when, and how-much disagreement without forcing them into a universal scalar score.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM012 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="rolling-holding-period-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="rolling-holding-period-analysis"><a href="./40_PORTFOLIO_METHODS/QM012_ROLLING_HOLDING_PERIODS/article.html">Rolling Holding-Period Analysis</a></h3>
-<p>What do 5-, 10-, 15-, and 20-year outcomes look like across different starting dates? It distinguishes endpoint from path outcomes and explains why heavily overlapping rolling windows are descriptive historical observations rather than IID probability trials.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM013 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="benchmark-relative-portfolio-evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="benchmark-relative-portfolio-evaluation"><a href="./40_PORTFOLIO_METHODS/QM013_BENCHMARK_RELATIVE/article.html">Benchmark-Relative Portfolio Evaluation</a></h3>
-<p>How should a portfolio be evaluated in active space? It defines active return, tracking error, information ratio, relative wealth, and benchmark-relative drawdown while separating absolute Sharpe from benchmark-relative metrics and clarifying benchmark choice.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM027 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="cross-sectional-ranking-top-k-selection-and-hold-buffers" class="level3">
-<h3 class="anchored" data-anchor-id="cross-sectional-ranking-top-k-selection-and-hold-buffers"><a href="./40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html">Cross-Sectional Ranking, Top-K Selection, and Hold Buffers</a></h3>
-<p>How should heterogeneous model outputs become stable portfolio membership? It separates ordinal rank from normalized rank strength, defines Top-K entry and incumbent hold buffers, and makes the turnover/path-dependence trade-off explicit.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM029 · PORTFOLIO METHODS · INTERMEDIATE</div>
-<h3 class="anchored"><a href="./40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html">Dynamic Currency Hedging and FX Overlay Accounting</a></h3>
-<p>How should a currency overlay be timed, accounted for, and separated from the underlying portfolio? It distinguishes raw versus admissible FX observations, base-currency wealth, hedge ratios, overlay costs, Official decisions, and Preview states.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM016 · TIME-SERIES METHODS · INTERMEDIATE
-</div>
-<section id="ewma-t-scenario-simulation" class="level3">
-<h3 class="anchored" data-anchor-id="ewma-t-scenario-simulation"><a href="./30_TIME_SERIES/QM016_EWMA_T_SCENARIO_SIMULATION/article.html">EWMA-t Scenario Simulation</a></h3>
-<p>How can the current multi-asset covariance environment be converted into heavy-tailed joint future paths? It combines exponentially weighted covariance estimation with covariance-targeted multivariate Student-t innovations, explicit degrees-of-freedom and decay conventions, and Monte Carlo stability checks.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM017 · PORTFOLIO METHODS · INTERMEDIATE
-</div>
-<section id="scenario-based-portfolio-stress-testing" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-based-portfolio-stress-testing"><a href="./40_PORTFOLIO_METHODS/QM017_SCENARIO_STRESS_TESTING/article.html">Scenario-Based Portfolio Stress Testing</a></h3>
-<p>How should a joint scenario cloud be mapped into portfolio loss and path-risk diagnostics? It revalues baseline and candidate portfolios on the same future paths, separates portfolio-weight effects from scenario-generation effects, and distinguishes scenario-conditioned what-if analysis from optimization and realized-loss claims.</p>
-</section>
-</div>
-</section>
-</div>
-<section id="machine-learning-methods" class="level3 sq-method-group" data-method-group="machine_learning">
-<h3 class="anchored" data-anchor-id="machine-learning-methods">Machine Learning Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM019 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="regularized-linear-models-ridge-lasso-and-elastic-net" class="level3">
-<h3 class="anchored" data-anchor-id="regularized-linear-models-ridge-lasso-and-elastic-net"><a href="./60_MACHINE_LEARNING/QM019_REGULARIZED_LINEAR_MODELS/article.html">Regularized Linear Models: Ridge, Lasso, and Elastic Net</a></h3>
-<p>How can a linear predictor remain stable when features are numerous, noisy, or correlated? It compares Ridge, Lasso, and Elastic Net, makes scaling and penalty conventions explicit, and treats preprocessing and penalty selection as part of the leakage-controlled forecasting procedure.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM020 · MACHINE LEARNING · ADVANCED
-</div>
-<section id="time-series-model-selection-and-hyperparameter-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="time-series-model-selection-and-hyperparameter-tuning"><a href="./60_MACHINE_LEARNING/QM020_TIME_SERIES_MODEL_SELECTION/article.html">Time-Series Model Selection and Hyperparameter Tuning</a></h3>
-<p>How should hyperparameters be selected when the tuning procedure itself must respect historical information sets? It covers chronological folds, nested evaluation, target maturity, gap design, fold-local preprocessing, and the important conditions under which ordinary K-fold is not automatically invalid.</p>
-</section>
-</div>
-
-<div class="sq-method-row">
-<div class="sq-meta">QM028 · MACHINE LEARNING · ADVANCED</div>
-<h3 class="anchored"><a href="./60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html">Reinforcement Learning for Adaptive Portfolio Risk Control</a></h3>
-<p>How can reinforcement learning be used as a bounded risk-control layer without becoming the alpha engine? It covers state/action/reward design, offline coverage, chronological evaluation, policy freezing, and Core-versus-Adaptive attribution.</p>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM024 · MACHINE LEARNING · INTERMEDIATE
-</div>
-<section id="forecast-combination-and-model-averaging" class="level3">
-<h3 class="anchored" data-anchor-id="forecast-combination-and-model-averaging"><a href="./60_MACHINE_LEARNING/QM024_FORECAST_COMBINATION_MODEL_AVERAGING/article.html">Forecast Combination and Model Averaging</a></h3>
-<p>When should several models be combined instead of forcing a single winner? It separates equal and estimated combinations, forecast-scale compatibility, rank aggregation, weight-estimation risk, and model-combination weights from downstream portfolio allocations.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM025 · AI &amp; FOUNDATION MODELS · ADVANCED
-</div>
-<section id="pretrained-time-series-foundation-models" class="level3">
-<h3 class="anchored" data-anchor-id="pretrained-time-series-foundation-models"><a href="./70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html">Pretrained Time-Series Foundation Models</a></h3>
-<p>How should pretrained forecasting models be evaluated without confusing zero-shot inference with information-free prediction? It separates downstream inference timing from pretrained knowledge, distinguishes model architectures, audits future covariates and pretraining overlap, and separates retrospective technology counterfactuals from historical real-time OOS claims.</p>
-</section>
-</div>
-</section>
-<section id="research-design-technical-methods" class="level3 sq-method-group" data-method-group="research_systems">
-<h3 class="anchored" data-anchor-id="research-design-technical-methods">Research Design &amp; Technical Methods</h3>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM014 · DATA &amp; RESEARCH DESIGN · INTERMEDIATE
-</div>
-<section id="information-timing-data-vintages-and-real-time-macro-data" class="level3">
-<h3 class="anchored" data-anchor-id="information-timing-data-vintages-and-real-time-macro-data"><a href="./80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">Information Timing, Data Vintages, and Real-Time Macro Data</a></h3>
-<p>Which macro observations were truly admissible at each forecast or portfolio decision? It separates reference periods, source release dates, database vintages, actual availability, revisions, and forecast cutoffs, with a fail-closed rule when exact point-in-time evidence is unavailable.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM026 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="point-in-time-dynamic-universe-construction" class="level3">
-<h3 class="anchored" data-anchor-id="point-in-time-dynamic-universe-construction"><a href="./80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html">Point-in-Time Dynamic Universe Construction</a></h3>
-<p>How should an investable opportunity set evolve without backfilling future constituents into the past? It separates listing availability, liquidity/history eligibility, exposure representative selection, model readiness, and prospective candidate-pool governance.</p>
-</section>
-</div>
-<div class="sq-method-row">
-<div class="sq-meta">
-QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
-</div>
-<section id="stress-archetypes-and-representative-scenario-geometry" class="level3">
-<h3 class="anchored" data-anchor-id="stress-archetypes-and-representative-scenario-geometry"><a href="./80_DATA_RESEARCH_DESIGN/QM018_STRESS_ARCHETYPES_GEOMETRY/article.html">Stress Archetypes and Representative Scenario Geometry</a></h3>
-<p>How can a large adverse scenario tail be converted into interpretable stress families without overstating probability claims? It defines mutually exclusive archetypes, a residual Other category, volatility-normalized geometry, feasible medoid-style representatives, and simulation-stability and external-relevance checks.</p>
-</section>
-</div>
-</section>
-</section>
-<section id="library-principles" class="level2">
-<h2 class="anchored" data-anchor-id="library-principles">Library principles</h2>
-<p>The library is <strong>application-driven rather than encyclopedic</strong>. Methods are added when they materially support SlackQuant research, investment systems, or applied quantitative practice.</p>
-<p>Each computed illustration is accompanied by the data and code needed to reproduce it. Synthetic examples are clearly labeled as illustrations rather than presented as empirical evidence.</p>
-</section>
-<section id="future-additions" class="level2">
-<h2 class="anchored" data-anchor-id="future-additions">Future additions</h2>
-<p>Future additions are added when they materially support active SlackQuant research, investment systems, or applied quantitative practice.</p>
-
-
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -972,8 +1041,6 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
-      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
-      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1110,5 +1177,5 @@ QM018 · DATA &amp; RESEARCH DESIGN · ADVANCED
 
 
 
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

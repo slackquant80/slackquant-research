@@ -66,9 +66,11 @@ def main() -> int:
         '"equity-alpha-system"',
         'QM026',
         'QM027',
+        'QM028',
+        'QM029',
     )
     ids = set(re.findall(r'id:\s*"(QM\d{3})"', methods))
-    expected_method_ids = {f"QM{i:03d}" for i in range(1, 21)} | {"QM024", "QM025", "QM026", "QM027"}
+    expected_method_ids = {f"QM{i:03d}" for i in range(1, 21)} | {"QM024", "QM025", "QM026", "QM027", "QM028", "QM029"}
     if ids != expected_method_ids:
         raise RuntimeError(f"Methods registry mismatch: {sorted(ids)}")
 
@@ -247,7 +249,7 @@ def main() -> int:
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed performance and four monitored portfolio views.",
+        "Recent completed returns and four monitored portfolio views.",
         "validated public operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "System Documentation ↗",
@@ -257,7 +259,7 @@ def main() -> int:
             raise RuntimeError(f"PDS platform landing regression: {forbidden}")
     for required in (
         "the platform emphasizes their roles and system architecture rather than reducing the design to a single allocation ratio.",
-        "the PDS dashboard is now the validated public operating view.",
+        "the PDS dashboard is the validated public operating view.",
     ):
         if required not in pds:
             raise RuntimeError(f"PDS current-platform disclosure missing: {required}")
@@ -341,7 +343,7 @@ def main() -> int:
     )
     need(
         "src/app/systems/pds/page.tsx",
-        "Multi-strategy Core, reinforcement-learning adaptive defense, and Dynamic FX.",
+        "Multi-strategy Core, RL-assisted adaptive risk control, and Dynamic FX.",
         "Chronos-2 pretrained time-series intelligence",
         "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
     )
@@ -353,6 +355,8 @@ def main() -> int:
         "Future additions",
         "QM026",
         "QM027",
+        "QM028",
+        "QM029",
     )
     need(
         "public/methods/80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html",
@@ -366,11 +370,22 @@ def main() -> int:
         "Add an incumbent hold buffer",
         "Equity Alpha",
     )
+    need(
+        "public/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html",
+        "Reinforcement Learning for Adaptive Portfolio Risk Control",
+        "https://research.slackquant.com/systems/pds/",
+    )
+    need(
+        "public/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html",
+        "Dynamic Currency Hedging and FX Overlay Accounting",
+        "https://research.slackquant.com/systems/pds/",
+        "https://research.slackquant.com/systems/adaa/",
+    )
     if "paper-driven rather than encyclopedic" in mi:
         raise RuntimeError("stale Methods principle remains")
     articles = sorted((ROOT / "public/methods").rglob("article.html"))
-    if len(articles) != 24:
-        raise RuntimeError(f"expected 24 Method articles; found {len(articles)}")
+    if len(articles) != 26:
+        raise RuntimeError(f"expected 26 Method articles; found {len(articles)}")
 
     old_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/methods\\/");'
     new_filter = 'var filterRegex = new RegExp("https:\\/\\/research\\.slackquant\\.com\\/");'
@@ -423,7 +438,7 @@ def main() -> int:
                 raise RuntimeError(f"built PDS recent-month chart missing token: {token}")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=5 Systems=5 Methods=24 / exact registry sets=PASS")
+    print("Research=5 Systems=5 Methods=26 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
 
     for stale in [

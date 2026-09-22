@@ -18,9 +18,9 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = "https://research.slackquant.com"
 SYSTEM_METHODS = {
-    "adaa": ["QM007", "QM009", "QM010", "QM011", "QM014"],
+    "adaa": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
     "f2r": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
-    "pds": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
+    "pds": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014", "QM028", "QM029"],
     "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],
 }
 SYSTEM_ROUTES = {k: f"{CANONICAL}/systems/{k}/" for k in SYSTEM_METHODS}
@@ -123,9 +123,9 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "No unauthorized same-origin new-tab", not unauthorized, "none", "; ".join(unauthorized[:8]))
 
     expected_map_literals = {
-        "adaa-system": '["QM007", "QM009", "QM010", "QM011", "QM014"]',
+        "adaa-system": '["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"]',
         "f2r-system": '["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"]',
-        "pds-system": '["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"]',
+        "pds-system": '["QM007", "QM008", "QM009", "QM011", "QM013", "QM014", "QM028", "QM029"]',
     }
     for key, arr in expected_map_literals.items(): add(c, f"Method mapping {key}", f'"{key}": {arr}' in methods, arr)
     add(c, "Explicit system method context", "systemMethodContext" in methods and "getMethodContextForArtifact" in methods and 'replace("this research"' not in methods_used, "artifact-specific context function used")
@@ -133,8 +133,8 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "No paper-only wording in system contexts", not re.search(r"(?i)\bpaper\b|this research|used in the paper", sys_context_block), "systemMethodContext is system-native")
 
     hrefs = parse_methods(methods)
-    expected_method_ids = {*(f"QM{i:03d}" for i in range(1,21)), "QM024", "QM025", "QM026", "QM027"}
-    add(c, "Method registry completeness", len(hrefs) == 24 and set(hrefs) == expected_method_ids, f"{len(hrefs)} method hrefs")
+    expected_method_ids = {*(f"QM{i:03d}" for i in range(1,21)), "QM024", "QM025", "QM026", "QM027", "QM028", "QM029"}
+    add(c, "Method registry completeness", len(hrefs) == 26 and set(hrefs) == expected_method_ids, f"{len(hrefs)} method hrefs")
     missing_dest = []
     reverse_missing = []
     canonical_missing = []

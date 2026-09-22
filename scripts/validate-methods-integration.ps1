@@ -294,9 +294,9 @@ foreach ($token in @('systemMethodContext','"adaa-system"','"f2r-system"','"pds-
 }
 
 $systemReverse = @{
-  'ADAA' = @{ Route = 'https://research.slackquant.com/systems/adaa/'; Methods = @('QM007','QM009','QM010','QM011','QM014') }
+  'ADAA' = @{ Route = 'https://research.slackquant.com/systems/adaa/'; Methods = @('QM007','QM009','QM010','QM011','QM014','QM029') }
   'F2R'  = @{ Route = 'https://research.slackquant.com/systems/f2r/'; Methods = @('QM001','QM002','QM003','QM007','QM009','QM013') }
-  'PDS'  = @{ Route = 'https://research.slackquant.com/systems/pds/'; Methods = @('QM007','QM008','QM009','QM011','QM013','QM014') }
+  'PDS'  = @{ Route = 'https://research.slackquant.com/systems/pds/'; Methods = @('QM007','QM008','QM009','QM011','QM013','QM014','QM028','QM029') }
 }
 $articleById = @{}
 Get-ChildItem (Join-Path $PlatformRoot 'public\methods') -Recurse -Filter article.html | ForEach-Object {

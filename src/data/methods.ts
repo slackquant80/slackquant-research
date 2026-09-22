@@ -14,6 +14,7 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM010: "Provides the momentum and trend concepts used by parts of ADAA's decision-diversified allocation architecture.",
     QM011: "Provides the decision-diversification framework used to distinguish complementary allocation perspectives from redundant strategy behavior.",
     QM014: "Defines release-date, vintage, and availability discipline for ADAA components that use macroeconomic information.",
+    QM029: "Defines the raw-versus-admissible FX clock, hedge-overlay accounting, and cost-aware base-currency implementation used to interpret ADAA FX monitoring consistently.",
   },
   "f2r-system": {
     QM001: "Defines the out-of-sample information boundary shared by F2R's heterogeneous forecasting layer before conventional ML and Chronos-2 views are converted into relative ranks.",
@@ -32,9 +33,11 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM007: "Defines portfolio accounting and rebalance timing used to maintain a continuous PDS Core performance path across provider decisions.",
     QM008: "Defines drawdown, underwater duration, and recovery measures used to interpret path-dependent PDS Core downside behavior.",
     QM009: "Defines turnover and transaction-cost conventions used when implementation effects are evaluated across governed portfolio decisions.",
-    QM011: "Provides strategy-similarity and decision-diversification concepts used when PDS evaluates how independently owned providers complement one another.",
+    QM011: "Provides strategy-similarity and decision-diversification concepts used when PDS evaluates provider complementarity and incremental portfolio admission value.",
     QM013: "Defines benchmark-relative portfolio measures used to separate absolute PDS Core performance from relative performance evidence.",
     QM014: "Defines information-timing and data-availability discipline used when PDS governs provider inputs that depend on macroeconomic information.",
+    QM028: "Explains RL-assisted adaptive risk control as a bounded defense layer, including state/action/reward design, offline evaluation limits, policy freezing, and Core-versus-Adaptive attribution.",
+    QM029: "Explains Dynamic FX overlay accounting, hedge-ratio timing, raw-versus-admissible FX observations, cost treatment, and base-currency attribution.",
   },
   "equity-alpha-system": {
     QM001: "Defines the genuinely out-of-sample evidence boundary used to distinguish historical model evaluation from current forward operation in Equity Alpha.",
@@ -260,6 +263,24 @@ export const quantitativeMethods: QuantitativeMethod[] = [
       "Explains the translation from cross-sectional scores to ranks and portfolio selections, including normalized rank strength, Top-K entry, incumbent hold buffers, turnover trade-offs, and path dependence.",
   },
   {
+    id: "QM028",
+    title: "Reinforcement Learning for Adaptive Portfolio Risk Control",
+    category: "Machine Learning",
+    level: "Advanced",
+    href: "/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html",
+    researchContext:
+      "Explains reinforcement learning as a bounded adaptive risk-control layer, with explicit state/action/reward design, chronological evaluation, offline-coverage limits, and policy-freeze governance.",
+  },
+  {
+    id: "QM029",
+    title: "Dynamic Currency Hedging and FX Overlay Accounting",
+    category: "Portfolio Methods",
+    level: "Intermediate",
+    href: "/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html",
+    researchContext:
+      "Explains base-currency return accounting, hedge ratios, raw-versus-admissible FX clocks, overlay costs, and dynamic currency-hedge attribution.",
+  },
+  {
     id: "QM024",
     title: "Forecast Combination and Model Averaging",
     category: "Machine Learning",
@@ -282,10 +303,10 @@ export const quantitativeMethods: QuantitativeMethod[] = [
 const artifactMethodIds: Record<string, string[]> = {
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
-  "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014"],
+  "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
   "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
   "equity-alpha-system": ["QM001", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM026", "QM027", "QM024", "QM025"],
-  "pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014"],
+  "pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014", "QM028", "QM029"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014", "QM019", "QM020"],
   "second-opinion-portfolio": ["QM001", "QM003", "QM007", "QM009", "QM011", "QM019", "QM020", "QM027", "QM024", "QM025"],
