@@ -723,7 +723,13 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .systems-family-equity-alpha .systems-family-head h3{color:#235f54}
 .home-system-card{min-height:0}
 .home-system-card p{max-width:820px}
+/* System detail typography policy
+   Keep system heroes editorial and prominent, but use a compact, consistent
+   reading scale for in-page section headings and introductory copy. */
 .system-detail-layout{align-items:start}
+.system-detail-layout .prose-section h2{font-size:32px;line-height:1.18;margin-bottom:18px}
+.system-detail-layout .lede{font-size:17px;line-height:1.68;max-width:840px;margin:0 0 18px}
+.system-detail-layout .body-copy{font-size:16px;line-height:1.72;max-width:840px;margin:18px 0 0}
 .system-metrics .value{font-size:30px}
 .system-usecase-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:28px 0}
 .system-usecase{background:var(--paper);border:1px solid var(--line);padding:18px 15px;min-height:132px;display:flex;flex-direction:column;gap:8px}
@@ -1150,15 +1156,15 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 
   .system-detail-layout .prose-section h2{
     max-width:100%;
-    font-size:clamp(31px,9vw,40px);
-    line-height:1.12;
+    font-size:clamp(27px,7.5vw,30px);
+    line-height:1.18;
     overflow-wrap:anywhere;
   }
 
   .system-detail-layout .lede{
     max-width:100%;
-    font-size:18px;
-    line-height:1.58;
+    font-size:16px;
+    line-height:1.68;
     overflow-wrap:anywhere;
   }
 
