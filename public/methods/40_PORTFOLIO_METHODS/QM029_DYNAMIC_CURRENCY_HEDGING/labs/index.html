@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.10.18" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
 <title>QM029 Hands-on Lab: FX Overlay Accounting – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -62,8 +59,6 @@ div.sourceCode
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
-
-
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -71,11 +66,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="../../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -92,7 +87,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
-
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -101,43 +95,30 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-
-
-<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/labs/">
+<link href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/labs/" rel="canonical"/>
 </head>
-
 <body class="quarto-light">
-
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
-  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
-  <li><a href="#audit-questions" id="toc-audit-questions" class="nav-link" data-scroll-target="#audit-questions">Audit questions</a></li>
-  <li><a href="#return-to-the-article" id="toc-return-to-the-article" class="nav-link" data-scroll-target="#return-to-the-article">Return to the article</a></li>
-  </ul>
-</nav>
-    </div>
+<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
+<nav class="toc-active" id="TOC" role="doc-toc"><h2 id="toc-title">On this page</h2><ul><li><a class="nav-link active" data-scroll-target="#objective" href="#objective" id="toc-objective">Objective</a></li><li><a class="nav-link" data-scroll-target="#run" href="#run" id="toc-run">Run</a></li><li><a class="nav-link" data-scroll-target="#what-to-inspect" href="#what-to-inspect" id="toc-what-to-inspect">What to inspect</a></li><li><a class="nav-link" data-scroll-target="#interpretation-boundary" href="#interpretation-boundary" id="toc-interpretation-boundary">Interpretation boundary</a></li></ul></nav>
+</div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-  <div class="sq-platform-shell sq-platform-nav">
-    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-    <nav class="sq-platform-nav-links" aria-label="Primary">
-      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
-      <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-      <a href="https://research.slackquant.com/about/" target="_self">About</a>
-      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </nav>
-  </div>
+<div class="sq-platform-shell sq-platform-nav">
+<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+<nav aria-label="Primary" class="sq-platform-nav-links">
+<a href="https://research.slackquant.com/research/" target="_self">Research</a>
+<a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
+<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+<a href="https://research.slackquant.com/about/" target="_self">About</a>
+<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
+</nav>
+</div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -152,15 +133,14 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
     }
   })();
 </script>
-<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">QM029 Hands-on Lab: FX Overlay Accounting</h1></div></header>
+<header class="quarto-title-block default" id="title-block-header"><div class="quarto-title"><h1 class="title">QM029 Hands-on Lab: FX Overlay Accounting</h1></div></header>
 <div class="method-kicker"><p>QM029 · Hands-on Lab</p></div>
 <h1 id="objective">Objective</h1>
 <p>Verify base-currency return accounting for an unhedged portfolio,
 apply a stylized partial hedge, and demonstrate why the latest raw FX
 observation can differ from the latest admissible observation.</p>
 <h1 id="run">Run</h1>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm029_fx_overlay.py</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="ex">python</span> labs/python/qm029_fx_overlay.py</span></code></pre></div>
 <h1 id="what-to-inspect">What to inspect</h1>
 <ul>
 <li>Does exact KRW wealth equal
@@ -175,7 +155,6 @@ information-clock mismatch?</li>
 <p>The hedge formula in the lab is stylized and excludes
 instrument-specific forward pricing details. It is for accounting and
 timing verification, not a recommendation for any hedge ratio.</p>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -584,17 +563,17 @@ timing verification, not a recommendation for any hedge ratio.</p>
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
+<div class="nav-footer">
+<div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>   
-    <div class="nav-footer-center">
-      &nbsp;
+</div>
+<div class="nav-footer-center">
+       
     </div>
-    <div class="nav-footer-right">
+<div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-  </div>
+</div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -871,9 +850,5 @@ timing verification, not a recommendation for any hedge ratio.</p>
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
-
-
-
-
 <script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

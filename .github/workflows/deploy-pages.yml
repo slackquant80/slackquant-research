@@ -45,6 +45,9 @@ jobs:
         shell: pwsh
         run: ./scripts/normalize-methods-navigation.ps1 -PlatformRoot .
 
+      - name: Methods UI source audit
+        run: python3 scripts/validate-methods-ui-integrity.py
+
       - name: Platform source audit
         run: python3 scripts/validate-platform-full-audit.py
 
@@ -58,6 +61,9 @@ jobs:
 
       - name: Platform built-output audit
         run: python3 scripts/validate-platform-full-audit.py --require-build
+
+      - name: Methods UI built-output audit
+        run: python3 scripts/validate-methods-ui-integrity.py --require-build
 
       - name: F2R documentation built-output audit
         run: python3 scripts/validate-f2r-documentation.py --require-build

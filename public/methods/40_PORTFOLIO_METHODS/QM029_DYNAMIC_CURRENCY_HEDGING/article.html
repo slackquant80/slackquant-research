@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="description" content="A practical guide to dynamic currency hedging, base-currency return accounting, FX information clocks, and cost-aware overlay implementation.">
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.10.18" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
+<meta content="A practical guide to dynamic currency hedging, base-currency return accounting, FX information clocks, and cost-aware overlay implementation." name="description"/>
 <title>Dynamic Currency Hedging and FX Overlay Accounting – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -82,8 +79,6 @@ div.csl-right-inline {
 div.csl-indent {
   margin-left: 2em;
 }</style>
-
-
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -91,11 +86,11 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -112,7 +107,6 @@ div.csl-indent {
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
-
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -121,10 +115,8 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 <script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
@@ -151,60 +143,30 @@ window.Quarto = {
   typesetMath
 };
 </script>
-
-<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html">
+<link href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html" rel="canonical"/>
 </head>
-
 <body class="quarto-light">
-
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
-  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
-  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
-  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
-  <ul class="collapse">
-  <li><a href="#create-a-cross-sectional-score" id="toc-create-a-cross-sectional-score" class="nav-link" data-scroll-target="#create-a-cross-sectional-score">1. Create a cross-sectional score</a></li>
-  <li><a href="#distinguish-ordinal-rank-from-normalized-rank-strength" id="toc-distinguish-ordinal-rank-from-normalized-rank-strength" class="nav-link" data-scroll-target="#distinguish-ordinal-rank-from-normalized-rank-strength">2. Distinguish ordinal rank from normalized rank strength</a></li>
-  <li><a href="#combine-heterogeneous-rank-views-carefully" id="toc-combine-heterogeneous-rank-views-carefully" class="nav-link" data-scroll-target="#combine-heterogeneous-rank-views-carefully">3. Combine heterogeneous rank views carefully</a></li>
-  <li><a href="#apply-a-top-k-entry-rule" id="toc-apply-a-top-k-entry-rule" class="nav-link" data-scroll-target="#apply-a-top-k-entry-rule">4. Apply a Top-K entry rule</a></li>
-  <li><a href="#add-an-incumbent-hold-buffer" id="toc-add-an-incumbent-hold-buffer" class="nav-link" data-scroll-target="#add-an-incumbent-hold-buffer">5. Add an incumbent hold buffer</a></li>
-  <li><a href="#define-the-full-slot-case-explicitly" id="toc-define-the-full-slot-case-explicitly" class="nav-link" data-scroll-target="#define-the-full-slot-case-explicitly">6. Define the full-slot case explicitly</a></li>
-  <li><a href="#measure-turnover-after-the-decision-rule" id="toc-measure-turnover-after-the-decision-rule" class="nav-link" data-scroll-target="#measure-turnover-after-the-decision-rule">7. Measure turnover after the decision rule</a></li>
-  </ul></li>
-  <li><a href="#rank-is-not-expected-return" id="toc-rank-is-not-expected-return" class="nav-link" data-scroll-target="#rank-is-not-expected-return">Rank Is Not Expected Return</a></li>
-  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
-  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
-  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
-  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
-  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
-  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul>
-</nav>
-    </div>
+<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
+<nav class="toc-active" id="TOC" role="doc-toc"><h2 id="toc-title">On this page</h2><ul><li><a class="nav-link active" data-scroll-target="#the-question" href="#the-question" id="toc-the-question">The Question</a></li><li><a class="nav-link" data-scroll-target="#unhedged-base-currency-return" href="#unhedged-base-currency-return" id="toc-unhedged-base-currency-return">Unhedged Base-Currency Return</a></li><li><a class="nav-link" data-scroll-target="#a-partial-hedge" href="#a-partial-hedge" id="toc-a-partial-hedge">A Partial Hedge</a></li><li><a class="nav-link" data-scroll-target="#why-the-overlay-should-stay-separate" href="#why-the-overlay-should-stay-separate" id="toc-why-the-overlay-should-stay-separate">Why the Overlay Should Stay Separate</a></li><li><a class="nav-link" data-scroll-target="#static-versus-dynamic-hedging" href="#static-versus-dynamic-hedging" id="toc-static-versus-dynamic-hedging">Static versus Dynamic Hedging</a></li><li><a class="nav-link" data-scroll-target="#the-fx-information-clock" href="#the-fx-information-clock" id="toc-the-fx-information-clock">The FX Information Clock</a></li><li><a class="nav-link" data-scroll-target="#latest-raw-fx-observation" href="#latest-raw-fx-observation" id="toc-latest-raw-fx-observation">Latest raw FX observation</a></li><li><a class="nav-link" data-scroll-target="#latest-admissible-fx-observation" href="#latest-admissible-fx-observation" id="toc-latest-admissible-fx-observation">Latest admissible FX observation</a></li><li><a class="nav-link" data-scroll-target="#portfolio-market-through" href="#portfolio-market-through" id="toc-portfolio-market-through">Portfolio market-through</a></li><li><a class="nav-link" data-scroll-target="#signal-holding-and-execution-timing" href="#signal-holding-and-execution-timing" id="toc-signal-holding-and-execution-timing">Signal, Holding, and Execution Timing</a></li><li><a class="nav-link" data-scroll-target="#hedge-rebalancing-and-turnover" href="#hedge-rebalancing-and-turnover" id="toc-hedge-rebalancing-and-turnover">Hedge Rebalancing and Turnover</a></li><li><a class="nav-link" data-scroll-target="#avoiding-double-counting" href="#avoiding-double-counting" id="toc-avoiding-double-counting">Avoiding Double Counting</a></li><li><a class="nav-link" data-scroll-target="#performance-attribution" href="#performance-attribution" id="toc-performance-attribution">Performance Attribution</a></li><li><a class="nav-link" data-scroll-target="#failure-modes" href="#failure-modes" id="toc-failure-modes">Failure Modes</a></li><li><a class="nav-link" data-scroll-target="#rawadmissible-clock-leakage" href="#rawadmissible-clock-leakage" id="toc-rawadmissible-clock-leakage">Raw/admissible clock leakage</a></li><li><a class="nav-link" data-scroll-target="#mixed-close-comparison" href="#mixed-close-comparison" id="toc-mixed-close-comparison">Mixed-close comparison</a></li><li><a class="nav-link" data-scroll-target="#previewofficial-confusion" href="#previewofficial-confusion" id="toc-previewofficial-confusion">Preview/official confusion</a></li><li><a class="nav-link" data-scroll-target="#cost-omission" href="#cost-omission" id="toc-cost-omission">Cost omission</a></li><li><a class="nav-link" data-scroll-target="#base-currency-double-counting" href="#base-currency-double-counting" id="toc-base-currency-double-counting">Base-currency double counting</a></li><li><a class="nav-link" data-scroll-target="#hands-on-lab" href="#hands-on-lab" id="toc-hands-on-lab">Hands-on Lab</a></li><li><a class="nav-link" data-scroll-target="#used-in-slackquant-research" href="#used-in-slackquant-research" id="toc-used-in-slackquant-research">Used in SlackQuant Research</a></li><li><a class="nav-link" data-scroll-target="#related-methods" href="#related-methods" id="toc-related-methods">Related Methods</a></li><li><a class="nav-link" data-scroll-target="#references" href="#references" id="toc-references">References</a></li></ul></nav>
+</div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-  <div class="sq-platform-shell sq-platform-nav">
-    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-    <nav class="sq-platform-nav-links" aria-label="Primary">
-      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
-      <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-      <a href="https://research.slackquant.com/about/" target="_self">About</a>
-      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </nav>
-  </div>
+<div class="sq-platform-shell sq-platform-nav">
+<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+<nav aria-label="Primary" class="sq-platform-nav-links">
+<a href="https://research.slackquant.com/research/" target="_self">Research</a>
+<a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
+<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+<a href="https://research.slackquant.com/about/" target="_self">About</a>
+<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
+</nav>
+</div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -219,11 +181,8 @@ window.Quarto = {
     }
   })();
 </script>
-<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">Dynamic Currency Hedging and FX Overlay Accounting</h1></div></header>
+<header class="quarto-title-block default" id="title-block-header"><div class="quarto-title"><h1 class="title">Dynamic Currency Hedging and FX Overlay Accounting</h1></div></header>
 <div class="method-kicker"><p>QM029 · Portfolio Methods · Intermediate</p></div>
-<div class="method-kicker">
-<p>QM029 · Portfolio Methods · Intermediate</p>
-</div>
 <div class="method-orientation">
 <p><strong>Core idea.</strong> A currency overlay changes the investor’s
 base-currency exposure without changing the underlying asset-selection
@@ -246,8 +205,7 @@ not merely a reporting conversion.</p>
 <p>Classic work on international portfolios shows that hedging can
 materially alter portfolio risk and that the appropriate hedge depends
 on the investor, asset mix, and covariance structure rather than on a
-universal constant <span class="citation"
-data-cites="peroldschulman1988 black1990 campbell2010">(Perold and
+universal constant <span class="citation" data-cites="peroldschulman1988 black1990 campbell2010">(Perold and
 Schulman 1988; Black 1990; Campbell, Serfaty-de Medeiros, and Viceira
 2010)</span>.</p>
 <p>A practical system must answer four separate questions:</p>
@@ -260,32 +218,24 @@ made?</li>
 </ol>
 <h1 id="unhedged-base-currency-return">Unhedged Base-Currency
 Return</h1>
-<p>Let <span
-class="math inline"><em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup></span>
+<p>Let <span class="math inline"><em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup></span>
 be the USD return of an asset portfolio over a holding interval and let
-<span
-class="math inline"><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub></span>
+<span class="math inline"><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub></span>
 be the return of USD measured in KRW over the same interval. Ignoring
 cash flows, the KRW wealth return of the unhedged portfolio is</p>
-<p><span
-class="math display">1 + <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = (1 + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup>)(1 + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>).</span></p>
+<p><span class="math display">1 + <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = (1 + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup>)(1 + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>).</span></p>
 <p>Therefore</p>
-<p><span
-class="math display"><em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup> + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>.</span></p>
+<p><span class="math display"><em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> = <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup> + <em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>A</em>, <em>t</em> + 1</sub><sup><em>U</em><em>S</em><em>D</em></sup><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub>.</span></p>
 <p>The interaction term is exact and should not be silently dropped when
 full wealth accounting is required.</p>
 <h1 id="a-partial-hedge">A Partial Hedge</h1>
-<p>Let <span
-class="math inline"><em>h</em><sub><em>t</em></sub> ∈ [0, 1]</span>
-denote the hedge ratio chosen at the decision time, where <span
-class="math inline"><em>h</em><sub><em>t</em></sub> = 0</span> is
-unhedged and <span
-class="math inline"><em>h</em><sub><em>t</em></sub> = 1</span> is fully
+<p>Let <span class="math inline"><em>h</em><sub><em>t</em></sub> ∈ [0, 1]</span>
+denote the hedge ratio chosen at the decision time, where <span class="math inline"><em>h</em><sub><em>t</em></sub> = 0</span> is
+unhedged and <span class="math inline"><em>h</em><sub><em>t</em></sub> = 1</span> is fully
 hedged under the declared hedge instrument.</p>
 <p>A practical implementation should model the actual hedge leg
 directly. For intuition, a stylized approximation is</p>
-<p><span
-class="math display"><em>R</em><sub><em>H</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> ≈ <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> − <em>h</em><sub><em>t</em></sub><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>c</em><em>a</em><em>r</em><em>r</em><em>y</em>, <em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup> − <em>C</em><sub><em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup>,</span></p>
+<p><span class="math display"><em>R</em><sub><em>H</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> ≈ <em>R</em><sub><em>U</em>, <em>t</em> + 1</sub><sup><em>K</em><em>R</em><em>W</em></sup> − <em>h</em><sub><em>t</em></sub><em>R</em><sub><em>F</em><em>X</em>, <em>t</em> + 1</sub> + <em>R</em><sub><em>c</em><em>a</em><em>r</em><em>r</em><em>y</em>, <em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup> − <em>C</em><sub><em>t</em> + 1</sub><sup><em>h</em><em>e</em><em>d</em><em>g</em><em>e</em></sup>,</span></p>
 <p>where the carry/forward component and trading cost depend on the
 chosen instrument and convention. This equation is an accounting guide,
 <strong>not</strong> a universal pricing identity for every hedge
@@ -306,13 +256,11 @@ being misread as a change in asset selection.</p>
 <h1 id="static-versus-dynamic-hedging">Static versus Dynamic
 Hedging</h1>
 <p>A static hedge holds a fixed ratio such as 0%, 50%, or 100% subject
-to rebalancing. A dynamic hedge changes <span
-class="math inline"><em>h</em><sub><em>t</em></sub></span> using a
+to rebalancing. A dynamic hedge changes <span class="math inline"><em>h</em><sub><em>t</em></sub></span> using a
 declared information set and decision rule.</p>
 <p>Research on global currency hedging emphasizes that optimal or
 risk-minimizing currency positions depend on asset-currency covariance
-and portfolio composition <span class="citation"
-data-cites="campbell2010">(Campbell, Serfaty-de Medeiros, and Viceira
+and portfolio composition <span class="citation" data-cites="campbell2010">(Campbell, Serfaty-de Medeiros, and Viceira
 2010)</span>. This does not imply that every tactical signal improves
 outcomes. A dynamic rule creates an additional model-selection and
 timing problem that must be evaluated separately.</p>
@@ -337,8 +285,7 @@ convention.</p>
 the portfolio decision is defined at a common ETF close, using a later
 FX print merely because the feed contains it can introduce an
 information mismatch.</p>
-<div class="callout-important"
-title="Freshest is not the same as admissible">
+<div class="callout-important" title="Freshest is not the same as admissible">
 <p>A feed can contain an FX observation dated after the latest common
 ETF close. That observation can be useful for monitoring feed freshness
 while still being excluded from the hedge decision and strategy
@@ -369,16 +316,12 @@ implementation should define whether the hedge notional is reset
 monthly, drifted between decisions, or adjusted under another
 convention.</p>
 <p>If <span class="math inline"><em>N</em><sub><em>t</em></sub></span>
-is the foreign-currency notional and <span
-class="math inline"><em>h</em><sub><em>t</em></sub></span> the target
+is the foreign-currency notional and <span class="math inline"><em>h</em><sub><em>t</em></sub></span> the target
 hedge ratio, the target hedge notional is</p>
-<p><span
-class="math display"><em>H</em><sub><em>t</em></sub> = <em>h</em><sub><em>t</em></sub><em>N</em><sub><em>t</em></sub>.</span></p>
+<p><span class="math display"><em>H</em><sub><em>t</em></sub> = <em>h</em><sub><em>t</em></sub><em>N</em><sub><em>t</em></sub>.</span></p>
 <p>A simple traded-notional measure at a rebalance is</p>
-<p><span
-class="math display"><em>Δ</em><em>H</em><sub><em>t</em></sub> = |<em>H</em><sub><em>t</em></sub> − <em>H</em><sub><em>t</em><sup>−</sup></sub>|,</span></p>
-<p>where <span
-class="math inline"><em>H</em><sub><em>t</em><sup>−</sup></sub></span>
+<p><span class="math display"><em>Δ</em><em>H</em><sub><em>t</em></sub> = |<em>H</em><sub><em>t</em></sub> − <em>H</em><sub><em>t</em><sup>−</sup></sub>|,</span></p>
+<p>where <span class="math inline"><em>H</em><sub><em>t</em><sup>−</sup></sub></span>
 is the hedge notional immediately before trading. The cost model should
 then match the instrument and denominator used in the quoted
 transaction-cost assumption.</p>
@@ -428,9 +371,7 @@ base-currency wealth, a stylized partial hedge, and the distinction
 between raw and admissible FX timestamps. It is an accounting and timing
 exercise, not evidence for a particular hedge rule.</p>
 <div class="lab-downloads">
-<p><strong>Run it yourself.</strong> Start with the <a
-href="labs/index.html">lab guide</a>. Direct source: <a
-href="labs/python/qm029_fx_overlay.py">Python</a>.</p>
+<p><strong>Run it yourself.</strong> Start with the <a href="labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm029_fx_overlay.py">Python</a>.</p>
 </div>
 <h1 id="used-in-slackquant-research">Used in SlackQuant Research</h1>
 <ul>
@@ -445,39 +386,32 @@ information is aligned to the strategy’s common market calendar.</li>
 </ul>
 <h1 id="related-methods">Related Methods</h1>
 <ul>
-<li><a
-href="../QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 —
+<li><a href="../QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 —
 Portfolio Backtesting and Rebalancing</a></li>
 <li><a href="../QM009_TURNOVER_COSTS/article.html">QM009 — Turnover,
 Transaction Costs, and Net Performance</a></li>
 <li><a href="../QM013_BENCHMARK_RELATIVE/article.html">QM013 —
 Benchmark-Relative Portfolio Evaluation</a></li>
-<li><a
-href="../../80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">QM014
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM014_MACRO_INFORMATION_TIMING/article.html">QM014
 — Information Timing, Data Vintages, and Real-Time Macro Data</a></li>
 </ul>
 <h1 id="references">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent"
-data-entry-spacing="0" role="list">
-<div id="ref-black1990" class="csl-entry" role="listitem">
+<div class="references csl-bib-body hanging-indent" data-entry-spacing="0" id="refs" role="list">
+<div class="csl-entry" id="ref-black1990" role="listitem">
 Black, Fischer. 1990. <span>“Equilibrium Exchange Rate Hedging.”</span>
-<em>The Journal of Finance</em> 45 (3): 899–907. <a
-href="https://doi.org/10.1111/j.1540-6261.1990.tb05111.x">https://doi.org/10.1111/j.1540-6261.1990.tb05111.x</a>.
+<em>The Journal of Finance</em> 45 (3): 899–907. <a href="https://doi.org/10.1111/j.1540-6261.1990.tb05111.x">https://doi.org/10.1111/j.1540-6261.1990.tb05111.x</a>.
 </div>
-<div id="ref-campbell2010" class="csl-entry" role="listitem">
+<div class="csl-entry" id="ref-campbell2010" role="listitem">
 Campbell, John Y., Karine Serfaty-de Medeiros, and Luis M. Viceira.
 2010. <span>“Global Currency Hedging.”</span> <em>The Journal of
-Finance</em> 65 (1): 87–121. <a
-href="https://doi.org/10.1111/j.1540-6261.2009.01524.x">https://doi.org/10.1111/j.1540-6261.2009.01524.x</a>.
+Finance</em> 65 (1): 87–121. <a href="https://doi.org/10.1111/j.1540-6261.2009.01524.x">https://doi.org/10.1111/j.1540-6261.2009.01524.x</a>.
 </div>
-<div id="ref-peroldschulman1988" class="csl-entry" role="listitem">
+<div class="csl-entry" id="ref-peroldschulman1988" role="listitem">
 Perold, André F., and Evan C. Schulman. 1988. <span>“The Free Lunch in
 Currency Hedging: Implications for Investment Policy and Performance
-Standards.”</span> <em>Financial Analysts Journal</em> 44 (3): 45–50. <a
-href="https://doi.org/10.2469/faj.v44.n3.45">https://doi.org/10.2469/faj.v44.n3.45</a>.
+Standards.”</span> <em>Financial Analysts Journal</em> 44 (3): 45–50. <a href="https://doi.org/10.2469/faj.v44.n3.45">https://doi.org/10.2469/faj.v44.n3.45</a>.
 </div>
 </div>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -886,17 +820,17 @@ href="https://doi.org/10.2469/faj.v44.n3.45">https://doi.org/10.2469/faj.v44.n3.
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
+<div class="nav-footer">
+<div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>   
-    <div class="nav-footer-center">
-      &nbsp;
+</div>
+<div class="nav-footer-center">
+       
     </div>
-    <div class="nav-footer-right">
+<div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-  </div>
+</div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -1173,9 +1107,5 @@ href="https://doi.org/10.2469/faj.v44.n3.45">https://doi.org/10.2469/faj.v44.n3.
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
-
-
-
-
 <script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

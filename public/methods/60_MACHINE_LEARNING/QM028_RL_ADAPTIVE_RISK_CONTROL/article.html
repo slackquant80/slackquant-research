@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="description" content="A practical guide to using reinforcement learning as a selective portfolio risk-control layer rather than as a standalone alpha engine.">
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.10.18" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
+<meta content="A practical guide to using reinforcement learning as a selective portfolio risk-control layer rather than as a standalone alpha engine." name="description"/>
 <title>Reinforcement Learning for Adaptive Portfolio Risk Control – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -82,8 +79,6 @@ div.csl-right-inline {
 div.csl-indent {
   margin-left: 2em;
 }</style>
-
-
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -91,11 +86,11 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -112,7 +107,6 @@ div.csl-indent {
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
-
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -121,10 +115,8 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 <script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
@@ -151,59 +143,30 @@ window.Quarto = {
   typesetMath
 };
 </script>
-
-<link rel="canonical" href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html">
+<link href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html" rel="canonical"/>
 </head>
-
 <body class="quarto-light">
-
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
-  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
-  <li><a href="#intuition" id="toc-intuition" class="nav-link" data-scroll-target="#intuition">Intuition</a></li>
-  <li><a href="#the-method" id="toc-the-method" class="nav-link" data-scroll-target="#the-method">The Method</a>
-  <ul class="collapse">
-  <li><a href="#separate-tuning-from-evaluation" id="toc-separate-tuning-from-evaluation" class="nav-link" data-scroll-target="#separate-tuning-from-evaluation">Separate tuning from evaluation</a></li>
-  <li><a href="#expanding-and-rolling-validation" id="toc-expanding-and-rolling-validation" class="nav-link" data-scroll-target="#expanding-and-rolling-validation">Expanding and rolling validation</a></li>
-  <li><a href="#the-role-of-a-gap" id="toc-the-role-of-a-gap" class="nav-link" data-scroll-target="#the-role-of-a-gap">The role of a gap</a></li>
-  </ul></li>
-  <li><a href="#is-ordinary-k-fold-always-wrong-for-time-series" id="toc-is-ordinary-k-fold-always-wrong-for-time-series" class="nav-link" data-scroll-target="#is-ordinary-k-fold-always-wrong-for-time-series">Is Ordinary K-Fold Always Wrong for Time Series?</a></li>
-  <li><a href="#preprocessing-belongs-inside-the-fold" id="toc-preprocessing-belongs-inside-the-fold" class="nav-link" data-scroll-target="#preprocessing-belongs-inside-the-fold">Preprocessing Belongs Inside the Fold</a></li>
-  <li><a href="#nested-historical-evaluation" id="toc-nested-historical-evaluation" class="nav-link" data-scroll-target="#nested-historical-evaluation">Nested Historical Evaluation</a></li>
-  <li><a href="#how-to-choose-the-objective" id="toc-how-to-choose-the-objective" class="nav-link" data-scroll-target="#how-to-choose-the-objective">How to Choose the Objective</a></li>
-  <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
-  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
-  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
-  <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
-  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
-  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul>
-</nav>
-    </div>
+<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
+<nav class="toc-active" id="TOC" role="doc-toc"><h2 id="toc-title">On this page</h2><ul><li><a class="nav-link active" data-scroll-target="#the-question" href="#the-question" id="toc-the-question">The Question</a></li><li><a class="nav-link" data-scroll-target="#why-it-matters" href="#why-it-matters" id="toc-why-it-matters">Why It Matters</a></li><li><a class="nav-link" data-scroll-target="#the-rl-formulation" href="#the-rl-formulation" id="toc-the-rl-formulation">The RL Formulation</a></li><li><a class="nav-link" data-scroll-target="#state-design" href="#state-design" id="toc-state-design">State Design</a></li><li><a class="nav-link" data-scroll-target="#action-design-control-the-risk-layer-not-necessarily-the-portfolio" href="#action-design-control-the-risk-layer-not-necessarily-the-portfolio" id="toc-action-design-control-the-risk-layer-not-necessarily-the-portfolio">Action Design: Control the Risk Layer, Not Necessarily the Portfolio</a></li><li><a class="nav-link" data-scroll-target="#reward-design" href="#reward-design" id="toc-reward-design">Reward Design</a></li><li><a class="nav-link" data-scroll-target="#rl-is-not-the-same-as-supervised-forecasting" href="#rl-is-not-the-same-as-supervised-forecasting" id="toc-rl-is-not-the-same-as-supervised-forecasting">RL Is Not the Same as Supervised Forecasting</a></li><li><a class="nav-link" data-scroll-target="#offline-evaluation-and-the-coverage-problem" href="#offline-evaluation-and-the-coverage-problem" id="toc-offline-evaluation-and-the-coverage-problem">Offline Evaluation and the Coverage Problem</a></li><li><a class="nav-link" data-scroll-target="#chronological-evaluation" href="#chronological-evaluation" id="toc-chronological-evaluation">Chronological Evaluation</a></li><li><a class="nav-link" data-scroll-target="#policy-freeze-and-deployment-governance" href="#policy-freeze-and-deployment-governance" id="toc-policy-freeze-and-deployment-governance">Policy Freeze and Deployment Governance</a></li><li><a class="nav-link" data-scroll-target="#comparing-core-and-adaptive-portfolios" href="#comparing-core-and-adaptive-portfolios" id="toc-comparing-core-and-adaptive-portfolios">Comparing Core and Adaptive Portfolios</a></li><li><a class="nav-link" data-scroll-target="#failure-modes" href="#failure-modes" id="toc-failure-modes">Failure Modes</a></li><li><a class="nav-link" data-scroll-target="#reward-hacking" href="#reward-hacking" id="toc-reward-hacking">Reward hacking</a></li><li><a class="nav-link" data-scroll-target="#state-leakage" href="#state-leakage" id="toc-state-leakage">State leakage</a></li><li><a class="nav-link" data-scroll-target="#historical-overfitting" href="#historical-overfitting" id="toc-historical-overfitting">Historical overfitting</a></li><li><a class="nav-link" data-scroll-target="#unsupported-actions" href="#unsupported-actions" id="toc-unsupported-actions">Unsupported actions</a></li><li><a class="nav-link" data-scroll-target="#cost-understatement" href="#cost-understatement" id="toc-cost-understatement">Cost understatement</a></li><li><a class="nav-link" data-scroll-target="#authority-ambiguity" href="#authority-ambiguity" id="toc-authority-ambiguity">Authority ambiguity</a></li><li><a class="nav-link" data-scroll-target="#hands-on-lab" href="#hands-on-lab" id="toc-hands-on-lab">Hands-on Lab</a></li><li><a class="nav-link" data-scroll-target="#what-to-report" href="#what-to-report" id="toc-what-to-report">What to Report</a></li><li><a class="nav-link" data-scroll-target="#used-in-slackquant-research" href="#used-in-slackquant-research" id="toc-used-in-slackquant-research">Used in SlackQuant Research</a></li><li><a class="nav-link" data-scroll-target="#related-methods" href="#related-methods" id="toc-related-methods">Related Methods</a></li><li><a class="nav-link" data-scroll-target="#references" href="#references" id="toc-references">References</a></li></ul></nav>
+</div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-  <div class="sq-platform-shell sq-platform-nav">
-    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-    <nav class="sq-platform-nav-links" aria-label="Primary">
-      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
-      <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-      <a href="https://research.slackquant.com/about/" target="_self">About</a>
-      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </nav>
-  </div>
+<div class="sq-platform-shell sq-platform-nav">
+<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+<nav aria-label="Primary" class="sq-platform-nav-links">
+<a href="https://research.slackquant.com/research/" target="_self">Research</a>
+<a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
+<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+<a href="https://research.slackquant.com/about/" target="_self">About</a>
+<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
+</nav>
+</div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -218,17 +181,13 @@ window.Quarto = {
     }
   })();
 </script>
-<header id="title-block-header" class="quarto-title-block default"><div class="quarto-title"><h1 class="title">Reinforcement Learning for Adaptive Portfolio Risk Control</h1></div></header>
+<header class="quarto-title-block default" id="title-block-header"><div class="quarto-title"><h1 class="title">Reinforcement Learning for Adaptive Portfolio Risk Control</h1></div></header>
 <div class="method-kicker"><p>QM028 · Machine Learning · Advanced</p></div>
-<div class="method-kicker">
-<p>QM028 · Machine Learning · Advanced</p>
-</div>
 <div class="method-orientation">
 <p><strong>Core idea.</strong> Reinforcement learning (RL) treats a
 sequence of decisions as a control problem: an agent observes a state,
 chooses an action, receives a reward, and learns a policy that seeks to
-improve cumulative reward <span class="citation"
-data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>. In
+improve cumulative reward <span class="citation" data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>. In
 portfolio applications, the action does not have to be security
 selection. A narrower and often more governable use is <strong>adaptive
 risk control</strong>: start from an existing portfolio and let a frozen
@@ -263,8 +222,7 @@ or allocation engine remains intact. RL acts on a bounded
 only the next-period return but also future wealth, drawdown, turnover,
 recovery path, and the state seen by later decisions. RL provides a
 language for optimizing such sequences rather than treating each month
-as an unrelated prediction problem <span class="citation"
-data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>.</p>
+as an unrelated prediction problem <span class="citation" data-cites="suttonbarto2018">(Sutton and Barto 2018)</span>.</p>
 <p>But financial RL has unusually severe validation challenges:</p>
 <ul>
 <li>market data are limited and nonstationary;</li>
@@ -278,18 +236,13 @@ poorly represented in its training sample.</li>
 </ul>
 <p>These concerns are especially important in offline or batch settings,
 where a policy is learned from a fixed historical dataset rather than
-through unconstrained live exploration <span class="citation"
-data-cites="levine2020offline">(Levine et al. 2020)</span>.</p>
+through unconstrained live exploration <span class="citation" data-cites="levine2020offline">(Levine et al. 2020)</span>.</p>
 <h1 id="the-rl-formulation">The RL Formulation</h1>
-<p>A standard Markov decision process is described by states <span
-class="math inline"><em>s</em><sub><em>t</em></sub></span>, actions
+<p>A standard Markov decision process is described by states <span class="math inline"><em>s</em><sub><em>t</em></sub></span>, actions
 <span class="math inline"><em>a</em><sub><em>t</em></sub></span>,
-rewards <span
-class="math inline"><em>r</em><sub><em>t</em> + 1</sub></span>,
-transition dynamics, and a discount factor <span
-class="math inline"><em>γ</em></span>.</p>
-<p>A policy <span
-class="math inline"><em>π</em>(<em>a</em> ∣ <em>s</em>)</span> maps the
+rewards <span class="math inline"><em>r</em><sub><em>t</em> + 1</sub></span>,
+transition dynamics, and a discount factor <span class="math inline"><em>γ</em></span>.</p>
+<p>A policy <span class="math inline"><em>π</em>(<em>a</em> ∣ <em>s</em>)</span> maps the
 current state to an action distribution. Its discounted return from time
 <span class="math inline"><em>t</em></span> is</p>
 <p><span class="math display">$$
@@ -301,8 +254,7 @@ cumulative return under the declared environment and reward definition
 2018)</span>.</p>
 <p>In a portfolio risk-control design, the action can be deliberately
 narrow. For example,</p>
-<p><span
-class="math display"><em>a</em><sub><em>t</em></sub> ∈ {1.00, 0.75, 0.50},</span></p>
+<p><span class="math display"><em>a</em><sub><em>t</em></sub> ∈ {1.00, 0.75, 0.50},</span></p>
 <p>where the action is a <strong>risk-budget multiplier</strong> applied
 to a pre-existing core portfolio. The residual may be assigned to a
 declared defensive asset or cash proxy. The exact action set is a design
@@ -322,15 +274,13 @@ state. If relevant history is omitted, the environment can remain
 partially observed. Adding more variables is also not automatically
 better: a larger state space can increase estimation error and make
 historical coverage thinner.</p>
-<div class="callout-important"
-title="State construction is an information-boundary problem">
+<div class="callout-important" title="State construction is an information-boundary problem">
 <p>Every state variable must obey the same point-in-time discipline as a
 forecasting feature. A risk controller trained on revised, backfilled,
 or future-known information can look robust historically while being
 impossible to reproduce live.</p>
 </div>
-<h1
-id="action-design-control-the-risk-layer-not-necessarily-the-portfolio">Action
+<h1 id="action-design-control-the-risk-layer-not-necessarily-the-portfolio">Action
 Design: Control the Risk Layer, Not Necessarily the Portfolio</h1>
 <p>A useful governance pattern is to separate:</p>
 <ol type="1">
@@ -348,15 +298,11 @@ than being confounded with a completely different alpha engine.</p>
 <p>The reward determines what the agent is actually being trained to
 prefer. A simple return-only reward can encourage undesirable tail risk
 or turnover. A stylized risk-aware reward might be</p>
-<p><span
-class="math display"><em>r</em><sub><em>t</em> + 1</sub> = <em>R</em><sub><em>t</em> + 1</sub><sup>adaptive</sup> − <em>λ</em><sub>risk</sub> ℛ<sub><em>t</em> + 1</sub> − <em>λ</em><sub>turn</sub> <em>τ</em><sub><em>t</em></sub>,</span></p>
+<p><span class="math display"><em>r</em><sub><em>t</em> + 1</sub> = <em>R</em><sub><em>t</em> + 1</sub><sup>adaptive</sup> − <em>λ</em><sub>risk</sub> ℛ<sub><em>t</em> + 1</sub> − <em>λ</em><sub>turn</sub> <em>τ</em><sub><em>t</em></sub>,</span></p>
 <p>where <span class="math inline">ℛ<sub><em>t</em> + 1</sub></span> is
-a declared risk penalty and <span
-class="math inline"><em>τ</em><sub><em>t</em></sub></span> is turnover
+a declared risk penalty and <span class="math inline"><em>τ</em><sub><em>t</em></sub></span> is turnover
 or a transaction-cost proxy.</p>
-<p>The coefficients <span
-class="math inline"><em>λ</em><sub>risk</sub></span> and <span
-class="math inline"><em>λ</em><sub>turn</sub></span> are preference
+<p>The coefficients <span class="math inline"><em>λ</em><sub>risk</sub></span> and <span class="math inline"><em>λ</em><sub>turn</sub></span> are preference
 parameters. They are not discovered economic truths. If they are
 repeatedly changed after inspecting the same history, they become
 another source of research overfitting.</p>
@@ -366,8 +312,7 @@ as Supervised Forecasting</h1>
 return or volatility. RL instead evaluates <strong>actions through their
 downstream consequences</strong>. That distinction is why direct
 reinforcement approaches have long been considered for trading and
-asset-allocation problems <span class="citation"
-data-cites="moodysaffell2001">(Moody and Saffell 2001)</span>.</p>
+asset-allocation problems <span class="citation" data-cites="moodysaffell2001">(Moody and Saffell 2001)</span>.</p>
 <p>But an RL policy can still use forecasts or supervised-model outputs
 inside its state. The categories are not mutually exclusive.</p>
 <h1 id="offline-evaluation-and-the-coverage-problem">Offline Evaluation
@@ -379,8 +324,7 @@ recommend actions in regions where the data provide little evidence
 about the resulting transition or reward.</p>
 <p>Offline RL research emphasizes that distribution shift between the
 historical behavior data and the candidate policy can produce severe
-value-estimation error <span class="citation"
-data-cites="levine2020offline">(Levine et al. 2020)</span>. In
+value-estimation error <span class="citation" data-cites="levine2020offline">(Levine et al. 2020)</span>. In
 investment work, this is one reason to prefer bounded action spaces,
 conservative policy changes, explicit historical coverage diagnostics,
 and independent forward monitoring.</p>
@@ -457,9 +401,7 @@ both return and downside exposure. The example is deliberately small and
 is <strong>not</strong> evidence that RL improves live investment
 results.</p>
 <div class="lab-downloads">
-<p><strong>Run it yourself.</strong> Start with the <a
-href="labs/index.html">lab guide</a>. Direct source: <a
-href="labs/python/qm028_rl_risk_control.py">Python</a>.</p>
+<p><strong>Run it yourself.</strong> Start with the <a href="labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm028_rl_risk_control.py">Python</a>.</p>
 </div>
 <h1 id="what-to-report">What to Report</h1>
 <p>A credible adaptive-risk-control study should report at least:</p>
@@ -483,40 +425,33 @@ controller recipe.</li>
 </ul>
 <h1 id="related-methods">Related Methods</h1>
 <ul>
-<li><a
-href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003
+<li><a href="../../80_DATA_RESEARCH_DESIGN/QM003_LOOK_AHEAD_BIAS_DATA_LEAKAGE/article.html">QM003
 — Look-Ahead Bias and Data Leakage</a></li>
-<li><a
-href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007
+<li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007
 — Portfolio Backtesting and Rebalancing</a></li>
-<li><a
-href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">QM009
+<li><a href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">QM009
 — Turnover, Transaction Costs, and Net Performance</a></li>
 <li><a href="../QM020_TIME_SERIES_MODEL_SELECTION/article.html">QM020 —
 Time-Series Model Selection and Hyperparameter Tuning</a></li>
 </ul>
 <h1 id="references">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent"
-data-entry-spacing="0" role="list">
-<div id="ref-levine2020offline" class="csl-entry" role="listitem">
+<div class="references csl-bib-body hanging-indent" data-entry-spacing="0" id="refs" role="list">
+<div class="csl-entry" id="ref-levine2020offline" role="listitem">
 Levine, Sergey, Aviral Kumar, George Tucker, and Justin Fu. 2020.
 <span>“Offline Reinforcement Learning: Tutorial, Review, and
 Perspectives on Open Problems.”</span> <em>arXiv Preprint
-arXiv:2005.01643</em>. <a
-href="https://doi.org/10.48550/arXiv.2005.01643">https://doi.org/10.48550/arXiv.2005.01643</a>.
+arXiv:2005.01643</em>. <a href="https://doi.org/10.48550/arXiv.2005.01643">https://doi.org/10.48550/arXiv.2005.01643</a>.
 </div>
-<div id="ref-moodysaffell2001" class="csl-entry" role="listitem">
+<div class="csl-entry" id="ref-moodysaffell2001" role="listitem">
 Moody, John, and Matthew Saffell. 2001. <span>“Learning to Trade via
 Direct Reinforcement.”</span> <em>IEEE Transactions on Neural
-Networks</em> 12 (4): 875–89. <a
-href="https://doi.org/10.1109/72.935097">https://doi.org/10.1109/72.935097</a>.
+Networks</em> 12 (4): 875–89. <a href="https://doi.org/10.1109/72.935097">https://doi.org/10.1109/72.935097</a>.
 </div>
-<div id="ref-suttonbarto2018" class="csl-entry" role="listitem">
+<div class="csl-entry" id="ref-suttonbarto2018" role="listitem">
 Sutton, Richard S., and Andrew G. Barto. 2018. <em>Reinforcement
 Learning: An Introduction</em>. 2nd ed. Cambridge, MA: MIT Press.
 </div>
 </div>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -925,17 +860,17 @@ Learning: An Introduction</em>. 2nd ed. Cambridge, MA: MIT Press.
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
+<div class="nav-footer">
+<div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>   
-    <div class="nav-footer-center">
-      &nbsp;
+</div>
+<div class="nav-footer-center">
+       
     </div>
-    <div class="nav-footer-right">
+<div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-  </div>
+</div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -1212,9 +1147,5 @@ Learning: An Introduction</em>. 2nd ed. Cambridge, MA: MIT Press.
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
-
-
-
-
 <script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
