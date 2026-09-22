@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "PDS Public Dashboard — Portfolio Decision System",
-  description: "Validated public operational dashboard for SlackQuant's Portfolio Decision System.",
+  description: "Validated public dashboard for SlackQuant's Portfolio Decision System.",
   alternates: { canonical: "/systems/pds/dashboard/" },
 };
 

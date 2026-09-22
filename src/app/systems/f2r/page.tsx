@@ -9,7 +9,7 @@ const item = getSystem("f2r");
 export const metadata: Metadata = {
   title: "Forecast-to-Rank Allocation (F2R) — Portfolio Strategy System",
   description:
-    "Forecast-to-Rank Allocation (F2R), a live cross-asset Portfolio Strategy System that combines conventional supervised machine learning with Chronos-2 pretrained time-series intelligence before translating forecasts into ranked portfolio decisions.",
+    "Forecast-to-Rank Allocation (F2R), a live cross-asset strategy combining conventional supervised machine learning with Chronos-2 before converting forecasts into ranked portfolio decisions.",
   alternates: { canonical: "/systems/f2r/" },
 };
 
@@ -74,20 +74,18 @@ export default function F2rSystemPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              F2R is a live cross-asset Portfolio Strategy System built around a clean separation between prediction and
-              portfolio choice. A heterogeneous forecasting layer combines conventional supervised machine learning with
-              Chronos-2 pretrained time-series intelligence; those views meet in a common cross-sectional ranking space
-              before any portfolio is formed.
+              F2R is a live cross-asset Portfolio Strategy System that separates forecasting from portfolio choice.
+              Conventional supervised models and Chronos-2 produce distinct forecasts, which are brought into a common
+              cross-sectional ranking process before the portfolio is formed.
             </p>
             <p className="body-copy">
-              That separation is deliberate. F2R does not treat raw forecast magnitudes as portfolio weights. Forecasts first
-              become comparable relative-opportunity ranks, then a governed allocation rule converts the final ordering into
-              a disciplined monthly multi-asset decision. The result is a modern forecasting stack wrapped in an interpretable
-              portfolio operating contract.
+              F2R does not treat raw forecast magnitudes as portfolio weights. Forecasts are first converted into comparable
+              relative-opportunity ranks; a separate allocation rule then turns the final ordering into the monthly multi-asset
+              portfolio. This keeps the forecasting logic separate from the rules that determine the portfolio.
             </p>
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">Heterogeneous</div><div className="label">Forecast architecture</div></div>
-              <div className="metric"><div className="value">Chronos-2</div><div className="label">Pretrained sequence expert</div></div>
+              <div className="metric"><div className="value">Chronos-2</div><div className="label">Pretrained time-series model</div></div>
               <div className="metric"><div className="value">Rank</div><div className="label">Portfolio translation</div></div>
               <div className="metric"><div className="value">Monthly</div><div className="label">Decision cycle</div></div>
             </div>
@@ -95,12 +93,12 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="process">
             <div className="kicker">Strategy architecture</div>
-            <h2>Heterogeneous forecasts, one common decision space</h2>
+            <h2>Heterogeneous forecasts, one common ranking process</h2>
             <div className="f2r-process-grid">
               <div className="system-role-card">
                 <div className="kicker">01 · Forecast</div>
                 <h3>Combine distinct forecasting views</h3>
-                <p>Conventional supervised models and Chronos-2 process price history through different representations before their views enter a common decision layer.</p>
+                <p>Conventional supervised models and Chronos-2 process price history through different representations before their forecasts enter the common ranking process.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">02 · Rank</div>
@@ -109,7 +107,7 @@ export default function F2rSystemPage() {
               </div>
               <div className="system-role-card">
                 <div className="kicker">03 · Allocate</div>
-                <h3>Translate rank into a governed portfolio target</h3>
+                <h3>Translate ranks into the portfolio target</h3>
                 <p>A separate allocation rule maps the final ordering into the monthly model portfolio under a defined timing, turnover, cost, and accounting contract.</p>
               </div>
             </div>
@@ -140,7 +138,7 @@ export default function F2rSystemPage() {
                 <a className="artifact" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">PUBLIC DEPLOYMENT</span>
                   <strong>GitHub Repository</strong>
-                  <small>Public-safe deployment artifact for the standalone Streamlit interface.</small>
+                  <small>Public deployment package for the standalone Streamlit interface.</small>
                   <span className="artifact-action">View Repository ↗</span>
                 </a>
               ) : null}
@@ -159,12 +157,12 @@ export default function F2rSystemPage() {
               <div className="dual-card">
                 <div className="kicker">Strategy layer</div>
                 <h3>F2R</h3>
-                <p>Forecast-ranked multi-asset portfolio strategy with its own operating contract, evidence lineage, and public deployment.</p>
+                <p>Forecast-ranked multi-asset strategy with its own timing rules, research record, and public dashboard.</p>
               </div>
               <div className="dual-card operational">
                 <div className="kicker">Operating layer</div>
                 <h3>Portfolio Decision System</h3>
-                <p>Portfolio-level framework for provider qualification, admission, integration, decision governance, refresh, and monitoring.</p>
+                <p>Portfolio-level system for provider qualification, admission, integration, decision governance, refresh, and monitoring.</p>
                 <Link className="btn inverse" href="/systems/pds/">Open PDS</Link>
               </div>
             </div>
@@ -172,7 +170,7 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="evidence">
             <div className="kicker">Related evidence</div>
-            <h2>Two public research papers document distinct stages of the F2R research lineage</h2>
+            <h2>Two public research papers document distinct stages of the F2R research record</h2>
             <p className="body-copy">
               The earlier information-set study tests whether historical-vintage macro
               information adds decision value beyond price information under matched
@@ -184,7 +182,7 @@ export default function F2rSystemPage() {
             <p className="body-copy">
               Both papers are frozen historical research artifacts. They document the
               evidence path that informed the F2R design family, while the live system
-              remains separately governed. Historical model-combination settings reported
+              is maintained separately. Historical model-combination settings reported
               in the paper are research configurations, not disclosures of the current
               protected production recipe.
             </p>
@@ -210,11 +208,11 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Operating boundary</div>
-            <h2>One operational source, governed public deployment surfaces</h2>
+            <h2>One operational source, multiple public access points</h2>
             <p className="body-copy">
-              The GitHub repository carries the public-safe deployment artifact, while Streamlit serves the public application.
-              Neither is a second operational source. F2R's operational state, validation, and release decisions remain
-              source-owned; only validated public-safe artifacts cross the deployment boundary.
+              The GitHub repository contains the public deployment package, while Streamlit serves the public application.
+              Neither is a second source of operational truth. F2R's operational state, validation, and release decisions
+              remain in the canonical F2R project; only validated public artifacts are published.
             </p>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
@@ -227,7 +225,7 @@ export default function F2rSystemPage() {
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
-                <h3>Source-owned / non-public</h3>
+                <h3>Internal / not public</h3>
                 <ul>
                   <li>Exact feature horizons, Chronos-2 sequence/runtime parameters, model-contribution settings, and low-level conflict-resolution rules</li>
                   <li>Local operating paths, credentials, and environment state</li>

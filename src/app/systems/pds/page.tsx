@@ -11,16 +11,16 @@ const item = getSystem("pds");
 export const metadata: Metadata = {
   title: "Portfolio Decision System — Multi-Strategy Portfolio Operating System",
   description:
-    "SlackQuant's governed multi-strategy portfolio operating system, combining source-owned strategy providers with RL-assisted adaptive risk control and a Dynamic FX implementation layer.",
+    "SlackQuant's multi-strategy portfolio operating system, combining independently maintained strategy providers with RL-assisted adaptive risk control and a Dynamic FX implementation layer.",
   alternates: { canonical: "/systems/pds/" },
 };
 
 const architectureStages = [
-  ["01", "Strategy / Forecast Providers", "Independent strategy systems enter through explicit source boundaries and retain their own evidence lineage."],
+  ["01", "Strategy / Forecast Providers", "Independent strategy systems enter through defined interfaces and keep their own research and operating records."],
   ["02", "Common Representation", "Provider outputs are translated into a consistent portfolio representation before cross-strategy comparison."],
   ["03", "Evidence Qualification", "Research evidence, data integrity, implementation assumptions, and operational readiness are checked before portfolio use."],
   ["04", "Adoption / Rejection", "Passing research evidence does not guarantee portfolio admission; incremental portfolio usefulness is assessed separately."],
-  ["05", "Portfolio Integration", "Approved providers are combined under a governed strategic allocation policy while provider identity and contribution remain traceable."],
+  ["05", "Portfolio Integration", "Approved providers are combined under a defined strategic allocation policy while each provider's identity and contribution remain traceable."],
   ["06", "Adaptive Risk Control", "An RL-assisted adaptive layer can selectively reduce risk without replacing the Core strategy engines."],
   ["07", "Monitoring / Refresh", "Core, Adaptive, Preview, Dynamic FX, and provider states are refreshed and monitored under a common operating clock."],
 ] as const;
@@ -173,19 +173,19 @@ export default function PdsSystemPage() {
         <article>
           <section className="prose-section" id="decision-state">
             <div className="kicker">Portfolio operating layer</div>
-            <h2>Turn independent strategy systems into one governed portfolio decision process.</h2>
+            <h2>Turn independent strategy systems into one portfolio decision process.</h2>
             <p className="lede">
-              PDS sits above individual strategy engines. It qualifies source-owned providers, separates research credibility
-              from portfolio usefulness, governs integration, forms portfolio-level decisions, and monitors whether each role
-              remains justified. The current Core combines ADAA and Forecast-to-Rank Allocation (F2R) as complementary providers;
-              the platform emphasizes their roles and system architecture rather than reducing the design to a single allocation ratio.
+              PDS sits above individual strategy engines. It evaluates providers, separates research credibility from portfolio
+              usefulness, manages integration, forms portfolio-level decisions, and monitors whether each role remains justified.
+              The current Core combines ADAA and Forecast-to-Rank Allocation (F2R) as complementary providers; the platform
+              emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.
             </p>
 
             <div className="pds-state-band">
               <div>
                 <span className="pds-state-label">Current Active Core</span>
                 <strong>ADAA + F2R</strong>
-                <small>Independent provider systems integrated through a governed strategic blend. Detailed current target construction is available in the validated dashboard.</small>
+                <small>Independent provider systems combined through a defined strategic allocation. Detailed current target construction is available in the validated dashboard.</small>
               </div>
               <div>
                 <span className="pds-state-label">Adaptive Risk Control</span>
@@ -207,7 +207,7 @@ export default function PdsSystemPage() {
             </div>
 
             <div className="boundary-note">
-              <b>Operational surface:</b> the PDS dashboard is the validated public operating view. It publishes the current
+              <b>Public dashboard:</b> the PDS dashboard is the validated operating view. It publishes the current
               decision, Adaptive state, Preview, performance, portfolio detail, and Dynamic FX monitoring while suppressing only
               environment-specific infrastructure such as local paths, runtimes, caches, credentials, and debug controls.
             </div>
@@ -219,14 +219,14 @@ export default function PdsSystemPage() {
             <p className="body-copy">
               PDS deliberately separates the source of portfolio opportunity from the controls applied around it. PDS Core is the
               canonical multi-strategy portfolio. PDS Adaptive adds an RL-assisted risk-control layer that can selectively
-              reduce exposure under governed defensive conditions. Dynamic FX is an implementation overlay that manages USD/KRW
+              reduce exposure when the defensive policy is active. Dynamic FX is an implementation overlay that manages USD/KRW
               hedge exposure on its own monthly decision clock.
             </p>
             <div className="system-role-grid pds-role-grid">
               <div className="system-role-card">
                 <div className="kicker">Canonical portfolio</div>
                 <h3>PDS Core</h3>
-                <p>Integrates admitted strategy providers under a governed portfolio policy while preserving provider boundaries, timing, and evidence lineage.</p>
+                <p>Combines admitted strategy providers under a defined portfolio policy while preserving each provider's timing, identity, and research record.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Reinforcement Learning</div>
@@ -236,12 +236,12 @@ export default function PdsSystemPage() {
               <div className="system-role-card">
                 <div className="kicker">Investor implementation</div>
                 <h3>Dynamic FX Overlay</h3>
-                <p>Applies a governed monthly USD/KRW hedge decision and cost schedule while keeping the underlying USD portfolio decision separate.</p>
+                <p>Applies a monthly USD/KRW hedge decision and cost schedule while keeping the underlying USD portfolio decision separate.</p>
               </div>
             </div>
             <div className="evidence-note">
               Current Adaptive state and risk budget are visible in the public dashboard. Low-level controller configuration,
-              training artifacts, model seeds, and implementation internals remain governed implementation details.
+              training artifacts, model seeds, and other implementation details remain internal.
             </div>
           </section>
 
@@ -264,8 +264,7 @@ export default function PdsSystemPage() {
             <p className="body-copy">
               PDS keeps research validation separate from portfolio admission. A strategy can be scientifically well specified
               yet add little incremental portfolio value, while a practical portfolio role does not rewrite a failed or
-              inconclusive research result. This separation allows provider admission to be governed by both evidence quality
-              and incremental portfolio function.
+              inconclusive research result. Provider admission therefore depends on both evidence quality and the role the strategy adds to the portfolio.
             </p>
             <div className="dual pds-gate-dual">
               <div className="dual-card">
@@ -276,18 +275,18 @@ export default function PdsSystemPage() {
               <div className="dual-card operational">
                 <div className="kicker">Portfolio admission</div>
                 <h3>Does it improve the portfolio&apos;s decision set?</h3>
-                <p>Incremental diversification, role fit, operational burden, and interaction with existing providers determine whether it belongs in the portfolio decision set.</p>
+                <p>Incremental diversification, role fit, operational burden, and interaction with existing providers determine whether the strategy belongs in the portfolio.</p>
               </div>
             </div>
           </section>
 
           <section className="prose-section" id="providers">
             <div className="kicker">Current Active Core providers</div>
-            <h2>Complementary strategy systems inside a broader operating architecture</h2>
+            <h2>Complementary strategy systems inside the PDS portfolio process</h2>
             <p className="body-copy">
-              ADAA and F2R are the strategy systems currently admitted to the Active Core. They remain independently governed,
-              source-owned Portfolio Strategy Systems: their models, evidence, and operating histories remain source-owned, while PDS governs
-              the portfolio-level admission, integration, current decision, and monitoring process.
+              ADAA and F2R are the strategy systems currently admitted to the Active Core. Each remains an independent Portfolio
+              Strategy System with its own models, evidence, and operating history; PDS is responsible for portfolio-level
+              admission, integration, the current combined decision, and monitoring.
             </p>
             <div className="dual pds-provider-dual">
               <div className="dual-card">
@@ -299,7 +298,7 @@ export default function PdsSystemPage() {
               <div className="dual-card">
                 <div className="kicker">Portfolio Strategy System</div>
                 <h3>Forecast-to-Rank Allocation (F2R)</h3>
-                <p>A heterogeneous cross-asset forecasting system combining conventional supervised machine learning with Chronos-2 pretrained time-series intelligence before rank-based portfolio formation.</p>
+                <p>A heterogeneous cross-asset forecasting system combining conventional supervised machine learning with Chronos-2 pretrained time-series forecasting before rank-based portfolio formation.</p>
                 <Link className="btn soft" href="/systems/f2r/">View F2R</Link>
               </div>
             </div>
@@ -361,16 +360,16 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="monitoring">
             <div className="kicker">Monitoring & governance</div>
-            <h2>One operating surface, with only environment-specific details suppressed.</h2>
+            <h2>The public dashboard mirrors the operating view while excluding machine-specific details.</h2>
             <p className="body-copy">
-              The validated public dashboard mirrors the canonical reader-facing operating information from the local system.
-              Publication suppresses machine-specific infrastructure rather than creating a separate reduced investment view.
-              Current decision state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance remain
-              visible under the same governed data and clock conventions.
+              The validated public dashboard mirrors the reader-facing operating information from the local system. Publication
+              removes machine-specific infrastructure rather than creating a separate, simplified investment view. Current
+              decision state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance use the same
+              data and clock conventions.
             </p>
             <div className="system-operating-list">
-              <div><strong>On-demand refresh.</strong><span> The release workflow refreshes provider state, validates cross-system reconciliation, and rebuilds the public dashboard from the governed source state.</span></div>
-              <div><strong>Provider boundaries.</strong><span> ADAA and F2R remain source-owned systems consumed through governed interfaces rather than copied into PDS.</span></div>
+              <div><strong>On-demand refresh.</strong><span> The release workflow refreshes provider state, validates cross-system reconciliation, and rebuilds the public dashboard from the canonical source state.</span></div>
+              <div><strong>Provider boundaries.</strong><span> ADAA and F2R remain independent systems connected to PDS through defined interfaces rather than copied into PDS.</span></div>
               <div><strong>Fail-closed publication.</strong><span> Public deployment is blocked when data, clock, identity, responsive-layout, or private-environment checks fail.</span></div>
             </div>
           </section>
@@ -378,7 +377,7 @@ export default function PdsSystemPage() {
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="boundary">
-            <div className="kicker">Public operating surface / internal implementation</div>
+            <div className="kicker">Public dashboard / internal implementation</div>
             <h2>Operational transparency without exposing machine-specific infrastructure.</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
@@ -402,8 +401,8 @@ export default function PdsSystemPage() {
             </div>
             <div className="evidence-note">
               The platform page intentionally summarizes the operating architecture rather than repeating every portfolio parameter.
-              The validated PDS dashboard is the authoritative public surface for current detailed targets, Preview, Dynamic FX,
-              and performance diagnostics; it is a research and monitoring surface, not a brokerage execution interface.
+              The validated PDS dashboard is the authoritative public source for current detailed targets, Preview, Dynamic FX,
+              and performance diagnostics; it is for research and monitoring, not brokerage execution.
             </div>
           </section>
         </article>

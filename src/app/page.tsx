@@ -174,8 +174,8 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span>Architecture</span>
-                    <strong>Provider-agnostic portfolio operating layer</strong>
-                    <small>Current providers are operating inputs, not the definition of PDS.</small>
+                    <strong>Portfolio operating layer independent of any single provider</strong>
+                    <small>The current provider mix can change without changing the role of PDS.</small>
                   </div>
                 </aside>
               </article>

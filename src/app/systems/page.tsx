@@ -43,7 +43,7 @@ export default function SystemsPage() {
             <h2>Clear authority. Distinct strategy domains.</h2>
             <p>
               The hierarchy distinguishes where a system sits in the investment process from the market domain in which a strategy operates.
-              Portfolio Operations governs integration and authority; Investment Strategies generates positions; Risk & Analytics supports diagnosis
+              Portfolio Operations governs integration and authority; Investment Strategies generate positions; Risk & Analytics supports diagnosis
               and stress interpretation.
             </p>
           </div>

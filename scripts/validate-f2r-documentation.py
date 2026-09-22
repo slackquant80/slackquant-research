@@ -42,8 +42,8 @@ def main() -> int:
     for token in [
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
-        "Chronos-2 pretrained time-series intelligence",
-        "Heterogeneous forecasts, one common decision space",
+        "Conventional supervised models and Chronos-2 produce distinct forecasts",
+        "Heterogeneous forecasts, one common ranking process",
         "Public disclosure names the forecasting technologies and the decision architecture.",
         'target="_blank"',
         'rel="noopener noreferrer"',
@@ -61,7 +61,7 @@ def main() -> int:
             raise RuntimeError(f"F2R page contains retired/recipe-sensitive token: {forbidden}")
 
     methods_text = methods.read_text(encoding="utf-8-sig", errors="strict")
-    current_qm002 = "Chronos-2 sequence expert enters through a separate governed inference path"
+    current_qm002 = "Chronos-2 is evaluated through a separate inference path rather than sharing the same fitting window"
     stale_qm002 = "with rolling windows retained as a methodological comparison rather than the live default"
     if current_qm002 not in methods_text:
         raise RuntimeError("F2R QM002 system context is not aligned to the current heterogeneous architecture")

@@ -10,7 +10,7 @@ export const site = {
     headline: "Quantitative Investment Practitioner & Researcher",
     affiliation: "Graduate School of Computing, Yonsei University",
     bio:
-      "Quantitative investment practitioner and researcher working at the intersection of systematic investing, asset allocation, machine learning, and AI-driven investment decision systems. His work focuses on translating forecasting, portfolio construction, and investment methodologies into reproducible and operational investment systems.",
+      "Quantitative investment practitioner and researcher focused on systematic investing, asset allocation, machine learning, and AI for investment decisions. His work spans forecasting, portfolio construction, and the development of reproducible investment systems.",
     email: "research@slackquant.com",
     linkedin: "https://kr.linkedin.com/in/sungkyu-scott-lee-cfa-46777655",
   },

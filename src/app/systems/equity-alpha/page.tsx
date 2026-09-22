@@ -9,7 +9,7 @@ const item = getSystem("equity-alpha");
 export const metadata: Metadata = {
   title: "Equity Alpha — Machine-Learning Equity ETF Strategy",
   description:
-    "SlackQuant Equity Alpha combines REX2 regularized cross-sectional machine learning, Chronos-2 pretrained time-series intelligence, and benchmark-aware active portfolio construction relative to ACWI.",
+    "SlackQuant Equity Alpha combines REX2 regularized cross-sectional machine learning, Chronos-2 forecasting, and benchmark-aware active portfolio construction relative to ACWI.",
   alternates: { canonical: "/systems/equity-alpha/" },
 };
 
@@ -83,9 +83,9 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="models">
             <div className="kicker">Model stack</div>
-            <h2>Two forecasting paradigms, one rank-based decision space</h2>
+            <h2>Two forecasting paradigms, one rank-based selection process</h2>
             <p className="body-copy">
-              Equity Alpha combines regularized cross-sectional machine learning with pretrained time-series forecasting. The objective is not to crown one model family, but to translate heterogeneous forecasts into a common portfolio decision language and preserve useful model disagreement when it improves selection quality.
+              Equity Alpha combines regularized cross-sectional machine learning with pretrained time-series forecasting. The objective is not to crown one model family, but to bring different forecasts into a common rank-based selection process while preserving useful disagreement between models.
             </p>
             <div className="system-role-grid equity-alpha-model-grid">
               <div className="system-role-card equity-alpha-role-card">
@@ -95,7 +95,7 @@ export default function EquityAlphaSystemPage() {
               </div>
               <div className="system-role-card equity-alpha-role-card">
                 <div className="kicker">Chronos-2</div>
-                <h3>Pretrained time-series intelligence</h3>
+                <h3>Pretrained time-series forecasting</h3>
                 <p>Chronos-2 contributes an independently trained time-series view, adding a pretrained forecasting paradigm that is structurally different from the fitted cross-sectional models.</p>
               </div>
               <div className="system-role-card equity-alpha-role-card">
@@ -105,7 +105,7 @@ export default function EquityAlphaSystemPage() {
               </div>
             </div>
             <div className="evidence-note">
-              <strong>Architecture-visible, recipe-protected.</strong> Public disclosure identifies the model families, portfolio roles, and decision flow. Exact feature transformations, hyperparameters, blend coefficients, and source-owned implementation details remain protected.
+              <strong>Public architecture, protected implementation details.</strong> The public page identifies the model families, portfolio roles, and decision flow. Exact feature transformations, hyperparameters, blend coefficients, and implementation details remain private.
             </div>
           </section>
 
@@ -116,12 +116,12 @@ export default function EquityAlphaSystemPage() {
               <div className="system-role-card equity-alpha-role-card">
                 <div className="kicker">01 · Broad PIT</div>
                 <h3>Dynamic opportunity set</h3>
-                <p>A broad U.S.-listed global equity ETF universe is formed point in time and ranked with the REX2 / Chronos-2 forecasting stack. The universe, model evidence, and ranking provenance remain observable rather than being collapsed into an opaque score.</p>
+                <p>A broad U.S.-listed global equity ETF universe is formed point in time and ranked with the REX2 / Chronos-2 forecasting stack. The universe, model outputs, and ranking path remain visible rather than being collapsed into a single opaque score.</p>
               </div>
               <div className="system-role-card equity-alpha-role-card">
                 <div className="kicker">02 · Static-v1</div>
                 <h3>Independent decision sleeve</h3>
-                <p>A separately governed static universe combines machine-learning and multi-signal evidence through its own selection path. Its ranks remain distinct from Broad ranks so the two engines preserve their own decision meaning.</p>
+                <p>A separately maintained static universe combines machine-learning and multi-signal evidence through its own selection path. Its ranks remain distinct from Broad ranks so the two engines can be interpreted separately.</p>
               </div>
               <div className="system-role-card equity-alpha-role-card">
                 <div className="kicker">03 · Portfolio</div>
@@ -133,9 +133,9 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="universe">
             <div className="kicker">Universe evolution</div>
-            <h2>Monthly point-in-time change is automatic; candidate-pool expansion is governed</h2>
+            <h2>Monthly point-in-time updates are automatic; candidate-pool expansion requires a separate review</h2>
             <p className="body-copy">
-              The Broad engine is dynamic every month inside its governed model-ready candidate pool. At each completed signal month, market eligibility and exposure representation are rebuilt from information available at that time, so eligible ETFs can enter or leave the monthly opportunity set and the representative wrapper for an exposure can change as liquidity and history evolve.
+              The Broad engine is dynamic every month inside its approved model-ready candidate pool. At each completed signal month, market eligibility and exposure representation are rebuilt from information available at that time, so eligible ETFs can enter or leave the monthly opportunity set and the representative wrapper for an exposure can change as liquidity and history evolve.
             </p>
             <p className="body-copy">
               The outer candidate pool is intentionally more conservative. A newly listed ETF or a wrapper that has never accumulated enough model-ready history is not promoted automatically merely because it becomes tradable. SlackQuant therefore separates <strong>monthly PIT maintenance</strong> from a lower-frequency <strong>Universe Expansion Audit</strong>. The latter reviews newly available wrappers, classification and exposure identity, listing history, liquidity, duplicate exposure, and model-readiness before any canonical pool revision. This keeps the live system adaptive without silently rewriting its historical information set.
@@ -144,7 +144,7 @@ export default function EquityAlphaSystemPage() {
               <div className="dual-card">
                 <div className="kicker">Monthly</div>
                 <h3>Dynamic PIT maintenance</h3>
-                <p>Re-evaluate eligibility and exposure representatives on the completed signal-month clock using the existing governed candidate pool.</p>
+                <p>Re-evaluate eligibility and exposure representatives on the completed signal-month clock using the existing approved candidate pool.</p>
               </div>
               <div className="dual-card operational">
                 <div className="kicker">Periodic governance</div>
@@ -162,7 +162,7 @@ export default function EquityAlphaSystemPage() {
             </p>
             <div className="equity-alpha-clock-grid">
               <div><span>Completed performance</span><strong>Closed historical periods</strong><small>Realized return evidence only</small></div>
-              <div><span>Official portfolio</span><strong>Current governed holding</strong><small>Signal and holding month shown explicitly</small></div>
+              <div><span>Official portfolio</span><strong>Current official holding</strong><small>Signal and holding month shown explicitly</small></div>
               <div><span>Current MTD / YTD</span><strong>Completed market closes</strong><small>Open-session partial bars excluded</small></div>
               <div><span>Preview</span><strong>NOT EXECUTED</strong><small>Candidate next state, clearly provisional</small></div>
             </div>
@@ -191,9 +191,9 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="public">
             <div className="kicker">Public operating view</div>
-            <h2>Decision provenance is visible without turning the website into a second model source</h2>
+            <h2>The dashboard shows how current decisions were formed without becoming a separate model source</h2>
             <p className="body-copy">
-              SlackQuant publishes a validated public-safe dashboard that exposes the current Official portfolio, current performance, Preview, Broad and Static universe views, portfolio history, active-risk metrics, and architecture. The canonical ETF Alpha project remains authoritative for refresh, scoring, portfolio formation, validation, and release decisions.
+              SlackQuant publishes a validated public dashboard showing the current Official portfolio, current performance, Preview, Broad and Static universe views, portfolio history, active-risk metrics, and architecture. The canonical Equity Alpha project remains the source of truth for refresh, scoring, portfolio formation, validation, and release decisions.
             </p>
             {item.links.publicDashboard ? (
               <div className="repro-links documentation-artifacts">
@@ -217,10 +217,10 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Operating boundary</div>
-            <h2>Public architecture is interpretable; operational authority remains source-owned</h2>
+            <h2>The public site explains the architecture; the canonical project remains the operational source</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
-                <h3>Public surface</h3>
+                <h3>Public</h3>
                 <ul>
                   <li>Benchmark, opportunity domain, model families, and portfolio architecture</li>
                   <li>Validated Official portfolio and completed/current performance states</li>
@@ -229,7 +229,7 @@ export default function EquityAlphaSystemPage() {
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
-                <h3>Source-owned / non-public</h3>
+                <h3>Internal / not public</h3>
                 <ul>
                   <li>Exact feature recipes, hyperparameters, blend coefficients, and protected implementation details</li>
                   <li>Private runtime data, credentials, local paths, and release-engineering state</li>

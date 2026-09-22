@@ -301,7 +301,7 @@ export default function SecondOpinionPortfolioPage() {
               <Link className="artifact artifact-primary" href="/systems/f2r/">
                 <span className="artifact-kicker">RELATED SYSTEM</span>
                 <strong>Forecast-to-Rank Allocation (F2R)</strong>
-                <small>Current public system architecture and governed operating boundary.</small>
+                <small>Current public system design and operating boundary.</small>
                 <span className="artifact-action">View F2R System →</span>
               </Link>
             </div>

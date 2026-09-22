@@ -46,7 +46,7 @@ export const systemItems: SystemItem[] = [
     status: "Public operational dashboard",
     dateLabel: "Updated with latest validated operational release",
     shortSummary:
-      "SlackQuant's governed multi-strategy portfolio operating layer. PDS Core integrates source-owned strategy providers, PDS Adaptive adds RL-assisted adaptive risk control as a parallel defensive layer, and Dynamic FX provides a separately governed investor-implementation overlay. The validated dashboard publishes the current operational state while machine-specific infrastructure remains internal.",
+      "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds RL-assisted risk control as a separate defensive layer, and Dynamic FX applies a separately managed investor-level currency overlay. The validated dashboard shows the current operating state while machine-specific infrastructure remains internal.",
     role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
     methodsKey: "pds-system",
     links: {
@@ -63,7 +63,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Live release series",
     shortSummary:
-      "A live multi-asset Portfolio Strategy System built around Decision Diversification: deliberately combining complementary decision horizons, cross-asset opportunity views, defensive responses, and persistence so the portfolio is not dependent on one allocation path. Official decisions, current drift, and provisional preview states remain explicitly separated.",
+      "A live multi-asset strategy built around Decision Diversification: combining complementary decision horizons, cross-asset opportunity views, defensive responses, and persistence so the portfolio does not depend on a single allocation rule. Official decisions, current drift, and provisional preview states are shown separately.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
     ssrnId: "7251518",
     evidenceLabel: "Public Working Paper",
@@ -88,7 +88,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live",
     dateLabel: "Live release series",
     shortSummary:
-      "Forecast-to-Rank Allocation (F2R) is a live cross-asset Portfolio Strategy System that combines conventional supervised machine learning with Chronos-2 pretrained time-series intelligence, translates heterogeneous forecasts into a common rank-based decision space, and converts that ordering into a disciplined monthly portfolio. Technology and architecture are public; low-level construction parameters remain protected.",
+      "Forecast-to-Rank Allocation (F2R) is a live cross-asset strategy combining conventional supervised machine learning with Chronos-2. Forecasts from different models are converted into a common rank-based ordering before the monthly portfolio is formed. The public site explains the model families and decision architecture, while low-level construction parameters remain private.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
     methodsKey: "f2r-system",
     links: {
@@ -108,7 +108,7 @@ export const systemItems: SystemItem[] = [
     status: "Public live · research-use operating view",
     dateLabel: "Official signal 2026-08 · holding 2026-09",
     shortSummary:
-      "A benchmark-aware global equity ETF strategy that combines REX2 regularized cross-sectional machine learning, Chronos-2 pretrained time-series intelligence, and complementary multi-signal evidence. Forecasts are translated into ranked ETF selections and an ACWI-relative active portfolio with explicit Official, current-performance, and Preview clocks.",
+      "A benchmark-aware global equity ETF strategy combining REX2 regularized cross-sectional machine learning, Chronos-2, and complementary multi-signal evidence. Forecasts are converted into ranked ETF selections and an ACWI-relative active portfolio, with Official holdings, current performance, and Preview kept on separate clocks.",
     role: "Machine-Learning Equity ETF Selection and ACWI-Relative Active Portfolio Construction",
     methodsKey: "equity-alpha-system",
     links: {
@@ -161,7 +161,7 @@ export const systemGroupDefinitions: Array<{
     kicker: "Multi-asset family",
     title: "Multi-Asset Strategies",
     description:
-      "Cross-asset strategy engines that generate portfolio allocations under independent decision architectures, timing contracts, and evidence standards.",
+      "Cross-asset strategy engines that generate portfolio allocations under their own decision rules, timing conventions, and evidence standards.",
   },
   {
     key: "equity-alpha",
@@ -175,7 +175,7 @@ export const systemGroupDefinitions: Array<{
     kicker: "Risk analysis",
     title: "Risk & Scenario Analysis",
     description:
-      "Decision-support systems for diagnosing portfolio risk, stress structure, and scenario behavior without becoming portfolio strategies themselves.",
+      "Decision-support systems for analyzing portfolio risk, stress structure, and scenario behavior without acting as portfolio strategies.",
   },
 ];
 
@@ -191,7 +191,7 @@ export const systemLayerDefinitions: Array<{
     kicker: "Portfolio operating layer",
     title: "Portfolio Operations",
     description:
-      "The portfolio-level operating layer governs which strategy providers are admitted, how approved decisions are integrated, and how portfolio authority and monitoring remain traceable over time.",
+      "The portfolio-level operating layer determines which strategy providers are admitted, how approved decisions are combined, and how portfolio authority and monitoring are tracked over time.",
     groupKeys: ["portfolio-decision"],
   },
   {

@@ -9,7 +9,7 @@ const item = getSystem("adaa");
 export const metadata: Metadata = {
   title: "ADAA — Portfolio Strategy System",
   description:
-    "Live multi-asset Portfolio Strategy System built around Decision Diversification: complementary decision horizons, opportunity views, defensive responses, and persistence combined under a disciplined monthly operating contract.",
+    "Live multi-asset Portfolio Strategy System built around Decision Diversification, with complementary decision horizons, opportunity views, defensive responses, and persistence under a defined monthly decision and execution process.",
   alternates: { canonical: "/systems/adaa/" },
 };
 
@@ -147,7 +147,7 @@ export default function AdaaSystemPage() {
               recipe. Detailed implementation, historical tests, and reproducibility materials remain in the versioned research record.
             </div>
             <div className="system-operating-list adaa-pds-relationship">
-              <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System and source owner while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>
+              <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>
             </div>
           </section>
 
@@ -159,9 +159,9 @@ export default function AdaaSystemPage() {
                 <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
-                  The governed release workflow refreshes and validates the canonical ADAA source state before deployment, including
+                  Before deployment, the release workflow refreshes and validates the canonical ADAA state, including
                   the 19-source-series market snapshot (18 final decision assets plus the EWJ history bridge). The public Thin-Shiny
-                  shell serves the validated snapshot-rendered dashboard; public sessions do not acquire Yahoo/FRED/FX data or
+                  app serves the validated snapshot-rendered dashboard; public sessions do not acquire Yahoo/FRED/FX data or
                   recompute the strategy.
                 </p>
                 {item.links.liveDashboard ? (
@@ -185,7 +185,7 @@ export default function AdaaSystemPage() {
             </div>
             <div className="system-operating-list adaa-evidence-list">
               <div><strong>Published evidence.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable record for the published study.</span></div>
-              <div><strong>Live operation.</strong><span> Source refresh, canonical snapshot validation, and public-safe bundling occur before deployment; the public application reads the validated released bundle.</span></div>
+              <div><strong>Live operation.</strong><span> Source refresh, canonical snapshot validation, and creation of the public deployment bundle occur before deployment; the public application reads that validated bundle.</span></div>
               <div><strong>Interpretation.</strong><span> The dashboard reports current strategy state and research-linked evidence; it is not a claim of guaranteed future performance.</span></div>
             </div>
 
@@ -217,7 +217,7 @@ export default function AdaaSystemPage() {
               {item.links.ssrn ? (
                 <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">SSRN</span><strong>Public Working Paper v1.34</strong>
-                  <small>Citable research anchor for Decision Diversification and the documented historical implementation.</small><span className="artifact-action">Open SSRN ↗</span>
+                  <small>Citable research record for Decision Diversification and the documented historical implementation.</small><span className="artifact-action">Open SSRN ↗</span>
                 </a>
               ) : null}
               {item.links.researchDashboard ? (

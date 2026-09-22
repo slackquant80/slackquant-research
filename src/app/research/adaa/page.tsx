@@ -221,7 +221,7 @@ export default function AdaaPage() {
           <section className="prose-section" id="dashboards">
             <h2>Research and Implementation</h2>
             <p>
-              This page is the Investment Research record aligned to the cited paper. The separate
+              This page is the Investment Research record aligned with the cited paper. The separate
               <Link href="/systems/adaa/"> ADAA System page</Link> covers current operation and links
               back to this versioned research evidence.
             </p>

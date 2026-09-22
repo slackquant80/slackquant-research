@@ -250,7 +250,7 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
-        "validated public operating view",
+        "validated operating view",
         "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
         "System Documentation ↗",
     )
@@ -258,8 +258,8 @@ def main() -> int:
         if forbidden in pds:
             raise RuntimeError(f"PDS platform landing regression: {forbidden}")
     for required in (
-        "the platform emphasizes their roles and system architecture rather than reducing the design to a single allocation ratio.",
-        "the PDS dashboard is the validated public operating view.",
+        "emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.",
+        "the PDS dashboard is the validated operating view.",
     ):
         if required not in pds:
             raise RuntimeError(f"PDS current-platform disclosure missing: {required}")
@@ -316,8 +316,8 @@ def main() -> int:
     # F2R_CURRENT_ARCHITECTURE_GATE_V2_1
     f2r = need(
         "src/app/systems/f2r/page.tsx",
-        "Chronos-2 pretrained time-series intelligence",
-        "Heterogeneous forecasts, one common decision space",
+        "Conventional supervised models and Chronos-2 produce distinct forecasts",
+        "Heterogeneous forecasts, one common ranking process",
         "Public disclosure names the forecasting technologies and the decision architecture.",
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
@@ -344,7 +344,7 @@ def main() -> int:
     need(
         "src/app/systems/pds/page.tsx",
         "Multi-strategy Core, RL-assisted adaptive risk control, and Dynamic FX.",
-        "Chronos-2 pretrained time-series intelligence",
+        "Chronos-2 pretrained time-series forecasting",
         "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
     )
 

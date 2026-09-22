@@ -568,7 +568,7 @@ function renderUniverse(){
    ['Static-74 canonical',S.canonicalCount??74,'fixed Static-v1 opportunity set'],
    ['Official scored',S.scoredCount??staticRows.filter(x=>x.isScored).length,S.signalMonth?`signal ${S.signalMonth}`:'run [23] to publish'],
    ['Static selected',S.selectedCount??staticRows.filter(x=>x.selectedStatic).length,'10% structural sleeve'],
-   ['Static evidence',S.status||'UNAVAILABLE',S.originDate?`origin ${S.originDate}`:(S.reason||'source-owned scores not published')]
+   ['Static evidence',S.status||'UNAVAILABLE',S.originDate?`origin ${S.originDate}`:(S.reason||'Static-v1 scores are not available in this snapshot')]
   ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${esc(x[2])}</div></div>`).join('');
  }else{
   $('#universeKpis').innerHTML=[
@@ -611,7 +611,7 @@ function renderUniverseTable(){
   $('#universeInventoryNote').innerHTML='<b>Static rank</b> is the Official Static-v1 cross-sectional rank for the 10% sleeve. <b>Static blend strength</b> is a normalized decision diagnostic, not an expected return or probability. Component ranks are shown separately; no Broad rank is mixed into this table.';
   $('#universeTableHead').innerHTML='<tr><th class="num">Static rank</th><th>ETF</th><th>Name</th><th class="num">Static blend strength</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th class="num">Multi-signal rank</th><th>Current Static state</th><th>Role family</th><th>Exposure</th></tr>';
   if(!filtered.length){
-   const reason=L.currentStaticUniverse?.reason||'Run [23] once after installing this version to publish source-owned Official Static-v1 ranks.';
+   const reason=L.currentStaticUniverse?.reason||'Official Static-v1 ranks are not available in this snapshot.';
    $('#universeBody').innerHTML=`<tr><td colspan="10" class="muted">${esc(reason)}</td></tr>`;return;
   }
   $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedStatic?'selected-row':''}"><td class="num"><b>${r.staticRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.staticScore==null?'—':num(r.staticScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td class="num">${r.multiSignalRank??'—'}</td><td><span class="pill ${staticDecisionClass(r.staticState)}">${esc(staticDecisionLabel(r.staticState))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td></tr>`).join('');
@@ -653,7 +653,7 @@ function renderHistory(){
  const months=rows.slice(-36),tickers=[...new Set(months.flatMap(m=>m[sleeveField]||[]))].sort();
  let head='<tr><th>Ticker</th>'+months.map(m=>`<th title="${m._state==='OFFICIAL_OPEN'?'Current Official open holding month':'Completed decision'}">${esc(String(m.signalMonth).slice(2))}${m._state==='OFFICIAL_OPEN'?'*':''}</th>`).join('')+'</tr>';
  let body=tickers.map(t=>`<tr><td>${esc(t)}</td>`+months.map((m,i)=>{const on=(m[sleeveField]||[]).includes(t),prev=i?(months[i-1][sleeveField]||[]).includes(t):false;return `<td class="cell ${on?(prev?'on':'new'):''} ${m._state==='OFFICIAL_OPEN'?'open-decision':''}" title="${esc(m.signalMonth)} · ${esc(t)} · ${historySleeve==='static'?'Static-v1 10%':'Broad 90%'} · ${m._state==='OFFICIAL_OPEN'?'Official open':'Completed'}"></td>`}).join('')+'</tr>').join('');
- $('#historyHeatmap').innerHTML=tickers.length?`<table class="heatgrid">${head}${body}</table>`:'<div class="muted">Static-v1 decision history is not yet published for this local snapshot. Run [23] once to refresh source-owned history.</div>';
+ $('#historyHeatmap').innerHTML=tickers.length?`<table class="heatgrid">${head}${body}</table>`:'<div class="muted">Static-v1 decision history is not available for this snapshot.</div>';
  $('#historySleeveTabs').innerHTML=[['broad','Broad 90%'],['static','Static-v1 10%']].map(([k,l])=>`<button data-h="${k}" class="${historySleeve===k?'active':''}">${l}</button>`).join('');
  $('#historySleeveTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{historySleeve=b.dataset.h;renderHistory()});
  $('#historyHeatmapTitle').textContent=historySleeve==='static'?'Static-v1 10% selection heatmap':'Broad 90% selection heatmap';

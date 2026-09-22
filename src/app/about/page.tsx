@@ -41,8 +41,8 @@ export default function AboutPage() {
               Methods provides reusable explanations of recurring methods, while
               Systems presents operational tools separately from the versioned research
               that supports them. Papers, evidence, code, dashboards, and documentation
-              stay connected without collapsing research and live operation into the
-              same record.
+              remain connected, while research evidence and live operation stay as
+              separate records.
             </p>
 
             <div className="person-card">
