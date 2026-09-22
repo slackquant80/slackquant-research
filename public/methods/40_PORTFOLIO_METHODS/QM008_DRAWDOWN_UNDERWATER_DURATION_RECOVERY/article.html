@@ -1,10 +1,13 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
-<meta charset="utf-8"/>
-<meta content="quarto-1.10.18" name="generator"/>
-<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
-<meta content="A practical guide to drawdown depth, underwater curves, episode duration, recovery conventions, and censored unrecovered periods." name="description"/>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to drawdown depth, underwater curves, episode duration, recovery conventions, and censored unrecovered periods.">
+
 <title>Drawdown, Underwater Duration, and Recovery – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -79,6 +82,8 @@ div.csl-right-inline {
 div.csl-indent {
   margin-left: 2em;
 }</style>
+
+
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -86,11 +91,11 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
-<link append-hash="true" data-mode="light" href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -107,6 +112,7 @@ div.csl-indent {
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -115,8 +121,10 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
@@ -143,62 +151,66 @@ window.Quarto = {
   typesetMath
 };
 </script>
-<link href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html" rel="canonical"/>
+
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">
 </head>
+
 <body class="quarto-light">
+
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
-<nav class="toc-active" id="TOC" role="doc-toc">
-<h2 id="toc-title">On this page</h2>
-<ul>
-<li><a class="nav-link active" data-scroll-target="#the-question" href="#the-question" id="toc-the-question">The Question</a></li>
-<li><a class="nav-link" data-scroll-target="#start-with-the-wealth-path" href="#start-with-the-wealth-path" id="toc-start-with-the-wealth-path">Start with the Wealth Path</a></li>
-<li><a class="nav-link" data-scroll-target="#different-drawdown-percentages-use-different-denominators" href="#different-drawdown-percentages-use-different-denominators" id="toc-different-drawdown-percentages-use-different-denominators">Different Drawdown Percentages Use Different Denominators</a></li>
-<li><a class="nav-link" data-scroll-target="#maximum-drawdown-is-a-path-statistic" href="#maximum-drawdown-is-a-path-statistic" id="toc-maximum-drawdown-is-a-path-statistic">Maximum Drawdown Is a Path Statistic</a></li>
-<li><a class="nav-link" data-scroll-target="#time-under-water-needs-more-than-one-number" href="#time-under-water-needs-more-than-one-number" id="toc-time-under-water-needs-more-than-one-number">Time Under Water Needs More Than One Number</a></li>
-<li><a class="nav-link" data-scroll-target="#a-completed-drawdown-episode" href="#a-completed-drawdown-episode" id="toc-a-completed-drawdown-episode">A Completed Drawdown Episode</a></li>
-<li><a class="nav-link" data-scroll-target="#unrecovered-episodes-are-censored" href="#unrecovered-episodes-are-censored" id="toc-unrecovered-episodes-are-censored">Unrecovered Episodes Are Censored</a></li>
-<li><a class="nav-link" data-scroll-target="#why-a-20-loss-needs-a-25-gain-to-recover" href="#why-a-20-loss-needs-a-25-gain-to-recover" id="toc-why-a-20-loss-needs-a-25-gain-to-recover">Why a 20% Loss Needs a 25% Gain to Recover</a></li>
-<li><a class="nav-link" data-scroll-target="#implementation-pattern" href="#implementation-pattern" id="toc-implementation-pattern">Implementation Pattern</a></li>
-<li><a class="nav-link" data-scroll-target="#worked-path-drawdown-and-recovery-states" href="#worked-path-drawdown-and-recovery-states" id="toc-worked-path-drawdown-and-recovery-states">Worked Path: Drawdown and Recovery States</a></li>
-<li><a class="nav-link" data-scroll-target="#hands-on-lab-recompute-the-episodes" href="#hands-on-lab-recompute-the-episodes" id="toc-hands-on-lab-recompute-the-episodes">Hands-on Lab: Recompute the Episodes</a></li>
-<li><a class="nav-link" data-scroll-target="#what-a-drawdown-report-should-state" href="#what-a-drawdown-report-should-state" id="toc-what-a-drawdown-report-should-state">What a Drawdown Report Should State</a></li>
-<li><a class="nav-link" data-scroll-target="#common-mistakes" href="#common-mistakes" id="toc-common-mistakes">Common Mistakes</a>
-<ul class="collapse">
-<li><a class="nav-link" data-scroll-target="#calling-the-worst-one-period-return-maximum-drawdown" href="#calling-the-worst-one-period-return-maximum-drawdown" id="toc-calling-the-worst-one-period-return-maximum-drawdown">1. Calling the worst one-period return “maximum drawdown”</a></li>
-<li><a class="nav-link" data-scroll-target="#switching-denominators-without-changing-the-label" href="#switching-denominators-without-changing-the-label" id="toc-switching-denominators-without-changing-the-label">2. Switching denominators without changing the label</a></li>
-<li><a class="nav-link" data-scroll-target="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart" href="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart" id="toc-mixing-positive-drawdown-depth-with-a-negative-underwater-chart">3. Mixing positive drawdown depth with a negative underwater chart</a></li>
-<li><a class="nav-link" data-scroll-target="#treating-below-peak-observations-as-peak-to-recovery-duration" href="#treating-below-peak-observations-as-peak-to-recovery-duration" id="toc-treating-below-peak-observations-as-peak-to-recovery-duration">4. Treating below-peak observations as peak-to-recovery duration</a></li>
-<li><a class="nav-link" data-scroll-target="#fabricating-recovery-at-the-sample-end" href="#fabricating-recovery-at-the-sample-end" id="toc-fabricating-recovery-at-the-sample-end">5. Fabricating recovery at the sample end</a></li>
-<li><a class="nav-link" data-scroll-target="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" href="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" id="toc-requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">6. Requiring a strict new high when recovery is defined at the prior peak</a></li>
-<li><a class="nav-link" data-scroll-target="#ignoring-sampling-frequency" href="#ignoring-sampling-frequency" id="toc-ignoring-sampling-frequency">7. Ignoring sampling frequency</a></li>
-<li><a class="nav-link" data-scroll-target="#reading-depth-as-a-forecast-of-recovery-time" href="#reading-depth-as-a-forecast-of-recovery-time" id="toc-reading-depth-as-a-forecast-of-recovery-time">8. Reading depth as a forecast of recovery time</a></li>
-</ul></li>
-<li><a class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended" href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
-<li><a class="nav-link" data-scroll-target="#related-methods" href="#related-methods" id="toc-related-methods">Related Methods</a></li>
-<li><a class="nav-link" data-scroll-target="#used-in-slackquant-research" href="#used-in-slackquant-research" id="toc-used-in-slackquant-research">Used in SlackQuant Research</a></li>
-<li><a class="nav-link" data-scroll-target="#reproducibility" href="#reproducibility" id="toc-reproducibility">Reproducibility</a></li>
-<li><a class="nav-link" data-scroll-target="#references" href="#references" id="toc-references">References</a></li>
-</ul>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#start-with-the-wealth-path" id="toc-start-with-the-wealth-path" class="nav-link" data-scroll-target="#start-with-the-wealth-path">Start with the Wealth Path</a></li>
+  <li><a href="#different-drawdown-percentages-use-different-denominators" id="toc-different-drawdown-percentages-use-different-denominators" class="nav-link" data-scroll-target="#different-drawdown-percentages-use-different-denominators">Different Drawdown Percentages Use Different Denominators</a></li>
+  <li><a href="#maximum-drawdown-is-a-path-statistic" id="toc-maximum-drawdown-is-a-path-statistic" class="nav-link" data-scroll-target="#maximum-drawdown-is-a-path-statistic">Maximum Drawdown Is a Path Statistic</a></li>
+  <li><a href="#time-under-water-needs-more-than-one-number" id="toc-time-under-water-needs-more-than-one-number" class="nav-link" data-scroll-target="#time-under-water-needs-more-than-one-number">Time Under Water Needs More Than One Number</a></li>
+  <li><a href="#a-completed-drawdown-episode" id="toc-a-completed-drawdown-episode" class="nav-link" data-scroll-target="#a-completed-drawdown-episode">A Completed Drawdown Episode</a></li>
+  <li><a href="#unrecovered-episodes-are-censored" id="toc-unrecovered-episodes-are-censored" class="nav-link" data-scroll-target="#unrecovered-episodes-are-censored">Unrecovered Episodes Are Censored</a></li>
+  <li><a href="#why-a-20-loss-needs-a-25-gain-to-recover" id="toc-why-a-20-loss-needs-a-25-gain-to-recover" class="nav-link" data-scroll-target="#why-a-20-loss-needs-a-25-gain-to-recover">Why a 20% Loss Needs a 25% Gain to Recover</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#worked-path-drawdown-and-recovery-states" id="toc-worked-path-drawdown-and-recovery-states" class="nav-link" data-scroll-target="#worked-path-drawdown-and-recovery-states">Worked Path: Drawdown and Recovery States</a></li>
+  <li><a href="#hands-on-lab-recompute-the-episodes" id="toc-hands-on-lab-recompute-the-episodes" class="nav-link" data-scroll-target="#hands-on-lab-recompute-the-episodes">Hands-on Lab: Recompute the Episodes</a></li>
+  <li><a href="#what-a-drawdown-report-should-state" id="toc-what-a-drawdown-report-should-state" class="nav-link" data-scroll-target="#what-a-drawdown-report-should-state">What a Drawdown Report Should State</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#calling-the-worst-one-period-return-maximum-drawdown" id="toc-calling-the-worst-one-period-return-maximum-drawdown" class="nav-link" data-scroll-target="#calling-the-worst-one-period-return-maximum-drawdown">1. Calling the worst one-period return “maximum drawdown”</a></li>
+  <li><a href="#switching-denominators-without-changing-the-label" id="toc-switching-denominators-without-changing-the-label" class="nav-link" data-scroll-target="#switching-denominators-without-changing-the-label">2. Switching denominators without changing the label</a></li>
+  <li><a href="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart" id="toc-mixing-positive-drawdown-depth-with-a-negative-underwater-chart" class="nav-link" data-scroll-target="#mixing-positive-drawdown-depth-with-a-negative-underwater-chart">3. Mixing positive drawdown depth with a negative underwater chart</a></li>
+  <li><a href="#treating-below-peak-observations-as-peak-to-recovery-duration" id="toc-treating-below-peak-observations-as-peak-to-recovery-duration" class="nav-link" data-scroll-target="#treating-below-peak-observations-as-peak-to-recovery-duration">4. Treating below-peak observations as peak-to-recovery duration</a></li>
+  <li><a href="#fabricating-recovery-at-the-sample-end" id="toc-fabricating-recovery-at-the-sample-end" class="nav-link" data-scroll-target="#fabricating-recovery-at-the-sample-end">5. Fabricating recovery at the sample end</a></li>
+  <li><a href="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" id="toc-requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" class="nav-link" data-scroll-target="#requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">6. Requiring a strict new high when recovery is defined at the prior peak</a></li>
+  <li><a href="#ignoring-sampling-frequency" id="toc-ignoring-sampling-frequency" class="nav-link" data-scroll-target="#ignoring-sampling-frequency">7. Ignoring sampling frequency</a></li>
+  <li><a href="#reading-depth-as-a-forecast-of-recovery-time" id="toc-reading-depth-as-a-forecast-of-recovery-time" class="nav-link" data-scroll-target="#reading-depth-as-a-forecast-of-recovery-time">8. Reading depth as a forecast of recovery time</a></li>
+  </ul></li>
+  <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
 </nav>
-</div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-<div class="sq-platform-shell sq-platform-nav">
-<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-<nav aria-label="Primary" class="sq-platform-nav-links">
-<a href="https://research.slackquant.com/research/" target="_self">Research</a>
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
       <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-<a href="https://research.slackquant.com/about/" target="_self">About</a>
-<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
-</nav>
-</div>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -213,31 +225,45 @@ window.Quarto = {
     }
   })();
 </script>
-<header class="quarto-title-block default" id="title-block-header">
+
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Drawdown, Underwater Duration, and Recovery</h1>
 <p class="subtitle lead">Measuring how far a portfolio falls, how long it remains below its peak, and what counts as recovery</p>
-<div class="quarto-categories">
-<div class="quarto-category">Investment Methods</div>
-<div class="quarto-category">Portfolio Methods</div>
-<div class="quarto-category">Foundation</div>
-</div>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">Portfolio Methods</div>
+    <div class="quarto-category">Foundation</div>
+  </div>
+  </div>
+
 <div>
-<div class="description">
+  <div class="description">
     A practical guide to drawdown depth, underwater curves, episode duration, recovery conventions, and censored unrecovered periods.
   </div>
 </div>
+
+
 <div class="quarto-title-meta">
-</div>
+
+    
+  
+    
+  </div>
+  
+
+
 </header>
-<div class="method-kicker"><p>QM008 · Portfolio Methods · Foundation</p></div>
+
+
+<div class="method-kicker">
+<p>QM008 · Portfolio Methods · Foundation</p>
+</div>
 <div class="method-orientation">
 <p><strong>Core idea.</strong> Drawdown measures how far current wealth is below a running high-water mark. Duration adds a second question: how long has the portfolio remained below that peak, and has recovery actually been observed?</p>
 <p><strong>Use it for.</strong> Describing historical path risk, comparing the depth and persistence of losses, and reporting recovery episodes with explicit conventions.</p>
 <p><strong>It does not establish.</strong> How quickly a future drawdown will recover, whether a strategy is attractive, or whether one historical maximum drawdown is a stable population risk parameter. Measurement is descriptive; prediction and portfolio optimization are separate problems.</p>
 </div>
-<section class="level1" id="the-question">
+<section id="the-question" class="level1">
 <h1>The Question</h1>
 <p>A portfolio can finish a year with a modest return and still have experienced substantial interim losses. A one-period loss does not tell us whether wealth is just below a recent high, 20% below a peak reached months ago, or still underwater after a long incomplete recovery.</p>
 <p>Drawdown measurement therefore needs three elements:</p>
@@ -248,7 +274,7 @@ window.Quarto = {
 </ol>
 <p>Although the formulas are simple, the reported values depend on several conventions. Different denominators, sign conventions, recovery inequalities, duration counts, observation frequencies, and cash-flow treatments can produce different numbers from the same economic path.</p>
 </section>
-<section class="level1" id="start-with-the-wealth-path">
+<section id="start-with-the-wealth-path" class="level1">
 <h1>Start with the Wealth Path</h1>
 <p>Let <span class="math inline">\(W_t&gt;0\)</span> be portfolio wealth or NAV at observation <span class="math inline">\(t\)</span> on a regular discrete-time grid. Define the running high-water mark</p>
 <p><span class="math display">\[
@@ -263,7 +289,7 @@ d_t
 1-\frac{W_t}{H_t},
 \qquad 0\le d_t&lt;1.
 \]</span></p>
-<p>This convention measures the percentage loss relative to the historical peak. Chen et al. use this high-water-mark normalization in their treatment of relative drawdown <span class="citation" data-cites="chenetal2015">(<a href="#ref-chenetal2015" role="doc-biblioref">Chen et al. 2015</a>)</span>.</p>
+<p>This convention measures the percentage loss relative to the historical peak. Chen et al.&nbsp;use this high-water-mark normalization in their treatment of relative drawdown <span class="citation" data-cites="chenetal2015">(<a href="#ref-chenetal2015" role="doc-biblioref">Chen et al. 2015</a>)</span>.</p>
 <p>The same state can be plotted as a signed <strong>underwater series</strong></p>
 <p><span class="math display">\[
 u_t
@@ -273,18 +299,18 @@ u_t
 -d_t,
 \]</span></p>
 <p>so <span class="math inline">\(u_t\le0\)</span>. A 20% drawdown is therefore either <span class="math inline">\(d_t=0.20\)</span> or <span class="math inline">\(u_t=-0.20\)</span>, depending on whether the chart displays positive loss depth or a negative underwater return. The sign convention should be stated rather than inferred from the picture.</p>
-<div alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode." class="quarto-float quarto-figure quarto-figure-center anchored" id="fig-qm008-wealth">
+<div id="fig-qm008-wealth" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm008-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode." class="img-fluid figure-img" src="figures/rendered/qm008_wealth_highwater.svg" style="width:94.0%"/>
+<img src="figures/rendered/qm008_wealth_highwater.svg" class="img-fluid figure-img" style="width:94.0%" alt="Wealth path and running high-water mark showing one completed drawdown and one unrecovered final episode.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm008-wealth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure 1: The wealth path is evaluated against its running high-water mark. The first episode peaks at 110, falls to 88, and recovers exactly to 110; the final episode remains unrecovered at the sample end.
+Figure&nbsp;1: The wealth path is evaluated against its running high-water mark. The first episode peaks at 110, falls to 88, and recovers exactly to 110; the final episode remains unrecovered at the sample end.
 </figcaption>
 </figure>
 </div>
 </section>
-<section class="level1" id="different-drawdown-percentages-use-different-denominators">
+<section id="different-drawdown-percentages-use-different-denominators" class="level1">
 <h1>Different Drawdown Percentages Use Different Denominators</h1>
 <p>The literature uses several related drawdown measures that are not numerically interchangeable. Absolute drawdown is the distance <span class="math inline">\(H_t-W_t\)</span> <span class="citation" data-cites="carrzhanghadjiliadis2011 goldbergmahmoud2017">(<a href="#ref-carrzhanghadjiliadis2011" role="doc-biblioref">Carr et al. 2011</a>; <a href="#ref-goldbergmahmoud2017" role="doc-biblioref">Goldberg and Mahmoud 2017</a>)</span>. The percentage convention used here divides that loss by the peak <span class="math inline">\(H_t\)</span>. Chekhlov, Uryasev, and Zabarankin illustrate why the denominator must be named explicitly: their introductory wealth-drop expression uses current wealth in the denominator <span class="citation" data-cites="chekhlovuryasevzabarankin2005">(<a href="#ref-chekhlovuryasevzabarankin2005" role="doc-biblioref">Chekhlov et al. 2005</a>)</span>.</p>
 <p>Take a peak of 110 and current wealth of 88:</p>
@@ -340,7 +366,7 @@ Figure 1: The wealth path is evaluated against its running high-water mark. The
 </div>
 </div>
 </section>
-<section class="level1" id="maximum-drawdown-is-a-path-statistic">
+<section id="maximum-drawdown-is-a-path-statistic" class="level1">
 <h1>Maximum Drawdown Is a Path Statistic</h1>
 <p>Over observations <span class="math inline">\(0,\ldots,T\)</span>, define</p>
 <p><span class="math display">\[
@@ -353,19 +379,19 @@ Figure 1: The wealth path is evaluated against its running high-water mark. The
 W=(100,110,99,88,99,110,121,115,121,122,100),
 \]</span></p>
 <p>maximum drawdown is 20%, reached when wealth falls from the high-water mark 110 to 88.</p>
-<div alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes." class="quarto-float quarto-figure quarto-figure-center anchored" id="fig-qm008-underwater">
+<div id="fig-qm008-underwater" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qm008-underwater-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes." class="img-fluid figure-img" src="figures/rendered/qm008_underwater.svg" style="width:92.0%"/>
+<img src="figures/rendered/qm008_underwater.svg" class="img-fluid figure-img" style="width:92.0%" alt="Signed underwater series showing zero at high-water marks and negative values during drawdown episodes.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-qm008-underwater-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure 2: The signed underwater series is zero at each high-water mark and negative while wealth is below the relevant peak. The final observation is still underwater, so its recovery duration is not yet observed.
+Figure&nbsp;2: The signed underwater series is zero at each high-water mark and negative while wealth is below the relevant peak. The final observation is still underwater, so its recovery duration is not yet observed.
 </figcaption>
 </figure>
 </div>
 <p>Maximum drawdown is not a one-period return statistic. It is generated by the compounded path and its running maximum. It is also sample-dependent. Goldberg and Mahmoud emphasize that drawdown measures depend on the observation horizon and can be sensitive to sampling frequency <span class="citation" data-cites="goldbergmahmoud2017">(<a href="#ref-goldbergmahmoud2017" role="doc-biblioref">Goldberg and Mahmoud 2017</a>)</span>. A monthly series can miss an intramonth trough that would appear in daily data.</p>
 </section>
-<section class="level1" id="time-under-water-needs-more-than-one-number">
+<section id="time-under-water-needs-more-than-one-number" class="level1">
 <h1>Time Under Water Needs More Than One Number</h1>
 <p>Depth and time answer different questions. A shallow drawdown can persist for a long time; a deep drawdown can recover quickly. The literature treats drawdown duration as a distinct object, often associated with “time to recover” the historical maximum <span class="citation" data-cites="landriaultlizhang2017">(<a href="#ref-landriaultlizhang2017" role="doc-biblioref">Landriault et al. 2017</a>)</span>. Proietti likewise models elapsed time since the most recent peak as its own state process rather than as drawdown magnitude <span class="citation" data-cites="proietti2026">(<a href="#ref-proietti2026" role="doc-biblioref">Proietti 2026</a>)</span>.</p>
 <p>For clarity, distinguish <strong>current underwater age</strong> from a <strong>completed episode duration</strong>.</p>
@@ -382,7 +408,7 @@ a_t=t-p_t,
 <p>and <span class="math inline">\(a_t=0\)</span> whenever <span class="math inline">\(d_t=0\)</span>.</p>
 <p>This point-in-time state grows while the portfolio remains underwater and resets to zero when the old peak is regained.</p>
 </section>
-<section class="level1" id="a-completed-drawdown-episode">
+<section id="a-completed-drawdown-episode" class="level1">
 <h1>A Completed Drawdown Episode</h1>
 <p>Consider a drawdown episode that begins at peak index <span class="math inline">\(p\)</span>. Under the QM008 convention, recovery occurs at the first later observation</p>
 <p><span class="math display">\[
@@ -427,7 +453,7 @@ q
 </div>
 </div>
 </section>
-<section class="level1" id="unrecovered-episodes-are-censored">
+<section id="unrecovered-episodes-are-censored" class="level1">
 <h1>Unrecovered Episodes Are Censored</h1>
 <p>The final example episode begins at <span class="math inline">\(t=9\)</span> with wealth 122 and ends the sample at <span class="math inline">\(t=10\)</span> with wealth 100. The drawdown-to-date is</p>
 <p><span class="math display">\[
@@ -438,7 +464,7 @@ q
 <p>QM008 records such an episode as <strong>right-censored</strong>. It can report the peak, trough-to-date, depth-to-date, and age-to-date, while leaving completed recovery duration missing.</p>
 <p>This distinction matters whenever drawdown histories are summarized statistically. Treating the sample end as a recovery date converts an incomplete episode into a completed observation.</p>
 </section>
-<section class="level1" id="why-a-20-loss-needs-a-25-gain-to-recover">
+<section id="why-a-20-loss-needs-a-25-gain-to-recover" class="level1">
 <h1>Why a 20% Loss Needs a 25% Gain to Recover</h1>
 <p>Drawdown percentages are asymmetric around the peak. If wealth falls by a peak-normalized fraction <span class="math inline">\(d\)</span> from <span class="math inline">\(H\)</span> to <span class="math inline">\(H(1-d)\)</span>, the trough-to-peak gain required to recover is</p>
 <p><span class="math display">\[
@@ -454,34 +480,34 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 \]</span></p>
 <p>This is an algebraic identity. It says <strong>how large</strong> the required gain is, not <strong>how long</strong> recovery will take. QM008 makes no forecast of future recovery speed.</p>
 </section>
-<section class="level1" id="implementation-pattern">
+<section id="implementation-pattern" class="level1">
 <h1>Implementation Pattern</h1>
 <p>A transparent discrete-time implementation keeps the high-water mark and episode state explicit:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a>high <span class="op">=</span> wealth[<span class="dv">0</span>]</span>
-<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a>peak_index <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-3"><a aria-hidden="true" href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a aria-hidden="true" href="#cb1-4" tabindex="-1"></a><span class="cf">for</span> t, value <span class="kw">in</span> <span class="bu">enumerate</span>(wealth):</span>
-<span id="cb1-5"><a aria-hidden="true" href="#cb1-5" tabindex="-1"></a>    <span class="cf">if</span> value <span class="op">&gt;=</span> high:</span>
-<span id="cb1-6"><a aria-hidden="true" href="#cb1-6" tabindex="-1"></a>        high <span class="op">=</span> value</span>
-<span id="cb1-7"><a aria-hidden="true" href="#cb1-7" tabindex="-1"></a>        peak_index <span class="op">=</span> t</span>
-<span id="cb1-8"><a aria-hidden="true" href="#cb1-8" tabindex="-1"></a>        drawdown <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a>        underwater_age <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-10"><a aria-hidden="true" href="#cb1-10" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-11"><a aria-hidden="true" href="#cb1-11" tabindex="-1"></a>        drawdown <span class="op">=</span> <span class="fl">1.0</span> <span class="op">-</span> value <span class="op">/</span> high</span>
-<span id="cb1-12"><a aria-hidden="true" href="#cb1-12" tabindex="-1"></a>        underwater_age <span class="op">=</span> t <span class="op">-</span> peak_index</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>high <span class="op">=</span> wealth[<span class="dv">0</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>peak_index <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t, value <span class="kw">in</span> <span class="bu">enumerate</span>(wealth):</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> value <span class="op">&gt;=</span> high:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        high <span class="op">=</span> value</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        peak_index <span class="op">=</span> t</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        drawdown <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        underwater_age <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        drawdown <span class="op">=</span> <span class="fl">1.0</span> <span class="op">-</span> value <span class="op">/</span> high</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        underwater_age <span class="op">=</span> t <span class="op">-</span> peak_index</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To identify episodes, the implementation also records the recovery condition, trough-selection rule, and censoring status. The accompanying code returns both the point-in-time drawdown state and a table of completed and censored episodes.</p>
 </section>
-<section class="level1" id="worked-path-drawdown-and-recovery-states">
+<section id="worked-path-drawdown-and-recovery-states" class="level1">
 <h1>Worked Path: Drawdown and Recovery States</h1>
 <p>The example path is small enough to inspect by hand:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 17%"/>
-<col style="width: 17%"/>
-<col style="width: 17%"/>
-<col style="width: 17%"/>
-<col style="width: 17%"/>
-<col style="width: 10%"/>
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -598,21 +624,21 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </div>
 </div>
 </section>
-<section class="level1" id="hands-on-lab-recompute-the-episodes">
+<section id="hands-on-lab-recompute-the-episodes" class="level1">
 <h1>Hands-on Lab: Recompute the Episodes</h1>
 <p>The lab reads the same wealth path, computes the running high-water mark, drawdown depth, signed underwater series, underwater age, and episode table, and prints the completed versus censored recovery states.</p>
 <div class="method-action">
 <p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm008_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm008_hands_on.py">Python</a> · <a href="labs/r/qm008_hands_on.R">R</a>.</p>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class="ex">python</span> labs/python/qm008_hands_on.py</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm008_hands_on.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A useful exercise is to change the final wealth from 100 to 122. Under the same equality-recovery convention, the last episode then becomes completed instead of censored. The convention is unchanged; only the observed path changes.</p>
 </section>
-<section class="level1" id="what-a-drawdown-report-should-state">
+<section id="what-a-drawdown-report-should-state" class="level1">
 <h1>What a Drawdown Report Should State</h1>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%"/>
-<col style="width: 50%"/>
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -665,42 +691,42 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </table>
 <p>Time-weighted performance standards explicitly adjust or neutralize external cash flows because client-driven flows can distort performance measurement <span class="citation" data-cites="gips2020handbook">(<a href="#ref-gips2020handbook" role="doc-biblioref">CFA Institute 2020</a>)</span>. Drawdown computed from raw account value across an unadjusted subscription or redemption can therefore describe the cash-flow path rather than the investment path.</p>
 </section>
-<section class="level1" id="common-mistakes">
+<section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>
-<section class="level2" id="calling-the-worst-one-period-return-maximum-drawdown">
+<section id="calling-the-worst-one-period-return-maximum-drawdown" class="level2">
 <h2 class="anchored" data-anchor-id="calling-the-worst-one-period-return-maximum-drawdown">1. Calling the worst one-period return “maximum drawdown”</h2>
 <p>Maximum drawdown comes from the compounded wealth path relative to a running peak. A 10% monthly loss produces a 10% drawdown when the period starts at the high-water mark, but it can occur inside a materially deeper drawdown when the portfolio was already underwater.</p>
 </section>
-<section class="level2" id="switching-denominators-without-changing-the-label">
+<section id="switching-denominators-without-changing-the-label" class="level2">
 <h2 class="anchored" data-anchor-id="switching-denominators-without-changing-the-label">2. Switching denominators without changing the label</h2>
 <p>At a peak of 110 and current wealth of 88, <span class="math inline">\((H-W)/H=20\%\)</span> while <span class="math inline">\((H-W)/W=25\%\)</span>. Both cannot be reported as the same “drawdown percentage.”</p>
 </section>
-<section class="level2" id="mixing-positive-drawdown-depth-with-a-negative-underwater-chart">
+<section id="mixing-positive-drawdown-depth-with-a-negative-underwater-chart" class="level2">
 <h2 class="anchored" data-anchor-id="mixing-positive-drawdown-depth-with-a-negative-underwater-chart">3. Mixing positive drawdown depth with a negative underwater chart</h2>
 <p>Under the QM008 convention, they are the same state with opposite sign: <span class="math inline">\(u_t=-d_t\)</span>.</p>
 </section>
-<section class="level2" id="treating-below-peak-observations-as-peak-to-recovery-duration">
+<section id="treating-below-peak-observations-as-peak-to-recovery-duration" class="level2">
 <h2 class="anchored" data-anchor-id="treating-below-peak-observations-as-peak-to-recovery-duration">4. Treating below-peak observations as peak-to-recovery duration</h2>
 <p>In the first example episode, three observations are strictly underwater but four intervals elapse from the peak to the equality recovery.</p>
 </section>
-<section class="level2" id="fabricating-recovery-at-the-sample-end">
+<section id="fabricating-recovery-at-the-sample-end" class="level2">
 <h2 class="anchored" data-anchor-id="fabricating-recovery-at-the-sample-end">5. Fabricating recovery at the sample end</h2>
 <p>An unrecovered final episode is right-censored. The sample end tells us its age-to-date, not its completed recovery duration.</p>
 </section>
-<section class="level2" id="requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">
+<section id="requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak" class="level2">
 <h2 class="anchored" data-anchor-id="requiring-a-strict-new-high-when-recovery-is-defined-at-the-prior-peak">6. Requiring a strict new high when recovery is defined at the prior peak</h2>
 <p><span class="math inline">\(W_q \ge W_p\)</span> and <span class="math inline">\(W_q &gt; W_p\)</span> define different recovery rules. If the stated convention counts regaining the prior peak as recovery, a backtest or risk report should not silently replace it with a strict-new-high rule.</p>
 </section>
-<section class="level2" id="ignoring-sampling-frequency">
+<section id="ignoring-sampling-frequency" class="level2">
 <h2 class="anchored" data-anchor-id="ignoring-sampling-frequency">7. Ignoring sampling frequency</h2>
 <p>Historical MDD can change when a finer observation grid reveals an interim trough that a coarser grid misses <span class="citation" data-cites="goldbergmahmoud2017">(<a href="#ref-goldbergmahmoud2017" role="doc-biblioref">Goldberg and Mahmoud 2017</a>)</span>.</p>
 </section>
-<section class="level2" id="reading-depth-as-a-forecast-of-recovery-time">
+<section id="reading-depth-as-a-forecast-of-recovery-time" class="level2">
 <h2 class="anchored" data-anchor-id="reading-depth-as-a-forecast-of-recovery-time">8. Reading depth as a forecast of recovery time</h2>
 <p>The identity <span class="math inline">\(d/(1-d)\)</span> gives the gain required to regain the old peak. It does not say how quickly or whether that gain will occur.</p>
 </section>
 </section>
-<section class="level1" id="when-this-setup-needs-to-be-extended">
+<section id="when-this-setup-needs-to-be-extended" class="level1">
 <h1>When This Setup Needs to Be Extended</h1>
 <p>The formulas above are scoped to strictly positive wealth on the stated observation grid. Additional definitions or accounting are needed for:</p>
 <ul>
@@ -714,13 +740,13 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </ul>
 <p>Each case requires additional definitions, evidence, or accounting beyond the setup used here.</p>
 </section>
-<section class="level1 related-methods" id="related-methods">
+<section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>
 <ul>
 <li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>: constructs the wealth path on which drawdown is measured and makes the portfolio timeline explicit.</li>
 </ul>
 </section>
-<section class="level1" id="used-in-slackquant-research">
+<section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
 <ul>
 <li><a href="https://research.slackquant.com/research/protection-patience/">When Protection Works but the Portfolio Still Lags</a>: uses own-path maximum drawdown and high-water-mark logic to separate realized downside protection from benchmark-relative path burden.</li>
@@ -728,36 +754,39 @@ g_{\text{recover}}=\frac{0.20}{0.80}=0.25.
 </ul>
 <p>The definitions here cover general drawdown, underwater-age, recovery, and censoring mechanics. Application-specific benchmark-relative measures remain defined in the relevant research or system record.</p>
 </section>
-<section class="level1" id="reproducibility">
+<section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
 <p>The accompanying materials include the illustrative wealth path, Python and base-R implementations, reproducible figures, numerical checks, and a hands-on lab. The example code independently reconstructs high-water marks, drawdown depth, underwater age, completed episodes, and the right-censored terminal episode used above.</p>
 </section>
-<section class="level1 unnumbered" id="references">
+<section id="references" class="level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div class="references csl-bib-body hanging-indent" id="refs" role="list">
-<div class="csl-entry" id="ref-carrzhanghadjiliadis2011" role="listitem">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-carrzhanghadjiliadis2011" class="csl-entry" role="listitem">
 Carr, Peter, Hongzhong Zhang, and Olympia Hadjiliadis. 2011. <span>“Maximum Drawdown Insurance.”</span> <em>International Journal of Theoretical and Applied Finance</em> 14 (8): 1195–230. <a href="https://doi.org/10.1142/S0219024911006826">https://doi.org/10.1142/S0219024911006826</a>.
 </div>
-<div class="csl-entry" id="ref-gips2020handbook" role="listitem">
+<div id="ref-gips2020handbook" class="csl-entry" role="listitem">
 CFA Institute. 2020. <span>“GIPS Standards Handbook for Firms.”</span> <a href="https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/">https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/</a>.
 </div>
-<div class="csl-entry" id="ref-chekhlovuryasevzabarankin2005" role="listitem">
+<div id="ref-chekhlovuryasevzabarankin2005" class="csl-entry" role="listitem">
 Chekhlov, Alexei, Stanislav Uryasev, and Michael Zabarankin. 2005. <span>“Drawdown Measure in Portfolio Optimization.”</span> <em>International Journal of Theoretical and Applied Finance</em> 8 (1): 13–58. <a href="https://doi.org/10.1142/S0219024905002767">https://doi.org/10.1142/S0219024905002767</a>.
 </div>
-<div class="csl-entry" id="ref-chenetal2015" role="listitem">
+<div id="ref-chenetal2015" class="csl-entry" role="listitem">
 Chen, Xinfu, David Landriault, Bin Li, and Dongchen Li. 2015. <span>“On Minimizing Drawdown Risks of Lifetime Investments.”</span> <em>Insurance: Mathematics and Economics</em> 65: 46–54. <a href="https://doi.org/10.1016/j.insmatheco.2015.08.007">https://doi.org/10.1016/j.insmatheco.2015.08.007</a>.
 </div>
-<div class="csl-entry" id="ref-goldbergmahmoud2017" role="listitem">
+<div id="ref-goldbergmahmoud2017" class="csl-entry" role="listitem">
 Goldberg, Lisa R., and Ola Mahmoud. 2017. <span>“Drawdown: From Practice to Theory and Back Again.”</span> <em>Mathematics and Financial Economics</em> 11: 275–97. <a href="https://doi.org/10.1007/s11579-016-0181-9">https://doi.org/10.1007/s11579-016-0181-9</a>.
 </div>
-<div class="csl-entry" id="ref-landriaultlizhang2017" role="listitem">
+<div id="ref-landriaultlizhang2017" class="csl-entry" role="listitem">
 Landriault, David, Bin Li, and Hongzhong Zhang. 2017. <span>“On Magnitude, Asymptotics and Duration of Drawdowns for Lévy Models.”</span> <em>Bernoulli</em> 23 (1): 432–58. <a href="https://doi.org/10.3150/15-BEJ748">https://doi.org/10.3150/15-BEJ748</a>.
 </div>
-<div class="csl-entry" id="ref-proietti2026" role="listitem">
+<div id="ref-proietti2026" class="csl-entry" role="listitem">
 Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>International Journal of Forecasting</em> 42 (2): 457–73. <a href="https://doi.org/10.1016/j.ijforecast.2025.07.008">https://doi.org/10.1016/j.ijforecast.2025.07.008</a>.
 </div>
 </div>
+
+
 </section>
+
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1166,17 +1195,17 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-<div class="nav-footer">
-<div class="nav-footer-left">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>
-<div class="nav-footer-center">
-       
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
     </div>
-<div class="nav-footer-right">
+    <div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-</div>
+  </div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -1190,13 +1219,14 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
     const categoryDisplay = (raw) => {
       const key = normalize(raw);
       const aliases = {
-        "forecast evaluation": "Forecast",
+        "forecast evaluation": "Forecast Evaluation",
         "statistical inference": "Statistical Inference",
         "time-series methods": "Time Series",
         "data & research design": "Data / Research Design",
         "portfolio methods": "Portfolio",
         "machine learning": "Machine Learning",
         "ml methods": "Machine Learning",
+        "ai & foundation models": "AI / Foundation Models",
       };
       if (aliases[key]) return aliases[key];
       return raw
@@ -1215,7 +1245,15 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
 
       const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
       const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      const expectedCount = Number(resultCount.dataset.canonicalCount || 0);
       if (!rows.length) return;
+      if (expectedCount && rows.length !== expectedCount) {
+        resultCount.textContent = `${rows.length} methods · catalog mismatch`;
+        resultCount.dataset.integrity = "fail";
+        console.error(`Methods catalog mismatch: rendered=${rows.length}, expected=${expectedCount}`);
+      } else {
+        resultCount.dataset.integrity = "pass";
+      }
 
       const categories = new Map();
       rows.forEach((row) => {
@@ -1252,7 +1290,21 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
       };
 
       addFilter("all", "All");
-      categories.forEach((label, key) => addFilter(key, label));
+      const preferredCategoryOrder = [
+        "forecast evaluation",
+        "statistical inference",
+        "portfolio methods",
+        "time-series methods",
+        "machine learning",
+        "ai & foundation models",
+        "data & research design",
+      ];
+      preferredCategoryOrder.forEach((key) => {
+        if (categories.has(key)) addFilter(key, categories.get(key));
+      });
+      categories.forEach((label, key) => {
+        if (!preferredCategoryOrder.includes(key)) addFilter(key, label);
+      });
 
       const apply = () => {
         const query = normalize(input.value);
@@ -1321,6 +1373,8 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
+      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
+      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1366,6 +1420,8 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
           "/20_STATISTICAL_INFERENCE/",
           "/30_TIME_SERIES/",
           "/40_PORTFOLIO_METHODS/",
+          "/60_MACHINE_LEARNING/",
+          "/70_AI_FOUNDATION_MODELS/",
           "/80_DATA_RESEARCH_DESIGN/",
         ];
         for (const marker of domainMarkers) {
@@ -1453,5 +1509,9 @@ Proietti, Tommaso. 2026. <span>“Ups and (Draw) Downs.”</span> <em>Internatio
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
+
+
+
+
 <script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

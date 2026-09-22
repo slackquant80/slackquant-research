@@ -1,10 +1,13 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
-<meta charset="utf-8"/>
-<meta content="quarto-1.10.18" name="generator"/>
-<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
-<meta content="A practical guide to drift-aware portfolio turnover, transaction-cost conventions, and how modeled trading costs translate before-cost performance into net portfolio performance." name="description"/>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A practical guide to drift-aware portfolio turnover, transaction-cost conventions, and how modeled trading costs translate before-cost performance into net portfolio performance.">
+
 <title>Turnover, Transaction Costs, and Net Performance – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -79,6 +82,8 @@ div.csl-right-inline {
 div.csl-indent {
   margin-left: 2em;
 }</style>
+
+
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -86,11 +91,11 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
-<link append-hash="true" data-mode="light" href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -107,6 +112,7 @@ div.csl-indent {
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -115,8 +121,10 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
@@ -143,65 +151,69 @@ window.Quarto = {
   typesetMath
 };
 </script>
-<link href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html" rel="canonical"/>
+
+<link rel="canonical" href="https://research.slackquant.com/methods/40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/article.html">
 </head>
+
 <body class="quarto-light">
+
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
-<nav class="toc-active" id="TOC" role="doc-toc">
-<h2 id="toc-title">On this page</h2>
-<ul>
-<li><a class="nav-link active" data-scroll-target="#the-question" href="#the-question" id="toc-the-question">The Question</a></li>
-<li><a class="nav-link" data-scroll-target="#why-it-matters" href="#why-it-matters" id="toc-why-it-matters">Why It Matters</a></li>
-<li><a class="nav-link" data-scroll-target="#start-from-the-drifted-portfolio" href="#start-from-the-drifted-portfolio" id="toc-start-from-the-drifted-portfolio">Start from the Drifted Portfolio</a></li>
-<li><a class="nav-link" data-scroll-target="#full-l1-and-one-way-turnover" href="#full-l1-and-one-way-turnover" id="toc-full-l1-and-one-way-turnover">Full-L1 and One-Way Turnover</a></li>
-<li><a class="nav-link" data-scroll-target="#match-the-cost-rate-to-the-turnover-measure" href="#match-the-cost-rate-to-the-turnover-measure" id="toc-match-the-cost-rate-to-the-turnover-measure">Match the Cost Rate to the Turnover Measure</a></li>
-<li><a class="nav-link" data-scroll-target="#from-performance-before-costs-to-net-wealth" href="#from-performance-before-costs-to-net-wealth" id="toc-from-performance-before-costs-to-net-wealth">From Performance Before Costs to Net Wealth</a>
-<ul class="collapse">
-<li><a class="nav-link" data-scroll-target="#why-the-wording-before-modeled-transaction-costs-matters" href="#why-the-wording-before-modeled-transaction-costs-matters" id="toc-why-the-wording-before-modeled-transaction-costs-matters">Why the wording “before modeled transaction costs” matters</a></li>
-</ul></li>
-<li><a class="nav-link" data-scroll-target="#numerical-illustration-drift-turnover-and-cost" href="#numerical-illustration-drift-turnover-and-cost" id="toc-numerical-illustration-drift-turnover-and-cost">Numerical Illustration: Drift, Turnover, and Cost</a></li>
-<li><a class="nav-link" data-scroll-target="#aggregating-turnover-and-cost-drag" href="#aggregating-turnover-and-cost-drag" id="toc-aggregating-turnover-and-cost-drag">Aggregating Turnover and Cost Drag</a></li>
-<li><a class="nav-link" data-scroll-target="#implementation-pattern" href="#implementation-pattern" id="toc-implementation-pattern">Implementation Pattern</a></li>
-<li><a class="nav-link" data-scroll-target="#hands-on-lab-change-the-cost-assumption" href="#hands-on-lab-change-the-cost-assumption" id="toc-hands-on-lab-change-the-cost-assumption">Hands-on Lab: Change the Cost Assumption</a></li>
-<li><a class="nav-link" data-scroll-target="#what-a-transaction-cost-backtest-should-state" href="#what-a-transaction-cost-backtest-should-state" id="toc-what-a-transaction-cost-backtest-should-state">What a Transaction-Cost Backtest Should State</a></li>
-<li><a class="nav-link" data-scroll-target="#common-mistakes" href="#common-mistakes" id="toc-common-mistakes">Common Mistakes</a>
-<ul class="collapse">
-<li><a class="nav-link" data-scroll-target="#computing-turnover-from-the-previous-target" href="#computing-turnover-from-the-previous-target" id="toc-computing-turnover-from-the-previous-target">1. Computing turnover from the previous target</a></li>
-<li><a class="nav-link" data-scroll-target="#reporting-turnover-without-the-formula" href="#reporting-turnover-without-the-formula" id="toc-reporting-turnover-without-the-formula">2. Reporting “turnover” without the formula</a></li>
-<li><a class="nav-link" data-scroll-target="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover" href="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover" id="toc-applying-a-both-legs-cost-rate-directly-to-one-way-turnover">3. Applying a both-legs cost rate directly to one-way turnover</a></li>
-<li><a class="nav-link" data-scroll-target="#treating-passive-weight-drift-as-a-trade" href="#treating-passive-weight-drift-as-a-trade" id="toc-treating-passive-weight-drift-as-a-trade">4. Treating passive weight drift as a trade</a></li>
-<li><a class="nav-link" data-scroll-target="#mixing-initial-formation-with-recurring-turnover" href="#mixing-initial-formation-with-recurring-turnover" id="toc-mixing-initial-formation-with-recurring-turnover">5. Mixing initial formation with recurring turnover</a></li>
-<li><a class="nav-link" data-scroll-target="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" href="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" id="toc-calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">6. Calling <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span> the exact cumulative drag</a></li>
-<li><a class="nav-link" data-scroll-target="#calling-a-fixed-bps-cost-model-actual-execution-cost" href="#calling-a-fixed-bps-cost-model-actual-execution-cost" id="toc-calling-a-fixed-bps-cost-model-actual-execution-cost">7. Calling a fixed-bps cost model “actual execution cost”</a></li>
-<li><a class="nav-link" data-scroll-target="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" href="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" id="toc-assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">8. Assuming ex-post cost deduction makes the portfolio cost-optimal</a></li>
-<li><a class="nav-link" data-scroll-target="#letting-transaction-cost-realism-hide-an-information-leak" href="#letting-transaction-cost-realism-hide-an-information-leak" id="toc-letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</a></li>
-</ul></li>
-<li><a class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended" href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
-<li><a class="nav-link" data-scroll-target="#used-in-slackquant-research" href="#used-in-slackquant-research" id="toc-used-in-slackquant-research">Used in SlackQuant Research</a></li>
-<li><a class="nav-link" data-scroll-target="#related-methods" href="#related-methods" id="toc-related-methods">Related Methods</a></li>
-<li><a class="nav-link" data-scroll-target="#reproducibility" href="#reproducibility" id="toc-reproducibility">Reproducibility</a></li>
-<li><a class="nav-link" data-scroll-target="#references" href="#references" id="toc-references">References</a></li>
-</ul>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The Question</a></li>
+  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#start-from-the-drifted-portfolio" id="toc-start-from-the-drifted-portfolio" class="nav-link" data-scroll-target="#start-from-the-drifted-portfolio">Start from the Drifted Portfolio</a></li>
+  <li><a href="#full-l1-and-one-way-turnover" id="toc-full-l1-and-one-way-turnover" class="nav-link" data-scroll-target="#full-l1-and-one-way-turnover">Full-L1 and One-Way Turnover</a></li>
+  <li><a href="#match-the-cost-rate-to-the-turnover-measure" id="toc-match-the-cost-rate-to-the-turnover-measure" class="nav-link" data-scroll-target="#match-the-cost-rate-to-the-turnover-measure">Match the Cost Rate to the Turnover Measure</a></li>
+  <li><a href="#from-performance-before-costs-to-net-wealth" id="toc-from-performance-before-costs-to-net-wealth" class="nav-link" data-scroll-target="#from-performance-before-costs-to-net-wealth">From Performance Before Costs to Net Wealth</a>
+  <ul class="collapse">
+  <li><a href="#why-the-wording-before-modeled-transaction-costs-matters" id="toc-why-the-wording-before-modeled-transaction-costs-matters" class="nav-link" data-scroll-target="#why-the-wording-before-modeled-transaction-costs-matters">Why the wording “before modeled transaction costs” matters</a></li>
+  </ul></li>
+  <li><a href="#numerical-illustration-drift-turnover-and-cost" id="toc-numerical-illustration-drift-turnover-and-cost" class="nav-link" data-scroll-target="#numerical-illustration-drift-turnover-and-cost">Numerical Illustration: Drift, Turnover, and Cost</a></li>
+  <li><a href="#aggregating-turnover-and-cost-drag" id="toc-aggregating-turnover-and-cost-drag" class="nav-link" data-scroll-target="#aggregating-turnover-and-cost-drag">Aggregating Turnover and Cost Drag</a></li>
+  <li><a href="#implementation-pattern" id="toc-implementation-pattern" class="nav-link" data-scroll-target="#implementation-pattern">Implementation Pattern</a></li>
+  <li><a href="#hands-on-lab-change-the-cost-assumption" id="toc-hands-on-lab-change-the-cost-assumption" class="nav-link" data-scroll-target="#hands-on-lab-change-the-cost-assumption">Hands-on Lab: Change the Cost Assumption</a></li>
+  <li><a href="#what-a-transaction-cost-backtest-should-state" id="toc-what-a-transaction-cost-backtest-should-state" class="nav-link" data-scroll-target="#what-a-transaction-cost-backtest-should-state">What a Transaction-Cost Backtest Should State</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a>
+  <ul class="collapse">
+  <li><a href="#computing-turnover-from-the-previous-target" id="toc-computing-turnover-from-the-previous-target" class="nav-link" data-scroll-target="#computing-turnover-from-the-previous-target">1. Computing turnover from the previous target</a></li>
+  <li><a href="#reporting-turnover-without-the-formula" id="toc-reporting-turnover-without-the-formula" class="nav-link" data-scroll-target="#reporting-turnover-without-the-formula">2. Reporting “turnover” without the formula</a></li>
+  <li><a href="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover" id="toc-applying-a-both-legs-cost-rate-directly-to-one-way-turnover" class="nav-link" data-scroll-target="#applying-a-both-legs-cost-rate-directly-to-one-way-turnover">3. Applying a both-legs cost rate directly to one-way turnover</a></li>
+  <li><a href="#treating-passive-weight-drift-as-a-trade" id="toc-treating-passive-weight-drift-as-a-trade" class="nav-link" data-scroll-target="#treating-passive-weight-drift-as-a-trade">4. Treating passive weight drift as a trade</a></li>
+  <li><a href="#mixing-initial-formation-with-recurring-turnover" id="toc-mixing-initial-formation-with-recurring-turnover" class="nav-link" data-scroll-target="#mixing-initial-formation-with-recurring-turnover">5. Mixing initial formation with recurring turnover</a></li>
+  <li><a href="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" id="toc-calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" class="nav-link" data-scroll-target="#calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">6. Calling <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span> the exact cumulative drag</a></li>
+  <li><a href="#calling-a-fixed-bps-cost-model-actual-execution-cost" id="toc-calling-a-fixed-bps-cost-model-actual-execution-cost" class="nav-link" data-scroll-target="#calling-a-fixed-bps-cost-model-actual-execution-cost">7. Calling a fixed-bps cost model “actual execution cost”</a></li>
+  <li><a href="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" id="toc-assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" class="nav-link" data-scroll-target="#assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">8. Assuming ex-post cost deduction makes the portfolio cost-optimal</a></li>
+  <li><a href="#letting-transaction-cost-realism-hide-an-information-leak" id="toc-letting-transaction-cost-realism-hide-an-information-leak" class="nav-link" data-scroll-target="#letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</a></li>
+  </ul></li>
+  <li><a href="#when-this-setup-needs-to-be-extended" id="toc-when-this-setup-needs-to-be-extended" class="nav-link" data-scroll-target="#when-this-setup-needs-to-be-extended">When This Setup Needs to Be Extended</a></li>
+  <li><a href="#used-in-slackquant-research" id="toc-used-in-slackquant-research" class="nav-link" data-scroll-target="#used-in-slackquant-research">Used in SlackQuant Research</a></li>
+  <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
 </nav>
-</div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-<div class="sq-platform-shell sq-platform-nav">
-<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-<nav aria-label="Primary" class="sq-platform-nav-links">
-<a href="https://research.slackquant.com/research/" target="_self">Research</a>
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
       <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-<a href="https://research.slackquant.com/about/" target="_self">About</a>
-<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
-</nav>
-</div>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -216,31 +228,45 @@ window.Quarto = {
     }
   })();
 </script>
-<header class="quarto-title-block default" id="title-block-header">
+
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Turnover, Transaction Costs, and Net Performance</h1>
 <p class="subtitle lead">Measuring portfolio turnover and how modeled transaction costs change the wealth path</p>
-<div class="quarto-categories">
-<div class="quarto-category">Investment Methods</div>
-<div class="quarto-category">Portfolio Methods</div>
-<div class="quarto-category">Intermediate</div>
-</div>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">Portfolio Methods</div>
+    <div class="quarto-category">Intermediate</div>
+  </div>
+  </div>
+
 <div>
-<div class="description">
+  <div class="description">
     A practical guide to drift-aware portfolio turnover, transaction-cost conventions, and how modeled trading costs translate before-cost performance into net portfolio performance.
   </div>
 </div>
+
+
 <div class="quarto-title-meta">
-</div>
+
+    
+  
+    
+  </div>
+  
+
+
 </header>
-<div class="method-kicker"><p>QM009 · Portfolio Methods · Intermediate</p></div>
+
+
+<div class="method-kicker">
+<p>QM009 · Portfolio Methods · Intermediate</p>
+</div>
 <div class="method-orientation">
 <p><strong>Core idea.</strong> Transaction costs in a backtest should be applied to the trades implied by the rebalance. That requires measuring turnover from the drifted pre-trade portfolio to the new target, declaring what the turnover statistic counts, and applying a cost rate to the same traded-notional convention.</p>
 <p><strong>Use it for.</strong> Turning a before-cost portfolio backtest into an explicitly cost-adjusted backtest when the trading rule, rebalance schedule, and proportional transaction-cost model are specified.</p>
 <p><strong>It does not establish.</strong> Actual implementation shortfall, market impact, capacity, or cost-optimal portfolio weights. A constant-basis-point cost model is a transparent modeling assumption, not a universal execution model.</p>
 </div>
-<section class="level1" id="the-question">
+<section id="the-question" class="level1">
 <h1>The Question</h1>
 <p>A strategy can have attractive performance before trading frictions and still be difficult to implement. One of the first quantities to examine is <strong>turnover</strong>.</p>
 <p>But the word is not enough. A backtest needs to answer three separate questions:</p>
@@ -255,14 +281,14 @@ window.Quarto = {
 </blockquote>
 <p>The portfolio timeline follows <a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>. Returns during the holding period change the portfolio weights before the next rebalance. The resulting <strong>drifted pre-trade portfolio</strong> is the state from which rebalancing begins. The rebalance then moves that portfolio toward the new target.</p>
 </section>
-<section class="level1" id="why-it-matters">
+<section id="why-it-matters" class="level1">
 <h1>Why It Matters</h1>
 <p>Transaction-cost analysis can go wrong even when the cost rate itself looks reasonable.</p>
 <p>Suppose a backtest says turnover is 10% and assumes 10 basis points of transaction cost. That still does not tell us the cost deduction. The turnover figure might refer to purchases only, purchases plus sales, an annual regulatory ratio, or an average across rebalance dates. Likewise, a 10-basis-point cost assumption is meaningful only when we know which measure of traded notional it applies to.</p>
 <p>A second problem is timing. The amount traded is generally <strong>not</strong> the difference between the new target and the previous target. Asset returns have changed the portfolio weights since the previous rebalance. This is also the convention used by DeMiguel, Garlappi, and Uppal, who measure turnover relative to the portfolio weights immediately before rebalancing <span class="citation" data-cites="demiguelgarlappiuppal2009">(<a href="#ref-demiguelgarlappiuppal2009" role="doc-biblioref">DeMiguel et al. 2009</a>)</span>.</p>
 <p>A third problem is terminology. The U.S. Securities and Exchange Commission’s mutual-fund Portfolio Turnover Rate is a particular annual disclosure ratio based on the lesser of purchases or sales relative to the prescribed average value of portfolio securities, subject to specified exclusions <span class="citation" data-cites="secformn1a">(<a href="#ref-secformn1a" role="doc-biblioref">U.S. Securities and Exchange Commission 2025</a>)</span>. It is not interchangeable with the rebalance-date weight-space turnover used in this article.</p>
 </section>
-<section class="level1" id="start-from-the-drifted-portfolio">
+<section id="start-from-the-drifted-portfolio" class="level1">
 <h1>Start from the Drifted Portfolio</h1>
 <p>Let <span class="math inline">\(\widetilde w_{i,t}\)</span> be asset <span class="math inline">\(i\)</span>’s weight immediately before rebalancing at date <span class="math inline">\(t\)</span>. These are the weights after returns over the preceding holding period have caused the portfolio to drift.</p>
 <p>Let <span class="math inline">\(w_{i,t}\)</span> be the desired post-rebalance target weight. Define the trade in weight space as</p>
@@ -297,7 +323,7 @@ TO_t^{L1}
 </div>
 </div>
 </section>
-<section class="level1" id="full-l1-and-one-way-turnover">
+<section id="full-l1-and-one-way-turnover" class="level1">
 <h1>Full-L1 and One-Way Turnover</h1>
 <p>For a long-only, fully invested portfolio with no external flows,</p>
 <p><span class="math display">\[
@@ -316,7 +342,7 @@ TO_t^{1w}
 <p>The factor of one-half is not a universal definition. With external cash flows, leverage, short positions, or other changes in net exposure, purchases and sales need not be equal.</p>
 <p>For example, if full-L1 turnover is 20%, the corresponding one-way turnover is 10%. Both numbers can describe the same rebalance. Reporting only “turnover = 10%” without defining the measure leaves the underlying traded notional ambiguous.</p>
 </section>
-<section class="level1" id="match-the-cost-rate-to-the-turnover-measure">
+<section id="match-the-cost-rate-to-the-turnover-measure" class="level1">
 <h1>Match the Cost Rate to the Turnover Measure</h1>
 <p>Let <span class="math inline">\(c_t\)</span> denote the assumed proportional cost <strong>per dollar of modeled trade notional, measured relative to pre-cost portfolio wealth</strong>. Under the symmetric base convention, the modeled cost fraction is</p>
 <p><span class="math display">\[
@@ -358,7 +384,7 @@ C_t
 </div>
 </div>
 </section>
-<section class="level1" id="from-performance-before-costs-to-net-wealth">
+<section id="from-performance-before-costs-to-net-wealth" class="level1">
 <h1>From Performance Before Costs to Net Wealth</h1>
 <p>Let <span class="math inline">\(V_{t-1}^{+}\)</span> be wealth immediately after the previous rebalance and cost debit. Let <span class="math inline">\(R_{p,t}^{\text{pre-cost}}\)</span> be the portfolio return earned during holding period <span class="math inline">\(t\)</span> <strong>before the modeled transaction cost at the next rebalance</strong>.</p>
 <p>Pre-cost wealth is</p>
@@ -402,7 +428,7 @@ R_{p,t}^{\text{pre-cost}}
 R_{p,t}^{\text{pre-cost}}-C_t
 \]</span></p>
 <p>omits the cross term. With small costs the numerical difference may be small, but the two accounting rules are not algebraically identical.</p>
-<section class="level2" id="why-the-wording-before-modeled-transaction-costs-matters">
+<section id="why-the-wording-before-modeled-transaction-costs-matters" class="level2">
 <h2 class="anchored" data-anchor-id="why-the-wording-before-modeled-transaction-costs-matters">Why the wording “before modeled transaction costs” matters</h2>
 <p><strong>Gross-of-fees</strong> should not be used as a synonym for “before transaction costs.” Under the GIPS Standards, transaction costs are reflected in both gross-of-fees and net-of-fees returns; the distinction concerns investment-management fees rather than whether trading costs are deducted <span class="citation" data-cites="gipshandbookfirms">(<a href="#ref-gipshandbookfirms" role="doc-biblioref">CFA Institute 2020</a>)</span>.</p>
 <p>For this reason, the article uses the following labels:</p>
@@ -413,7 +439,7 @@ R_{p,t}^{\text{pre-cost}}-C_t
 <p>These labels also make the model boundary visible: commissions, spreads, taxes, financing, market impact, and other implementation effects are included only if the stated cost model explicitly includes them.</p>
 </section>
 </section>
-<section class="level1" id="numerical-illustration-drift-turnover-and-cost">
+<section id="numerical-illustration-drift-turnover-and-cost" class="level1">
 <h1>Numerical Illustration: Drift, Turnover, and Cost</h1>
 <p>Consider an already established three-asset portfolio with initial wealth 100 and weights</p>
 <p><span class="math display">\[
@@ -471,13 +497,13 @@ V_1^{+}
 <p>The full four-period illustration is deliberately small enough to inspect by hand:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
-<col style="width: 14%"/>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -543,7 +569,7 @@ V_1^{+}
 </div>
 </div>
 </section>
-<section class="level1" id="aggregating-turnover-and-cost-drag">
+<section id="aggregating-turnover-and-cost-drag" class="level1">
 <h1>Aggregating Turnover and Cost Drag</h1>
 <p>Turnover statistics also need a time-aggregation convention.</p>
 <p>For a set of rebalance dates <span class="math inline">\(\mathcal T\)</span> within a chosen sample or calendar period, one transparent summary is the sum of rebalance-date turnover:</p>
@@ -582,55 +608,55 @@ TO_{\mathcal T}^{L1}
 \]</span></p>
 <p>The difference is tiny here because the modeled costs are small, but the accounting distinction is still real.</p>
 </section>
-<section class="level1" id="implementation-pattern">
+<section id="implementation-pattern" class="level1">
 <h1>Implementation Pattern</h1>
 <p>A transparent implementation keeps the portfolio state, turnover calculation, and cost debit separate:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a>weights <span class="op">=</span> initial_weights</span>
-<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a>wealth <span class="op">=</span> initial_wealth</span>
-<span id="cb1-3"><a aria-hidden="true" href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a aria-hidden="true" href="#cb1-4" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> periods:</span>
-<span id="cb1-5"><a aria-hidden="true" href="#cb1-5" tabindex="-1"></a>    holding_growth_factor <span class="op">=</span> <span class="bu">sum</span>(</span>
-<span id="cb1-6"><a aria-hidden="true" href="#cb1-6" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r)</span>
-<span id="cb1-7"><a aria-hidden="true" href="#cb1-7" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
-<span id="cb1-8"><a aria-hidden="true" href="#cb1-8" tabindex="-1"></a>    )</span>
-<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a aria-hidden="true" href="#cb1-10" tabindex="-1"></a>    pre_cost_wealth <span class="op">=</span> wealth <span class="op">*</span> holding_growth_factor</span>
-<span id="cb1-11"><a aria-hidden="true" href="#cb1-11" tabindex="-1"></a>    drifted_weights <span class="op">=</span> [</span>
-<span id="cb1-12"><a aria-hidden="true" href="#cb1-12" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r) <span class="op">/</span> holding_growth_factor</span>
-<span id="cb1-13"><a aria-hidden="true" href="#cb1-13" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
-<span id="cb1-14"><a aria-hidden="true" href="#cb1-14" tabindex="-1"></a>    ]</span>
-<span id="cb1-15"><a aria-hidden="true" href="#cb1-15" tabindex="-1"></a></span>
-<span id="cb1-16"><a aria-hidden="true" href="#cb1-16" tabindex="-1"></a>    <span class="cf">if</span> is_rebalance_date(t):</span>
-<span id="cb1-17"><a aria-hidden="true" href="#cb1-17" tabindex="-1"></a>        target <span class="op">=</span> target_weights[t]</span>
-<span id="cb1-18"><a aria-hidden="true" href="#cb1-18" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="bu">sum</span>(</span>
-<span id="cb1-19"><a aria-hidden="true" href="#cb1-19" tabindex="-1"></a>            <span class="bu">abs</span>(target_i <span class="op">-</span> drifted_i)</span>
-<span id="cb1-20"><a aria-hidden="true" href="#cb1-20" tabindex="-1"></a>            <span class="cf">for</span> target_i, drifted_i <span class="kw">in</span> <span class="bu">zip</span>(target, drifted_weights)</span>
-<span id="cb1-21"><a aria-hidden="true" href="#cb1-21" tabindex="-1"></a>        )</span>
-<span id="cb1-22"><a aria-hidden="true" href="#cb1-22" tabindex="-1"></a>        cost_fraction <span class="op">=</span> cost_rate[t] <span class="op">*</span> turnover_l1</span>
-<span id="cb1-23"><a aria-hidden="true" href="#cb1-23" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> cost_fraction)</span>
-<span id="cb1-24"><a aria-hidden="true" href="#cb1-24" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
-<span id="cb1-25"><a aria-hidden="true" href="#cb1-25" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-26"><a aria-hidden="true" href="#cb1-26" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb1-27"><a aria-hidden="true" href="#cb1-27" tabindex="-1"></a>        cost_fraction <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb1-28"><a aria-hidden="true" href="#cb1-28" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth</span>
-<span id="cb1-29"><a aria-hidden="true" href="#cb1-29" tabindex="-1"></a>        weights <span class="op">=</span> drifted_weights</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> initial_weights</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wealth <span class="op">=</span> initial_wealth</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> periods:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    holding_growth_factor <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    pre_cost_wealth <span class="op">=</span> wealth <span class="op">*</span> holding_growth_factor</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    drifted_weights <span class="op">=</span> [</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        w <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> r) <span class="op">/</span> holding_growth_factor</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> w, r <span class="kw">in</span> <span class="bu">zip</span>(weights, returns[t])</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> is_rebalance_date(t):</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        target <span class="op">=</span> target_weights[t]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">abs</span>(target_i <span class="op">-</span> drifted_i)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> target_i, drifted_i <span class="kw">in</span> <span class="bu">zip</span>(target, drifted_weights)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        cost_fraction <span class="op">=</span> cost_rate[t] <span class="op">*</span> turnover_l1</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> cost_fraction)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> target</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        turnover_l1 <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        cost_fraction <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        wealth <span class="op">=</span> pre_cost_wealth</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> drifted_weights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This is a <strong>reduced-form proportional-cost backtest</strong>. The trade vector is measured from the drifted pre-trade portfolio to the desired target using pre-cost wealth as the denominator. The scalar cost deduction is then applied to wealth. Because transaction costs are applied as a scalar wealth deduction, the example does not solve the more detailed self-financing execution problem in which trading costs can alter the exact post-trade holdings.</p>
 </section>
-<section class="level1" id="hands-on-lab-change-the-cost-assumption">
+<section id="hands-on-lab-change-the-cost-assumption" class="level1">
 <h1>Hands-on Lab: Change the Cost Assumption</h1>
 <p>The lab uses the same four-period three-asset path and lets you change the proportional cost assumption while keeping the trading rule fixed.</p>
 <div class="method-action">
 <p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM009_TURNOVER_COSTS/labs/index.html">lab guide</a>. For a self-contained copy, use the <a href="labs/qm009_hands_on_lab_bundle.zip">complete lab bundle</a>. Direct source: <a href="labs/python/qm009_hands_on.py">Python</a> · <a href="labs/r/qm009_hands_on.R">R</a>.</p>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class="ex">python</span> labs/python/qm009_hands_on.py 10</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm009_hands_on.py 10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Try 0, 10, and 25 bps. Turnover should not change, because the targets and return path are unchanged. Terminal net wealth should change, because the same modeled trade notional is being charged at a different rate.</p>
 </section>
-<section class="level1" id="what-a-transaction-cost-backtest-should-state">
+<section id="what-a-transaction-cost-backtest-should-state" class="level1">
 <h1>What a Transaction-Cost Backtest Should State</h1>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%"/>
-<col style="width: 50%"/>
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -682,46 +708,46 @@ TO_{\mathcal T}^{L1}
 </tbody>
 </table>
 </section>
-<section class="level1" id="common-mistakes">
+<section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>
-<section class="level2" id="computing-turnover-from-the-previous-target">
+<section id="computing-turnover-from-the-previous-target" class="level2">
 <h2 class="anchored" data-anchor-id="computing-turnover-from-the-previous-target">1. Computing turnover from the previous target</h2>
 <p>Asset returns change portfolio weights between rebalances even when no trade occurs. The previous target is therefore not generally the portfolio that exists when the next order is placed.</p>
 </section>
-<section class="level2" id="reporting-turnover-without-the-formula">
+<section id="reporting-turnover-without-the-formula" class="level2">
 <h2 class="anchored" data-anchor-id="reporting-turnover-without-the-formula">2. Reporting “turnover” without the formula</h2>
 <p>Full-L1 and one-way turnover differ by a factor of two under the fully invested/no-flow convention used here. Regulatory portfolio turnover is a separate statistic <span class="citation" data-cites="secformn1a">(<a href="#ref-secformn1a" role="doc-biblioref">U.S. Securities and Exchange Commission 2025</a>)</span>.</p>
 </section>
-<section class="level2" id="applying-a-both-legs-cost-rate-directly-to-one-way-turnover">
+<section id="applying-a-both-legs-cost-rate-directly-to-one-way-turnover" class="level2">
 <h2 class="anchored" data-anchor-id="applying-a-both-legs-cost-rate-directly-to-one-way-turnover">3. Applying a both-legs cost rate directly to one-way turnover</h2>
 <p>If the cost rate prices each dollar bought and sold, the full-L1 traded-notional base must be used, or the factor-of-two mapping must be applied explicitly.</p>
 </section>
-<section class="level2" id="treating-passive-weight-drift-as-a-trade">
+<section id="treating-passive-weight-drift-as-a-trade" class="level2">
 <h2 class="anchored" data-anchor-id="treating-passive-weight-drift-as-a-trade">4. Treating passive weight drift as a trade</h2>
 <p>On a non-rebalance date, drift changes weights but does not create strategy-driven turnover. Cost should not appear merely because prices moved.</p>
 </section>
-<section class="level2" id="mixing-initial-formation-with-recurring-turnover">
+<section id="mixing-initial-formation-with-recurring-turnover" class="level2">
 <h2 class="anchored" data-anchor-id="mixing-initial-formation-with-recurring-turnover">5. Mixing initial formation with recurring turnover</h2>
 <p>A cash-to-portfolio inception trade is not automatically comparable with later rebalances. State the inception convention separately.</p>
 </section>
-<section class="level2" id="calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">
+<section id="calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag" class="level2">
 <h2 class="anchored" data-anchor-id="calling-sum_tinmathcal-tc_t-the-exact-cumulative-drag">6. Calling <span class="math inline">\(\sum_{t\in\mathcal T}C_t\)</span> the exact cumulative drag</h2>
 <p>The exact retention is multiplicative: <span class="math inline">\(\prod_{t\in\mathcal T}(1-C_t)\)</span>.</p>
 </section>
-<section class="level2" id="calling-a-fixed-bps-cost-model-actual-execution-cost">
+<section id="calling-a-fixed-bps-cost-model-actual-execution-cost" class="level2">
 <h2 class="anchored" data-anchor-id="calling-a-fixed-bps-cost-model-actual-execution-cost">7. Calling a fixed-bps cost model “actual execution cost”</h2>
 <p>Implementation shortfall is broader than a simple turnover-linked debit <span class="citation" data-cites="perold1988 kritzmanmyrgrenpage2006">(<a href="#ref-perold1988" role="doc-biblioref">Perold 1988</a>; <a href="#ref-kritzmanmyrgrenpage2006" role="doc-biblioref">Kritzman et al. 2006</a>)</span>. Execution models can include spread, market impact, execution speed, liquidity, and risk trade-offs; Almgren and Chriss provide a classic example of that richer problem <span class="citation" data-cites="almgrenchriss2001">(<a href="#ref-almgrenchriss2001" role="doc-biblioref">Almgren and Chriss 2001</a>)</span>.</p>
 </section>
-<section class="level2" id="assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">
+<section id="assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal" class="level2">
 <h2 class="anchored" data-anchor-id="assuming-ex-post-cost-deduction-makes-the-portfolio-cost-optimal">8. Assuming ex-post cost deduction makes the portfolio cost-optimal</h2>
 <p>An ex-post cost adjustment evaluates a target that has already been chosen. A cost-aware optimizer would place turnover, transaction-cost terms, or trading constraints inside the portfolio-choice problem and may choose a different target.</p>
 </section>
-<section class="level2" id="letting-transaction-cost-realism-hide-an-information-leak">
+<section id="letting-transaction-cost-realism-hide-an-information-leak" class="level2">
 <h2 class="anchored" data-anchor-id="letting-transaction-cost-realism-hide-an-information-leak">9. Letting transaction-cost realism hide an information leak</h2>
 <p>Charging a cost does not repair a timing error. If a target uses information that would not have been available before the trade generating the subsequent return, the backtest still has an information-timing problem. The timing discipline described in QM007 still applies.</p>
 </section>
 </section>
-<section class="level1" id="when-this-setup-needs-to-be-extended">
+<section id="when-this-setup-needs-to-be-extended" class="level1">
 <h1>When This Setup Needs to Be Extended</h1>
 <p>The proportional-cost model is most useful when the goal is transparent sensitivity analysis under a simple, declared cost assumption. Extend the model when the implementation problem materially depends on:</p>
 <ul>
@@ -738,7 +764,7 @@ TO_{\mathcal T}^{L1}
 </ul>
 <p>Perold’s implementation-shortfall framework and later transaction-cost analysis emphasize the gap between a paper portfolio and the implemented outcome <span class="citation" data-cites="perold1988 kritzmanmyrgrenpage2006">(<a href="#ref-perold1988" role="doc-biblioref">Perold 1988</a>; <a href="#ref-kritzmanmyrgrenpage2006" role="doc-biblioref">Kritzman et al. 2006</a>)</span>. Almgren and Chriss show why market impact and execution risk can make optimal trading a separate problem from portfolio-weight accounting <span class="citation" data-cites="almgrenchriss2001">(<a href="#ref-almgrenchriss2001" role="doc-biblioref">Almgren and Chriss 2001</a>)</span>. - <a href="../../40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html">QM027 — Cross-Sectional Ranking, Top-K Selection, and Hold Buffers</a></p>
 </section>
-<section class="level1" id="used-in-slackquant-research">
+<section id="used-in-slackquant-research" class="level1">
 <h1>Used in SlackQuant Research</h1>
 <ul>
 <li><p><a href="https://research.slackquant.com/systems/equity-alpha/">Equity Alpha</a> — benchmark-aware global equity ETF alpha system using point-in-time selection, rank-based decisions, and active-risk evaluation.</p></li>
@@ -751,40 +777,43 @@ TO_{\mathcal T}^{L1}
 </ul>
 <p>QM009 defines the reusable turnover and cost-accounting mechanics; the linked artifacts retain authority over their own cost rates, execution assumptions, and reported results.</p>
 </section>
-<section class="level1 related-methods" id="related-methods">
+<section id="related-methods" class="level1 related-methods">
 <h1 class="related-methods">Related Methods</h1>
 <ul>
 <li><a href="../../40_PORTFOLIO_METHODS/QM007_PORTFOLIO_BACKTESTING_REBALANCING/article.html">QM007 — Portfolio Backtesting and Rebalancing</a>: provides the timeline, drifted pre-trade weights, and rebalance-state accounting used here before transaction costs are applied.</li>
 <li><a href="../../40_PORTFOLIO_METHODS/QM008_DRAWDOWN_UNDERWATER_DURATION_RECOVERY/article.html">QM008 — Drawdown, Underwater Duration, and Recovery</a>: measures path-dependent downside on the resulting wealth path; whether that path is before or net of modeled costs should be stated explicitly.</li>
 </ul>
 </section>
-<section class="level1" id="reproducibility">
+<section id="reproducibility" class="level1">
 <h1>Reproducibility</h1>
 <p>The article, Python example, base-R implementation, and hands-on lab all use the same deterministic three-asset path. Their outputs are cross-checked for drift-aware turnover, the one-way/full-L1 conversion, zero turnover on non-rebalance dates, multiplicative cost accounting, and cumulative modeled cost drag.</p>
 </section>
-<section class="level1 unnumbered" id="references">
+<section id="references" class="level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div class="references csl-bib-body hanging-indent" id="refs" role="list">
-<div class="csl-entry" id="ref-almgrenchriss2001" role="listitem">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-almgrenchriss2001" class="csl-entry" role="listitem">
 Almgren, Robert, and Neil Chriss. 2001. <span>“Optimal Execution of Portfolio Transactions.”</span> <em>The Journal of Risk</em> 3 (2): 5–39. <a href="https://doi.org/10.21314/JOR.2001.041">https://doi.org/10.21314/JOR.2001.041</a>.
 </div>
-<div class="csl-entry" id="ref-gipshandbookfirms" role="listitem">
+<div id="ref-gipshandbookfirms" class="csl-entry" role="listitem">
 CFA Institute. 2020. <em>GIPS Standards Handbook for Firms</em>. <a href="https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/">https://www.gipsstandards.org/standards/gips-standards-for-firms/gips-standards-handbook-for-firms/</a>.
 </div>
-<div class="csl-entry" id="ref-demiguelgarlappiuppal2009" role="listitem">
+<div id="ref-demiguelgarlappiuppal2009" class="csl-entry" role="listitem">
 DeMiguel, Victor, Lorenzo Garlappi, and Raman Uppal. 2009. <span>“Optimal Versus Naive Diversification: How Inefficient Is the 1/n Portfolio Strategy?”</span> <em>The Review of Financial Studies</em> 22 (5): 1915–53. <a href="https://doi.org/10.1093/rfs/hhm075">https://doi.org/10.1093/rfs/hhm075</a>.
 </div>
-<div class="csl-entry" id="ref-kritzmanmyrgrenpage2006" role="listitem">
+<div id="ref-kritzmanmyrgrenpage2006" class="csl-entry" role="listitem">
 Kritzman, Mark, Simon Myrgren, and Sébastien Page. 2006. <span>“Implementation Shortfall.”</span> <em>The Journal of Portfolio Management</em> 33 (1): 25–30. <a href="https://doi.org/10.3905/jpm.2006.661367">https://doi.org/10.3905/jpm.2006.661367</a>.
 </div>
-<div class="csl-entry" id="ref-perold1988" role="listitem">
+<div id="ref-perold1988" class="csl-entry" role="listitem">
 Perold, André F. 1988. <span>“The Implementation Shortfall: Paper Versus Reality.”</span> <em>The Journal of Portfolio Management</em> 14 (3): 4–9. <a href="https://doi.org/10.3905/jpm.1988.409150">https://doi.org/10.3905/jpm.1988.409150</a>.
 </div>
-<div class="csl-entry" id="ref-secformn1a" role="listitem">
+<div id="ref-secformn1a" class="csl-entry" role="listitem">
 U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration Statement Under the Securities Act of 1933 and/or the Investment Company Act of 1940</em>. <a href="https://www.sec.gov/files/form-n-1a.pdf">https://www.sec.gov/files/form-n-1a.pdf</a>.
 </div>
 </div>
+
+
 </section>
+
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1193,17 +1222,17 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-<div class="nav-footer">
-<div class="nav-footer-left">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>
-<div class="nav-footer-center">
-       
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
     </div>
-<div class="nav-footer-right">
+    <div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-</div>
+  </div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -1217,13 +1246,14 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
     const categoryDisplay = (raw) => {
       const key = normalize(raw);
       const aliases = {
-        "forecast evaluation": "Forecast",
+        "forecast evaluation": "Forecast Evaluation",
         "statistical inference": "Statistical Inference",
         "time-series methods": "Time Series",
         "data & research design": "Data / Research Design",
         "portfolio methods": "Portfolio",
         "machine learning": "Machine Learning",
         "ml methods": "Machine Learning",
+        "ai & foundation models": "AI / Foundation Models",
       };
       if (aliases[key]) return aliases[key];
       return raw
@@ -1242,7 +1272,15 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
 
       const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
       const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      const expectedCount = Number(resultCount.dataset.canonicalCount || 0);
       if (!rows.length) return;
+      if (expectedCount && rows.length !== expectedCount) {
+        resultCount.textContent = `${rows.length} methods · catalog mismatch`;
+        resultCount.dataset.integrity = "fail";
+        console.error(`Methods catalog mismatch: rendered=${rows.length}, expected=${expectedCount}`);
+      } else {
+        resultCount.dataset.integrity = "pass";
+      }
 
       const categories = new Map();
       rows.forEach((row) => {
@@ -1279,7 +1317,21 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
       };
 
       addFilter("all", "All");
-      categories.forEach((label, key) => addFilter(key, label));
+      const preferredCategoryOrder = [
+        "forecast evaluation",
+        "statistical inference",
+        "portfolio methods",
+        "time-series methods",
+        "machine learning",
+        "ai & foundation models",
+        "data & research design",
+      ];
+      preferredCategoryOrder.forEach((key) => {
+        if (categories.has(key)) addFilter(key, categories.get(key));
+      });
+      categories.forEach((label, key) => {
+        if (!preferredCategoryOrder.includes(key)) addFilter(key, label);
+      });
 
       const apply = () => {
         const query = normalize(input.value);
@@ -1348,6 +1400,8 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
+      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
+      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1393,6 +1447,8 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
           "/20_STATISTICAL_INFERENCE/",
           "/30_TIME_SERIES/",
           "/40_PORTFOLIO_METHODS/",
+          "/60_MACHINE_LEARNING/",
+          "/70_AI_FOUNDATION_MODELS/",
           "/80_DATA_RESEARCH_DESIGN/",
         ];
         for (const marker of domainMarkers) {
@@ -1480,5 +1536,9 @@ U.S. Securities and Exchange Commission. 2025. <em>Form n-1A: Registration State
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
+
+
+
+
 <script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

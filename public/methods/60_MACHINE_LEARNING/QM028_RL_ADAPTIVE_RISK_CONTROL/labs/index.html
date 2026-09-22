@@ -1,9 +1,12 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
-<meta charset="utf-8"/>
-<meta content="quarto-1.10.18" name="generator"/>
-<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
 <title>QM028 Hands-on Lab: Adaptive Risk Control – SlackQuant Research</title>
 <style>
 /* Default styles provided by pandoc.
@@ -59,6 +62,8 @@ div.sourceCode
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
+
+
 <script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -66,11 +71,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
-<link append-hash="true" data-mode="light" href="../../../site_libs/bootstrap/bootstrap-29639d9c4a16f21f6b148b1319ac2460.min.css" id="quarto-bootstrap" rel="stylesheet"/>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-172ba59bd5e0b52282274ba0c0cc16fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -87,6 +92,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6GE45R8S4F"></script>
+
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -95,30 +101,43 @@ gtag('js', new Date());
 gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 </script>
 <style>html{ scroll-behavior: smooth; }</style>
-<link href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/labs/" rel="canonical"/>
+
+
+<link rel="canonical" href="https://research.slackquant.com/methods/60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/labs/">
 </head>
+
 <body class="quarto-light">
+
 <div id="quarto-search-results"></div>
 <!-- content -->
-<div class="quarto-container page-columns page-rows-contents page-layout-article" id="quarto-content">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-<div class="sidebar margin-sidebar" id="quarto-margin-sidebar">
-<nav class="toc-active" id="TOC" role="doc-toc"><h2 id="toc-title">On this page</h2><ul><li><a class="nav-link active" data-scroll-target="#objective" href="#objective" id="toc-objective">Objective</a></li><li><a class="nav-link" data-scroll-target="#run" href="#run" id="toc-run">Run</a></li><li><a class="nav-link" data-scroll-target="#what-to-inspect" href="#what-to-inspect" id="toc-what-to-inspect">What to inspect</a></li><li><a class="nav-link" data-scroll-target="#interpretation-boundary" href="#interpretation-boundary" id="toc-interpretation-boundary">Interpretation boundary</a></li></ul></nav>
-</div>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objective" id="toc-objective" class="nav-link active" data-scroll-target="#objective">Objective</a></li>
+  <li><a href="#run" id="toc-run" class="nav-link" data-scroll-target="#run">Run</a></li>
+  <li><a href="#what-to-inspect" id="toc-what-to-inspect" class="nav-link" data-scroll-target="#what-to-inspect">What to inspect</a></li>
+  <li><a href="#interpretation-boundary" id="toc-interpretation-boundary" class="nav-link" data-scroll-target="#interpretation-boundary">Interpretation boundary</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 <header class="sq-platform-header">
-<div class="sq-platform-shell sq-platform-nav">
-<a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
-<nav aria-label="Primary" class="sq-platform-nav-links">
-<a href="https://research.slackquant.com/research/" target="_self">Research</a>
-<a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
-<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
-<a href="https://research.slackquant.com/about/" target="_self">About</a>
-<a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" rel="noopener noreferrer" target="_blank">GitHub</a>
-</nav>
-</div>
+  <div class="sq-platform-shell sq-platform-nav">
+    <a class="sq-platform-brand" href="https://research.slackquant.com/" target="_self">SlackQuant Research</a>
+    <nav class="sq-platform-nav-links" aria-label="Primary">
+      <a href="https://research.slackquant.com/research/" target="_self">Research</a>
+      <a href="https://research.slackquant.com/systems/" target="_self">Systems</a>
+      <a href="https://research.slackquant.com/methods/" target="_self">Methods</a>
+      <a href="https://research.slackquant.com/about/" target="_self">About</a>
+      <a class="sq-platform-ext" href="https://github.com/slackquant80/slackquant-research" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </div>
 </header>
 <script id="sq-header-relocator">
   (() => {
@@ -133,28 +152,50 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
     }
   })();
 </script>
-<header class="quarto-title-block default" id="title-block-header"><div class="quarto-title"><h1 class="title">QM028 Hands-on Lab: Adaptive Risk Control</h1></div></header>
-<div class="method-kicker"><p>QM028 · Hands-on Lab</p></div>
-<h1 id="objective">Objective</h1>
-<p>Use a small synthetic monthly return sequence to compare a Core
-portfolio with a bounded adaptive risk-budget overlay. The exercise is
-intentionally simple: it demonstrates portfolio mapping and reward
-sensitivity, not a production RL result.</p>
-<h1 id="run">Run</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="ex">python</span> labs/python/qm028_rl_risk_control.py</span></code></pre></div>
-<h1 id="what-to-inspect">What to inspect</h1>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">QM028 Hands-on Lab: Adaptive Risk Control</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="objective" class="level1">
+<h1>Objective</h1>
+<p>Use a small synthetic monthly return sequence to compare a Core portfolio with a bounded adaptive risk-budget overlay. The exercise is intentionally simple: it demonstrates portfolio mapping and reward sensitivity, not a production RL result.</p>
+</section>
+<section id="run" class="level1">
+<h1>Run</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> labs/python/qm028_rl_risk_control.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="what-to-inspect" class="level1">
+<h1>What to inspect</h1>
 <ul>
 <li>Which months are mapped to the defensive state?</li>
-<li>How does a 50% risk budget change return and drawdown relative to
-Core?</li>
+<li>How does a 50% risk budget change return and drawdown relative to Core?</li>
 <li>What happens when the turnover penalty is increased?</li>
-<li>Why is a better outcome on this synthetic path not evidence that the
-state rule will generalize?</li>
+<li>Why is a better outcome on this synthetic path not evidence that the state rule will generalize?</li>
 </ul>
-<h1 id="interpretation-boundary">Interpretation boundary</h1>
-<p>The script uses a predetermined synthetic state sequence. It does not
-train or validate a deployable policy and makes no empirical
-market-performance claim.</p>
+</section>
+<section id="interpretation-boundary" class="level1">
+<h1>Interpretation boundary</h1>
+<p>The script uses a predetermined synthetic state sequence. It does not train or validate a deployable policy and makes no empirical market-performance claim.</p>
+
+
+</section>
+
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -563,17 +604,17 @@ market-performance claim.</p>
   </script>
 </div> <!-- /content -->
 <footer class="footer">
-<div class="nav-footer">
-<div class="nav-footer-left">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
 <p>SlackQuant Research · Quantitative Methods</p>
-</div>
-<div class="nav-footer-center">
-       
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
     </div>
-<div class="nav-footer-right">
+    <div class="nav-footer-right">
 <p>Methods for applied quantitative research and investment practice</p>
 </div>
-</div>
+  </div>
 </footer>
 <script id="sq-method-index-discovery-script">
   (() => {
@@ -587,13 +628,14 @@ market-performance claim.</p>
     const categoryDisplay = (raw) => {
       const key = normalize(raw);
       const aliases = {
-        "forecast evaluation": "Forecast",
+        "forecast evaluation": "Forecast Evaluation",
         "statistical inference": "Statistical Inference",
         "time-series methods": "Time Series",
         "data & research design": "Data / Research Design",
         "portfolio methods": "Portfolio",
         "machine learning": "Machine Learning",
         "ml methods": "Machine Learning",
+        "ai & foundation models": "AI / Foundation Models",
       };
       if (aliases[key]) return aliases[key];
       return raw
@@ -612,7 +654,15 @@ market-performance claim.</p>
 
       const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
       const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      const expectedCount = Number(resultCount.dataset.canonicalCount || 0);
       if (!rows.length) return;
+      if (expectedCount && rows.length !== expectedCount) {
+        resultCount.textContent = `${rows.length} methods · catalog mismatch`;
+        resultCount.dataset.integrity = "fail";
+        console.error(`Methods catalog mismatch: rendered=${rows.length}, expected=${expectedCount}`);
+      } else {
+        resultCount.dataset.integrity = "pass";
+      }
 
       const categories = new Map();
       rows.forEach((row) => {
@@ -649,7 +699,21 @@ market-performance claim.</p>
       };
 
       addFilter("all", "All");
-      categories.forEach((label, key) => addFilter(key, label));
+      const preferredCategoryOrder = [
+        "forecast evaluation",
+        "statistical inference",
+        "portfolio methods",
+        "time-series methods",
+        "machine learning",
+        "ai & foundation models",
+        "data & research design",
+      ];
+      preferredCategoryOrder.forEach((key) => {
+        if (categories.has(key)) addFilter(key, categories.get(key));
+      });
+      categories.forEach((label, key) => {
+        if (!preferredCategoryOrder.includes(key)) addFilter(key, label);
+      });
 
       const apply = () => {
         const query = normalize(input.value);
@@ -718,6 +782,8 @@ market-performance claim.</p>
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
+      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
+      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -763,6 +829,8 @@ market-performance claim.</p>
           "/20_STATISTICAL_INFERENCE/",
           "/30_TIME_SERIES/",
           "/40_PORTFOLIO_METHODS/",
+          "/60_MACHINE_LEARNING/",
+          "/70_AI_FOUNDATION_MODELS/",
           "/80_DATA_RESEARCH_DESIGN/",
         ];
         for (const marker of domainMarkers) {
@@ -850,5 +918,9 @@ market-performance claim.</p>
     new MutationObserver(apply).observe(document.documentElement, { childList: true, subtree: true });
   })();
 </script>
+
+
+
+
 <script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

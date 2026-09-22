@@ -181,6 +181,7 @@ window.Quarto = {
   <li><a href="#how-to-interpret-the-result" id="toc-how-to-interpret-the-result" class="nav-link" data-scroll-target="#how-to-interpret-the-result">How to Interpret the Result</a></li>
   <li><a href="#financial-economic-example" id="toc-financial-economic-example" class="nav-link" data-scroll-target="#financial-economic-example">Financial / Economic Example</a></li>
   <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#hands-on-lab" id="toc-hands-on-lab" class="nav-link" data-scroll-target="#hands-on-lab">Hands-on Lab</a></li>
   <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
   <li><a href="#when-not-to-use-it" id="toc-when-not-to-use-it" class="nav-link" data-scroll-target="#when-not-to-use-it">When Not to Use It</a></li>
   <li><a href="#related-methods" id="toc-related-methods" class="nav-link" data-scroll-target="#related-methods">Related Methods</a></li>
@@ -439,6 +440,13 @@ D_{w}=\frac{1}{T}\sum_{t=1}^{T}\frac{1}{2}\|\mathbf w_{A,t}-\mathbf w_{B,t}\|_1.
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> half_l1_distance(w_a, w_b):</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">0.5</span> <span class="op">*</span> np.<span class="bu">abs</span>(np.asarray(w_a) <span class="op">-</span> np.asarray(w_b)).<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>For valid long-only fully invested vectors, <code>overlap(a, b)</code> equals <code>1 - half_l1_distance(a, b)</code>. The included validator checks this identity and the timing-disagreement example.</p>
+</section>
+<section id="hands-on-lab" class="level1">
+<h1>Hands-on Lab</h1>
+<p>The lab compares two synthetic weight paths using holdings overlap, material-change timing, and half-<span class="math inline">\(L_1\)</span> allocation distance. It keeps the three decision-similarity dimensions separate instead of forcing them into one score.</p>
+<div class="lab-downloads">
+<p><strong>Run it yourself.</strong> Start with the <a href="../../40_PORTFOLIO_METHODS/QM011_DECISION_DIVERSIFICATION/labs/index.html">lab guide</a>. Direct source: <a href="labs/python/qm011_decision_similarity.py">Python</a>.</p>
+</div>
 </section>
 <section id="common-mistakes" class="level1">
 <h1>Common Mistakes</h1>
@@ -922,13 +930,14 @@ Markowitz, Harry. 1952. <span>“Portfolio Selection.”</span> <em>The Journal 
     const categoryDisplay = (raw) => {
       const key = normalize(raw);
       const aliases = {
-        "forecast evaluation": "Forecast",
+        "forecast evaluation": "Forecast Evaluation",
         "statistical inference": "Statistical Inference",
         "time-series methods": "Time Series",
         "data & research design": "Data / Research Design",
         "portfolio methods": "Portfolio",
         "machine learning": "Machine Learning",
         "ml methods": "Machine Learning",
+        "ai & foundation models": "AI / Foundation Models",
       };
       if (aliases[key]) return aliases[key];
       return raw
@@ -947,7 +956,15 @@ Markowitz, Harry. 1952. <span>“Portfolio Selection.”</span> <em>The Journal 
 
       const rows = Array.from(catalog.querySelectorAll(".sq-method-row"));
       const groups = Array.from(catalog.querySelectorAll(".sq-method-group"));
+      const expectedCount = Number(resultCount.dataset.canonicalCount || 0);
       if (!rows.length) return;
+      if (expectedCount && rows.length !== expectedCount) {
+        resultCount.textContent = `${rows.length} methods · catalog mismatch`;
+        resultCount.dataset.integrity = "fail";
+        console.error(`Methods catalog mismatch: rendered=${rows.length}, expected=${expectedCount}`);
+      } else {
+        resultCount.dataset.integrity = "pass";
+      }
 
       const categories = new Map();
       rows.forEach((row) => {
@@ -984,7 +1001,21 @@ Markowitz, Harry. 1952. <span>“Portfolio Selection.”</span> <em>The Journal 
       };
 
       addFilter("all", "All");
-      categories.forEach((label, key) => addFilter(key, label));
+      const preferredCategoryOrder = [
+        "forecast evaluation",
+        "statistical inference",
+        "portfolio methods",
+        "time-series methods",
+        "machine learning",
+        "ai & foundation models",
+        "data & research design",
+      ];
+      preferredCategoryOrder.forEach((key) => {
+        if (categories.has(key)) addFilter(key, categories.get(key));
+      });
+      categories.forEach((label, key) => {
+        if (!preferredCategoryOrder.includes(key)) addFilter(key, label);
+      });
 
       const apply = () => {
         const query = normalize(input.value);
@@ -1053,6 +1084,8 @@ Markowitz, Harry. 1952. <span>“Portfolio Selection.”</span> <em>The Journal 
       { id: "QM025", title: "Pretrained Time-Series Foundation Models", path: "70_AI_FOUNDATION_MODELS/QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS/article.html", folder: "QM025_PRETRAINED_TIME_SERIES_FOUNDATION_MODELS" },
       { id: "QM026", title: "Point-in-Time Dynamic Universe Construction", path: "80_DATA_RESEARCH_DESIGN/QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE/article.html", folder: "QM026_POINT_IN_TIME_DYNAMIC_UNIVERSE" },
       { id: "QM027", title: "Cross-Sectional Ranking, Top-K Selection, and Hold Buffers", path: "40_PORTFOLIO_METHODS/QM027_CROSS_SECTIONAL_RANKING_TOPK/article.html", folder: "QM027_CROSS_SECTIONAL_RANKING_TOPK" },
+      { id: "QM028", title: "Reinforcement Learning for Adaptive Portfolio Risk Control", path: "60_MACHINE_LEARNING/QM028_RL_ADAPTIVE_RISK_CONTROL/article.html", folder: "QM028_RL_ADAPTIVE_RISK_CONTROL" },
+      { id: "QM029", title: "Dynamic Currency Hedging and FX Overlay Accounting", path: "40_PORTFOLIO_METHODS/QM029_DYNAMIC_CURRENCY_HEDGING/article.html", folder: "QM029_DYNAMIC_CURRENCY_HEDGING" },
     ];
 
     const init = () => {
@@ -1098,6 +1131,8 @@ Markowitz, Harry. 1952. <span>“Portfolio Selection.”</span> <em>The Journal 
           "/20_STATISTICAL_INFERENCE/",
           "/30_TIME_SERIES/",
           "/40_PORTFOLIO_METHODS/",
+          "/60_MACHINE_LEARNING/",
+          "/70_AI_FOUNDATION_MODELS/",
           "/80_DATA_RESEARCH_DESIGN/",
         ];
         for (const marker of domainMarkers) {
