@@ -251,7 +251,7 @@ def main() -> int:
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
         "validated operating view",
-        "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
+        "/resources/systems/pds/PDS_System_Documentation_v1.3.pdf",
         "System Documentation ↗",
     )
     for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv", "DELAYED PUBLIC", "protected current decision state"):
@@ -291,7 +291,7 @@ def main() -> int:
     if "pdsPublicSnapshot" in systems_index or "pdsPublicSnapshot" in pds:
         raise RuntimeError("PDS platform still depends on legacy delayed snapshot binding")
 
-    pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
+    pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
     if not pds_documentation.is_file() or pds_documentation.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("PDS System Documentation PDF missing or invalid")
 
@@ -425,7 +425,7 @@ def main() -> int:
         for rel in required_out:
             if not (ROOT / rel).is_file():
                 raise RuntimeError(f"built route/artifact missing: {rel}")
-        built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
+        built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
         if not built_doc.is_file() or built_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built PDS System Documentation PDF missing or invalid")
         built_f2r_doc = ROOT / "out/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"

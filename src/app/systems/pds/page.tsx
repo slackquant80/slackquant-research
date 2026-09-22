@@ -144,7 +144,7 @@ export default function PdsSystemPage() {
             </Link>
             <a
               className="btn soft"
-              href="/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
+              href="/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >

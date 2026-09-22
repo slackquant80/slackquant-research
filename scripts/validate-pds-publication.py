@@ -16,7 +16,7 @@ SUMMARY = APP / "src/data/pdsCanonicalSummary.ts"
 SUMMARY_BINDER = APP / "scripts/bind-pds-canonical-summary.py"
 PUBLIC_DASHBOARD = APP / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
 PUBLIC_DASHBOARD_RECEIPT = APP / "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
-PDS_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.2.pdf"
+PDS_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
 LEGACY_PDS_DOCUMENTATIONS = [
     APP / "public/resources/systems/pds/PDS_System_Documentation_v1.0.pdf",
     APP / "public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf",
@@ -97,8 +97,8 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
-        "validated public operating view",
-        "/resources/systems/pds/PDS_System_Documentation_v1.2.pdf",
+        "the PDS dashboard is the validated operating view",
+        "/resources/systems/pds/PDS_System_Documentation_v1.3.pdf",
         "/systems/pds/dashboard/",
     ]:
         require(pds, tok, "PDS platform page")
@@ -264,7 +264,7 @@ def main() -> int:
     require(route, "/assets/systems/pds/Portfolio_Decision_System_Public.html", "PDS dashboard route")
 
     if not PDS_DOCUMENTATION.is_file() or PDS_DOCUMENTATION.read_bytes()[:5] != b"%PDF-":
-        raise RuntimeError("PDS System Documentation v1.2 PDF missing or invalid")
+        raise RuntimeError("PDS System Documentation v1.3 PDF missing or invalid")
     for legacy in LEGACY_PDS_DOCUMENTATIONS:
         if legacy.exists():
             raise RuntimeError(f"legacy PDS System Documentation must not remain public: {legacy.name}")
