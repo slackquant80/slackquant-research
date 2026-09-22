@@ -21,6 +21,22 @@ $newFilter = 'var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\
 $oldRel = 'link.setAttribute("rel", "noopener");'
 $newRel = 'link.setAttribute("rel", "noopener noreferrer");'
 
+
+$bootstrapDir = Join-Path $methodsRoot "site_libs\bootstrap"
+if (-not (Test-Path $bootstrapDir)) {
+  throw "Missing Methods Bootstrap directory: $bootstrapDir"
+}
+$platformBootstrapFiles = @(
+  Get-ChildItem $bootstrapDir -File -Filter "bootstrap-*.min.css" | Where-Object {
+    [System.IO.File]::ReadAllText($_.FullName).Contains(".sq-platform-header")
+  }
+)
+if ($platformBootstrapFiles.Count -ne 1) {
+  throw "Expected exactly one Methods Bootstrap bundle containing SlackQuant platform styles; found $($platformBootstrapFiles.Count)"
+}
+$platformBootstrapName = $platformBootstrapFiles[0].Name
+$bootstrapHrefPattern = '((?:\.\./)*site_libs/bootstrap/)bootstrap-[A-Za-z0-9]+\.min\.css'
+
 function Count-Token([string]$Text, [string]$Token) {
   return ([regex]::Matches($Text, [regex]::Escape($Token))).Count
 }
@@ -66,6 +82,7 @@ $changedFiles = 0
 $missingSystems = @()
 $staleFilters = @()
 $staleRel = @()
+$staleBootstrap = @()
 
 Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
   $path = $_.FullName
@@ -102,6 +119,22 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
     else { $next = $next.Replace($oldRel, $newRel) }
   } elseif (-not $next.Contains($newRel)) {
     $staleRel += Relative-MethodPath $path
+  }
+
+
+  $bootstrapMatch = [regex]::Match($next, $bootstrapHrefPattern)
+  if (-not $bootstrapMatch.Success) {
+    $staleBootstrap += Relative-MethodPath $path
+  } else {
+    $currentBootstrapName = [System.IO.Path]::GetFileName($bootstrapMatch.Value)
+    if ($currentBootstrapName -ne $platformBootstrapName) {
+      if ($CheckOnly) {
+        $staleBootstrap += Relative-MethodPath $path
+      } else {
+        $replacement = $bootstrapMatch.Groups[1].Value + $platformBootstrapName
+        $next = $next.Substring(0, $bootstrapMatch.Index) + $replacement + $next.Substring($bootstrapMatch.Index + $bootstrapMatch.Length)
+      }
+    }
   }
 
   $navRange = Find-PlatformNavRange -Text $next -Path $path
@@ -158,5 +191,9 @@ if ($staleRel.Count -gt 0) {
   throw ("Methods external rel policy is stale in {0} rendered HTML file(s). Example: {1}" -f $staleRel.Count, $staleRel[0])
 }
 
+if ($staleBootstrap.Count -gt 0) {
+  throw ("Methods platform Bootstrap bundle is stale/missing in {0} rendered HTML file(s). Example: {1}" -f $staleBootstrap.Count, $staleBootstrap[0])
+}
+
 $mode = if ($CheckOnly) { "CHECK" } else { "NORMALIZE" }
-Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles first_party=canonical_host nav_match=attribute_order_independent" -ForegroundColor Green
+Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles first_party=canonical_host nav_match=attribute_order_independent bootstrap=$platformBootstrapName" -ForegroundColor Green
