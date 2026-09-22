@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = (Get-Location).Path,
   [switch]$CheckOnly
 )
@@ -25,6 +25,42 @@ function Count-Token([string]$Text, [string]$Token) {
   return ([regex]::Matches($Text, [regex]::Escape($Token))).Count
 }
 
+function Find-PlatformNavRange([string]$Text, [string]$Path) {
+  $cursor = 0
+  while ($cursor -lt $Text.Length) {
+    $navStart = $Text.IndexOf("<nav", $cursor, [System.StringComparison]::OrdinalIgnoreCase)
+    if ($navStart -lt 0) {
+      return $null
+    }
+
+    $openEnd = $Text.IndexOf(">", $navStart)
+    if ($openEnd -lt 0) {
+      throw "Malformed nav opening tag in Methods HTML: $Path"
+    }
+
+    $openTag = $Text.Substring($navStart, $openEnd - $navStart + 1)
+    if ($openTag -match '\bsq-platform-nav-links\b') {
+      $navEnd = $Text.IndexOf("</nav>", $openEnd, [System.StringComparison]::OrdinalIgnoreCase)
+      if ($navEnd -lt 0) {
+        throw "Malformed Methods platform navigation (closing nav missing): $Path"
+      }
+      return @{
+        Start = $navStart
+        End = $navEnd
+      }
+    }
+
+    $cursor = $openEnd + 1
+  }
+
+  return $null
+}
+
+function Relative-MethodPath([string]$Path) {
+  $rel = $Path.Substring($methodsRoot.Length)
+  return $rel.TrimStart([char[]]@('\','/'))
+}
+
 $headerFiles = 0
 $changedFiles = 0
 $missingSystems = @()
@@ -35,7 +71,8 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
   $path = $_.FullName
   $text = [System.IO.File]::ReadAllText($path)
 
-  if ($text -notmatch 'class="sq-platform-nav-links"') {
+  $navRange = Find-PlatformNavRange -Text $text -Path $path
+  if ($null -eq $navRange) {
     return
   }
 
@@ -47,32 +84,31 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
       throw "Research anchor missing from Methods platform header: $path"
     }
     if ($CheckOnly) {
-      $missingSystems += $path.Substring($methodsRoot.Length).TrimStart('\')
+      $missingSystems += Relative-MethodPath $path
     } else {
       $next = $next.Replace($research, $research + "`r`n      " + $systems)
     }
   }
 
   if ($next.Contains($oldFilter)) {
-    if ($CheckOnly) { $staleFilters += $path.Substring($methodsRoot.Length).TrimStart('\') }
+    if ($CheckOnly) { $staleFilters += Relative-MethodPath $path }
     else { $next = $next.Replace($oldFilter, $newFilter) }
   } elseif (-not $next.Contains($newFilter)) {
-    $staleFilters += $path.Substring($methodsRoot.Length).TrimStart('\')
+    $staleFilters += Relative-MethodPath $path
   }
 
   if ($next.Contains($oldRel)) {
-    if ($CheckOnly) { $staleRel += $path.Substring($methodsRoot.Length).TrimStart('\') }
+    if ($CheckOnly) { $staleRel += Relative-MethodPath $path }
     else { $next = $next.Replace($oldRel, $newRel) }
   } elseif (-not $next.Contains($newRel)) {
-    $staleRel += $path.Substring($methodsRoot.Length).TrimStart('\')
+    $staleRel += Relative-MethodPath $path
   }
 
-  $navStart = $next.IndexOf('<nav class="sq-platform-nav-links"')
-  $navEnd = $next.IndexOf('</nav>', $navStart)
-  if ($navStart -lt 0 -or $navEnd -lt 0) {
-    throw "Malformed Methods platform navigation: $path"
+  $navRange = Find-PlatformNavRange -Text $next -Path $path
+  if ($null -eq $navRange) {
+    throw "Methods platform navigation disappeared during normalization: $path"
   }
-  $nav = $next.Substring($navStart, $navEnd - $navStart)
+  $nav = $next.Substring($navRange.Start, $navRange.End - $navRange.Start)
 
   foreach ($pair in @(
     @{Name="Research"; Token=$research},
@@ -123,4 +159,4 @@ if ($staleRel.Count -gt 0) {
 }
 
 $mode = if ($CheckOnly) { "CHECK" } else { "NORMALIZE" }
-Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles first_party=canonical_host" -ForegroundColor Green
+Write-Host "METHODS_NAVIGATION_${mode}_PASS headers=$headerFiles changed=$changedFiles first_party=canonical_host nav_match=attribute_order_independent" -ForegroundColor Green
