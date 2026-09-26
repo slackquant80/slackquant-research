@@ -42,8 +42,9 @@ def main() -> int:
     for token in [
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
-        "Chronos-2 pretrained time-series intelligence",
-        "Heterogeneous forecasts, one common decision space",
+        "Chronos-2",
+        "Pretrained time-series model",
+        "Heterogeneous forecasts, one common ranking process",
         "Public disclosure names the forecasting technologies and the decision architecture.",
         'target="_blank"',
         'rel="noopener noreferrer"',
