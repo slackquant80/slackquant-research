@@ -62,10 +62,19 @@ def main() -> int:
             raise RuntimeError(f"F2R page contains retired/recipe-sensitive token: {forbidden}")
 
     methods_text = methods.read_text(encoding="utf-8-sig", errors="strict")
-    current_qm002 = "Chronos-2 sequence expert enters through a separate governed inference path"
+    qm002_required_tokens = (
+        "QM002",
+        "F2R's conventional supervised models",
+        "Chronos-2",
+        "separate inference path",
+    )
+    missing_qm002 = [token for token in qm002_required_tokens if token not in methods_text]
+    if missing_qm002:
+        raise RuntimeError(
+            "F2R QM002 system context is not aligned to the current heterogeneous architecture; "
+            f"missing tokens: {', '.join(missing_qm002)}"
+        )
     stale_qm002 = "with rolling windows retained as a methodological comparison rather than the live default"
-    if current_qm002 not in methods_text:
-        raise RuntimeError("F2R QM002 system context is not aligned to the current heterogeneous architecture")
     if stale_qm002 in methods_text:
         raise RuntimeError("stale pre-Chronos F2R QM002 system context remains")
 
