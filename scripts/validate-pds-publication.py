@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,7 @@ SUMMARY = APP / "src/data/pdsCanonicalSummary.ts"
 SUMMARY_BINDER = APP / "scripts/bind-pds-canonical-summary.py"
 PUBLIC_DASHBOARD = APP / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
 PUBLIC_DASHBOARD_RECEIPT = APP / "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+PUBLIC_PORTFOLIO_HISTORY_XLSX = APP / "public/assets/systems/pds/PDS_Portfolio_History_Current_Definition.xlsx"
 
 
 def need(path: Path) -> str:
@@ -165,6 +167,25 @@ def main() -> int:
         raise RuntimeError("PDS canonical public dashboard receipt is not PASS under current policy")
     if not receipt.get("canonical_current_values_embedded"):
         raise RuntimeError("PDS canonical public dashboard receipt does not certify current values")
+
+    # Portfolio-history download must be a real adjacent XLSX asset, not a dangling relative link.
+    if not PUBLIC_PORTFOLIO_HISTORY_XLSX.is_file():
+        raise RuntimeError("PDS public portfolio-history XLSX asset is missing")
+    try:
+        with zipfile.ZipFile(PUBLIC_PORTFOLIO_HISTORY_XLSX) as z:
+            names = set(z.namelist())
+            if "xl/workbook.xml" not in names or "xl/worksheets/sheet1.xml" not in names:
+                raise RuntimeError("PDS public portfolio-history XLSX is structurally incomplete")
+            workbook_xml = z.read("xl/workbook.xml").decode("utf-8", errors="replace")
+    except zipfile.BadZipFile as exc:
+        raise RuntimeError("PDS public portfolio-history XLSX is not a valid XLSX/ZIP file") from exc
+    for sheet_name in ("Core Portfolio", "Adaptive Portfolio", "Blend 50-50 Portfolio"):
+        if sheet_name not in workbook_xml:
+            raise RuntimeError(f"PDS public portfolio-history XLSX required sheet missing: {sheet_name}")
+    xlsx_sha = hashlib.sha256(PUBLIC_PORTFOLIO_HISTORY_XLSX.read_bytes()).hexdigest()
+    if receipt.get("portfolio_history_xlsx_file") != PUBLIC_PORTFOLIO_HISTORY_XLSX.name or receipt.get("portfolio_history_xlsx_sha256") != xlsx_sha:
+        raise RuntimeError("PDS public portfolio-history XLSX does not match the canonical-mirror receipt")
+    require(public_html, 'href="PDS_Portfolio_History_Current_Definition.xlsx"', "PDS Portfolio Excel download link")
 
     # Canonical summary must be derived from the same current dashboard bytes.
     data = dashboard_payload(public_html)
