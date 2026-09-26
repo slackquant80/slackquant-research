@@ -46,7 +46,7 @@ export const systemItems: SystemItem[] = [
     status: "Public operational dashboard",
     dateLabel: "Updated with latest system release",
     shortSummary:
-      "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds RL-assisted risk control as a separate defensive layer, and Dynamic FX applies a separately managed investor-level currency overlay. The public dashboard shows the current operating state while machine-specific infrastructure remains internal.",
+      "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds reinforcement-learning adaptive risk control as a separate defensive layer, and Dynamic FX applies a separately managed investor-level currency overlay. The public dashboard shows the current operating state while machine-specific infrastructure remains internal.",
     role: "Provider Review, Portfolio Integration, Decision Process, and Monitoring",
     methodsKey: "pds-system",
     links: {
