@@ -13,6 +13,8 @@
     "coreperf",
     "weights"
   ],
+  "portfolio_history_xlsx_file": "PDS_Portfolio_History_Current_Definition.xlsx",
+  "portfolio_history_xlsx_sha256": "4c88364082d27c5b32132e4f3a38a8d7c494ce0ed2d0d6811f2cb8bbb387894f",
   "presentation_contract": "RS03_CANONICAL_LOCAL_INFORMATION__PUBLIC_SANITIZED_MIRROR",
   "preview_source_through": "2026-09-25",
   "public_policy": "CANONICAL_LOCAL_INFORMATION__ENVIRONMENT_ONLY_SUPPRESSED",
