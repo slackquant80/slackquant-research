@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = ""
 )
 
@@ -31,9 +31,9 @@ if ($LASTEXITCODE -ne 0) { throw "PDS performance-clock validation failed" }
 
   Write-Host "PDS_SYSTEM_PUBLICATION_GATE_PASS" -ForegroundColor Green
   Write-Host "System   : /systems/pds/ | Portfolio Decision & Operating System | flagship"
-  Write-Host "Dashboard: /systems/pds/dashboard/ | delayed Core + historical FX evidence"
-  Write-Host "Boundary : open architecture / delayed history / protected current decision state"
-  Write-Host "Binding  : governed source export -> SlackQuant public read model"
+  Write-Host "Dashboard: /systems/pds/dashboard/ | current Core / Adaptive / Preview / Dynamic FX"
+  Write-Host "Boundary : reader-facing system state public / machine-specific infrastructure private"
+  Write-Host "Binding  : current PDS public dashboard -> SlackQuant platform summary"
 }
 finally {
   Pop-Location

@@ -59,7 +59,7 @@ export default function AdaaSystemPage() {
           <a href="#overview">Overview</a>
           <a href="#operating-state">Operating State</a>
           <a href="#architecture">Strategy Architecture</a>
-          <a href="#evidence">Evidence & Versioning</a>
+          <a href="#evidence">Research & Versioning</a>
           <a href="#methods">Quantitative Methods</a>
           <a href="#access">Access & Documentation</a>
         </aside>
@@ -82,13 +82,13 @@ export default function AdaaSystemPage() {
               <div className="metric"><div className="value">Monthly</div><div className="label">Official decision cycle</div></div>
               <div className="metric"><div className="value">3</div><div className="label">Separated operating states</div></div>
               <div className="metric"><div className="value">Live</div><div className="label">Public operating interface</div></div>
-              <div className="metric"><div className="value">Versioned</div><div className="label">Research evidence</div></div>
+              <div className="metric"><div className="value">Versioned</div><div className="label">Research record</div></div>
             </div>
           </section>
 
           <section className="prose-section" id="operating-state">
-            <div className="kicker">Operational contract</div>
-            <h2>Three operating states, one decision authority</h2>
+            <div className="kicker">Decision timing</div>
+            <h2>Three operating states, one decision process</h2>
             <p className="body-copy">
               The official month-end decision is the portfolio target. Current MTD shows how that portfolio has drifted
               since execution, while Intramonth Preview estimates a possible next target from partial-month data. Keeping
@@ -108,11 +108,11 @@ export default function AdaaSystemPage() {
               <div className="system-role-card adaa-state-card preview">
                 <div className="kicker">03 · Provisional</div>
                 <h3>Intramonth Preview</h3>
-                <p>A provisional next-target estimate using the latest available month-to-date data. It may change before month-end and has no execution authority.</p>
+                <p>A provisional next-target estimate using the latest available month-to-date data. It may change before month-end and is not an executable target.</p>
               </div>
             </div>
             <div className="boundary-note">
-              <b>Decision authority:</b> only the Official Decision carries portfolio-target authority. Current MTD and Intramonth Preview are monitoring states; the dashboard itself does not place trades.
+              <b>Decision timing:</b> only the Official Decision defines the portfolio target. Current MTD and Intramonth Preview are monitoring views; the dashboard itself does not place trades.
             </div>
           </section>
 
@@ -152,17 +152,16 @@ export default function AdaaSystemPage() {
           </section>
 
           <section className="prose-section" id="evidence">
-            <div className="kicker">Evidence & versioning</div>
-            <h2>Live operation evolves; published evidence stays versioned</h2>
+            <div className="kicker">Research & versioning</div>
+            <h2>Live operation updates; published research remains versioned</h2>
             <div className="dual adaa-evidence-dual">
               <div className="dual-card operational">
                 <div className="kicker">Live operation</div>
                 <h3>ADAA Live System</h3>
                 <p>
-                  Before deployment, the release workflow refreshes and validates the canonical ADAA state, including
-                  the 19-source-series market snapshot (18 final decision assets plus the EWJ history bridge). The public Thin-Shiny
-                  app serves the validated snapshot-rendered dashboard; public sessions do not acquire Yahoo/FRED/FX data or
-                  recompute the strategy.
+                  Before release, ADAA refreshes its market and FX inputs, recalculates the current state, and runs consistency
+                  checks. The public dashboard then displays that prepared state; it does not rerun the strategy or fetch source
+                  data during a public session.
                 </p>
                 {item.links.liveDashboard ? (
                   <a className="btn inverse" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
@@ -184,9 +183,9 @@ export default function AdaaSystemPage() {
               </div>
             </div>
             <div className="system-operating-list adaa-evidence-list">
-              <div><strong>Published evidence.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable record for the published study.</span></div>
-              <div><strong>Live operation.</strong><span> Source refresh, canonical snapshot validation, and creation of the public deployment bundle occur before deployment; the public application reads that validated bundle.</span></div>
-              <div><strong>Interpretation.</strong><span> The dashboard reports current strategy state and research-linked evidence; it is not a claim of guaranteed future performance.</span></div>
+              <div><strong>Published research.</strong><span> SSRN v1.34 and public replication v1.1.4 remain the citable record for the published study.</span></div>
+              <div><strong>Live dashboard.</strong><span> Market data are refreshed and the current strategy state is checked before release; the public application displays the prepared result.</span></div>
+              <div><strong>Interpretation.</strong><span> The dashboard reports the current strategy state alongside the related research record; it is not a claim of guaranteed future performance.</span></div>
             </div>
 
           </section>
@@ -194,11 +193,11 @@ export default function AdaaSystemPage() {
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="access">
-            <div className="kicker">Public artifacts</div>
+            <div className="kicker">Public resources</div>
             <h2>Access & documentation</h2>
             <p className="body-copy">
               Use the live dashboard for current operation, the Investment Research and SSRN record for published
-              evidence, the replication release and DOI for reproducibility, and Quantitative Methods for reusable
+              research, the replication release and DOI for reproducibility, and Quantitative Methods for reusable
               methodology.
             </p>
             <div className="repro-links documentation-artifacts adaa-artifact-grid">
@@ -211,7 +210,7 @@ export default function AdaaSystemPage() {
               {item.links.relatedResearch ? (
                 <Link className="artifact" href={item.links.relatedResearch}>
                   <span className="artifact-kicker">RESEARCH</span><strong>Investment Research</strong>
-                  <small>Paper-aligned evidence page for the frozen public research version.</small><span className="artifact-action">View Research →</span>
+                  <small>Paper-aligned research page for the published study.</small><span className="artifact-action">View Research →</span>
                 </Link>
               ) : null}
               {item.links.ssrn ? (
@@ -222,8 +221,8 @@ export default function AdaaSystemPage() {
               ) : null}
               {item.links.researchDashboard ? (
                 <a className="artifact" href={item.links.researchDashboard} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">EVIDENCE</span><strong>Research Dashboard</strong>
-                  <small>Versioned visual evidence aligned to the public paper.</small><span className="artifact-action">Open Research Dashboard ↗</span>
+                  <span className="artifact-kicker">RESEARCH</span><strong>Research Dashboard</strong>
+                  <small>Versioned visual results aligned to the public paper.</small><span className="artifact-action">Open Research Dashboard ↗</span>
                 </a>
               ) : null}
               {item.links.replicationRepository ? (

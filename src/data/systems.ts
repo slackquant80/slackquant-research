@@ -44,10 +44,10 @@ export const systemItems: SystemItem[] = [
     systemGroup: "portfolio-decision",
     prominence: "flagship",
     status: "Public operational dashboard",
-    dateLabel: "Updated with latest validated operational release",
+    dateLabel: "Updated with latest system release",
     shortSummary:
-      "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds RL-assisted risk control as a separate defensive layer, and Dynamic FX applies a separately managed investor-level currency overlay. The validated dashboard shows the current operating state while machine-specific infrastructure remains internal.",
-    role: "Provider Qualification, Portfolio Integration, Decision Governance, and Monitoring",
+      "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds RL-assisted risk control as a separate defensive layer, and Dynamic FX applies a separately managed investor-level currency overlay. The public dashboard shows the current operating state while machine-specific infrastructure remains internal.",
+    role: "Provider Review, Portfolio Integration, Decision Process, and Monitoring",
     methodsKey: "pds-system",
     links: {
       publicDashboard: "/systems/pds/dashboard/",
@@ -154,14 +154,14 @@ export const systemGroupDefinitions: Array<{
     kicker: "Portfolio operations",
     title: "Portfolio Operations",
     description:
-      "Portfolio-level governance, provider qualification, strategy integration, decision authority, and ongoing monitoring.",
+      "Portfolio-level strategy review, integration, combined decisions, and ongoing monitoring.",
   },
   {
     key: "portfolio-strategy",
     kicker: "Multi-asset family",
     title: "Multi-Asset Strategies",
     description:
-      "Cross-asset strategy engines that generate portfolio allocations under their own decision rules, timing conventions, and evidence standards.",
+      "Cross-asset strategy engines that generate portfolio allocations under their own decision rules, timing conventions, and research processes.",
   },
   {
     key: "equity-alpha",
@@ -191,7 +191,7 @@ export const systemLayerDefinitions: Array<{
     kicker: "Portfolio operating layer",
     title: "Portfolio Operations",
     description:
-      "The portfolio-level operating layer determines which strategy providers are admitted, how approved decisions are combined, and how portfolio authority and monitoring are tracked over time.",
+      "The portfolio-level operating layer determines which strategy providers are admitted, how their decisions are combined, and how the resulting portfolio is monitored over time.",
     groupKeys: ["portfolio-decision"],
   },
   {
@@ -207,7 +207,7 @@ export const systemLayerDefinitions: Array<{
     kicker: "Risk & analytics layer",
     title: "Risk & Scenario Analysis",
     description:
-      "Analytical systems support portfolio diagnosis, scenario analysis, and stress interpretation without carrying standalone allocation authority.",
+      "Analytical systems support portfolio diagnosis, scenario analysis, and stress interpretation without acting as standalone allocation strategies.",
     groupKeys: ["risk-scenario"],
   },
 ];

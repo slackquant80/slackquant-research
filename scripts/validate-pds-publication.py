@@ -16,11 +16,6 @@ SUMMARY = APP / "src/data/pdsCanonicalSummary.ts"
 SUMMARY_BINDER = APP / "scripts/bind-pds-canonical-summary.py"
 PUBLIC_DASHBOARD = APP / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
 PUBLIC_DASHBOARD_RECEIPT = APP / "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
-PDS_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
-LEGACY_PDS_DOCUMENTATIONS = [
-    APP / "public/resources/systems/pds/PDS_System_Documentation_v1.0.pdf",
-    APP / "public/resources/systems/pds/PDS_System_Documentation_v1.1.pdf",
-]
 
 
 def need(path: Path) -> str:
@@ -97,8 +92,7 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
-        "the PDS dashboard is the validated operating view",
-        "/resources/systems/pds/PDS_System_Documentation_v1.3.pdf",
+        "the PDS dashboard is the current operating view",
         "/systems/pds/dashboard/",
     ]:
         require(pds, tok, "PDS platform page")
@@ -112,6 +106,8 @@ def main() -> int:
         r"(?i)25/75",
         r"latestStrategyWeights",
         r"public_active_core_strategy_weights\.csv",
+        r"PDS_System_Documentation_v1\.3\.pdf",
+        r"(?i)Support matters:",
     ]
     for pattern in forbidden_platform:
         if re.search(pattern, pds):
@@ -263,16 +259,10 @@ def main() -> int:
     require(route, dashboard_sha[:16], "PDS dashboard route cache key")
     require(route, "/assets/systems/pds/Portfolio_Decision_System_Public.html", "PDS dashboard route")
 
-    if not PDS_DOCUMENTATION.is_file() or PDS_DOCUMENTATION.read_bytes()[:5] != b"%PDF-":
-        raise RuntimeError("PDS System Documentation v1.3 PDF missing or invalid")
-    for legacy in LEGACY_PDS_DOCUMENTATIONS:
-        if legacy.exists():
-            raise RuntimeError(f"legacy PDS System Documentation must not remain public: {legacy.name}")
-
     print("PDS_PUBLICATION_VALIDATION_PASS")
     print(f"Canonical current clock : {summary['officialSignal']} -> {summary['holdingMonth']} / through {summary['markThrough']}")
     print(f"Adaptive state          : {summary['adaptiveState']} / risk budget {summary['adaptiveRiskBudget']:.0%}")
-    print("Four-portfolio summary  : exact parity with canonical public dashboard")
+    print("Four-portfolio summary  : exact parity with current public dashboard")
     print("Platform provider mix   : roles visible / exact ratio not foregrounded")
     print("Legacy delayed binding  : not used by platform pages")
     return 0

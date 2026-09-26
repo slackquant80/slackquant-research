@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = (Get-Location).Path
 )
 
@@ -42,14 +42,14 @@ foreach ($token in @(
   'Official Decision',
   'Current MTD',
   'Intramonth Preview',
-  'no execution authority',
+  'is not an executable target',
   'Public Working Paper v1.34',
   'Diversify the decision process before diversifying the portfolio',
   'MethodsUsed',
   'context="system"',
-  'validates the canonical 19-symbol market-data',
-  'public-safe bundled snapshot',
-  'not the authority that refreshes source data'
+  'Before release, ADAA refreshes its market and FX inputs',
+  'The public dashboard then displays that prepared state',
+  'Research & Versioning'
 )) {
   if ($systemPage -notmatch [regex]::Escape($token)) {
     throw "ADAA system page contract missing: $token"

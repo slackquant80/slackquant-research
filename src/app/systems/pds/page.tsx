@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 const architectureStages = [
   ["01", "Strategy / Forecast Providers", "Independent strategy systems enter through defined interfaces and keep their own research and operating records."],
   ["02", "Common Representation", "Provider outputs are translated into a consistent portfolio representation before cross-strategy comparison."],
-  ["03", "Evidence Qualification", "Research evidence, data integrity, implementation assumptions, and operational readiness are checked before portfolio use."],
-  ["04", "Adoption / Rejection", "Passing research evidence does not guarantee portfolio admission; incremental portfolio usefulness is assessed separately."],
+  ["03", "Research Review", "Data timing, research quality, implementation assumptions, and operational readiness are reviewed before portfolio use."],
+  ["04", "Portfolio Admission", "A sound research result does not automatically enter the portfolio; incremental portfolio usefulness is assessed separately."],
   ["05", "Portfolio Integration", "Approved providers are combined under a defined strategic allocation policy while each provider's identity and contribution remain traceable."],
   ["06", "Adaptive Risk Control", "An RL-assisted adaptive layer can selectively reduce risk without replacing the Core strategy engines."],
   ["07", "Monitoring / Refresh", "Core, Adaptive, Preview, Dynamic FX, and provider states are refreshed and monitored under a common operating clock."],
@@ -142,14 +142,6 @@ export default function PdsSystemPage() {
             >
               Open Dashboard ↗
             </Link>
-            <a
-              className="btn soft"
-              href="/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              System Documentation ↗
-            </a>
             <Link className="btn soft" href="/systems/adaa/">Explore ADAA</Link>
             <Link className="btn soft" href="/systems/f2r/">Explore F2R</Link>
           </div>
@@ -162,12 +154,12 @@ export default function PdsSystemPage() {
           <a href="#decision-state">System Role & Current State</a>
           <a href="#variants">Core / RL Adaptive / Dynamic FX</a>
           <a href="#architecture">Decision Architecture</a>
-          <a href="#adoption">Evidence-Gated Adoption</a>
+          <a href="#adoption">Research Review & Portfolio Admission</a>
           <a href="#providers">Strategy Provider Layer</a>
-          <a href="#performance">Performance Evidence</a>
-          <a href="#monitoring">Monitoring & Governance</a>
+          <a href="#performance">Performance</a>
+          <a href="#monitoring">Operations & Monitoring</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#boundary">Disclosure Boundary</a>
+          <a href="#boundary">Public & Internal Detail</a>
         </aside>
 
         <article>
@@ -185,7 +177,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Current Active Core</span>
                 <strong>ADAA + F2R</strong>
-                <small>Independent provider systems combined through a defined strategic allocation. Detailed current target construction is available in the validated dashboard.</small>
+                <small>Independent provider systems combined through a defined strategic allocation. Detailed current target construction is available in the PDS dashboard.</small>
               </div>
               <div>
                 <span className="pds-state-label">Adaptive Risk Control</span>
@@ -207,9 +199,9 @@ export default function PdsSystemPage() {
             </div>
 
             <div className="boundary-note">
-              <b>Public dashboard:</b> the PDS dashboard is the validated operating view. It publishes the current
-              decision, Adaptive state, Preview, performance, portfolio detail, and Dynamic FX monitoring while suppressing only
-              environment-specific infrastructure such as local paths, runtimes, caches, credentials, and debug controls.
+              <b>Public dashboard:</b> the PDS dashboard is the current operating view. It shows the current decision,
+              Adaptive state, Preview, performance, portfolio detail, and Dynamic FX monitoring while leaving machine-specific
+              infrastructure such as local paths, caches, credentials, and debug controls out of the public interface.
             </div>
           </section>
 
@@ -218,13 +210,13 @@ export default function PdsSystemPage() {
             <h2>Multi-strategy Core, RL-assisted adaptive risk control, and Dynamic FX.</h2>
             <p className="body-copy">
               PDS deliberately separates the source of portfolio opportunity from the controls applied around it. PDS Core is the
-              canonical multi-strategy portfolio. PDS Adaptive adds an RL-assisted risk-control layer that can selectively
+              main multi-strategy portfolio. PDS Adaptive adds an RL-assisted risk-control layer that can selectively
               reduce exposure when the defensive policy is active. Dynamic FX is an implementation overlay that manages USD/KRW
               hedge exposure on its own monthly decision clock.
             </p>
             <div className="system-role-grid pds-role-grid">
               <div className="system-role-card">
-                <div className="kicker">Canonical portfolio</div>
+                <div className="kicker">Core portfolio</div>
                 <h3>PDS Core</h3>
                 <p>Combines admitted strategy providers under a defined portfolio policy while preserving each provider's timing, identity, and research record.</p>
               </div>
@@ -241,7 +233,7 @@ export default function PdsSystemPage() {
             </div>
             <div className="evidence-note">
               Current Adaptive state and risk budget are visible in the public dashboard. Low-level controller configuration,
-              training artifacts, model seeds, and other implementation details remain internal.
+              model-training settings, seeds, and other low-level implementation details remain internal.
             </div>
           </section>
 
@@ -259,18 +251,18 @@ export default function PdsSystemPage() {
           </section>
 
           <section className="prose-section" id="adoption">
-            <div className="kicker">Evidence-gated adoption</div>
-            <h2>Research validity and portfolio usefulness are related, but they are not the same gate.</h2>
+            <div className="kicker">Research review & portfolio admission</div>
+            <h2>Research quality and portfolio usefulness are related, but they are evaluated separately.</h2>
             <p className="body-copy">
-              PDS keeps research validation separate from portfolio admission. A strategy can be scientifically well specified
-              yet add little incremental portfolio value, while a practical portfolio role does not rewrite a failed or
-              inconclusive research result. Provider admission therefore depends on both evidence quality and the role the strategy adds to the portfolio.
+              PDS keeps research review separate from portfolio admission. A strategy can be scientifically well specified
+              yet add little incremental portfolio value, while a useful portfolio role does not rewrite a failed or
+              inconclusive research result. Admission therefore depends on both research quality and the role the strategy adds to the portfolio.
             </p>
             <div className="dual pds-gate-dual">
               <div className="dual-card">
-                <div className="kicker">Research evidence</div>
+                <div className="kicker">Research review</div>
                 <h3>Is the strategy result credible?</h3>
-                <p>Data timing, reproducibility, model specification, robustness, and evidence quality are assessed on their own terms.</p>
+                <p>Data timing, reproducibility, model specification, robustness, and result quality are assessed on their own terms.</p>
               </div>
               <div className="dual-card operational">
                 <div className="kicker">Portfolio admission</div>
@@ -285,7 +277,7 @@ export default function PdsSystemPage() {
             <h2>Complementary strategy systems inside the PDS portfolio process</h2>
             <p className="body-copy">
               ADAA and F2R are the strategy systems currently admitted to the Active Core. Each remains an independent Portfolio
-              Strategy System with its own models, evidence, and operating history; PDS is responsible for portfolio-level
+              Strategy System with its own models, research record, and operating history; PDS is responsible for portfolio-level
               admission, integration, the current combined decision, and monitoring.
             </p>
             <div className="dual pds-provider-dual">
@@ -305,12 +297,12 @@ export default function PdsSystemPage() {
           </section>
 
           <section className="prose-section" id="performance">
-            <div className="kicker">Integrated performance evidence</div>
+            <div className="kicker">Integrated performance</div>
             <h2>Recent completed returns and four monitored portfolio views.</h2>
             <p className="body-copy">
               The chart shows the most recent 12 completed holding months for the two Dynamic FX portfolio views; current MTD is
-              deliberately excluded. The table then summarizes the same four portfolio views used in the operational dashboard.
-              Core variants use the full operational support window; Adaptive variants use the approved frozen-policy evidence window.
+              deliberately excluded. The table then summarizes the same four portfolio views used in the PDS dashboard.
+              Core rows use their longer completed histories; Adaptive rows begin at the later Adaptive evaluation start.
             </p>
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
@@ -318,7 +310,7 @@ export default function PdsSystemPage() {
                 <thead>
                   <tr>
                     <th>Portfolio</th>
-                    <th>Support</th>
+                    <th>Completed period</th>
                     <th>Cumulative</th>
                     <th>CAGR</th>
                     <th>Vol.</th>
@@ -330,10 +322,7 @@ export default function PdsSystemPage() {
                 <tbody>
                   {state.performance.map((row) => (
                     <tr key={row.label}>
-                      <th scope="row">
-                        {row.label}
-                        <small style={{ display: "block", fontWeight: 400 }}>{row.evidenceClass}</small>
-                      </th>
+                      <th scope="row">{row.label}</th>
                       <td>{row.supportStart} → {row.supportEnd}</td>
                       <td>{pct(row.cumulativeReturn)}</td>
                       <td>{pct(row.cagr)}</td>
@@ -347,9 +336,9 @@ export default function PdsSystemPage() {
               </table>
             </div>
             <div className="boundary-note">
-              <b>Support matters:</b> Adaptive history begins later than Core history, so the four rows should not be read as
-              identical-window comparisons. For common-support comparisons, monthly returns, current MTD, target detail, and
-              full diagnostics, use the operational dashboard.
+              <b>Comparison periods differ:</b> Adaptive history begins later than Core history, so the four rows should not be read as
+              identical-window comparisons. For same-period comparisons, monthly returns, current MTD, target detail, and
+              full diagnostics, use the PDS dashboard.
             </div>
             <div className="actions">
               <Link className="btn primary" href="/systems/pds/dashboard/" target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
@@ -359,25 +348,25 @@ export default function PdsSystemPage() {
           </section>
 
           <section className="prose-section" id="monitoring">
-            <div className="kicker">Monitoring & governance</div>
+            <div className="kicker">Operations & monitoring</div>
             <h2>The public dashboard mirrors the operating view while excluding machine-specific details.</h2>
             <p className="body-copy">
-              The validated public dashboard mirrors the reader-facing operating information from the local system. Publication
-              removes machine-specific infrastructure rather than creating a separate, simplified investment view. Current
-              decision state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance use the same
-              data and clock conventions.
+              The public dashboard mirrors the reader-facing operating information from the local system. Publication leaves
+              machine-specific infrastructure out rather than creating a separate, simplified investment view. Current decision
+              state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance use the same data and
+              clock conventions.
             </p>
             <div className="system-operating-list">
-              <div><strong>On-demand refresh.</strong><span> The release workflow refreshes provider state, validates cross-system reconciliation, and rebuilds the public dashboard from the canonical source state.</span></div>
-              <div><strong>Provider boundaries.</strong><span> ADAA and F2R remain independent systems connected to PDS through defined interfaces rather than copied into PDS.</span></div>
-              <div><strong>Fail-closed publication.</strong><span> Public deployment is blocked when data, clock, identity, responsive-layout, or private-environment checks fail.</span></div>
+              <div><strong>On-demand refresh.</strong><span> The release workflow refreshes provider state, checks cross-system consistency, and rebuilds the public dashboard from the current system state.</span></div>
+              <div><strong>Provider separation.</strong><span> ADAA and F2R remain independent systems connected to PDS through defined interfaces rather than copied into PDS.</span></div>
+              <div><strong>Release checks.</strong><span> Public deployment proceeds only after data, clock, identity, responsive-layout, and private-environment checks complete successfully.</span></div>
             </div>
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="boundary">
-            <div className="kicker">Public dashboard / internal implementation</div>
+            <div className="kicker">Public and internal detail</div>
             <h2>Operational transparency without exposing machine-specific infrastructure.</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
@@ -385,24 +374,24 @@ export default function PdsSystemPage() {
                 <ul>
                   <li>System architecture, provider relationships, and governance</li>
                   <li>Current PDS Core, Adaptive, Preview, Portfolio, Performance, and Dynamic FX operating views</li>
-                  <li>Current operational clock and detailed portfolio targets through the validated dashboard</li>
-                  <li>Four-portfolio historical performance evidence with explicit support windows</li>
+                  <li>Current decision clock and detailed portfolio targets through the PDS dashboard</li>
+                  <li>Four-portfolio historical performance with each completed period stated explicitly</li>
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
                 <h3>Internal implementation</h3>
                 <ul>
-                  <li>Local filesystem paths, runtimes, caches, repository controls, credentials, and debug tooling</li>
-                  <li>Low-level controller training artifacts, seeds, and implementation-specific internal identifiers</li>
+                  <li>Local filesystem paths, runtime/cache details, repository controls, credentials, and debug tooling</li>
+                  <li>Low-level controller training settings, seeds, and implementation-specific internal identifiers</li>
                   <li>Brokerage-account holdings, realized account P&amp;L, and order-routing infrastructure</li>
-                  <li>Unpromoted research branches and non-canonical experimental artifacts</li>
+                  <li>Unpromoted research branches and internal experimental work</li>
                 </ul>
               </div>
             </div>
             <div className="evidence-note">
               The platform page intentionally summarizes the operating architecture rather than repeating every portfolio parameter.
-              The validated PDS dashboard is the authoritative public source for current detailed targets, Preview, Dynamic FX,
-              and performance diagnostics; it is for research and monitoring, not brokerage execution.
+              The PDS dashboard is the current public view for detailed targets, Preview, Dynamic FX, and performance
+              diagnostics; it is for research and monitoring, not brokerage execution.
             </div>
           </section>
         </article>

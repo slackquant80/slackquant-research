@@ -184,15 +184,20 @@ def audit_static(require_build: bool) -> list[Check]:
 
     adaa = text(SYSTEM_PAGE_FILES["adaa"])
     adaa_required = [
-        "refreshes and validates the canonical ADAA source state before deployment",
-        "19-source-series market snapshot",
-        "public Thin-Shiny",
-        "public sessions do not acquire Yahoo/FRED/FX data",
-        "public application reads the validated released bundle",
+        "Before release, ADAA refreshes its market and FX inputs",
+        "The public dashboard then displays that prepared state",
+        "it does not rerun the strategy or fetch source",
+        "data during a public session",
+        "Official Decision",
+        "Current MTD",
+        "Intramonth Preview",
     ]
-    add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-deploy refresh → validated bundle → public consumer")
-    adaa_forbidden = ["live implementation refreshes current data", "public session refreshes source data", "public Shiny refreshes source data"]
-    add(c, "No stale ADAA runtime authority wording", not any(x.lower() in adaa.lower() for x in adaa_forbidden), "none")
+    add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-release refresh/check → prepared public state")
+    adaa_forbidden = [
+        "19-source-series market snapshot", "public Thin-Shiny", "Decision authority:",
+        "canonical snapshot validation", "no execution authority"
+    ]
+    add(c, "No internal ADAA reader wording", not any(x.lower() in adaa.lower() for x in adaa_forbidden), "none")
 
     f2r = text(SYSTEM_PAGE_FILES["f2r"])
     add(c, "F2R identity on page", "Forecast-to-Rank Allocation (F2R)" in systems and "item.title" in f2r, "registry-driven formal identity")

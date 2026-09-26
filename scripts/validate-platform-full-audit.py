@@ -250,16 +250,15 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
-        "validated operating view",
-        "/resources/systems/pds/PDS_System_Documentation_v1.3.pdf",
-        "System Documentation ↗",
+        "the PDS dashboard is the current operating view",
+        "Research review & portfolio admission",
     )
     for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv", "DELAYED PUBLIC", "protected current decision state"):
         if forbidden in pds:
             raise RuntimeError(f"PDS platform landing regression: {forbidden}")
     for required in (
         "emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.",
-        "the PDS dashboard is the validated operating view.",
+        "the PDS dashboard is the current operating view.",
     ):
         if required not in pds:
             raise RuntimeError(f"PDS current-platform disclosure missing: {required}")
@@ -290,10 +289,6 @@ def main() -> int:
     )
     if "pdsPublicSnapshot" in systems_index or "pdsPublicSnapshot" in pds:
         raise RuntimeError("PDS platform still depends on legacy delayed snapshot binding")
-
-    pds_documentation = ROOT / "public/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
-    if not pds_documentation.is_file() or pds_documentation.read_bytes()[:5] != b"%PDF-":
-        raise RuntimeError("PDS System Documentation PDF missing or invalid")
 
     public_dashboard = need(
         "public/assets/systems/pds/Portfolio_Decision_System_Public.html",
@@ -336,10 +331,10 @@ def main() -> int:
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
         "not the exact construction",
-        "19-source-series market snapshot",
-        "18 final decision assets plus the EWJ history bridge",
-        "public Thin-Shiny",
-        "public sessions do not acquire Yahoo/FRED/FX data",
+        "Before release, ADAA refreshes its market and FX inputs",
+        "The public dashboard then displays that prepared state",
+        "it does not rerun the strategy or fetch source",
+        "data during a public session",
     )
     need(
         "src/app/systems/pds/page.tsx",
@@ -425,9 +420,6 @@ def main() -> int:
         for rel in required_out:
             if not (ROOT / rel).is_file():
                 raise RuntimeError(f"built route/artifact missing: {rel}")
-        built_doc = ROOT / "out/resources/systems/pds/PDS_System_Documentation_v1.3.pdf"
-        if not built_doc.is_file() or built_doc.read_bytes()[:5] != b"%PDF-":
-            raise RuntimeError("built PDS System Documentation PDF missing or invalid")
         built_f2r_doc = ROOT / "out/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
         if not built_f2r_doc.is_file() or built_f2r_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
@@ -449,7 +441,7 @@ def main() -> int:
             raise RuntimeError(f"Stale pre-canonical Equity Alpha Method path must not exist: {stale}")
 
     print("Methods whole-host first-party navigation=PASS")
-    print("PDS canonical operational platform / four-portfolio summary / current dashboard=PASS")
+    print("PDS current operational platform / four-portfolio summary / current dashboard=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
     print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning + three-layer taxonomy=PASS")
     print("About research links / shared research-detail hero=PASS")

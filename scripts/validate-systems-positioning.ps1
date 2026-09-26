@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = (Get-Location).Path
 )
 
@@ -63,13 +63,28 @@ if ($css -notmatch [regex]::Escape('.system-card-flagship')) {
   throw "Flagship system visual class missing"
 }
 
-foreach ($token in @('ADAA + F2R','Protected until release gate','PDS is provider-agnostic and is not defined by any particular pair of strategies','Current provider configuration within a broader operating architecture','Historical operating state','not the definition of PDS','/systems/adaa/','/systems/f2r/')) {
+foreach ($token in @(
+  'ADAA + F2R',
+  'Current Active Core',
+  'emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.',
+  'Research review & portfolio admission',
+  '/systems/adaa/',
+  '/systems/f2r/'
+)) {
   if ($pdsPage -notmatch [regex]::Escape($token)) { throw "PDS hierarchy/disclosure page contract missing: $token" }
 }
-foreach ($forbidden in @('Active Core architecture','Latest released strategy mix','Two independent Portfolio Strategy Systems')) {
-  if ($pdsPage -match [regex]::Escape($forbidden)) { throw "PDS fixed-blend narrative regression: $forbidden" }
+foreach ($forbidden in @('25/75','F2R 25%','ADAA 75%','validated operating view','Support matters:')) {
+  if ($pdsPage -match [regex]::Escape($forbidden)) { throw "PDS stale/internal reader wording remains: $forbidden" }
 }
-foreach ($token in @('Forecast-to-Rank Allocation (F2R)','current PDS Active Core provider','current operating state, not the definition of PDS','Open Dashboard ↗','GitHub Repository','governed public deployment surfaces','/systems/pds/')) {
+foreach ($token in @(
+  'Forecast-to-Rank Allocation (F2R)',
+  'current PDS Active Core provider',
+  'current operating state, not the definition of PDS',
+  'Open Dashboard ↗',
+  'GitHub Repository',
+  'Both are access points to the same live system.',
+  '/systems/pds/'
+)) {
   if ($f2rPage -notmatch [regex]::Escape($token)) { throw "F2R relationship/live-system contract missing: $token" }
 }
 foreach ($token in @('status: "Public live"','https://f2r-forecast-to-rank-allocation.streamlit.app','https://github.com/slackquant80/f2r-forecast-to-rank-allocation')) {

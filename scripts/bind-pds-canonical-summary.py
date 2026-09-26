@@ -33,7 +33,7 @@ def num(v: Any) -> float:
     return float(v)
 
 
-def perf(row: dict[str, Any], *, label: str, evidence: str) -> dict[str, Any]:
+def perf(row: dict[str, Any], *, label: str) -> dict[str, Any]:
     terminal = num(row["terminal_wealth"])
     return {
         "label": label,
@@ -45,7 +45,6 @@ def perf(row: dict[str, Any], *, label: str, evidence: str) -> dict[str, Any]:
         "sharpe": num(row.get("sharpe_ratio_rf0", row.get("sharpe_style"))),
         "mdd": num(row["mdd"]),
         "calmar": num(row["calmar"]),
-        "evidenceClass": evidence,
     }
 
 
@@ -132,17 +131,17 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
         "previewFxZscore": num(preview_fx["zscore"]),
         "recentMonthlyReturns": recent_monthly_returns(data, 12),
         "performance": [
-            perf(core_fx, label="PDS Core + Dynamic FX", evidence="Operational full support"),
-            perf(core, label="PDS Core", evidence="Operational full support"),
-            perf(adaptive_fx, label="PDS Adaptive + Dynamic FX", evidence="Frozen-policy evidence"),
-            perf(adaptive_hist, label="PDS Adaptive", evidence="Frozen-policy evidence"),
+            perf(core_fx, label="PDS Core + Dynamic FX"),
+            perf(core, label="PDS Core"),
+            perf(adaptive_fx, label="PDS Adaptive + Dynamic FX"),
+            perf(adaptive_hist, label="PDS Adaptive"),
         ],
     }
 
 
 def render_ts(summary: dict[str, Any]) -> str:
     payload = json.dumps(summary, ensure_ascii=False, indent=2)
-    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n  evidenceClass: string;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewSignal: string;\n  previewHolding: string;\n  previewThrough: string;\n  adaptivePreviewState: string;\n  adaptivePreviewRiskBudget: number;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxHedge: number;\n  previewFxZscore: number;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the validated canonical PDS public dashboard.\n// Do not hand-edit numerical values; refresh through the governed PDS publication pipeline.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
+    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewSignal: string;\n  previewHolding: string;\n  previewThrough: string;\n  adaptivePreviewState: string;\n  adaptivePreviewRiskBudget: number;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxHedge: number;\n  previewFxZscore: number;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
 
 
 def main() -> int:

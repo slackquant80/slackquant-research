@@ -1,4 +1,4 @@
-﻿param(
+param(
   [string]$PlatformRoot = (Get-Location).Path
 )
 
@@ -32,7 +32,7 @@ foreach ($token in @(
   'Open Dashboard ↗',
   'GitHub Repository',
   'current operating state, not the definition of PDS',
-  'governed public deployment surfaces',
+  'Both are access points to the same live system.',
   'MethodsUsed',
   'context="system"'
 )) {
@@ -56,5 +56,5 @@ if ($methodsData -notmatch [regex]::Escape('"f2r-system"')) { throw "F2R system 
 
 Write-Host "F2R_SYSTEM_PUBLICATION_GATE_PASS" -ForegroundColor Green
 Write-Host "Live      : Streamlit public dashboard + GitHub deployment repository"
-Write-Host "Boundary  : deployment surface is not a second canonical strategy source"
-Write-Host "Evidence  : related research remains separately identified"
+Write-Host "Boundary  : public access points share one live-system definition"
+Write-Host "Research  : related studies remain separately identified"

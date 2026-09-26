@@ -47,8 +47,11 @@ def main() -> int:
 
     if manifest.get("performance_clock") != "REALIZED_HOLDING_MONTH":
         raise RuntimeError("Public monthly-return artifact is not declared on realized holding-month clock")
-    if manifest.get("active_core_policy") != "F2R_25_ADAA_75_FIXED_ALL_HISTORY":
-        raise RuntimeError("PDS public Core policy is not canonical fixed 25/75")
+    policy_id = str(manifest.get("active_core_policy", "")).strip()
+    if not policy_id:
+        raise RuntimeError("PDS public Core policy identifier is missing")
+    if "25_75" in policy_id or "25/75" in policy_id:
+        raise RuntimeError(f"Stale 25/75 Core policy identifier remains: {policy_id}")
 
     # public_core_monthly_returns.period is the realized holding month. The performance
     # path preserves the source signal/origin month separately and must map it +1 into
@@ -97,17 +100,20 @@ def main() -> int:
         holding = str(r["holding_month"])
         if holding != add_month(signal, 1):
             raise RuntimeError(f"Core weight clock mismatch row {i}: {signal} -> {holding}")
-        if abs(float(r["f2r_weight"]) - 0.25) > 1e-12 or abs(float(r["adaa_weight"]) - 0.75) > 1e-12:
-            raise RuntimeError(f"Fixed 25/75 Core policy drift at row {i}")
-        if r.get("weight_basis") != "FIXED_25_75_CANONICAL_ALL_HISTORY":
-            raise RuntimeError(f"Core weight-basis drift at row {i}")
+        if abs(float(r["f2r_weight"]) - 0.10) > 1e-12 or abs(float(r["adaa_weight"]) - 0.90) > 1e-12:
+            raise RuntimeError(f"Fixed 10/90 Core policy drift at row {i}")
+        weight_basis = str(r.get("weight_basis", "")).strip()
+        if not weight_basis:
+            raise RuntimeError(f"Core weight-basis missing at row {i}")
+        if "25_75" in weight_basis or "25/75" in weight_basis:
+            raise RuntimeError(f"Stale 25/75 weight-basis remains at row {i}: {weight_basis}")
 
     print("PDS_PERFORMANCE_CLOCK_GATE_PASS")
     print("Clock       : source signal/origin month -> realized holding month +1")
     print(f"Holding max : {holding_cutoff}")
     print("Monthly file: period is realized holding month")
     print("Annual      : compounded by realized holding year")
-    print("Core policy : F2R 25% / ADAA 75% fixed target history")
+    print("Core policy : F2R 10% / ADAA 90% fixed target history")
     return 0
 
 

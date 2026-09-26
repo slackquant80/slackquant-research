@@ -65,9 +65,9 @@ export default function F2rSystemPage() {
           <a href="#process">Forecast-to-Rank Process</a>
           <a href="#live">Live System</a>
           <a href="#relationship">Relationship to PDS</a>
-          <a href="#evidence">Evidence Boundary</a>
+          <a href="#evidence">Research Context</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#boundary">Operating Boundary</a>
+          <a href="#boundary">Public & Internal Detail</a>
         </aside>
 
         <article>
@@ -108,12 +108,12 @@ export default function F2rSystemPage() {
               <div className="system-role-card">
                 <div className="kicker">03 · Allocate</div>
                 <h3>Translate ranks into the portfolio target</h3>
-                <p>A separate allocation rule maps the final ordering into the monthly model portfolio under a defined timing, turnover, cost, and accounting contract.</p>
+                <p>A separate allocation rule maps the final ordering into the monthly model portfolio under a defined timing, turnover, cost, and accounting process.</p>
               </div>
             </div>
             <div className="evidence-note">
               <strong>Public disclosure names the forecasting technologies and the decision architecture.</strong> Exact feature horizons,
-              sequence/runtime parameters, model-contribution settings, and low-level integration mechanics remain protected implementation details.
+              detailed lookback and sequence settings, model-combination settings, and low-level integration mechanics remain protected implementation details.
             </div>
           </section>
 
@@ -122,15 +122,15 @@ export default function F2rSystemPage() {
             <h2>The public dashboard separates the actionable decision from the provisional next state</h2>
             <p className="body-copy">
               The standalone F2R dashboard publishes the current official monthly target alongside a separately labeled
-              intramonth preview. The preview is indicative only: it may change before month-end and carries no execution or
-              performance authority. Historical research evidence and forward-live tracking are also kept distinct.
+              intramonth preview. The preview is indicative only: it may change before month-end, is not executed, and is kept
+              outside completed performance. Historical research results and current operation are also shown separately.
             </p>
             <div className="repro-links documentation-artifacts">
               {item.links.liveDashboard ? (
                 <a className="artifact artifact-primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">LIVE SYSTEM</span>
                   <strong>F2R Public Dashboard</strong>
-                  <small>Official decision, intramonth preview, historical evidence, and certified target history.</small>
+                  <small>Official decision, intramonth preview, historical performance, and portfolio target history.</small>
                   <span className="artifact-action">Open Dashboard ↗</span>
                 </a>
               ) : null}
@@ -169,7 +169,7 @@ export default function F2rSystemPage() {
           </section>
 
           <section className="prose-section" id="evidence">
-            <div className="kicker">Related evidence</div>
+            <div className="kicker">Related research</div>
             <h2>Two public research papers document distinct stages of the F2R research record</h2>
             <p className="body-copy">
               The earlier information-set study tests whether historical-vintage macro
@@ -180,11 +180,10 @@ export default function F2rSystemPage() {
               historical portfolio outcomes.
             </p>
             <p className="body-copy">
-              Both papers are frozen historical research artifacts. They document the
-              evidence path that informed the F2R design family, while the live system
-              is maintained separately. Historical model-combination settings reported
-              in the paper are research configurations, not disclosures of the current
-              protected production recipe.
+              Both papers document earlier stages of the F2R research program. They show the
+              research path that informed the F2R design family, while the live system is
+              maintained separately. Model-combination settings reported in a paper describe
+              that research configuration and should not be read as the current production recipe.
             </p>
             <div className="repro-links documentation-artifacts">
               {item.links.relatedResearch ? (
@@ -198,7 +197,7 @@ export default function F2rSystemPage() {
               <Link className="artifact" href="/research/price-macro-decision/">
                 <span className="artifact-kicker">INFORMATION-SET RESEARCH</span>
                 <strong>The Decision Value of Price and Macro Information</strong>
-                <small>Matched price-versus-macro evidence with explicit information-timing controls.</small>
+                <small>Matched price-versus-macro comparison with explicit information-timing controls.</small>
                 <span className="artifact-action">View Prior Research →</span>
               </Link>
             </div>
@@ -207,30 +206,30 @@ export default function F2rSystemPage() {
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
           <section className="prose-section" id="boundary">
-            <div className="kicker">Operating boundary</div>
-            <h2>One operational source, multiple public access points</h2>
+            <div className="kicker">Public and internal detail</div>
+            <h2>One live system, multiple public access points</h2>
             <p className="body-copy">
               The GitHub repository contains the public deployment package, while Streamlit serves the public application.
-              Neither is a second source of operational truth. F2R's operational state, validation, and release decisions
-              remain in the canonical F2R project; only validated public artifacts are published.
+              Both are access points to the same live system. Detailed configuration, validation, and release work remains
+              in the local F2R project; the public surfaces show the system description and reader-facing results.
             </p>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
                 <h3>Public surface</h3>
                 <ul>
                   <li>Formal F2R system identity, decision architecture, and named use of conventional supervised ML plus Chronos-2</li>
-                  <li>Validated official and provisional public states</li>
-                  <li>Approved historical evidence and target-history views</li>
+                  <li>Official and provisional portfolio states, clearly labeled</li>
+                  <li>Historical performance and portfolio target-history views</li>
                   <li>Public deployment repository and related research</li>
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
                 <h3>Internal / not public</h3>
                 <ul>
-                  <li>Exact feature horizons, Chronos-2 sequence/runtime parameters, model-contribution settings, and low-level conflict-resolution rules</li>
+                  <li>Exact feature horizons, Chronos-2 sequence settings, model-combination settings, and low-level conflict-resolution rules</li>
                   <li>Local operating paths, credentials, and environment state</li>
                   <li>Research branches not promoted to the live specification</li>
-                  <li>Internal validation and release-engineering artifacts</li>
+                  <li>Internal validation records and release-engineering details</li>
                 </ul>
               </div>
             </div>
