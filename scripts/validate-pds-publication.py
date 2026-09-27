@@ -18,6 +18,8 @@ SUMMARY_BINDER = APP / "scripts/bind-pds-canonical-summary.py"
 PUBLIC_DASHBOARD = APP / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
 PUBLIC_DASHBOARD_RECEIPT = APP / "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
 PUBLIC_PORTFOLIO_HISTORY_XLSX = APP / "public/assets/systems/pds/PDS_Portfolio_History_Current_Definition.xlsx"
+PDS_SYSTEM_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.4.pdf"
+PDS_SYSTEM_DOCUMENTATION_SHA256 = "509912158bb765f6115c9b77266c197828bd7e6249303112c1f790c08cab19ab"
 
 
 def need(path: Path) -> str:
@@ -78,6 +80,13 @@ def main() -> int:
     binder = need(SUMMARY_BINDER)
     public_html = need(PUBLIC_DASHBOARD)
 
+    if not PDS_SYSTEM_DOCUMENTATION.is_file():
+        raise RuntimeError("PDS System Documentation v1.4 PDF is missing")
+    if PDS_SYSTEM_DOCUMENTATION.read_bytes()[:5] != b"%PDF-":
+        raise RuntimeError("PDS System Documentation v1.4 does not have a PDF signature")
+    if hashlib.sha256(PDS_SYSTEM_DOCUMENTATION.read_bytes()).hexdigest() != PDS_SYSTEM_DOCUMENTATION_SHA256:
+        raise RuntimeError("PDS System Documentation v1.4 PDF hash mismatch")
+
     # Platform identity: current operational surface, not a delayed/reduced product.
     for tok in [
         'status: "Public operational dashboard"',
@@ -96,6 +105,8 @@ def main() -> int:
         "Recent completed returns and four monitored portfolio views.",
         "the PDS dashboard is the current operating view",
         "/systems/pds/dashboard/",
+        "/resources/systems/pds/PDS_System_Documentation_v1.4.pdf",
+        "System Documentation ↗",
     ]:
         require(pds, tok, "PDS platform page")
 
@@ -108,6 +119,9 @@ def main() -> int:
         r"(?i)25/75",
         r"latestStrategyWeights",
         r"public_active_core_strategy_weights\.csv",
+        r"PDS_System_Documentation_v1\.0\.pdf",
+        r"PDS_System_Documentation_v1\.1\.pdf",
+        r"PDS_System_Documentation_v1\.2\.pdf",
         r"PDS_System_Documentation_v1\.3\.pdf",
         r"(?i)Support matters:",
     ]

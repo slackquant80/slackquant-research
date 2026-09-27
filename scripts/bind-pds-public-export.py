@@ -41,7 +41,7 @@ PROHIBITED = [
     re.compile(r"FIXED_25_75"),
     re.compile(r"(?i)f2r_weight"),
     re.compile(r"(?i)adaa_weight"),
-    re.compile(r"ENS_ENS_Q25"), re.compile(r"RISK_ONLY_PPO"), re.compile(r"(?i)F55|R80|V85"),
+    re.compile(r"ENS_ENS_Q25"), re.compile(r"RISK_ONLY_PPO"), re.compile(r"(?i)\b(?:F55|R80|V85)\b"),
 ]
 
 
