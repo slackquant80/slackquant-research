@@ -41,32 +41,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Normalize rendered Methods shell
-        shell: pwsh
-        run: ./scripts/normalize-methods-navigation.ps1 -PlatformRoot .
+      - name: Canonical release validation
+        run: npm run validate:release
 
-      - name: Methods UI source audit
-        run: python3 scripts/validate-methods-ui-integrity.py
-
-      - name: Platform source audit
-        run: python3 scripts/validate-platform-full-audit.py
-
-      - name: F2R documentation source audit
-        run: python3 scripts/validate-f2r-documentation.py
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Build static site
-        run: npm run build
-
-      - name: Platform built-output audit
-        run: python3 scripts/validate-platform-full-audit.py --require-build
-
-      - name: Methods UI built-output audit
-        run: python3 scripts/validate-methods-ui-integrity.py --require-build
-
-      - name: F2R documentation built-output audit
-        run: python3 scripts/validate-f2r-documentation.py --require-build
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'
         run: touch out/.nojekyll

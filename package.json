@@ -9,6 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "validate:release": "node scripts/validate-release.mjs",
     "preview": "python -m http.server 8080 -d out"
   },
   "dependencies": {

@@ -34,7 +34,7 @@ PDS publication has two current reader-facing outputs. The validated PDS dashboa
 
 `src/data/pdsPublicSnapshot.ts` is retained only as a legacy compatibility binding for older delayed-output consumers. Reader-facing code under `src/app` and `src/components` must not import or depend on that module; source and built-output audits enforce this boundary.
 
-Use the project-root `00_PUBLISH_PDS_PUBLIC.cmd` for the governed sync + local release QA workflow.
+After a governed PDS sync has updated this repository, use the canonical release gate below. Do not replace the release gate with a hand-picked subset of validators.
 
 ## F2R standalone public deployment
 
@@ -59,21 +59,45 @@ npm run build
 
 The production build creates the static export in `out/`. On Windows, use the repository's native Node dependencies; do not copy a platform-specific `node_modules` directory between operating systems.
 
-## Consolidated 3-System / Methods / indexability gate
+## Canonical release validation — single source of truth
 
-Run the source/static gate before release:
+There is exactly one release gate for this repository. Local pre-push validation and GitHub Actions both execute the same orchestrator: `scripts/validate-release.mjs`.
 
-```powershell
-.\scripts\validate-three-systems-surface.ps1
-```
-
-The gate checks PDS / ADAA / F2R identity and dashboard policy, System ↔ Method integration, Method article destinations and reverse usage, sitemap/canonical/robots contracts, repository semantics, stale operational wording, and the PDS public disclosure boundary. After `npm run build`, rerun with the build requirement enabled:
+On the Windows operator machine, run:
 
 ```powershell
-.\scripts\validate-three-systems-surface.ps1 -RequireBuild
+.\00_VALIDATE_RELEASE.cmd
 ```
 
-Use `-Live` only for the remote link gate; transient network/provider failures are reported separately from structural source failures.
+or equivalently:
+
+```powershell
+npm.cmd run validate:release
+```
+
+GitHub Actions runs the same gate as:
+
+```bash
+npm run validate:release
+```
+
+Do **not** reconstruct the release checklist manually from individual validator commands. The canonical gate performs, in order:
+
+1. rendered Methods navigation normalization;
+2. PDS publication source audit;
+3. Methods UI source audit;
+4. F2R documentation source audit;
+5. full platform source audit;
+6. TypeScript typecheck;
+7. production static build;
+8. platform, Methods, and F2R built-output audits; and
+9. the consolidated Systems / Methods / indexability gate against the built output.
+
+The orchestrator also verifies that the GitHub Pages workflow delegates to `npm run validate:release` rather than maintaining a second, drifting copy of the validation sequence. A failure means **do not push/deploy** until the owning contract is reconciled.
+
+### Validator ownership rule
+
+System-specific mutable publication contracts belong in the corresponding system validator (for example, PDS reader-facing publication semantics in `scripts/validate-pds-publication.py`). Broad platform validators should enforce cross-system structure and safety, not become a second manually maintained release checklist. When a validator is added to the canonical release process, add it to `scripts/validate-release.mjs`; do not add a separate CI-only step.
 
 ## Build output
 
