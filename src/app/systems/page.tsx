@@ -40,10 +40,10 @@ export default function SystemsPage() {
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
             <div className="kicker">Three-layer system architecture</div>
-            <h2>Clear authority. Distinct strategy domains.</h2>
+            <h2>Clear roles. Distinct strategy domains.</h2>
             <p>
               The hierarchy distinguishes where a system sits in the investment process from the market domain in which a strategy operates.
-              Portfolio Operations governs integration and authority; Investment Strategies generate positions; Risk & Analytics supports diagnosis
+              Portfolio Operations handles integration and portfolio-level decisions; Investment Strategies generate positions; Risk & Analytics supports diagnosis
               and stress interpretation.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function SystemsPage() {
           </div>
 
           <p className="systems-rollout-note">
-            The three layers describe operating authority, not performance ranking. Multi-Asset Strategies and Equity Alpha Strategies are peer families
+            The three layers describe operating roles, not performance ranking. Multi-Asset Strategies and Equity Alpha Strategies are peer families
             inside the Investment Strategy Layer; PDS remains the portfolio operating layer, while the Stress Lab remains a risk & analytics system.
           </p>
         </div>

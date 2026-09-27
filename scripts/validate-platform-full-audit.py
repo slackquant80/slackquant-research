@@ -144,7 +144,7 @@ def main() -> int:
     need(
         "src/app/systems/page.tsx",
         "Three-layer system architecture",
-        "Clear authority. Distinct strategy domains.",
+        "Clear roles. Distinct strategy domains.",
         "Multi-Asset Strategies",
         "Equity Alpha Strategies",
     )

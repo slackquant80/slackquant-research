@@ -103,6 +103,8 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns and four monitored portfolio views.",
+        "Core rows begin in May 2017",
+        "longer current-definition Core / Dynamic FX reconstruction beginning in December 2005",
         "the PDS dashboard is the current operating view",
         "/systems/pds/dashboard/",
         "/resources/systems/pds/PDS_System_Documentation_v1.4.pdf",
@@ -156,9 +158,17 @@ def main() -> int:
         "<h2>Performance</h2>",
         "<h2>Portfolio</h2>",
         "Latest admissible FX observation",
+        "Public Operating View",
     ]
     for tok in required_dashboard:
         require(public_html, tok, "PDS canonical public dashboard")
+    for tok in [
+        "const integrityStrip=isPublicSurface?'':`<section class=\"panel section integrity-strip\">",
+        "${isPublicSurface?'':`<details class=\"audit-disclosure section\"><summary><span><b>Technical Preview audit</b>",
+        "${isPublicSurface?'':`<details class=\"audit-disclosure section\"><summary><span><b>FX technical audit</b>",
+        "isPublicSurface?'Public Operating View':'Research dashboard '",
+    ]:
+        require(public_html, tok, "PDS public reader-surface guard")
     for forbidden in [
         "PDS_PUBLIC_SAFE_DELAYED_READ_MODEL",
         "Governed delayed public profile",
@@ -170,6 +180,7 @@ def main() -> int:
         "MACRO_FORECAST_ALLOCATION",
         "MFA_PRICE_ONLY",
         "Latest raw FX observation",
+        "Public Validated Snapshot",
     ]:
         if forbidden.casefold() in public_html.casefold():
             raise RuntimeError(f"PDS canonical public dashboard leakage/stale identity: {forbidden}")

@@ -45,8 +45,8 @@ export type PdsCanonicalSummary = {
 // Do not hand-edit numerical values; refresh through the PDS publication workflow.
 export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
-  "generatedAt": "2026-09-27T10:39:22.499982+09:00",
-  "systemAsOfKst": "2026-09-27T10:39:17.842244+09:00",
+  "generatedAt": "2026-09-27T12:22:58.296592+09:00",
+  "systemAsOfKst": "2026-09-27T12:22:53.572205+09:00",
   "officialSignal": "2026-08",
   "holdingMonth": "2026-09",
   "executionClose": "2026-09-01",
@@ -62,7 +62,7 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "previewHolding": "2026-10",
   "previewThrough": "2026-09-25",
   "adaptivePreviewState": "DEFENSIVE",
-  "adaptivePreviewRiskBudget": 0.6890736222267151,
+  "adaptivePreviewRiskBudget": 0.6890733242034912,
   "officialFxHedge": 0.5,
   "officialFxZscore": 0.24941947094137737,
   "previewFxHedge": 0.5,
@@ -70,63 +70,63 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "recentMonthlyReturns": [
     {
       "holdingMonth": "2025-09",
-      "coreDynamicFx": 0.07111902299004935,
-      "adaptiveDynamicFx": 0.07355896509435955
+      "coreDynamicFx": 0.0711190652514726,
+      "adaptiveDynamicFx": 0.07355901369216111
     },
     {
       "holdingMonth": "2025-10",
-      "coreDynamicFx": 0.051374588033332946,
-      "adaptiveDynamicFx": 0.050561905052348255
+      "coreDynamicFx": 0.051374586000505706,
+      "adaptiveDynamicFx": 0.050561890548999955
     },
     {
       "holdingMonth": "2025-11",
-      "coreDynamicFx": 0.012334684907840288,
-      "adaptiveDynamicFx": 0.011664358745563819
+      "coreDynamicFx": 0.012334671416570187,
+      "adaptiveDynamicFx": 0.01166433545630885
     },
     {
       "holdingMonth": "2025-12",
-      "coreDynamicFx": 0.010897599072413167,
-      "adaptiveDynamicFx": 0.011720315714017104
+      "coreDynamicFx": 0.010897630339675723,
+      "adaptiveDynamicFx": 0.011720352667459633
     },
     {
       "holdingMonth": "2026-01",
-      "coreDynamicFx": 0.07233921421960976,
-      "adaptiveDynamicFx": 0.0713181189899541
+      "coreDynamicFx": 0.07233919480074058,
+      "adaptiveDynamicFx": 0.07131810272040129
     },
     {
       "holdingMonth": "2026-02",
-      "coreDynamicFx": 0.058301239724311005,
-      "adaptiveDynamicFx": 0.05355636267900121
+      "coreDynamicFx": 0.05830123931052822,
+      "adaptiveDynamicFx": 0.053556365846304965
     },
     {
       "holdingMonth": "2026-03",
-      "coreDynamicFx": -0.05020756333672527,
-      "adaptiveDynamicFx": -0.0525388214884267
+      "coreDynamicFx": -0.05020755386526954,
+      "adaptiveDynamicFx": -0.05253881265113969
     },
     {
       "holdingMonth": "2026-04",
-      "coreDynamicFx": 0.07408961995335295,
-      "adaptiveDynamicFx": 0.0828340153719278
+      "coreDynamicFx": 0.07408960677899024,
+      "adaptiveDynamicFx": 0.08283399995066776
     },
     {
       "holdingMonth": "2026-05",
-      "coreDynamicFx": 0.07262416433683305,
-      "adaptiveDynamicFx": 0.07552314451504549
+      "coreDynamicFx": 0.07262416829252172,
+      "adaptiveDynamicFx": 0.07552314781873881
     },
     {
       "holdingMonth": "2026-06",
-      "coreDynamicFx": -0.004646285493852487,
-      "adaptiveDynamicFx": 0.009813918080257666
+      "coreDynamicFx": -0.004646287235373192,
+      "adaptiveDynamicFx": 0.009813990869996791
     },
     {
       "holdingMonth": "2026-07",
-      "coreDynamicFx": -0.05362583562908274,
-      "adaptiveDynamicFx": -0.03447953067794707
+      "coreDynamicFx": -0.05362583805868504,
+      "adaptiveDynamicFx": -0.03447960063277078
     },
     {
       "holdingMonth": "2026-08",
-      "coreDynamicFx": 0.027129890581951255,
-      "adaptiveDynamicFx": 0.029984254073246897
+      "coreDynamicFx": 0.0271298905819517,
+      "adaptiveDynamicFx": 0.029984254073246674
     }
   ],
   "performance": [
@@ -134,45 +134,45 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
       "label": "PDS Core + Dynamic FX",
       "supportStart": "2017-05-01",
       "supportEnd": "2026-08-31",
-      "cumulativeReturn": 2.6424026881302485,
-      "cagr": 0.14854683600686358,
-      "annVol": 0.11178823867858566,
-      "sharpe": 1.2979032936110366,
-      "mdd": -0.12331731312731187,
-      "calmar": 1.2045902739828993
+      "cumulativeReturn": 2.6424042136553716,
+      "cagr": 0.1485468875467264,
+      "annVol": 0.11178818710369039,
+      "sharpe": 1.297904242763309,
+      "mdd": -0.123317177334902,
+      "calmar": 1.2045920183796142
     },
     {
       "label": "PDS Core",
       "supportStart": "2017-05-01",
       "supportEnd": "2026-08-31",
-      "cumulativeReturn": 2.10271094585926,
-      "cagr": 0.12898083536031857,
-      "annVol": 0.10978444934361763,
-      "sharpe": 1.1626537711033278,
-      "mdd": -0.13555309650266223,
-      "calmar": 0.95151522678632
+      "cumulativeReturn": 2.102712245348602,
+      "cagr": 0.12898088602217683,
+      "annVol": 0.10978442012413295,
+      "sharpe": 1.162654460371641,
+      "mdd": -0.13555291179198703,
+      "calmar": 0.9515168971073428
     },
     {
       "label": "PDS Adaptive + Dynamic FX",
       "supportStart": "2021-05-03",
       "supportEnd": "2026-08-31",
-      "cumulativeReturn": 1.2524728729458134,
-      "cagr": 0.1646398009431982,
-      "annVol": 0.11706152850379058,
-      "sharpe": 1.3644231397131472,
-      "mdd": -0.11040271592646644,
-      "calmar": 1.4912658584672525
+      "cumulativeReturn": 1.252471640209822,
+      "cagr": 0.1646396813105766,
+      "annVol": 0.11706150102034966,
+      "sharpe": 1.3644225523389606,
+      "mdd": -0.11040270598484625,
+      "calmar": 1.4912649091515462
     },
     {
       "label": "PDS Adaptive",
       "supportStart": "2021-05-03",
       "supportEnd": "2026-08-31",
-      "cumulativeReturn": 0.926663766499092,
-      "cagr": 0.13098278593830304,
-      "annVol": 0.11676875123600046,
-      "sharpe": 1.1156000311545846,
-      "mdd": -0.11953266468201407,
-      "calmar": 1.0957907303978296
+      "cumulativeReturn": 0.9266627120722899,
+      "cagr": 0.13098266976295392,
+      "annVol": 0.1167687302471894,
+      "sharpe": 1.1155993282300112,
+      "mdd": -0.11953268648862703,
+      "calmar": 1.0957895585774884
     }
   ]
 } as PdsCanonicalSummary;

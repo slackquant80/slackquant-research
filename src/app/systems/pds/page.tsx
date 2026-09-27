@@ -309,8 +309,9 @@ export default function PdsSystemPage() {
             <h2>Recent completed returns and four monitored portfolio views.</h2>
             <p className="body-copy">
               The chart shows the most recent 12 completed holding months for the two Dynamic FX portfolio views; current MTD is
-              deliberately excluded. The table then summarizes the same four portfolio views used in the PDS dashboard.
-              Core rows use their longer completed histories; Adaptive rows begin at the later Adaptive evaluation start.
+              deliberately excluded. The table summarizes the four portfolio views over the periods used by this platform summary:
+              Core rows begin in May 2017, while Adaptive rows begin at the later May 2021 evaluation start. The PDS dashboard
+              separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
             </p>
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
@@ -345,8 +346,8 @@ export default function PdsSystemPage() {
             </div>
             <div className="boundary-note">
               <b>Comparison periods differ:</b> Adaptive history begins later than Core history, so the four rows should not be read as
-              identical-window comparisons. For same-period comparisons, monthly returns, current MTD, target detail, and
-              full diagnostics, use the PDS dashboard.
+              identical-window comparisons. The longer PDS reconstruction is a separate current-definition research series and should
+              not be confused with the standalone F2R or ADAA records. For same-period comparisons and full portfolio detail, use the PDS dashboard.
             </div>
             <div className="actions">
               <Link className="btn primary" href="/systems/pds/dashboard/" target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
