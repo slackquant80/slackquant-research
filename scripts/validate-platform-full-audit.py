@@ -287,8 +287,27 @@ def main() -> int:
         "pdsCanonicalSummary.markThrough",
         "Operational data through",
     )
-    if "pdsPublicSnapshot" in systems_index or "pdsPublicSnapshot" in pds:
-        raise RuntimeError("PDS platform still depends on legacy delayed snapshot binding")
+    # PDS_LEGACY_READER_NO_IMPORT_GATE_V1
+    legacy_snapshot = need(
+        "src/data/pdsPublicSnapshot.ts",
+        "PDS_LEGACY_COMPATIBILITY_BINDING_V1",
+    )
+    legacy_reader_refs = []
+    for reader_root_rel in ("src/app", "src/components"):
+        reader_root = ROOT / reader_root_rel
+        if not reader_root.is_dir():
+            continue
+        for source_path in reader_root.rglob("*"):
+            if source_path.suffix not in {".ts", ".tsx", ".js", ".jsx"}:
+                continue
+            source_text = source_path.read_text(encoding="utf-8-sig", errors="replace")
+            if "pdsPublicSnapshot" in source_text:
+                legacy_reader_refs.append(source_path.relative_to(ROOT).as_posix())
+    if legacy_reader_refs:
+        raise RuntimeError(
+            "PDS legacy compatibility module leaked into reader-facing source: "
+            + ", ".join(sorted(legacy_reader_refs))
+        )
 
     public_dashboard = need(
         "public/assets/systems/pds/Portfolio_Decision_System_Public.html",

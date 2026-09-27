@@ -304,6 +304,8 @@ def main() -> int:
     source = snapshot_ts.read_text(encoding="utf-8")
     replacement = (
         "// PDS_PUBLIC_BINDING_START\n"
+        "// PDS_LEGACY_COMPATIBILITY_BINDING_V1\n"
+        "// Compatibility-only delayed binding; reader-facing src/app and src/components must not import this module.\n"
         "export const pdsPublicSnapshot: PdsPublicSnapshot | null = "
         + json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False)
         + " as PdsPublicSnapshot;\n"
