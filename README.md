@@ -102,3 +102,19 @@ System-specific mutable publication contracts belong in the corresponding system
 ## Build output
 
 `npm run build` creates a static export in `out/`. That directory is reconstructible deployment output and is not canonical source.
+
+## Automatic push guard
+
+The canonical release gate is not dependent on an operator or assistant remembering to run it manually.
+
+This repository installs a managed Git `pre-push` hook. Every normal `git push` automatically runs the same canonical release validation used by GitHub Actions. The hook requires a clean working tree before and after validation so the checked files exactly match the commit being pushed.
+
+Installation is automatic through the package `prepare` script whenever `npm install` or `npm ci` runs. To install or repair it explicitly:
+
+```powershell
+npm.cmd run install:hooks
+```
+
+`00_VALIDATE_RELEASE.cmd` remains available as a manual preflight tool, but it is no longer the only local safeguard.
+
+The local hook may be bypassed deliberately with Git's `--no-verify`; that is not an approved SlackQuant release path. Even if the local hook is bypassed or unavailable, GitHub Pages deployment remains fail-closed behind the same `npm run validate:release` CI gate.

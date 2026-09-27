@@ -29,6 +29,17 @@ function requireText(rel, tokens) {
   return text;
 }
 
+function capture(command, args) {
+  const result = spawnSync(command, args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    env: process.env,
+    shell: false,
+  });
+  if (result.error || result.status !== 0) return "";
+  return (result.stdout || "").trim();
+}
+
 function run(label, command, args) {
   console.log(`\n=== ${label} ===`);
   const result = spawnSync(command, args, {
@@ -62,10 +73,29 @@ function runPowerShell(label, script, extra = []) {
   run(label, POWERSHELL, args);
 }
 
+function assertManagedPrePushHook() {
+  const hookPath = capture("git", ["rev-parse", "--git-path", "hooks/pre-push"]);
+  if (!hookPath) fail("Git pre-push hook path is unavailable.");
+  const absoluteHook = resolve(ROOT, hookPath);
+  if (!existsSync(absoluteHook)) {
+    fail("Managed pre-push guard is not installed. Run: npm run install:hooks");
+  }
+  const hook = readFileSync(absoluteHook, "utf8");
+  if (!hook.includes("SLACKQUANT_MANAGED_PRE_PUSH_V1")) {
+    fail("pre-push hook is not the SlackQuant managed release guard.");
+  }
+}
+
 function assertCanonicalReleaseContract() {
   const pkg = JSON.parse(readFileSync(requireFile("package.json"), "utf8"));
   if (pkg?.scripts?.["validate:release"] !== "node scripts/validate-release.mjs") {
     fail("package.json must map validate:release to scripts/validate-release.mjs");
+  }
+  if (pkg?.scripts?.["install:hooks"] !== "node scripts/install-git-hooks.mjs") {
+    fail("package.json must map install:hooks to scripts/install-git-hooks.mjs");
+  }
+  if (pkg?.scripts?.prepare !== "node scripts/install-git-hooks.mjs") {
+    fail("package.json prepare must auto-install the managed Git pre-push guard.");
   }
 
   const workflow = requireText(".github/workflows/deploy-pages.yml", [
@@ -87,6 +117,8 @@ function assertCanonicalReleaseContract() {
   }
 
   requireText("00_VALIDATE_RELEASE.cmd", ["npm.cmd run validate:release"]);
+  requireFile("scripts/install-git-hooks.mjs");
+  requireFile("scripts/pre-push-release-gate.mjs");
 
   for (const rel of [
     "scripts/normalize-methods-navigation.ps1",
@@ -98,15 +130,16 @@ function assertCanonicalReleaseContract() {
   ]) {
     requireFile(rel);
   }
+
+  // This turns the local guard into part of the release contract rather than a remembered convention.
+  assertManagedPrePushHook();
 }
 
-console.log("SLACKQUANT_CANONICAL_RELEASE_GATE_V1");
+console.log("SLACKQUANT_CANONICAL_RELEASE_GATE_V2");
 assertCanonicalReleaseContract();
 
 runPowerShell("Normalize rendered Methods shell", "scripts/normalize-methods-navigation.ps1", ["-PlatformRoot", "."]);
 
-// Source-level gates. System-specific contracts are checked before the broad platform audit
-// so failures identify the owning surface first.
 runPython("PDS publication source audit", "scripts/validate-pds-publication.py");
 runPython("Methods UI source audit", "scripts/validate-methods-ui-integrity.py");
 runPython("F2R documentation source audit", "scripts/validate-f2r-documentation.py");
@@ -115,7 +148,6 @@ runPython("Platform source audit", "scripts/validate-platform-full-audit.py");
 runNpm("Typecheck", "typecheck");
 runNpm("Build static site", "build");
 
-// Built-output gates. These run against the exact out/ tree that GitHub Pages will upload.
 runPython("Platform built-output audit", "scripts/validate-platform-full-audit.py", ["--require-build"]);
 runPython("Methods UI built-output audit", "scripts/validate-methods-ui-integrity.py", ["--require-build"]);
 runPython("F2R documentation built-output audit", "scripts/validate-f2r-documentation.py", ["--require-build"]);
