@@ -93,22 +93,23 @@ def main() -> int:
     # Platform identity: current operational surface, not a delayed/reduced product.
     for tok in [
         'status: "Public operational dashboard"',
-        'subtitle: "Multi-Strategy Portfolio System with Reinforcement-Learning Adaptive Risk Control"',
+        'subtitle: "Multi-Strategy Portfolio Integration, Adaptive Risk Control, and Dynamic FX"',
         'publicDashboard: "/systems/pds/dashboard/"',
     ]:
         require(systems, tok, "PDS systems registry")
 
     for tok in [
         "PDS_CANONICAL_PLATFORM_PAGE_V1",
-        "Reinforcement-Learning Adaptive Risk Control",
+        "Adaptive Risk Control · RL-assisted hybrid",
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed returns and four monitored portfolio views.",
+        "Recent completed returns and historical evidence views.",
         "Core rows begin in May 2017",
+        "Historical prior-parent results are therefore not a current-Core Adaptive track record",
         "longer current-definition Core / Dynamic FX reconstruction beginning in December 2005",
-        "the PDS dashboard is the current operating view",
+        "the PDS dashboard shows the current decision",
         "/systems/pds/dashboard/",
         "/resources/systems/pds/PDS_System_Documentation_v1.5.pdf",
         "System Documentation ↗",

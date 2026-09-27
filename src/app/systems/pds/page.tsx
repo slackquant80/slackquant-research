@@ -11,7 +11,7 @@ const item = getSystem("pds");
 export const metadata: Metadata = {
   title: "Portfolio Decision System — Multi-Strategy Portfolio Operating System",
   description:
-    "SlackQuant's multi-strategy portfolio operating system, combining independently maintained strategy providers with RL-assisted adaptive risk control and a Dynamic FX implementation layer.",
+    "SlackQuant's multi-strategy portfolio operating system, combining independently maintained strategy providers with bounded hybrid adaptive risk control and a Dynamic FX implementation layer.",
   alternates: { canonical: "/systems/pds/" },
 };
 
@@ -21,7 +21,7 @@ const architectureStages = [
   ["03", "Research Review", "Data timing, research quality, implementation assumptions, and operational readiness are reviewed before portfolio use."],
   ["04", "Portfolio Admission", "A sound research result does not automatically enter the portfolio; incremental portfolio usefulness is assessed separately."],
   ["05", "Portfolio Integration", "Approved providers are combined under a defined strategic allocation policy while each provider's identity and contribution remain traceable."],
-  ["06", "Adaptive Risk Control", "An RL-assisted adaptive layer can selectively reduce risk without replacing the Core strategy engines."],
+  ["06", "Adaptive Risk Control", "A bounded hybrid Adaptive layer can selectively reduce Core risk without replacing the underlying strategy engines."],
   ["07", "Monitoring / Refresh", "Core, Adaptive, Preview, Dynamic FX, and provider states are refreshed and monitored under a common operating clock."],
 ] as const;
 
@@ -74,7 +74,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
       <figcaption className="pds-monthly-chart-head">
         <div>
           <h3>Recent Completed Monthly Returns</h3>
-          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · completed holding months only · current MTD excluded</p>
+          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · historical series · current MTD excluded</p>
         </div>
         <div className="pds-monthly-legend" aria-label="Chart legend">
           <span><i className="pds-legend-swatch core" />Core + Dynamic FX</span>
@@ -107,7 +107,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
           })}
         </svg>
       </div>
-      <div className="pds-monthly-chart-note">Detailed Core / Adaptive / provider comparisons remain available in the operational dashboard.</div>
+      <div className="pds-monthly-chart-note">Adaptive results are the certified prior-parent historical comparison and are not rebased to the current Core definition. Detailed same-period and provider comparisons remain in the PDS dashboard.</div>
     </figure>
   );
 }
@@ -130,7 +130,7 @@ export default function PdsSystemPage() {
           <div className="paper-meta">
             <span>{item.status}</span>
             <span>Current Core providers · ADAA + F2R</span>
-            <span>Reinforcement-Learning Adaptive Risk Control</span>
+            <span>Adaptive Risk Control · RL-assisted hybrid</span>
           </div>
           <div className="actions">
             <Link
@@ -160,7 +160,7 @@ export default function PdsSystemPage() {
         <aside className="toc">
           <strong>On this page</strong>
           <a href="#decision-state">System Role & Current State</a>
-          <a href="#variants">Core / RL Adaptive / Dynamic FX</a>
+          <a href="#variants">Core / Adaptive / Dynamic FX</a>
           <a href="#architecture">Decision Architecture</a>
           <a href="#adoption">Research Review & Portfolio Admission</a>
           <a href="#providers">Strategy Provider Layer</a>
@@ -177,8 +177,8 @@ export default function PdsSystemPage() {
             <p className="lede">
               PDS sits above individual strategy engines. It evaluates providers, separates research credibility from portfolio
               usefulness, manages integration, forms portfolio-level decisions, and monitors whether each role remains justified.
-              The current Core combines ADAA and Forecast-to-Rank Allocation (F2R) as complementary providers; the platform
-              emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.
+              The current Core combines ADAA and Forecast-to-Rank Allocation (F2R) as complementary providers, while PDS handles
+              portfolio integration, adaptive risk control, and monitoring at the system level.
             </p>
 
             <div className="pds-state-band">
@@ -190,7 +190,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Adaptive Risk Control</span>
                 <strong>{state.adaptiveState} · {pct(state.adaptiveRiskBudget, 0)} risk budget</strong>
-                <small>RL-assisted adaptive risk control is applied selectively on top of PDS Core rather than used as a standalone alpha engine.</small>
+                <small>Adaptive risk control is a bounded hybrid layer that uses an RL signal alongside independent volatility confirmation; it is not a standalone alpha engine.</small>
               </div>
               <div>
                 <span className="pds-state-label">Dynamic FX Overlay</span>
@@ -207,20 +207,19 @@ export default function PdsSystemPage() {
             </div>
 
             <div className="boundary-note">
-              <b>Public dashboard:</b> the PDS dashboard is the current operating view. It shows the current decision,
-              Adaptive state, Preview, performance, portfolio detail, and Dynamic FX monitoring while leaving machine-specific
-              infrastructure such as local paths, caches, credentials, and debug controls out of the public interface.
+              <b>Public dashboard:</b> the PDS dashboard shows the current decision, Adaptive state, Preview, portfolio detail,
+              performance, and Dynamic FX monitoring. Local paths, caches, credentials, and debug controls are excluded from the
+              public interface.
             </div>
           </section>
 
           <section className="prose-section" id="variants">
             <div className="kicker">Three operating layers</div>
-            <h2>Multi-strategy Core, RL-assisted adaptive risk control, and Dynamic FX.</h2>
+            <h2>PDS Core, Adaptive Risk Control, and Dynamic FX.</h2>
             <p className="body-copy">
-              PDS deliberately separates the source of portfolio opportunity from the controls applied around it. PDS Core is the
-              main multi-strategy portfolio. PDS Adaptive adds an RL-assisted risk-control layer that can selectively
-              reduce exposure when the defensive policy is active. Dynamic FX is an implementation overlay that manages USD/KRW
-              hedge exposure on its own monthly decision clock.
+              PDS separates the source of portfolio opportunity from the controls applied around it. PDS Core is the main
+              multi-strategy portfolio. PDS Adaptive is a bounded hybrid risk-control layer that can reduce total Core exposure
+              when its defensive controller is active. Dynamic FX manages USD/KRW hedge exposure on a separate monthly decision clock.
             </p>
             <div className="system-role-grid pds-role-grid">
               <div className="system-role-card">
@@ -229,9 +228,9 @@ export default function PdsSystemPage() {
                 <p>Combines admitted strategy providers under a defined portfolio policy while preserving each provider's timing, identity, and research record.</p>
               </div>
               <div className="system-role-card">
-                <div className="kicker">Reinforcement Learning</div>
+                <div className="kicker">Adaptive risk control</div>
                 <h3>PDS Adaptive</h3>
-                <p><strong>Reinforcement-Learning Adaptive Risk Control.</strong> The RL component is used selectively within the state-dependent defense layer, not as the alpha engine or portfolio-selection model.</p>
+                <p>PDS Adaptive uses an RL signal inside a bounded hybrid controller with independent point-in-time volatility confirmation. It does not select securities or replace the Core allocation engines.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Investor implementation</div>
@@ -240,14 +239,16 @@ export default function PdsSystemPage() {
               </div>
             </div>
             <div className="evidence-note">
-              Current Adaptive state and risk budget are visible in the public dashboard. Low-level controller configuration,
-              model-training settings, seeds, and other low-level implementation details remain internal.
+              The frozen controller was trained under the previous Core parent definition and is currently applied to the revised
+              Core without automatic retraining. Historical prior-parent results are therefore not a current-Core Adaptive track record.
+              Current Adaptive state and risk budget remain visible in the public dashboard; low-level controller settings,
+              seeds, and model artifacts remain internal.
             </div>
           </section>
 
           <section className="prose-section" id="architecture">
             <div className="kicker">Decision architecture</div>
-            <h2>From heterogeneous providers to one portfolio decision</h2>
+            <h2>From independent providers to one portfolio decision</h2>
             <div className="pds-architecture-flow" aria-label="PDS decision architecture">
               {architectureStages.map(([stage, title, copy]) => (
                 <div className="pds-architecture-stage" key={title}>
@@ -262,8 +263,8 @@ export default function PdsSystemPage() {
             <div className="kicker">Research review & portfolio admission</div>
             <h2>Research quality and portfolio usefulness are related, but they are evaluated separately.</h2>
             <p className="body-copy">
-              PDS keeps research review separate from portfolio admission. A strategy can be scientifically well specified
-              yet add little incremental portfolio value, while a useful portfolio role does not rewrite a failed or
+              PDS keeps research review separate from portfolio admission. A strategy can be well specified as research yet add
+              little incremental portfolio value, while a useful portfolio role does not change the status of a failed or
               inconclusive research result. Admission therefore depends on both research quality and the role the strategy adds to the portfolio.
             </p>
             <div className="dual pds-gate-dual">
@@ -274,7 +275,7 @@ export default function PdsSystemPage() {
               </div>
               <div className="dual-card operational">
                 <div className="kicker">Portfolio admission</div>
-                <h3>Does it improve the portfolio&apos;s decision set?</h3>
+                <h3>Does it add a useful portfolio role?</h3>
                 <p>Incremental diversification, role fit, operational burden, and interaction with existing providers determine whether the strategy belongs in the portfolio.</p>
               </div>
             </div>
@@ -298,7 +299,7 @@ export default function PdsSystemPage() {
               <div className="dual-card">
                 <div className="kicker">Portfolio Strategy System</div>
                 <h3>Forecast-to-Rank Allocation (F2R)</h3>
-                <p>A heterogeneous cross-asset forecasting system combining conventional supervised machine learning with Chronos-2 pretrained time-series forecasting before rank-based portfolio formation.</p>
+                <p>A cross-asset forecasting system combining conventional supervised machine learning with Chronos-2 pretrained time-series forecasting before rank-based portfolio formation.</p>
                 <Link className="btn soft" href="/systems/f2r/">View F2R</Link>
               </div>
             </div>
@@ -306,12 +307,13 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="performance">
             <div className="kicker">Integrated performance</div>
-            <h2>Recent completed returns and four monitored portfolio views.</h2>
+            <h2>Recent completed returns and historical evidence views.</h2>
             <p className="body-copy">
-              The chart shows the most recent 12 completed holding months for the two Dynamic FX portfolio views; current MTD is
-              deliberately excluded. The table summarizes the four portfolio views over the periods used by this platform summary:
-              Core rows begin in May 2017, while Adaptive rows begin at the later May 2021 evaluation start. The PDS dashboard
-              separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
+              The chart shows the most recent 12 completed holding months for the two Dynamic FX historical series; current MTD is
+              excluded. The table summarizes the historical series surfaced in this platform summary. Core rows begin in May 2017.
+              Adaptive rows begin in May 2021 and belong to the certified frozen-policy comparison under the prior Core parent
+              definition; they are research evidence, not a current-Core Adaptive track record. The PDS dashboard separately shows
+              the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
             </p>
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
@@ -345,9 +347,10 @@ export default function PdsSystemPage() {
               </table>
             </div>
             <div className="boundary-note">
-              <b>Comparison periods differ:</b> Adaptive history begins later than Core history, so the four rows should not be read as
-              identical-window comparisons. The longer PDS reconstruction is a separate current-definition research series and should
-              not be confused with the standalone F2R or ADAA records. For same-period comparisons and full portfolio detail, use the PDS dashboard.
+              <b>Evidence periods differ:</b> Adaptive history begins later than Core history and reflects the prior Core parent
+              definition, so the rows are not current-definition like-for-like comparisons. The longer PDS reconstruction is a
+              separate current-definition research series; standalone F2R and ADAA histories remain separate. Use the PDS dashboard
+              for full portfolio detail.
             </div>
             <div className="actions">
               <Link className="btn primary" href="/systems/pds/dashboard/" target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
@@ -358,17 +361,17 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="monitoring">
             <div className="kicker">Operations & monitoring</div>
-            <h2>The public dashboard mirrors the operating view while excluding machine-specific details.</h2>
+            <h2>The public dashboard uses the operating data and clock while omitting private infrastructure.</h2>
             <p className="body-copy">
-              The public dashboard mirrors the reader-facing operating information from the local system. Publication leaves
-              machine-specific infrastructure out rather than creating a separate, simplified investment view. Current decision
-              state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance use the same data and
-              clock conventions.
+              The public dashboard uses the same decision state, clocks, and portfolio data as the operating system. It omits
+              machine-specific infrastructure and private controls rather than maintaining a separate investment view. Current
+              decision state, Adaptive state, Preview, portfolio weights, Dynamic FX monitoring, and performance follow the same
+              data and clock conventions.
             </p>
             <div className="system-operating-list">
               <div><strong>On-demand refresh.</strong><span> The release workflow refreshes provider state, checks cross-system consistency, and rebuilds the public dashboard from the current system state.</span></div>
               <div><strong>Provider separation.</strong><span> ADAA and F2R remain independent systems connected to PDS through defined interfaces rather than copied into PDS.</span></div>
-              <div><strong>Release checks.</strong><span> Public deployment proceeds only after data, clock, identity, responsive-layout, and private-environment checks complete successfully.</span></div>
+              <div><strong>Release checks.</strong><span> Release checks cover data consistency, clocks, identity, responsive layout, and private-environment boundaries before deployment.</span></div>
             </div>
           </section>
 
@@ -376,7 +379,7 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Public and internal detail</div>
-            <h2>Operational transparency without exposing machine-specific infrastructure.</h2>
+            <h2>What is public and what remains internal.</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
                 <h3>Public</h3>
@@ -384,7 +387,7 @@ export default function PdsSystemPage() {
                   <li>System architecture, provider relationships, and governance</li>
                   <li>Current PDS Core, Adaptive, Preview, Portfolio, Performance, and Dynamic FX operating views</li>
                   <li>Current decision clock and detailed portfolio targets through the PDS dashboard</li>
-                  <li>Four-portfolio historical performance with each completed period stated explicitly</li>
+                  <li>Historical performance views with support periods and evidence boundaries stated explicitly</li>
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
@@ -398,9 +401,9 @@ export default function PdsSystemPage() {
               </div>
             </div>
             <div className="evidence-note">
-              The platform page intentionally summarizes the operating architecture rather than repeating every portfolio parameter.
-              The PDS dashboard is the current public view for detailed targets, Preview, Dynamic FX, and performance
-              diagnostics; it is for research and monitoring, not brokerage execution.
+              The platform page summarizes the operating architecture rather than repeating every portfolio parameter. The PDS
+              dashboard is the public operating view for detailed targets, Preview, Dynamic FX, and performance diagnostics; it is
+              for research and monitoring, not brokerage execution.
             </div>
           </section>
         </article>
