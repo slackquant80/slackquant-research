@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 from __future__ import annotations
 
 import csv
@@ -244,21 +244,21 @@ def main() -> int:
     pds = need(
         "src/app/systems/pds/page.tsx",
         "PDS_CANONICAL_PLATFORM_PAGE_V1",
-        "Reinforcement-Learning Adaptive Risk Control",
+        "Adaptive Risk Control · RL-assisted hybrid",
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed returns and four monitored portfolio views.",
-        "the PDS dashboard is the current operating view",
+        "Recent completed returns and historical evidence views.",
+        "the PDS dashboard shows the current decision",
         "Research review & portfolio admission",
     )
     for forbidden in ("25/75", "F2R 25%", "ADAA 75%", "latestStrategyWeights", "public_active_core_strategy_weights.csv", "DELAYED PUBLIC", "protected current decision state"):
         if forbidden in pds:
             raise RuntimeError(f"PDS platform landing regression: {forbidden}")
     for required in (
-        "emphasizes what each provider contributes rather than reducing the design to a single allocation ratio.",
-        "the PDS dashboard is the current operating view.",
+        "portfolio integration, adaptive risk control, and monitoring at the system level.",
+        "the PDS dashboard shows the current decision",
     ):
         if required not in pds:
             raise RuntimeError(f"PDS current-platform disclosure missing: {required}")
@@ -357,7 +357,7 @@ def main() -> int:
     )
     need(
         "src/app/systems/pds/page.tsx",
-        "Multi-strategy Core, RL-assisted adaptive risk control, and Dynamic FX.",
+        "PDS Core, Adaptive Risk Control, and Dynamic FX.",
         "Chronos-2 pretrained time-series forecasting",
         "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
     )
@@ -470,3 +470,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+
