@@ -18,8 +18,8 @@ SUMMARY_BINDER = APP / "scripts/bind-pds-canonical-summary.py"
 PUBLIC_DASHBOARD = APP / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
 PUBLIC_DASHBOARD_RECEIPT = APP / "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
 PUBLIC_PORTFOLIO_HISTORY_XLSX = APP / "public/assets/systems/pds/PDS_Portfolio_History_Current_Definition.xlsx"
-PDS_SYSTEM_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.4.pdf"
-PDS_SYSTEM_DOCUMENTATION_SHA256 = "509912158bb765f6115c9b77266c197828bd7e6249303112c1f790c08cab19ab"
+PDS_SYSTEM_DOCUMENTATION = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.5.pdf"
+PDS_SYSTEM_DOCUMENTATION_SHA256 = "635c0b34badba7078cc01c3c72568aeb034665675eae2c730eef31b8fc29f2e0"
 
 
 def need(path: Path) -> str:
@@ -81,11 +81,14 @@ def main() -> int:
     public_html = need(PUBLIC_DASHBOARD)
 
     if not PDS_SYSTEM_DOCUMENTATION.is_file():
-        raise RuntimeError("PDS System Documentation v1.4 PDF is missing")
+        raise RuntimeError("PDS System Documentation v1.5 PDF is missing")
     if PDS_SYSTEM_DOCUMENTATION.read_bytes()[:5] != b"%PDF-":
-        raise RuntimeError("PDS System Documentation v1.4 does not have a PDF signature")
+        raise RuntimeError("PDS System Documentation v1.5 does not have a PDF signature")
     if hashlib.sha256(PDS_SYSTEM_DOCUMENTATION.read_bytes()).hexdigest() != PDS_SYSTEM_DOCUMENTATION_SHA256:
-        raise RuntimeError("PDS System Documentation v1.4 PDF hash mismatch")
+        raise RuntimeError("PDS System Documentation v1.5 PDF hash mismatch")
+    retired_doc = APP / "public/resources/systems/pds/PDS_System_Documentation_v1.4.pdf"
+    if retired_doc.exists():
+        raise RuntimeError("retired PDS System Documentation v1.4 remains publicly addressable")
 
     # Platform identity: current operational surface, not a delayed/reduced product.
     for tok in [
@@ -107,7 +110,7 @@ def main() -> int:
         "longer current-definition Core / Dynamic FX reconstruction beginning in December 2005",
         "the PDS dashboard is the current operating view",
         "/systems/pds/dashboard/",
-        "/resources/systems/pds/PDS_System_Documentation_v1.4.pdf",
+        "/resources/systems/pds/PDS_System_Documentation_v1.5.pdf",
         "System Documentation ↗",
     ]:
         require(pds, tok, "PDS platform page")
@@ -125,6 +128,7 @@ def main() -> int:
         r"PDS_System_Documentation_v1\.1\.pdf",
         r"PDS_System_Documentation_v1\.2\.pdf",
         r"PDS_System_Documentation_v1\.3\.pdf",
+        r"PDS_System_Documentation_v1\.4\.pdf",
         r"(?i)Support matters:",
     ]
     for pattern in forbidden_platform:
