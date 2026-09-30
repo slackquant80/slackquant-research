@@ -2,8 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { getSystem } from "@/data/systems";
+import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
 
 const item = getSystem("equity-alpha");
+
+function pct(value: number, digits = 2) {
+  return `${(value * 100).toFixed(digits)}%`;
+}
+
+function num(value: number, digits = 2) {
+  return value.toFixed(digits);
+}
 
 export const metadata: Metadata = {
   title: "Equity Alpha — Benchmark-Aware Global Equity ETF Portfolio",
@@ -14,6 +23,7 @@ export const metadata: Metadata = {
 
 export default function EquityAlphaSystemPage() {
   if (!item) notFound();
+  const evidence = getEquityAlphaEvidence();
 
   return (
     <main>
@@ -54,6 +64,7 @@ export default function EquityAlphaSystemPage() {
           <a href="#architecture">Portfolio Architecture</a>
           <a href="#clocks">Operating Clocks</a>
           <a href="#risk">Benchmark & Risk</a>
+          <a href="#empirical-evidence">Empirical Evidence</a>
           <a href="#public">Dashboard</a>
           <a href="#methods">Quantitative Methods</a>
         </aside>
@@ -123,6 +134,51 @@ export default function EquityAlphaSystemPage() {
             <p className="body-copy">
               The strategy is evaluated against ACWI using active return, tracking error, information ratio, relative wealth, and relative drawdown alongside absolute return and drawdown. The dashboard can also combine Global Alpha with an ACWI core; that control changes the investor-level risk profile and investable weights, not the underlying model selections.
             </p>
+          </section>
+
+          <section className="prose-section" id="empirical-evidence">
+            <div className="kicker">Completed daily evidence</div>
+            <h2>ACWI-relative evidence from the same daily history used by the public dashboard</h2>
+            <p className="body-copy">
+              The figures below are calculated at build time from the canonical Global Equity Alpha completed-daily dataset
+              shipped with the public dashboard. Current MTD is excluded. This keeps the System page tied to the same evidence
+              source rather than maintaining a separate hand-entered performance snapshot.
+            </p>
+            <div className="metrics system-metrics">
+              <div className="metric"><div className="value">{pct(evidence.portfolio.cagr)}</div><div className="label">Global Alpha CAGR</div></div>
+              <div className="metric"><div className="value">{pct(evidence.activeReturn)}</div><div className="label">Annualized active return vs. ACWI</div></div>
+              <div className="metric"><div className="value">{num(evidence.informationRatio)}</div><div className="label">Information ratio vs. ACWI</div></div>
+              <div className="metric"><div className="value">{pct(evidence.relativeDrawdown)}</div><div className="label">Relative drawdown</div></div>
+            </div>
+            <div className="selected-table-block">
+              <div className="selected-exhibits-head">
+                <div className="section-title">Completed-history risk / return</div>
+                <p>{evidence.supportStart} → {evidence.supportEnd} · {evidence.observations.toLocaleString("en-US")} completed daily returns · daily-first accounting</p>
+              </div>
+              <div className="evidence-table-wrap" role="region" aria-label="Global Equity Alpha completed daily evidence" tabIndex={0}>
+                <table className="evidence-table">
+                  <thead>
+                    <tr>
+                      <th>Series</th><th>Cumulative</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MDD</th><th>Ann. active</th><th>TE</th><th>IR</th><th>Relative DD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Global Equity Alpha</th>
+                      <td>{pct(evidence.portfolio.cumulative)}</td><td>{pct(evidence.portfolio.cagr)}</td><td>{pct(evidence.portfolio.vol)}</td><td>{num(evidence.portfolio.sharpe)}</td><td>{pct(evidence.portfolio.mdd)}</td><td>{pct(evidence.activeReturn)}</td><td>{pct(evidence.trackingError)}</td><td>{num(evidence.informationRatio)}</td><td>{pct(evidence.relativeDrawdown)}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">{evidence.benchmarkLabel} benchmark</th>
+                      <td>{pct(evidence.benchmark.cumulative)}</td><td>{pct(evidence.benchmark.cagr)}</td><td>{pct(evidence.benchmark.vol)}</td><td>{num(evidence.benchmark.sharpe)}</td><td>{pct(evidence.benchmark.mdd)}</td><td>—</td><td>—</td><td>—</td><td>—</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="evidence-table-source">Public dashboard authority · {evidence.sourceVersion}</div>
+            </div>
+            <div className="evidence-note">
+              These are historical completed-period results for the production model definition shown in the public dashboard. They are not a guarantee of future alpha. Investor-level ACWI Core / Global Alpha mixing changes the investor portfolio, not the underlying model selections.
+            </div>
           </section>
 
           <section className="prose-section" id="public">

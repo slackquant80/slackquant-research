@@ -7,13 +7,7 @@ import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
-
-const metrics = [
-  ["10.80%", "ADAA practitioner gross CAGR"],
-  ["8.97%", "Annualized volatility"],
-  ["1.05", "BIL-excess Sharpe"],
-  ["−10.34%", "Maximum drawdown"],
-] as const;
+import { adaaPublishedEvidence } from "@/data/systemEvidence";
 
 export const metadata: Metadata = {
   title: "ADAA",
@@ -85,7 +79,7 @@ export default function AdaaPage() {
               reported in Public Working Paper {item.publicVersion}. SSRN {item.ssrnId}.
             </p>
             <div className="metrics">
-              {metrics.map(([value, label]) => (
+              {adaaPublishedEvidence.metrics.map(([value, label]) => (
                 <div className="metric" key={label}>
                   <div className="value">{value}</div>
                   <div className="label">{label}</div>

@@ -193,6 +193,7 @@ def audit_static(require_build: bool) -> list[Check]:
         "Intramonth Preview",
     ]
     add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-release refresh/check → prepared public state")
+    add(c, "ADAA visible empirical evidence", all(x in adaa for x in ["Published empirical evidence", "adaaPublishedEvidence", "Evidence boundary"]), "paper-bound historical metrics visible on System page")
     adaa_forbidden = [
         "19-source-series market snapshot", "public Thin-Shiny", "Decision authority:",
         "canonical snapshot validation", "no execution authority"
@@ -201,6 +202,10 @@ def audit_static(require_build: bool) -> list[Check]:
 
     f2r = text(SYSTEM_PAGE_FILES["f2r"])
     add(c, "F2R identity on page", "Forecast-to-Rank Allocation (F2R)" in systems and "item.title" in f2r, "registry-driven formal identity")
+    add(c, "F2R visible empirical evidence", all(x in f2r for x in ["Published empirical evidence", "Historical portfolio comparison", "f2rPublishedEvidence"]), "model-adoption evidence visible on System page")
+    equity = text(ROOT / "src/app/systems/equity-alpha/page.tsx")
+    equity_helper = text(ROOT / "src/lib/equityAlphaEvidence.ts")
+    add(c, "Equity Alpha canonical evidence binding", all(x in equity for x in ["Completed daily evidence", "getEquityAlphaEvidence", "Annualized active return vs. ACWI", "Relative drawdown"]) and all(x in equity_helper for x in ["dashboard_data.js", "globalFinalDaily", "informationRatio", "relativeDrawdown"]), "System page derives completed evidence from public dashboard authority")
     pds_summary = ROOT / "src/data/pdsCanonicalSummary.ts"
     pds_public_dashboard = ROOT / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
     if pds_summary.is_file() and pds_public_dashboard.is_file():

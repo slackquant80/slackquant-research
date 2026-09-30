@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { adaaPublishedEvidence } from "@/data/systemEvidence";
 
 const item = getSystem("adaa");
 
@@ -58,6 +59,7 @@ export default function AdaaSystemPage() {
           <a href="#overview">System Role</a>
           <a href="#operating-state">Operating States</a>
           <a href="#architecture">Strategy Architecture</a>
+          <a href="#empirical-evidence">Empirical Evidence</a>
           <a href="#evidence">Research & Public Artifacts</a>
           <a href="#methods">Quantitative Methods</a>
         </aside>
@@ -148,6 +150,40 @@ export default function AdaaSystemPage() {
             <div className="system-operating-list adaa-pds-relationship">
               <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>
             </div>
+          </section>
+
+          <section className="prose-section" id="empirical-evidence">
+            <div className="kicker">Published empirical evidence</div>
+            <h2>Historical evidence behind the Decision Diversification design</h2>
+            <p className="body-copy">
+              The public working paper evaluates ADAA as a retrospective historical simulation and reports the risk/return
+              profile of the practitioner composite alongside decision-diversification diagnostics. The system page shows a
+              compact evidence snapshot here so the empirical basis is visible without requiring a separate dashboard or paper first.
+            </p>
+            <div className="metrics system-metrics">
+              {adaaPublishedEvidence.metrics.map(([value, label]) => (
+                <div className="metric" key={label}>
+                  <div className="value">{value}</div>
+                  <div className="label">{label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="selected-table-block">
+              <div className="selected-exhibits-head">
+                <div className="section-title">Evidence boundary</div>
+                <p>{adaaPublishedEvidence.sourceLabel}</p>
+              </div>
+              <div className="evidence-table-wrap" role="region" aria-label="ADAA evidence boundary" tabIndex={0}>
+                <table className="evidence-table">
+                  <tbody>
+                    <tr><th scope="row">Evidence type</th><td>Retrospective historical simulation reported in the public working paper</td></tr>
+                    <tr><th scope="row">What it supports</th><td>Historical risk/return behavior and the case for diversifying portfolio decisions across complementary rules</td></tr>
+                    <tr><th scope="row">What it does not establish</th><td>A live track record, a uniquely optimal weight vector, or guaranteed future performance</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="evidence-note">{adaaPublishedEvidence.boundary}</div>
           </section>
 
           <section className="prose-section" id="evidence">

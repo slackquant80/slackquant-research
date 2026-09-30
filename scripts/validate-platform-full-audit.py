@@ -379,6 +379,9 @@ def main() -> int:
         "Conventional supervised models and Chronos-2 produce distinct forecasts",
         "Heterogeneous forecasts, one common ranking process",
         "Public disclosure names the forecasting technologies and the decision architecture.",
+        "Published empirical evidence",
+        "Historical portfolio comparison",
+        "f2rPublishedEvidence",
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
     )
@@ -395,12 +398,40 @@ def main() -> int:
         "src/app/systems/adaa/page.tsx",
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
+        "Published empirical evidence",
+        "adaaPublishedEvidence",
         "not the exact construction",
         "Before release, ADAA refreshes its market and FX inputs",
         "The public dashboard then displays that prepared state",
         "it does not rerun the strategy or fetch source",
         "data during a public session",
     )
+    need(
+        "src/app/systems/equity-alpha/page.tsx",
+        "Completed daily evidence",
+        "ACWI-relative evidence from the same daily history used by the public dashboard",
+        "getEquityAlphaEvidence",
+        "Annualized active return vs. ACWI",
+        "Relative drawdown",
+    )
+    need(
+        "src/lib/equityAlphaEvidence.ts",
+        "public",
+        "dashboards",
+        "equity-alpha",
+        "dashboard_data.js",
+        "globalFinalDaily",
+        "informationRatio",
+        "relativeDrawdown",
+    )
+    need(
+        "src/data/systemEvidence.ts",
+        "ADAA practitioner gross CAGR",
+        "Selected hybrid CAGR",
+        "58 / 112",
+        "retrospective technology counterfactual",
+    )
+
     need(
         "src/app/systems/pds/page.tsx",
         "PDS Core, Adaptive Risk Control, and Dynamic FX",

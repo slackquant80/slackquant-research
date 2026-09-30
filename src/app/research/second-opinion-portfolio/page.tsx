@@ -6,6 +6,7 @@ import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
+import { f2rPublishedEvidence } from "@/data/systemEvidence";
 
 const designFacts = [
   ["112", "Monthly historical signal dates"],
@@ -14,18 +15,6 @@ const designFacts = [
   ["v1.1", "Public replication release"],
 ] as const;
 
-const evidenceMetrics = [
-  ["17.13%", "Selected hybrid CAGR"],
-  ["0.987", "Selected hybrid Sharpe ratio"],
-  ["58 / 112", "Months with a changed Top-4 vs. incumbent"],
-  ["+2.53pp", "Rank vs. standardized integration CAGR difference"],
-] as const;
-
-const portfolioRows = [
-  ["Incumbent four-model ensemble", "14.92%", "0.891", "Conventional reference"],
-  ["Chronos-2 standalone", "15.49%", "0.962", "Higher point-forecast RMSE than the conventional models"],
-  ["Three-model + Chronos-2 hybrid", "17.13%", "0.987", "20% historical model-combination contribution"],
-] as const;
 
 export const metadata: Metadata = {
   title: "A Second Opinion for the Portfolio",
@@ -105,7 +94,7 @@ export default function SecondOpinionPortfolioPage() {
             </p>
 
             <div className="metrics">
-              {evidenceMetrics.map(([value, label]) => (
+              {f2rPublishedEvidence.metrics.map(([value, label]) => (
                 <div className="metric" key={label}>
                   <div className="value">{value}</div>
                   <div className="label">{label}</div>
@@ -137,7 +126,7 @@ export default function SecondOpinionPortfolioPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {portfolioRows.map((row) => (
+                    {f2rPublishedEvidence.comparisonRows.map((row) => (
                       <tr key={row[0]}>
                         {row.map((cell, index) =>
                           index === 0 ? (

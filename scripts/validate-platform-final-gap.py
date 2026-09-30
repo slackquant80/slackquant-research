@@ -28,6 +28,11 @@ def main() -> int:
     need_text(root, "src/app/systems/pds/page.tsx", "Recent completed returns with their evidence boundaries")
     need_text(root, "src/app/systems/pds/page.tsx", "certified frozen-policy comparison under the prior Core parent")
     need_text(root, "src/app/systems/pds/page.tsx", "Open Full PDS Dashboard ↗")
+    need_text(root, "src/app/systems/adaa/page.tsx", "Published empirical evidence")
+    need_text(root, "src/app/systems/f2r/page.tsx", "Historical portfolio comparison")
+    need_text(root, "src/app/systems/equity-alpha/page.tsx", "getEquityAlphaEvidence")
+    need_text(root, "src/lib/equityAlphaEvidence.ts", "globalFinalDaily")
+    need_text(root, "src/data/systemEvidence.ts", "ADAA practitioner gross CAGR")
     need_text(root, "public/methods/index.html", "application-driven rather than encyclopedic")
 
     xlsx = root / "public/data/systems/pds/public_recent_12m_returns.xlsx"
@@ -48,6 +53,7 @@ def main() -> int:
     print("ADAA v3.93 research/runtime wording: PASS")
     print("Methods application-driven principle: PASS")
     print("PDS recent-return evidence boundary + retained XLSX artifact: PASS")
+    print("ADAA/F2R/Equity Alpha visible evidence layer: PASS")
     print("Price-Macro canonical SSRN URL: PASS")
     return 0
 

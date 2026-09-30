@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { getSystem } from "@/data/systems";
+import { f2rPublishedEvidence } from "@/data/systemEvidence";
 
 const item = getSystem("f2r");
 
@@ -57,6 +58,7 @@ export default function F2rSystemPage() {
           <strong>On this page</strong>
           <a href="#overview">System Role</a>
           <a href="#process">Forecast-to-Rank Process</a>
+          <a href="#empirical-evidence">Empirical Evidence</a>
           <a href="#live">Live Operation</a>
           <a href="#evidence">Research Context</a>
           <a href="#methods">Quantitative Methods</a>
@@ -111,6 +113,46 @@ export default function F2rSystemPage() {
               <strong>Public disclosure names the forecasting technologies and the decision architecture.</strong> Exact feature horizons,
               detailed lookback and sequence settings, model-combination settings, and low-level integration mechanics remain protected implementation details.
             </div>
+          </section>
+
+          <section className="prose-section" id="empirical-evidence">
+            <div className="kicker">Published empirical evidence</div>
+            <h2>The model-adoption study shows where forecast changes became portfolio changes</h2>
+            <p className="body-copy">
+              The public model-adoption study evaluates Chronos-2 inside the same Forecast-to-Rank portfolio interface used for
+              the conventional models. The evidence is intentionally shown at the portfolio-decision layer: forecast accuracy,
+              changed Top-4 selections, and historical portfolio outcomes are evaluated separately.
+            </p>
+            <div className="metrics system-metrics">
+              {f2rPublishedEvidence.metrics.map(([value, label]) => (
+                <div className="metric" key={label}>
+                  <div className="value">{value}</div>
+                  <div className="label">{label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="selected-table-block">
+              <div className="selected-exhibits-head">
+                <div className="section-title">Historical portfolio comparison</div>
+                <p>{f2rPublishedEvidence.support} · same Top-4 portfolio interface</p>
+              </div>
+              <div className="evidence-table-wrap" role="region" aria-label="F2R historical portfolio comparison" tabIndex={0}>
+                <table className="evidence-table">
+                  <thead>
+                    <tr><th>Research configuration</th><th>CAGR</th><th>Sharpe</th><th>Interpretation</th></tr>
+                  </thead>
+                  <tbody>
+                    {f2rPublishedEvidence.comparisonRows.map((row) => (
+                      <tr key={row[0]}>
+                        <th scope="row">{row[0]}</th><td>{row[1]}</td><td>{row[2]}</td><td>{row[3]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="evidence-table-source">{f2rPublishedEvidence.sourceLabel}</div>
+            </div>
+            <div className="evidence-note">{f2rPublishedEvidence.boundary}</div>
           </section>
 
           <section className="prose-section" id="live">
