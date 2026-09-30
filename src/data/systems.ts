@@ -101,15 +101,15 @@ export const systemItems: SystemItem[] = [
   {
     slug: "equity-alpha",
     title: "Equity Alpha",
-    subtitle: "Benchmark-Aware Global Equity ETF Selection & Allocation",
+    subtitle: "Benchmark-Aware Global Equity ETF Portfolio",
     category: "Equity Alpha Strategy",
     systemGroup: "equity-alpha",
     prominence: "standard",
-    status: "Public live · Global Equity Alpha",
+    status: "Public live",
     dateLabel: "Official signal 2026-08 · holding 2026-09",
     shortSummary:
-      "A benchmark-aware global equity ETF strategy combining ML-based ETF selection, independent regional momentum allocation, and a small selective-alpha decision layer in one ACWI-relative portfolio. Completed performance, current holdings, and Preview remain on separate operating clocks.",
-    role: "Benchmark-Aware Global Equity Alpha Portfolio Construction",
+      "A three-layer global equity strategy combining ML-based ETF selection, independent regional momentum allocation, and a selective Theme / Sector / Style path. ETF-level decisions are merged into one final portfolio and evaluated against ACWI with daily-first performance and explicit active-risk measures.",
+    role: "Benchmark-Aware Global Equity ETF Portfolio",
     methodsKey: "equity-alpha-system",
     links: {
       publicDashboard: "/dashboards/equity-alpha/",
@@ -168,7 +168,7 @@ export const systemGroupDefinitions: Array<{
     kicker: "Equity alpha family",
     title: "Equity Alpha Strategies",
     description:
-      "Benchmark-aware equity selection and active-portfolio systems that operate within the equity opportunity set rather than across asset classes.",
+      "Benchmark-aware equity strategies that select and allocate within the global equity ETF opportunity set, with explicit benchmark-relative portfolio evaluation.",
   },
   {
     key: "risk-scenario",

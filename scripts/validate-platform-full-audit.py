@@ -110,12 +110,13 @@ def main() -> int:
     equity_alpha = need(
         "src/app/systems/equity-alpha/page.tsx",
         "Open Dashboard ↗",
-        "Three decision layers, one global equity portfolio",
+        "Three independent decision layers, one unified portfolio",
         "Primary alpha engine",
         "Regional Momentum Allocation",
         "Selective Alpha",
-        "One ETF, one target weight",
-        "ACWI defines the active-risk frame",
+        "One ETF, one final target weight",
+        "ACWI anchors the active-risk view",
+        "investment-exposure groupings",
         "Preview",
         'target="_blank"',
         'rel="noopener noreferrer"',
@@ -127,7 +128,7 @@ def main() -> int:
         "MethodsUsed",
         'researchSlug={item.methodsKey ?? item.slug}',
         "Unified Final Portfolio",
-        "Daily-first performance",
+        "Daily-first accounting",
     ):
         if token not in equity_alpha:
             raise RuntimeError(f"Equity Alpha editorial/method contract missing: {token}")
@@ -157,6 +158,14 @@ def main() -> int:
         'rel="noopener noreferrer"',
         "data-sq-dashboard-app",
     )
+    equity_css = need(
+        "src/app/globals.css",
+        ".system-card-equity-alpha{position:relative}",
+        ".equity-alpha-track-chip",
+        ".equity-alpha-system-hero",
+    )
+    if ".system-card-equity-alpha{position:relative;border-top" in equity_css:
+        raise RuntimeError("Equity Alpha systems card must not carry a unique top accent rule")
     need(
         "src/components/ExternalLinkPolicy.tsx",
         '"/systems/pds/dashboard/"',

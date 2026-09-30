@@ -2097,9 +2097,9 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 
 
 /* Equity Alpha system family */
-.system-card-equity-alpha{position:relative;border-top:3px solid #2b7567;background:linear-gradient(180deg,#fbfdfc 0%,#fff 100%)}
+.system-card-equity-alpha{position:relative}
 .system-card-equity-alpha .track-chip,.equity-alpha-track-chip{border-color:#9fc9bf;background:#edf7f4;color:#235f54}
-.home-system-mini-equity-alpha{border-top:3px solid #2b7567;background:linear-gradient(180deg,#f8fcfb 0%,#fff 100%)}
+.home-system-mini-equity-alpha{}
 .home-system-mini-equity-alpha .kicker{color:#27675a}
 .equity-alpha-system-hero{background:linear-gradient(180deg,#eef7f4 0%,#fff 100%);border-bottom:1px solid #d8e8e3}
 .equity-alpha-system-hero .paper-subtitle{max-width:820px}

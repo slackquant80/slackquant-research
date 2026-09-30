@@ -307,7 +307,7 @@ const artifactMethodIds: Record<string, string[]> = {
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
   "f2r-system": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
-  "equity-alpha-system": ["QM001", "QM003", "QM007", "QM009", "QM010", "QM011", "QM013", "QM019", "QM020", "QM026", "QM027", "QM024", "QM025"],
+  "equity-alpha-system": ["QM003", "QM007", "QM009", "QM010", "QM011", "QM013", "QM019", "QM025", "QM026", "QM027"],
   "pds-system": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014", "QM028", "QM029"],
   "protection-patience": ["QM007", "QM008", "QM009", "QM010", "QM012", "QM013"],
   "price-macro-decision": ["QM001", "QM002", "QM003", "QM006", "QM007", "QM009", "QM013", "QM014", "QM019", "QM020"],
