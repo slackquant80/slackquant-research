@@ -89,12 +89,12 @@ def audit_static(require_build: bool) -> list[Check]:
     layout = text(ROOT / "src/app/layout.tsx")
 
     identities = {
-        "PDS registry identity": ['slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"', 'status: "Public operational dashboard"'],
+        "PDS registry identity": ['slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"', 'status: "Public live"'],
         "ADAA registry identity": ['slug: "adaa"', 'title: "ADAA"', 'systemGroup: "portfolio-strategy"', 'status: "Public live"'],
         "F2R formal identity": ['slug: "f2r"', 'title: "Forecast-to-Rank Allocation (F2R)"', 'subtitle: "Machine-Learning Cross-Asset Portfolio Strategy"', 'systemGroup: "portfolio-strategy"'],
     }
     for name, toks in identities.items(): add(c, name, all(t in systems for t in toks), "; ".join(toks))
-    add(c, "Stable live release labels", 'dateLabel: "Live release series"' in systems and "Updated August 2026" not in systems and "Updated August 30, 2026" not in systems, "ADAA/F2R use stable release labels")
+    add(c, "Unified operating-state labels", systems.count('status: "Public live"') >= 5 and systems.count('dateLabel: "Monthly decision cycle"') >= 2 and 'dateLabel: "Operational dashboard"' in systems and 'dateLabel: "Validated baseline v1 · On-demand analysis"' in systems and "Updated August 2026" not in systems and "Updated August 30, 2026" not in systems, "system cards separate common public status from system-specific operating state")
     add(c, "ADAA repository semantics", "replicationRepository:" in systems and not re.search(r'slug:\s*"adaa"[\s\S]{0,1500}?deploymentRepository:', systems), "ADAA replication repo separated from deployment semantics")
 
     for slug, p in SYSTEM_PAGE_FILES.items(): add(c, f"{slug.upper()} system route source", p.is_file(), str(p.relative_to(ROOT)))

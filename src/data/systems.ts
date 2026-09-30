@@ -43,8 +43,8 @@ export const systemItems: SystemItem[] = [
     category: "Portfolio Operating System",
     systemGroup: "portfolio-decision",
     prominence: "flagship",
-    status: "Public operational dashboard",
-    dateLabel: "Updated with latest system release",
+    status: "Public live",
+    dateLabel: "Operational dashboard",
     shortSummary:
       "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds a bounded hybrid risk-control layer that combines an RL signal with independent volatility confirmation, and Dynamic FX applies a separately managed investor-level currency overlay. The public dashboard shows the current operating state while machine-specific infrastructure remains internal.",
     role: "Provider Review, Portfolio Integration, Decision Process, and Monitoring",
@@ -61,7 +61,7 @@ export const systemItems: SystemItem[] = [
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
-    dateLabel: "Live release series",
+    dateLabel: "Monthly decision cycle",
     shortSummary:
       "A live multi-asset strategy built around Decision Diversification: combining complementary decision horizons, cross-asset opportunity views, defensive responses, and persistence so the portfolio does not depend on a single allocation rule. Official decisions, current drift, and provisional preview states are shown separately.",
     role: "Decision-Diversified Multi-Asset Portfolio Strategy",
@@ -86,7 +86,7 @@ export const systemItems: SystemItem[] = [
     systemGroup: "portfolio-strategy",
     prominence: "standard",
     status: "Public live",
-    dateLabel: "Live release series",
+    dateLabel: "Monthly decision cycle",
     shortSummary:
       "Forecast-to-Rank Allocation (F2R) is a live cross-asset strategy combining conventional supervised machine learning with Chronos-2. Forecasts from different models are converted into a common rank-based ordering before the monthly portfolio is formed. The public site explains the model families and decision architecture, while low-level construction parameters remain private.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
@@ -123,8 +123,8 @@ export const systemItems: SystemItem[] = [
     category: "Risk & Analytics System",
     systemGroup: "risk-scenario",
     prominence: "standard",
-    status: "Public live · validated baseline v1",
-    dateLabel: "On-demand release series",
+    status: "Public live",
+    dateLabel: "Validated baseline v1 · On-demand analysis",
     shortSummary:
       "A human-in-the-loop multi-asset system for exploring portfolio behavior under plausible joint market stress. It organizes conditional scenarios into interpretable stress archetypes and revalues portfolios on a common scenario set, with a transparent historical comparator retained for context. Designed for portfolio stress decision support, not market timing or automated allocation.",
     role: "Scenario-Based Portfolio Stress Decision Support",

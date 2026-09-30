@@ -1,6 +1,12 @@
 import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
+function evidenceLinkLabel(item: SystemItem) {
+  if (item.evidenceLabel === "Public Working Paper") return "Working Paper ↗";
+  if (item.evidenceLabel === "Technical White Paper") return "Technical White Paper ↗";
+  return "SSRN ↗";
+}
+
 export function SystemCard({ item }: { item: SystemItem }) {
   const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard;
   const dashboardIsFirstPartyApp = Boolean(item.links.publicDashboard);
@@ -16,7 +22,6 @@ export function SystemCard({ item }: { item: SystemItem }) {
       <p>{item.shortSummary}</p>
       <div className="card-meta">
         <span>{item.status}</span>
-        {item.ssrnId ? <span>{item.evidenceLabel ?? "SSRN"} · SSRN {item.ssrnId}</span> : null}
         <span>{item.dateLabel}</span>
       </div>
       <div className="card-action-row">
@@ -33,6 +38,11 @@ export function SystemCard({ item }: { item: SystemItem }) {
               data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}
             >
               Open Dashboard ↗
+            </a>
+          ) : null}
+          {item.links.ssrn ? (
+            <a href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
+              {evidenceLinkLabel(item)}
             </a>
           ) : null}
           {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}

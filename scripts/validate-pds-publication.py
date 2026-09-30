@@ -92,7 +92,7 @@ def main() -> int:
 
     # Platform identity: current operational surface, not a delayed/reduced product.
     for tok in [
-        'status: "Public operational dashboard"',
+        'status: "Public live"',
         'subtitle: "Multi-Strategy Portfolio Integration, Adaptive Risk Control, and Dynamic FX"',
         'publicDashboard: "/systems/pds/dashboard/"',
     ]:

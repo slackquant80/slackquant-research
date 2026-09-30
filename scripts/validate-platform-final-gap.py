@@ -21,7 +21,7 @@ def main() -> int:
 
     need_text(root, "src/data/methods.ts", '"scenario-stress-lab": {')
     need_text(root, "src/data/methods.ts", "Missing system-specific method context")
-    need_text(root, "src/data/systems.ts", 'dateLabel: "On-demand release series"')
+    need_text(root, "src/data/systems.ts", 'dateLabel: "Validated baseline v1 · On-demand analysis"')
     need_text(root, "src/app/systems/scenario-stress-lab/page.tsx", "Open Dashboard ↗")
     need_text(root, "src/app/systems/scenario-stress-lab/guide/page.tsx", "Open Dashboard ↗")
     need_text(root, "src/app/research/adaa/page.tsx", "canonical 19-ETF snapshot is validated")

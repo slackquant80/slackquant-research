@@ -153,12 +153,32 @@ def main() -> int:
         "Multi-Asset Strategies",
         "Equity Alpha Strategies",
     )
-    need(
+    system_card = need(
         "src/components/SystemCard.tsx",
         'target="_blank"',
         'rel="noopener noreferrer"',
         "data-sq-dashboard-app",
+        "item.links.ssrn",
+        "evidenceLinkLabel",
+        '<span>{item.status}</span>',
+        '<span>{item.dateLabel}</span>',
     )
+    card_meta_block = system_card.split('<div className="card-meta">', 1)[1].split('</div>', 1)[0]
+    if "ssrnId" in card_meta_block or "evidenceLabel" in card_meta_block:
+        raise RuntimeError("System cards must keep publication artifacts out of the status/date metadata row")
+
+    systems_registry = need(
+        "src/data/systems.ts",
+        'slug: "pds"',
+        'slug: "adaa"',
+        'slug: "f2r"',
+        'slug: "equity-alpha"',
+        'slug: "scenario-stress-lab"',
+        'dateLabel: "Monthly decision cycle"',
+        'dateLabel: "Validated baseline v1 · On-demand analysis"',
+    )
+    if systems_registry.count('status: "Public live"') < 5:
+        raise RuntimeError("All public system cards must use the same Public live status label")
     equity_css = need(
         "src/app/globals.css",
         ".equity-alpha-clock-grid",

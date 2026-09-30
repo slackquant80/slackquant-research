@@ -109,8 +109,8 @@ foreach ($token in @(
   if ($homePage -notmatch [regex]::Escape($token)) { throw "Home platform/system positioning contract missing: $token" }
 }
 foreach ($token in @(
-  'status: "Public live',
-  'validated baseline v1"',
+  'status: "Public live"',
+  'dateLabel: "Validated baseline v1 · On-demand analysis"',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7354238'
 )) {
   if ($systemsData -notmatch [regex]::Escape($token)) { throw "Stress Lab public registry normalization missing: $token" }
