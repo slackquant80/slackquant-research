@@ -23,8 +23,6 @@ export type SystemItem = {
     whitePaper?: string;
     liveDashboard?: string;
     publicDashboard?: string;
-    dashboardGuide?: string;
-    dashboardGuidePdf?: string;
     fullManual?: string;
     deploymentRepository?: string;
     replicationRepository?: string;
@@ -136,8 +134,6 @@ export const systemItems: SystemItem[] = [
       whitePaper:
         "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Technical_White_Paper.pdf",
       liveDashboard: "https://multi-asset-scenario-stress-lab.streamlit.app",
-      dashboardGuide: "/systems/scenario-stress-lab/guide/",
-      dashboardGuidePdf: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Dashboard_Guide_v2.0.pdf",
       fullManual: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Full_Manual.pdf",
     },
   },

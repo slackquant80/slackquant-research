@@ -24,7 +24,6 @@ Next.js App Router + React + TypeScript static export.
 /systems/f2r/
 /systems/equity-alpha/
 /systems/scenario-stress-lab/
-/systems/scenario-stress-lab/guide/
 /methods/
 ```
 

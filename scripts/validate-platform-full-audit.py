@@ -85,18 +85,14 @@ def main() -> int:
     stress = need(
         "src/app/systems/scenario-stress-lab/page.tsx",
         "Open Dashboard ↗",
-        "Open PDF ↗",
+        "Full Manual (KR) ↗",
+        "Technical White Paper ↗",
+        "Dashboard-specific interpretation is kept within the dashboard and the Full Manual",
     )
     if "Open Live Dashboard" in stress:
         raise RuntimeError("Stress Lab stale primary CTA")
-    guide = need(
-        "src/app/systems/scenario-stress-lab/guide/page.tsx",
-        '<main lang="ko">',
-        "Open Dashboard ↗",
-        "Guide PDF ↗",
-    )
-    if 'className="btn primary ext"' in guide:
-        raise RuntimeError("Stress Lab guide duplicate-arrow regression")
+    if "Dashboard Guide" in stress or "/systems/scenario-stress-lab/guide/" in stress:
+        raise RuntimeError("Stress Lab standalone Dashboard Guide must not remain on the public system page")
 
     need(
         "src/app/systems/adaa/page.tsx",
@@ -166,6 +162,8 @@ def main() -> int:
     card_meta_block = system_card.split('<div className="card-meta">', 1)[1].split('</div>', 1)[0]
     if "ssrnId" in card_meta_block or "evidenceLabel" in card_meta_block:
         raise RuntimeError("System cards must keep publication artifacts out of the status/date metadata row")
+    if "item.links.whitePaper && !item.links.ssrn" not in system_card:
+        raise RuntimeError("System cards must not show a duplicate direct white-paper PDF when SSRN/evidence is already linked")
 
     systems_registry = need(
         "src/data/systems.ts",
@@ -176,7 +174,10 @@ def main() -> int:
         'slug: "scenario-stress-lab"',
         'dateLabel: "Monthly decision cycle"',
         'dateLabel: "Validated baseline v1 · On-demand analysis"',
+        'fullManual: "/assets/systems/scenario-stress-lab/Multi_Asset_Scenario_Stress_Lab_Full_Manual.pdf"',
     )
+    if "dashboardGuide" in systems_registry or "/systems/scenario-stress-lab/guide/" in systems_registry:
+        raise RuntimeError("Stress Lab standalone Dashboard Guide must be absent from the public registry")
     if systems_registry.count('status: "Public live"') < 5:
         raise RuntimeError("All public system cards must use the same Public live status label")
     equity_css = need(
@@ -476,7 +477,6 @@ def main() -> int:
             "out/dashboards/equity-alpha/data/dashboard_data.js",
             "out/dashboards/equity-alpha/data/live_overlay.js",
             "out/systems/scenario-stress-lab/index.html",
-            "out/systems/scenario-stress-lab/guide/index.html",
             "out/about/index.html",
             "out/sitemap.xml",
             "out/robots.txt",

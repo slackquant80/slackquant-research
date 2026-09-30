@@ -243,7 +243,7 @@ def audit_static(require_build: bool) -> list[Check]:
                 add(c, "Sitemap URL ↔ built route parity", not missing_routes, f"{len(urls)} sitemap routes resolve in out", ", ".join(missing_routes[:12]))
             except Exception as e: add(c, "Sitemap URL ↔ built route parity", False, str(e))
         if robots_file.is_file(): add(c, "Built robots → sitemap", f"Sitemap: {CANONICAL}/sitemap.xml" in text(robots_file), "root sitemap declared")
-        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/scenario-stress-lab/guide/", "/systems/pds/dashboard/"] + list(hrefs.values())
+        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/pds/dashboard/"] + list(hrefs.values())
         bad_head=[]
         for r in built_routes:
             f=expected_out_file(r)

@@ -78,8 +78,7 @@ if (-not $homePage.Contains("Open PDS Dashboard $arrow")) {
 }
 
 foreach ($rel in @(
-  "src\app\systems\scenario-stress-lab\page.tsx",
-  "src\app\systems\scenario-stress-lab\guide\page.tsx"
+  "src\app\systems\scenario-stress-lab\page.tsx"
 )) {
   $s = ReadText $rel
   if ($s.Contains('className="btn primary ext"')) {

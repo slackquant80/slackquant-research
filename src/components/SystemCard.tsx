@@ -45,8 +45,7 @@ export function SystemCard({ item }: { item: SystemItem }) {
               {evidenceLinkLabel(item)}
             </a>
           ) : null}
-          {item.links.dashboardGuide ? <Link href={item.links.dashboardGuide}>Dashboard Guide</Link> : null}
-          {item.links.whitePaper ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}
+          {item.links.whitePaper && !item.links.ssrn ? <a href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">White Paper PDF ↗</a> : null}
         </div>
       </div>
     </article>

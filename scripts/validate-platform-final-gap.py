@@ -23,7 +23,6 @@ def main() -> int:
     need_text(root, "src/data/methods.ts", "Missing system-specific method context")
     need_text(root, "src/data/systems.ts", 'dateLabel: "Validated baseline v1 · On-demand analysis"')
     need_text(root, "src/app/systems/scenario-stress-lab/page.tsx", "Open Dashboard ↗")
-    need_text(root, "src/app/systems/scenario-stress-lab/guide/page.tsx", "Open Dashboard ↗")
     need_text(root, "src/app/research/adaa/page.tsx", "canonical 19-ETF snapshot is validated")
     need_text(root, "src/data/research.ts", "papers.cfm?abstract_id=7340100")
     need_text(root, "src/app/systems/pds/page.tsx", "public_recent_12m_returns.xlsx")
@@ -46,7 +45,7 @@ def main() -> int:
             raise RuntimeError("PDS 12-month XLSX structure invalid")
 
     print("PLATFORM_FINAL_GAP_VALIDATION_PASS")
-    print("Stress Lab system context/date/CTA: PASS")
+    print("Stress Lab system context/date/CTA + documentation IA: PASS")
     print("ADAA v3.93 research/runtime wording: PASS")
     print("Methods application-driven principle: PASS")
     print("PDS real 12-month XLSX: PASS")

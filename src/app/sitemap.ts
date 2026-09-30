@@ -40,7 +40,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/methods/",
     ...researchItems.map((item) => `/research/${item.slug}/`),
     ...systemItems.map((item) => `/systems/${item.slug}/`),
-    "/systems/scenario-stress-lab/guide/",
     ...collectMethodArticleRoutes(),
   ];
 

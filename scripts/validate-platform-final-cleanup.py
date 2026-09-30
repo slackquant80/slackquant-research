@@ -11,8 +11,12 @@ def need(path, token):
 def main():
     need("src/components/ExternalLinkPolicy.tsx", "isFirstPartyPdf")
     need("src/components/ArtifactLink.tsx", "opensNewTab")
-    need("src/components/SystemCard.tsx", "White Paper PDF ↗")
-    need("src/app/systems/scenario-stress-lab/guide/page.tsx", "Guide PDF ↗")
+    card=(ROOT/"src/components/SystemCard.tsx").read_text(encoding="utf-8-sig",errors="replace")
+    if "item.links.whitePaper && !item.links.ssrn" not in card:
+        raise RuntimeError("SystemCard must suppress a duplicate direct white-paper PDF when a canonical SSRN/evidence link exists")
+    systems=(ROOT/"src/data/systems.ts").read_text(encoding="utf-8-sig",errors="replace")
+    if "dashboardGuide" in systems or "/systems/scenario-stress-lab/guide/" in systems:
+        raise RuntimeError("Stress Lab standalone Dashboard Guide must not remain in the public system registry")
     need("src/app/page.tsx", "Where available, projects link directly")
     for p in ["src/app/research/page.tsx","src/app/about/page.tsx","src/app/research/adaa/page.tsx","src/app/research/beyond-average-accuracy/page.tsx","src/app/research/price-macro-decision/page.tsx","src/app/research/protection-patience/page.tsx"]:
         need(p, "description:")

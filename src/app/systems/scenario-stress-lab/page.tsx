@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
 import { MethodsUsed } from "@/components/MethodsUsed";
@@ -54,14 +53,16 @@ export default function ScenarioStressLabPage() {
                 Open Dashboard ↗
               </a>
             ) : null}
-            {item.links.dashboardGuide ? (
-              <Link className="btn soft" href={item.links.dashboardGuide}>
-                Dashboard Guide
-              </Link>
+            {item.links.fullManual ? (
+              <a className="btn soft" href={item.links.fullManual} target="_blank" rel="noopener noreferrer">
+                Full Manual (KR) ↗
+              </a>
             ) : null}
-            <a className="btn soft ext" href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">
-              White Paper PDF
-            </a>
+            {item.links.ssrn ? (
+              <a className="btn soft" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
+                Technical White Paper ↗
+              </a>
+            ) : null}
           </div>
         </div>
       </section>
@@ -256,31 +257,22 @@ export default function ScenarioStressLabPage() {
                   <small>Current public interface for scenario and stress analysis</small><span className="artifact-action">Open Dashboard ↗</span>
                 </a>
               ) : null}
-              {item.links.dashboardGuide ? (
-                <Link className="artifact" href={item.links.dashboardGuide}>
-                  <span className="artifact-kicker">GUIDE · v2.0</span><strong>Dashboard Guide</strong>
-                  <small>Short Korean, screen-centered guide to the four practitioner views</small><span className="artifact-action">Open Guide →</span>
-                </Link>
-              ) : null}
               {item.links.fullManual ? (
                 <a className="artifact" href={item.links.fullManual} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">MANUAL · v1.1</span><strong>Full Manual</strong>
-                  <small>Comprehensive Korean manual covering concepts, operation, interpretation, and workflow</small><span className="artifact-action">Open PDF ↗</span>
+                  <span className="artifact-kicker">MANUAL · v1.1</span><strong>Full Manual (Korean)</strong>
+                  <small>Comprehensive operating and explanatory manual covering concepts, workflow, interpretation, and system use</small><span className="artifact-action">Open PDF ↗</span>
                 </a>
               ) : null}
-              <a className="artifact" href={item.links.whitePaper} target="_blank" rel="noopener noreferrer">
-                <span className="artifact-kicker">PDF</span><strong>Technical White Paper</strong>
-                <small>System architecture, validation results, and interpretation limits</small><span className="artifact-action">Open PDF ↗</span>
-              </a>
-              <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
-                <span className="artifact-kicker">SSRN</span><strong>SSRN Record</strong>
-                <small>Abstract ID {item.ssrnId} · August 2026</small><span className="artifact-action">Open SSRN ↗</span>
-              </a>
+              {item.links.ssrn ? (
+                <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
+                  <span className="artifact-kicker">WHITE PAPER · SSRN</span><strong>Technical White Paper</strong>
+                  <small>System architecture, validation evidence, and interpretation boundaries · SSRN {item.ssrnId}</small><span className="artifact-action">Open SSRN ↗</span>
+                </a>
+              ) : null}
             </div>
             <p className="body-copy documentation-note">
-              The Korean Full Manual v1.1 is the comprehensive guide to concepts, operation, interpretation, and workflow.
-              Dashboard Guide v2.0 is intentionally shorter: it explains what to look at and how to read the public screens without duplicating the full manual.
-              {item.links.dashboardGuidePdf ? <> A printable <a className="ext" href={item.links.dashboardGuidePdf} target="_blank" rel="noopener noreferrer">Dashboard Guide PDF</a> is also available.</> : null}
+              The Korean Full Manual v1.1 is the comprehensive operating and explanatory guide. The Technical White Paper is the research and validation artifact.
+              Dashboard-specific interpretation is kept within the dashboard and the Full Manual rather than maintained as a separate public guide layer.
             </p>
             {item.links.deploymentRepository ? (
               <p className="body-copy documentation-note">
