@@ -117,6 +117,7 @@ def main() -> int:
         "One ETF, one final target weight",
         "ACWI anchors the active-risk view",
         "investment-exposure groupings",
+        "latest available market closes",
         "Preview",
         'target="_blank"',
         'rel="noopener noreferrer"',
@@ -160,12 +161,24 @@ def main() -> int:
     )
     equity_css = need(
         "src/app/globals.css",
-        ".system-card-equity-alpha{position:relative}",
-        ".equity-alpha-track-chip",
-        ".equity-alpha-system-hero",
+        ".equity-alpha-clock-grid",
     )
-    if ".system-card-equity-alpha{position:relative;border-top" in equity_css:
-        raise RuntimeError("Equity Alpha systems card must not carry a unique top accent rule")
+    forbidden_equity_alpha_decor = (
+        ".system-card-equity-alpha{",
+        ".systems-family-equity-alpha .systems-family-head h3",
+        ".home-system-mini-equity-alpha .kicker",
+        ".equity-alpha-track-chip",
+        ".equity-alpha-system-hero{",
+        ".equity-alpha-metrics .metric:first-child",
+        ".equity-alpha-role-card{",
+    )
+    for token in forbidden_equity_alpha_decor:
+        if token in equity_css:
+            raise RuntimeError(f"Equity Alpha must use the standard platform visual hierarchy; decorative override remains: {token}")
+    if ".metric:first-child" in equity_css:
+        raise RuntimeError("System metric grids must not carry arbitrary first-card emphasis")
+    if "Public Scope" in equity_alpha or 'id="boundary"' in equity_alpha:
+        raise RuntimeError("Equity Alpha reader page must not expose an internal-style Public Scope section")
     need(
         "src/components/ExternalLinkPolicy.tsx",
         '"/systems/pds/dashboard/"',
