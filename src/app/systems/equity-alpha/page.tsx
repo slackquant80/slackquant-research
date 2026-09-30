@@ -7,9 +7,9 @@ import { getSystem } from "@/data/systems";
 const item = getSystem("equity-alpha");
 
 export const metadata: Metadata = {
-  title: "Equity Alpha — Machine-Learning Equity ETF Strategy",
+  title: "Equity Alpha — Benchmark-Aware Global Equity ETF Strategy",
   description:
-    "SlackQuant Equity Alpha combines REX2 regularized cross-sectional machine learning, Chronos-2 forecasting, and benchmark-aware active portfolio construction relative to ACWI.",
+    "SlackQuant Global Equity Alpha combines machine-learning ETF selection, regional momentum allocation, and a selective alpha layer in one ACWI-relative portfolio.",
   alternates: { canonical: "/systems/equity-alpha/" },
 };
 
@@ -24,13 +24,13 @@ export default function EquityAlphaSystemPage() {
             <div className="eyebrow">SlackQuant Systems</div>
             <span className="track-chip equity-alpha-track-chip">{item.category}</span>
           </div>
-          <h1 className="paper-title">{item.title}</h1>
-          <div className="paper-subtitle">{item.subtitle}</div>
+          <h1 className="paper-title">Equity Alpha</h1>
+          <div className="paper-subtitle">Benchmark-aware global equity alpha</div>
           <div className="paper-meta">
             <span>{item.status}</span>
-            <span>Global equity ETF alpha · ACWI benchmark</span>
-            <span>REX2 (Ridge + ElasticNet) · Chronos-2</span>
-            <span>Broad PIT engine + independent Static-v1 sleeve</span>
+            <span>Global Equity Alpha · ACWI benchmark</span>
+            <span>Daily-first performance</span>
+            <span>Unified final portfolio</span>
           </div>
           <div className="actions">
             {item.links.publicDashboard ? (
@@ -53,11 +53,9 @@ export default function EquityAlphaSystemPage() {
         <aside className="toc">
           <strong>On this page</strong>
           <a href="#overview">Overview</a>
-          <a href="#models">Model Stack</a>
-          <a href="#architecture">Portfolio Architecture</a>
-          <a href="#universe">Universe Evolution</a>
+          <a href="#architecture">Decision Architecture</a>
           <a href="#clocks">Operating Clocks</a>
-          <a href="#benchmark">Benchmark-Aware Risk</a>
+          <a href="#risk">Benchmark-Aware Risk</a>
           <a href="#public">Public Dashboard</a>
           <a href="#methods">Quantitative Methods</a>
           <a href="#boundary">Operating Boundary</a>
@@ -65,148 +63,83 @@ export default function EquityAlphaSystemPage() {
 
         <article>
           <section className="prose-section" id="overview">
-            <div className="kicker">Equity alpha strategy</div>
-            <h2>Machine-learning selection, translated into benchmark-aware active risk</h2>
+            <div className="kicker">Global equity alpha</div>
+            <h2>Three decision layers, one global equity portfolio</h2>
             <p className="lede">
-              Equity Alpha is SlackQuant&apos;s global equity ETF alpha strategy. It treats forecasting as an input to portfolio decisions rather than a standalone objective: cross-sectional evidence is converted into ranked ETF selections, combined across independent decision sleeves, and evaluated relative to ACWI through active return, tracking error, and information ratio.
+              Equity Alpha is SlackQuant&apos;s global equity ETF strategy. A primary machine-learning selection engine is combined with independent regional allocation and a smaller selective-alpha layer, then merged into one ETF-level portfolio and evaluated against ACWI.
             </p>
             <p className="body-copy">
-              The system is deliberately separate from SlackQuant&apos;s multi-asset allocation family. Its opportunity set is equity-only, its benchmark is explicit, and its portfolio problem is active selection: identify differentiated equity exposures while keeping benchmark-relative risk visible at every stage of portfolio translation.
+              The design keeps the ML engine as the main source of alpha while adding separate geographic and selection perspectives. Active return, tracking error, information ratio, and relative drawdown remain visible throughout the portfolio process.
             </p>
             <div className="metrics system-metrics equity-alpha-metrics">
-              <div className="metric"><div className="value">ACWI</div><div className="label">Global equity benchmark</div></div>
-              <div className="metric"><div className="value">REX2 + C2</div><div className="label">Forecasting stack</div></div>
-              <div className="metric"><div className="value">PIT + Static</div><div className="label">Independent sleeves</div></div>
-              <div className="metric"><div className="value">IR / TE</div><div className="label">Active-risk lens</div></div>
-            </div>
-          </section>
-
-          <section className="prose-section" id="models">
-            <div className="kicker">Model stack</div>
-            <h2>Two forecasting paradigms, one rank-based selection process</h2>
-            <p className="body-copy">
-              Equity Alpha combines regularized cross-sectional machine learning with pretrained time-series forecasting. The objective is not to crown one model family, but to bring different forecasts into a common rank-based selection process while preserving useful disagreement between models.
-            </p>
-            <div className="system-role-grid equity-alpha-model-grid">
-              <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">REX2</div>
-                <h3>Ridge + ElasticNet rank ensemble</h3>
-                <p>Regularized linear models generate cross-sectional return-ranking evidence under point-in-time data rules. Ridge and ElasticNet forecasts are combined in rank space rather than treated as unrelated standalone portfolios.</p>
-              </div>
-              <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">Chronos-2</div>
-                <h3>Pretrained time-series forecasting</h3>
-                <p>Chronos-2 contributes an independently trained time-series view, adding a pretrained forecasting paradigm that is structurally different from the fitted cross-sectional models.</p>
-              </div>
-              <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">Multi-signal</div>
-                <h3>Complementary non-ML evidence</h3>
-                <p>Traditional signal evidence remains a separate input in the Static-v1 path, providing decision diversification rather than forcing every portfolio choice through a single forecasting family.</p>
-              </div>
-            </div>
-            <div className="evidence-note">
-              <strong>Public architecture, protected implementation details.</strong> The public page identifies the model families, portfolio roles, and decision flow. Exact feature transformations, hyperparameters, blend coefficients, and implementation details remain private.
+              <div className="metric"><div className="value">ACWI</div><div className="label">Primary benchmark</div></div>
+              <div className="metric"><div className="value">3</div><div className="label">Decision layers</div></div>
+              <div className="metric"><div className="value">Daily</div><div className="label">Performance accounting</div></div>
+              <div className="metric"><div className="value">IR / RDD</div><div className="label">Relative-risk lens</div></div>
             </div>
           </section>
 
           <section className="prose-section" id="architecture">
-            <div className="kicker">Portfolio architecture</div>
-            <h2>A primary point-in-time engine with an independent Static-v1 sleeve</h2>
+            <div className="kicker">Decision architecture</div>
+            <h2>Independent inputs are merged before the final portfolio is formed</h2>
             <div className="f2r-process-grid equity-alpha-process-grid">
               <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">01 · Broad PIT</div>
-                <h3>Dynamic opportunity set</h3>
-                <p>A broad U.S.-listed global equity ETF universe is formed point in time and ranked with the REX2 / Chronos-2 forecasting stack. The universe, model outputs, and ranking path remain visible rather than being collapsed into a single opaque score.</p>
+                <div className="kicker">01 · ML ETF Selection</div>
+                <h3>Primary alpha engine</h3>
+                <p>A point-in-time equity ETF universe is ranked with regularized cross-sectional forecasts and Chronos-2 evidence, then translated into holdings under explicit entry and hold rules.</p>
               </div>
               <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">02 · Static-v1</div>
-                <h3>Independent decision sleeve</h3>
-                <p>A separately maintained static universe combines machine-learning and multi-signal evidence through its own selection path. Its ranks remain distinct from Broad ranks so the two engines can be interpreted separately.</p>
+                <div className="kicker">02 · Regional Momentum Allocation</div>
+                <h3>Geographic diversification</h3>
+                <p>An independent regional process adds a separate geographic allocation view and helps diversify benchmark-relative portfolio risk.</p>
               </div>
               <div className="system-role-card equity-alpha-role-card">
-                <div className="kicker">03 · Portfolio</div>
-                <h3>Selection, persistence, and overlap merge</h3>
-                <p>Ranked candidates are translated into investable holdings with entry/hold persistence and explicit overlap handling before the investor&apos;s ACWI-core / alpha-sleeve risk budget is applied.</p>
+                <div className="kicker">03 · Selective Alpha</div>
+                <h3>Additional equity-selection path</h3>
+                <p>A smaller Theme / Sector / Style layer broadens the decision set with an independent selection path without becoming the main source of portfolio risk.</p>
               </div>
-            </div>
-          </section>
-
-          <section className="prose-section" id="universe">
-            <div className="kicker">Universe evolution</div>
-            <h2>Monthly point-in-time updates are automatic; candidate-pool expansion requires a separate review</h2>
-            <p className="body-copy">
-              The Broad engine is dynamic every month inside its approved model-ready candidate pool. At each completed signal month, market eligibility and exposure representation are rebuilt from information available at that time, so eligible ETFs can enter or leave the monthly opportunity set and the representative wrapper for an exposure can change as liquidity and history evolve.
-            </p>
-            <p className="body-copy">
-              The outer candidate pool is intentionally more conservative. A newly listed ETF or a wrapper that has never accumulated enough model-ready history is not promoted automatically merely because it becomes tradable. SlackQuant therefore separates <strong>monthly PIT maintenance</strong> from a lower-frequency <strong>Universe Expansion Audit</strong>. The latter reviews newly available wrappers, classification and exposure identity, listing history, liquidity, duplicate exposure, and model-readiness before any canonical pool revision. This keeps the live system adaptive without silently rewriting its historical information set.
-            </p>
-            <div className="dual equity-alpha-dual">
-              <div className="dual-card">
-                <div className="kicker">Monthly</div>
-                <h3>Dynamic PIT maintenance</h3>
-                <p>Re-evaluate eligibility and exposure representatives on the completed signal-month clock using the existing approved candidate pool.</p>
-              </div>
-              <div className="dual-card operational">
-                <div className="kicker">Periodic governance</div>
-                <h3>Universe Expansion Audit</h3>
-                <p>Review new listings and previously non-model-ready wrappers before expanding the canonical candidate pool. Promotion is explicit and versioned rather than automatic.</p>
+              <div className="system-role-card equity-alpha-role-card">
+                <div className="kicker">04 · Unified Final Portfolio</div>
+                <h3>One ETF, one target weight</h3>
+                <p>When more than one layer selects the same ETF, the contributions are merged before turnover, transaction costs, and portfolio performance are calculated.</p>
               </div>
             </div>
           </section>
 
           <section className="prose-section" id="clocks">
-            <div className="kicker">Operating discipline</div>
-            <h2>Historical evidence, current performance, Official holdings, and Preview stay on separate clocks</h2>
+            <div className="kicker">Operating clocks</div>
+            <h2>Completed history, current performance, Official holdings, and Preview stay separate</h2>
             <p className="body-copy">
-              The operating view separates completed month-end performance from current MTD/YTD, the current Official portfolio from the next candidate holding state, and the provisional Preview from anything with execution authority. Current performance uses completed market closes rather than an open U.S. session&apos;s partial bar.
+              Completed performance uses the closed daily history. Current MTD/YTD uses completed market closes. Official holdings belong to the current holding month, while Preview shows the next proposed holding month and is clearly marked as not executed.
             </p>
             <div className="equity-alpha-clock-grid">
-              <div><span>Completed performance</span><strong>Closed historical periods</strong><small>Realized return evidence only</small></div>
-              <div><span>Official portfolio</span><strong>Current official holding</strong><small>Signal and holding month shown explicitly</small></div>
-              <div><span>Current MTD / YTD</span><strong>Completed market closes</strong><small>Open-session partial bars excluded</small></div>
-              <div><span>Preview</span><strong>NOT EXECUTED</strong><small>Candidate next state, clearly provisional</small></div>
+              <div><span>Completed performance</span><strong>Closed daily history</strong><small>Daily-first realized performance</small></div>
+              <div><span>Official portfolio</span><strong>Current holding month</strong><small>Signal and holding month shown explicitly</small></div>
+              <div><span>Current MTD / YTD</span><strong>Completed market closes</strong><small>Shown separately from completed history</small></div>
+              <div><span>Preview</span><strong>NOT EXECUTED</strong><small>Synchronized next-period portfolio view</small></div>
             </div>
           </section>
 
-          <section className="prose-section" id="benchmark">
-            <div className="kicker">Benchmark-aware portfolio construction</div>
-            <h2>ACWI defines the active-risk frame; it is not an alpha candidate</h2>
+          <section className="prose-section" id="risk">
+            <div className="kicker">Benchmark-aware risk</div>
+            <h2>ACWI defines the active-risk frame</h2>
             <p className="body-copy">
-              ACWI is the benchmark against which the strategy&apos;s active return, tracking error, and information ratio are evaluated. The public interface also translates the alpha engine into an investor-selectable ACWI-core / alpha-sleeve profile, making a clear distinction between the selection model and the amount of active risk an investor chooses to carry.
+              Active return, tracking error, information ratio, and relative drawdown are measured against ACWI. The dashboard can also combine the completed Global Alpha model with an ACWI core. This changes the investor-level risk profile and investable weights, not the underlying model selections.
             </p>
-            <div className="dual equity-alpha-dual">
-              <div className="dual-card">
-                <div className="kicker">Equity alpha family</div>
-                <h3>Selection within equities</h3>
-                <p>Cross-sectional ETF ranking and benchmark-relative active portfolio construction within the global equity opportunity set.</p>
-              </div>
-              <div className="dual-card operational">
-                <div className="kicker">Multi-asset family</div>
-                <h3>ADAA / F2R</h3>
-                <p>Peer strategy engines in the Investment Strategy Layer, but focused on cross-asset allocation rather than ACWI-relative equity selection.</p>
-                <Link className="btn inverse" href="/systems/">Compare Strategy Families</Link>
-              </div>
-            </div>
           </section>
 
           <section className="prose-section" id="public">
-            <div className="kicker">Public operating view</div>
-            <h2>The dashboard shows how current decisions were formed without becoming a separate model source</h2>
+            <div className="kicker">Public dashboard</div>
+            <h2>Portfolio, performance, risk, and history in one operating view</h2>
             <p className="body-copy">
-              SlackQuant publishes a validated public dashboard showing the current Official portfolio, current performance, Preview, Broad and Static universe views, portfolio history, active-risk metrics, and architecture. The canonical Equity Alpha project remains the source of truth for refresh, scoring, portfolio formation, validation, and release decisions.
+              The dashboard brings together the Official portfolio, synchronized Preview, daily-first performance, full portfolio history, ACWI-relative risk, universe diagnostics, and the investor ACWI-core / Global-Alpha mix. The downloadable history workbook provides the completed daily and monthly record together with the final target-weight history.
             </p>
             {item.links.publicDashboard ? (
               <div className="repro-links documentation-artifacts">
-                <a
-                  className="artifact artifact-primary"
-                  href={item.links.publicDashboard}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-sq-dashboard-app="true"
-                >
+                <a className="artifact artifact-primary" href={item.links.publicDashboard} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
                   <span className="artifact-kicker">LIVE</span>
-                  <strong>Operational Dashboard</strong>
-                  <small>Official portfolio, current performance, Preview, Broad / Static universe intelligence, portfolio history, and active risk.</small>
+                  <strong>Equity Alpha Dashboard</strong>
+                  <small>Official portfolio, Preview, daily-first performance, ACWI-relative risk, and full portfolio history.</small>
                   <span className="artifact-action">Open Dashboard ↗</span>
                 </a>
               </div>
@@ -217,24 +150,23 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="boundary">
             <div className="kicker">Operating boundary</div>
-            <h2>The public site explains the architecture; the canonical project remains the operational source</h2>
+            <h2>Public architecture and portfolio behavior, protected implementation detail</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
                 <h3>Public</h3>
                 <ul>
-                  <li>Benchmark, opportunity domain, model families, and portfolio architecture</li>
-                  <li>Validated Official portfolio and completed/current performance states</li>
-                  <li>Clearly labeled provisional Preview plus Broad / Static rank provenance</li>
-                  <li>Benchmark-relative performance and active-risk interpretation</li>
+                  <li>Decision-layer roles, ACWI benchmark frame, and unified final holdings</li>
+                  <li>Completed/current performance and clearly labeled Preview</li>
+                  <li>Active-risk measures including IR, tracking error, and relative drawdown</li>
+                  <li>Investor ACWI-core / Global-Alpha risk translation</li>
                 </ul>
               </div>
               <div className="system-boundary-card prohibited">
-                <h3>Internal / not public</h3>
+                <h3>Internal</h3>
                 <ul>
-                  <li>Exact feature recipes, hyperparameters, blend coefficients, and protected implementation details</li>
+                  <li>Protected feature recipes, tuning parameters, and private source lineage</li>
                   <li>Private runtime data, credentials, local paths, and release-engineering state</li>
-                  <li>Unvalidated research branches or candidate experiments</li>
-                  <li>Any Preview interpretation as an executed or Official decision</li>
+                  <li>Low-level implementation details that are not needed to interpret the public portfolio</li>
                 </ul>
               </div>
             </div>

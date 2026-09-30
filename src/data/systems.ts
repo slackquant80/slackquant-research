@@ -101,15 +101,15 @@ export const systemItems: SystemItem[] = [
   {
     slug: "equity-alpha",
     title: "Equity Alpha",
-    subtitle: "Machine-Learning Equity ETF Selection & Active Portfolio Construction",
+    subtitle: "Benchmark-Aware Global Equity ETF Selection & Allocation",
     category: "Equity Alpha Strategy",
     systemGroup: "equity-alpha",
     prominence: "standard",
-    status: "Public live · research-use operating view",
+    status: "Public live · Global Equity Alpha",
     dateLabel: "Official signal 2026-08 · holding 2026-09",
     shortSummary:
-      "A benchmark-aware global equity ETF strategy combining REX2 regularized cross-sectional machine learning, Chronos-2, and complementary multi-signal evidence. Forecasts are converted into ranked ETF selections and an ACWI-relative active portfolio, with Official holdings, current performance, and Preview kept on separate clocks.",
-    role: "Machine-Learning Equity ETF Selection and ACWI-Relative Active Portfolio Construction",
+      "A benchmark-aware global equity ETF strategy combining ML-based ETF selection, independent regional momentum allocation, and a small selective-alpha decision layer in one ACWI-relative portfolio. Completed performance, current holdings, and Preview remain on separate operating clocks.",
+    role: "Benchmark-Aware Global Equity Alpha Portfolio Construction",
     methodsKey: "equity-alpha-system",
     links: {
       publicDashboard: "/dashboards/equity-alpha/",

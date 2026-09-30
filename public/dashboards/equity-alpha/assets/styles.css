@@ -196,3 +196,38 @@ display:flex;align-items:center;justify-content:space-between;padding:15px 24px}
 .support-strip{margin-top:10px;padding:8px 11px;border:1px solid rgba(139,172,190,.22);border-radius:9px;background:rgba(9,25,34,.65);color:#8fb0c1;font-size:11px;line-height:1.45}.support-strip strong{color:#dceaf0}.support-strip.section{margin-top:15px}
 
 .monthly-history-table{max-height:590px}
+
+
+/* v1.5.0.89 — preview readability / rank-table containment */
+.preview-card .holding-reason,.holding-card .holding-reason{overflow:visible;text-overflow:clip;flex:0 0 auto}
+.rank-watch-table{min-width:0!important;width:100%;table-layout:fixed}
+.rank-watch-table th:nth-child(1),.rank-watch-table td:nth-child(1){width:13%}
+.rank-watch-table th:nth-child(2),.rank-watch-table td:nth-child(2){width:13%}
+.rank-watch-table th:nth-child(3),.rank-watch-table td:nth-child(3){width:18%}
+.rank-watch-table th:nth-child(4),.rank-watch-table td:nth-child(4){width:22%}
+.rank-watch-table th:nth-child(5),.rank-watch-table td:nth-child(5){width:34%;white-space:normal}
+#previewSummary .status-row b{max-width:64%;text-align:right;line-height:1.35}
+
+
+/* v1.5.0.90 — Cockpit / Performance reader closeout */
+.returns-table-wrap{overflow-x:hidden}
+.returns-table{min-width:0!important;width:100%;table-layout:fixed}
+.returns-table th:first-child,.returns-table td:first-child{width:22%;padding-left:10px;padding-right:6px}
+.returns-table th:not(:first-child),.returns-table td:not(:first-child){width:26%;padding-left:6px;padding-right:8px}
+@media(max-width:700px){.returns-table th,.returns-table td{font-size:11px;padding-left:5px!important;padding-right:5px!important}.returns-table th:first-child,.returns-table td:first-child{width:25%}.returns-table th:not(:first-child),.returns-table td:not(:first-child){width:25%}}
+
+.panel-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.export-btn{display:inline-flex;align-items:center;border:1px solid #2a755d;border-radius:8px;background:#123027;color:#dffbf0;text-decoration:none;padding:7px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.export-btn:hover{background:#173b30;border-color:#3b9a79}
+
+/* v1.5.0.92 — final Active Risk / Robustness reader QA */
+.compact-tablewrap{overflow-x:hidden}
+.risk-profile-table,.robustness-cost-table,.robustness-blend-table{min-width:0!important;width:100%;table-layout:fixed}
+.risk-profile-table th:first-child,.risk-profile-table td:first-child{width:31%;white-space:normal}
+.risk-profile-table th:not(:first-child),.risk-profile-table td:not(:first-child){width:11.5%;padding-left:6px;padding-right:6px}
+.robustness-cost-table th,.robustness-cost-table td{width:16.666%;padding-left:6px;padding-right:6px}
+.robustness-blend-table th:first-child,.robustness-blend-table td:first-child{width:34%;white-space:normal}
+.robustness-blend-table th:not(:first-child),.robustness-blend-table td:not(:first-child){width:16.5%;padding-left:6px;padding-right:6px}
+.selected-spec-row{background:rgba(75,210,165,.07)}
+.selected-spec-row td:first-child{font-weight:700}
+@media(max-width:900px){.compact-tablewrap{overflow-x:auto}.risk-profile-table,.robustness-cost-table,.robustness-blend-table{min-width:660px!important}}

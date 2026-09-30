@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import csv
@@ -110,9 +110,11 @@ def main() -> int:
     equity_alpha = need(
         "src/app/systems/equity-alpha/page.tsx",
         "Open Dashboard ↗",
-        "REX2",
-        "Ridge + ElasticNet",
-        "Chronos-2",
+        "Three decision layers, one global equity portfolio",
+        "Primary alpha engine",
+        "Regional Momentum Allocation",
+        "Selective Alpha",
+        "One ETF, one target weight",
         "ACWI defines the active-risk frame",
         "Preview",
         'target="_blank"',
@@ -122,9 +124,10 @@ def main() -> int:
         raise RuntimeError("Equity Alpha dashboard CTA must use an explicit external anchor")
     for token in (
         "Open Dashboard ↗",
-        "Universe Expansion Audit",
         "MethodsUsed",
         'researchSlug={item.methodsKey ?? item.slug}',
+        "Unified Final Portfolio",
+        "Daily-first performance",
     ):
         if token not in equity_alpha:
             raise RuntimeError(f"Equity Alpha editorial/method contract missing: {token}")

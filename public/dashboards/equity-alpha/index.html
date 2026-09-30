@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SlackQuant Equity Alpha · Live Research Dashboard</title>
-<link rel="stylesheet" href="assets/styles.css?v=a5bef3169287">
+<title>SlackQuant Global Equity Alpha Dashboard</title>
+<link rel="stylesheet" href="assets/styles.css?v=v1593">
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="name">SlackQuant</div><div class="sub">Equity Alpha · Live Research Dashboard</div></div>
+  <div class="brand"><div class="name">SlackQuant</div><div class="sub">Global Equity Alpha Dashboard</div></div>
   <div class="nav-title">PM workspace</div>
   <div class="nav">
     <button data-page="cockpit">◆ PM Cockpit</button>
@@ -21,9 +21,9 @@
     <button data-page="method">◷ System Architecture</button>
   </div>
   <div class="side-bottom">
-    <b>Global / ACWI</b><br>
-    Current operating research view.<br>
-    Completed history + current MTD.
+    <b>Global Equity Alpha / ACWI</b><br>
+    Public operating view.<br>
+    Completed history + current month.
   </div>
 </aside>
 
@@ -31,7 +31,7 @@
 <header class="topbar">
  <div class="title">
    <h1>Equity Alpha</h1>
-   <p>Broad Dynamic PIT ETF Universe · ML-Heavy Forecast-to-Rank Selection</p>
+   <p>Global Equity Alpha · ML ETF Selection + Regional Allocation + Selective Alpha</p>
  </div>
  <div class="top-actions">
    <div class="profile-global">
@@ -40,7 +40,7 @@
      <small id="globalProfileContext"></small>
    </div>
    <div class="badges">
-     <span class="badge good">LIVE RESEARCH MODEL</span>
+     <span class="badge good">GLOBAL · LIVE</span>
      <span class="badge dark" id="statusTrack"></span>
      <span class="badge dark" id="statusSignal"></span>
    </div>
@@ -49,10 +49,8 @@
 
 <main class="wrap">
 <div class="notice warn">
-  <strong>Research-use operating view.</strong>
-  Completed performance, the current Official portfolio, current MTD, and Preview are shown on separate clocks.
-  The ACWI-core / Alpha-sleeve control below is an investor risk-budget translation,
-  not a new model fit. <span id="evidenceThrough"></span>.
+  <strong>Operating view.</strong> <span id="evidenceThrough"></span>
+  The ACWI / Global Alpha mix changes the investor risk profile only; it does not change model selections.
 </div>
 
 <section class="page" id="page-cockpit">
@@ -61,10 +59,27 @@
  <div class="support-strip" id="cockpitCompletedSupport"></div>
 
  <div class="grid cols2 section">
+  <section class="chart">
+   <div class="panel-title"><div><h3>Completed cumulative wealth</h3><p id="cockpitWealthSupport">Completed daily history · current MTD excluded</p></div></div>
+   <div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div>
+   <div id="cockpitWealthChart"></div>
+  </section>
+  <section class="panel">
+   <div class="panel-title"><div><h3>Current MTD</h3><p>Open holding-month performance is separate from completed history</p></div><span class="badge good">MTD</span></div>
+   <div class="status-list">
+    <div class="status-row"><span>Portfolio</span><b id="mtdPanelPortfolio">—</b></div>
+    <div class="status-row"><span>ACWI</span><b id="mtdPanelAcwi">—</b></div>
+    <div class="status-row"><span>Excess</span><b id="mtdPanelExcess">—</b></div>
+    <div class="status-row"><span>Market through</span><b id="mtdPanelAsOf">—</b></div>
+   </div>
+  </section>
+ </div>
+
+ <div class="grid cols2 section">
   <section class="panel">
    <div class="panel-title">
-    <div><h3>Official portfolio</h3><p id="cockpitProfileContext"></p></div>
-    <span class="badge dark">PROFILE-AWARE</span>
+    <div><h3>Official final portfolio</h3><p id="cockpitProfileContext"></p></div>
+    <span class="badge dark">RISK PROFILE</span>
    </div>
    <div class="portfolio-legend" id="officialPortfolioLegend"></div>
    <div class="holding-card-grid" id="latestHoldings"></div>
@@ -72,7 +87,7 @@
 
   <section class="panel">
    <div class="panel-title">
-    <div><h3>Preview portfolio</h3><p id="previewProfileContext"></p></div>
+    <div><h3>Final portfolio preview</h3><p id="previewProfileContext"></p></div>
     <span class="badge warn">PREVIEW · NOT EXECUTED</span>
    </div>
    <div class="portfolio-legend preview-legend" id="previewPortfolioLegend"></div>
@@ -83,7 +98,7 @@
 
  <div class="grid cols2 section">
   <section class="panel">
-   <div class="panel-title"><div><h3>Core / alpha allocation</h3><p>Selected profile translated into investable weights</p></div><span class="badge good">TE CONTROL</span></div>
+   <div class="panel-title"><div><h3>ACWI / Global Alpha mix</h3><p>Selected risk profile translated into investable portfolio weights</p></div><span class="badge good">RISK PROFILE</span></div>
    <div class="allocation-layout">
      <div class="donut" id="allocationDonut"><div class="donut-center"><b id="donutTE">—</b><span>Tracking error</span></div></div>
      <div class="stack" id="allocationSummary"></div>
@@ -99,57 +114,41 @@
   <section class="panel">
    <div class="panel-title">
     <div>
-     <h3>Broad engine ranking</h3>
-     <p><b>Broad rank</b> is the current rank inside the 90% Broad sleeve only. Rank 1 is strongest; it is not a portfolio row number or weight rank.</p>
+     <h3>ML selection ranking</h3>
+     <p><b>ML Broad rank</b> shows the primary ML Selection layer’s cross-sectional order. Rank 1 is strongest; it does not represent final portfolio weight.</p>
     </div>
-    <span class="badge good">BROAD 90%</span>
+    <span class="badge good">ML LAYER</span>
    </div>
    <div class="rank-explainer">
-    <div><b>1 · REX2</b><span>Convert the REX2 forecast into a cross-sectional rank strength.</span></div>
-    <div><b>2 · Chronos-2</b><span>Convert the Chronos-2 forecast to the same cross-sectional rank-strength scale.</span></div>
-    <div><b>3 · Broad rank</b><span>Blend normalized rank strength at 80% REX2 + 20% Chronos-2, then sort strongest to weakest.</span></div>
+    <div><b>1 · REX2</b><span>Cross-sectional ranking from the REX2 forecast.</span></div>
+    <div><b>2 · Chronos-2</b><span>Cross-sectional ranking from the Chronos-2 forecast.</span></div>
+    <div><b>3 · Broad rank</b><span>Combine normalized REX2 and Chronos-2 rank strength at 80/20, then order strongest to weakest.</span></div>
    </div>
-   <div class="rank-weight-note"><b>Important:</b> the displayed component ranks are ordinal diagnostics. The 80/20 weights apply to normalized rank strength, <b>not</b> directly to the displayed rank numbers.</div>
-   <div class="tablewrap"><table class="tbl rank-watch-table"><thead><tr><th class="num">Broad rank</th><th>ETF</th><th class="num">REX2 component rank</th><th class="num">Chronos-2 component rank</th><th>Current broad state</th></tr></thead><tbody id="rankWatchBody"></tbody></table></div>
+   <div class="rank-weight-note">The 80/20 blend uses normalized rank strength, <b>not</b> the displayed rank numbers themselves.</div>
+   <div class="tablewrap"><table class="tbl rank-watch-table"><thead><tr><th class="num">Broad rank</th><th>ETF</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Broad state</th></tr></thead><tbody id="rankWatchBody"></tbody></table></div>
    <div class="rank-rule-note">
     <span><b>Held · 1–10</b>: current holding remains in the entry zone</span>
     <span><b>Held · 11–15</b>: incumbent is retained by the hold buffer</span>
     <span><b>Wait · 1–10</b>: strong new candidate, but all 10 Broad slots are still occupied by valid incumbents</span>
-    <span><b>Raw blend score hidden</b>: it is a normalized ranking diagnostic, not an expected return or probability</span>
    </div>
   </section>
   <section class="panel">
-   <div class="panel-title"><div><h3>Structural regularization</h3><p>Broad engine versus small Static-74 anchor</p></div><span class="badge dark">COARSE 0 / 10 / 20</span></div>
+   <div class="panel-title"><div><h3>Decision structure</h3><p>Three independent decision layers combined into one final portfolio</p></div><span class="badge dark">3 LAYERS</span></div>
    <div class="status-list" id="regularizationSummary"></div>
   </section>
  </div>
 
- <div class="grid cols2 section">
-  <section class="chart">
-   <div class="panel-title"><div><h3>Completed cumulative wealth</h3><p id="cockpitWealthSupport">Completed daily path · current MTD excluded</p></div></div>
-   <div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div>
-   <div id="cockpitWealthChart"></div>
-  </section>
-  <section class="panel">
-   <div class="panel-title"><div><h3>Current MTD</h3><p>Open holding-month performance is separate from completed history</p></div><span class="badge good">MTD</span></div>
-   <div class="status-list">
-    <div class="status-row"><span>Portfolio</span><b id="mtdPanelPortfolio">—</b></div>
-    <div class="status-row"><span>ACWI</span><b id="mtdPanelAcwi">—</b></div>
-    <div class="status-row"><span>Excess</span><b id="mtdPanelExcess">—</b></div>
-    <div class="status-row"><span>Market through</span><b id="mtdPanelAsOf">—</b></div>
-   </div>
-  </section>
- </div>
+
 </section>
 
 <section class="page" id="page-performance">
  <section class="panel">
-  <div class="panel-title"><div><h3>Core / alpha risk controller</h3><p>Change ACWI core weight; every performance statistic and holding weight updates immediately</p></div><span class="badge good">LINKED</span></div>
+  <div class="panel-title"><div><h3>ACWI / Global Alpha risk profile</h3><p>Adjust the investor-level mix; performance and investable holdings update together</p></div><span class="badge good">PORTFOLIO-WIDE</span></div>
   <div class="profile-tabs" id="profileTabs"></div>
   <div class="risk-slider-row">
-    <div><label for="alphaWeightSlider">Alpha sleeve weight</label><div class="slider-value"><b id="alphaWeightLabel">100%</b><span id="coreWeightLabel">ACWI core 0%</span></div></div>
+    <div><label for="alphaWeightSlider">Global Alpha weight</label><div class="slider-value"><b id="alphaWeightLabel">100%</b><span id="coreWeightLabel">ACWI core 0%</span></div></div>
     <input id="alphaWeightSlider" type="range" min="0" max="100" step="5" value="100">
-    <div class="te-readout"><span>Realized historical TE</span><b id="sliderTE">—</b></div>
+    <div class="te-readout"><span>Tracking error</span><b id="sliderTE">—</b></div>
   </div>
   <div class="metric-strip" id="profileMetrics"></div>
   <div class="support-strip" id="performanceControllerSupport"></div>
@@ -157,12 +156,12 @@
 
  <section class="panel section">
   <div class="panel-title">
-   <div><h3>Completed performance summary</h3><p id="performanceSummaryPeriod">Daily completed path · current MTD excluded</p></div>
-   <span class="badge dark">COMMON SUPPORT</span>
+   <div><h3>Completed performance summary</h3><p id="performanceSummaryPeriod">Completed daily history · current MTD excluded</p></div>
+   <span class="badge dark">DAILY HISTORY</span>
   </div>
   <div class="tablewrap">
    <table class="tbl performance-summary-table">
-    <thead><tr><th>Series</th><th class="num">Cumulative</th><th class="num">CAGR</th><th class="num">Ann. vol</th><th class="num">Sharpe · rf=0</th><th class="num">MDD</th><th class="num">Calmar</th><th class="num">Active return</th><th class="num">TE</th><th class="num">IR · daily</th></tr></thead>
+    <thead><tr><th>Series</th><th class="num">Cumulative</th><th class="num">CAGR</th><th class="num">Ann. vol</th><th class="num">Sharpe · rf=0</th><th class="num">MDD</th><th class="num">Calmar</th><th class="num">Ann. active return</th><th class="num">TE</th><th class="num">IR · daily</th><th class="num">Relative DD</th></tr></thead>
     <tbody id="performanceSummaryBody"></tbody>
    </table>
   </div>
@@ -170,41 +169,41 @@
 
  <div class="support-strip section" id="performanceChartSupport"></div>
  <div class="grid cols2 section">
-  <section class="chart"><div class="panel-title"><div><h3>Completed cumulative wealth</h3><p>Uses the completed daily support shown above</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="wealthChart"></div></section>
-  <section class="chart"><div class="panel-title"><div><h3>Relative wealth vs ACWI</h3><p>Uses the completed daily support shown above</p></div></div><div id="relativeChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Cumulative wealth</h3><p id="wealthChartNote">Completed daily history</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="wealthChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Relative wealth vs ACWI</h3><p id="relativeChartNote">Portfolio wealth relative to ACWI</p></div></div><div id="relativeChart"></div></section>
  </div>
 
  <div class="grid cols2 section">
-  <section class="chart"><div class="panel-title"><div><h3>Completed drawdown</h3><p>Uses the completed daily support shown above</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="drawdownChart"></div></section>
-  <section class="chart"><div class="panel-title"><div><h3>Rolling tracking error</h3><p id="teChartSupport">1Y and 2Y annualized active risk · completed daily path · annualization 252D</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y TE</span><span class="b"><i></i>Rolling 2Y TE</span></div><div id="teChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Drawdown</h3><p id="drawdownChartNote">Peak-to-trough decline from each series’ prior high</p></div></div><div class="legend"><span class="a"><i></i>Investor portfolio</span><span class="b"><i></i>ACWI ETF</span></div><div id="drawdownChart"></div></section>
+  <section class="chart"><div class="panel-title"><div><h3>Rolling tracking error</h3><p id="teChartSupport">1-year and 2-year annualized tracking error</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y TE</span><span class="b"><i></i>Rolling 2Y TE</span></div><div id="teChart"></div></section>
  </div>
 
- <section class="chart section"><div class="panel-title"><div><h3>Rolling information ratio</h3><p id="irChartSupport">1Y and 2Y benchmark-relative efficiency · completed daily path · annualization 252D</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y IR</span><span class="b"><i></i>Rolling 2Y IR</span></div><div id="irChart"></div></section>
+ <section class="chart section"><div class="panel-title"><div><h3>Rolling information ratio</h3><p id="irChartSupport">1-year and 2-year information ratio</p></div></div><div class="legend"><span class="a"><i></i>Rolling 1Y IR</span><span class="b"><i></i>Rolling 2Y IR</span></div><div id="irChart"></div></section>
 
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Monthly returns</h3><p>Chart: latest 12 completed months · Table: full completed history, latest first</p></div></div><div id="monthlyReturnBars"></div><div class="tablewrap monthly-history-table" style="margin-top:12px"><table class="tbl"><thead><tr><th>Month</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="recentMonthlyBody"></tbody></table></div></section>
-  <section class="panel"><div class="panel-title"><div><h3>Calendar-year returns</h3><p>Profile vs ACWI ETF</p></div></div><div id="annualReturnBars"></div><div class="tablewrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>Year</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="annualBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Monthly returns</h3><p>Latest 12 completed months in the chart; full history below</p></div></div><div id="monthlyReturnBars"></div><div class="tablewrap monthly-history-table returns-table-wrap" style="margin-top:12px"><table class="tbl returns-table"><thead><tr><th>Month</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="recentMonthlyBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Calendar-year returns</h3><p>Investor portfolio vs ACWI</p></div></div><div id="annualReturnBars"></div><div class="tablewrap returns-table-wrap" style="margin-top:12px"><table class="tbl returns-table"><thead><tr><th>Year</th><th class="num">Portfolio</th><th class="num">ACWI</th><th class="num">Excess</th></tr></thead><tbody id="annualBody"></tbody></table></div></section>
  </div>
 </section>
 
 <section class="page" id="page-holdings">
  <div class="grid cols2">
   <section class="panel">
-   <div class="panel-title"><div><h3>Investor portfolio weights</h3><p id="holdingProfileContext"></p></div><span class="badge dark">PROFILE-AWARE</span></div>
+   <div class="panel-title"><div><h3>Investor portfolio weights</h3><p id="holdingProfileContext"></p></div><span class="badge dark">RISK PROFILE</span></div>
    <div id="holdingBars"></div>
   </section>
   <section class="panel">
-   <div class="panel-title"><div><h3>Role-family composition</h3><p>Investor portfolio target weights</p></div></div>
+   <div class="panel-title"><div><h3>Portfolio composition</h3><p>Investor portfolio target weights by presentation group</p></div></div>
    <div id="roleBars"></div>
   </section>
  </div>
  <section class="panel section">
   <div class="panel-title"><div><h3>Official holdings detail</h3><p id="holdingsSignalContext"></p></div><span class="badge good">OFFICIAL</span></div>
-  <div class="tablewrap"><table class="tbl"><thead><tr><th>Source</th><th class="num">Broad rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th class="num">Target wt</th><th class="num">Current wt</th><th class="num">Holding MTD</th></tr></thead><tbody id="holdingDetailBody"></tbody></table></div>
+  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th class="num">ML rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th class="num">Target wt</th><th class="num">Current wt</th><th class="num">Holding MTD</th></tr></thead><tbody id="holdingDetailBody"></tbody></table></div>
  </section>
  <section class="panel section">
   <div class="panel-title"><div><h3>Preview holdings detail</h3><p id="previewHoldingsContext"></p></div><span class="badge warn">PREVIEW · NOT EXECUTED</span></div>
-  <div class="tablewrap"><table class="tbl"><thead><tr><th>Rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th>Status</th><th class="num">Preview wt</th><th class="num">Official wt</th><th class="num">Δ wt</th></tr></thead><tbody id="previewHoldingDetailBody"></tbody></table></div>
+  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th class="num">ML rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th>Status</th><th class="num">Preview wt</th><th class="num">Official wt</th><th class="num">Δ wt</th></tr></thead><tbody id="previewHoldingDetailBody"></tbody></table></div>
  </section>
 </section>
 
@@ -213,18 +212,18 @@
 
  <div class="grid cols2 section">
   <section class="chart">
-    <div class="panel-title"><div><h3>PIT representative breadth</h3><p id="universeBreadthSupport">Monthly point-in-time investable exposure representatives</p></div></div>
+    <div class="panel-title"><div><h3>ML selection universe breadth</h3><p id="universeBreadthSupport">Monthly point-in-time opportunity set for the primary ML Selection layer</p></div></div>
     <div id="breadthChart"></div>
   </section>
   <section class="panel">
-    <div class="panel-title"><div><h3 id="universeRoleTitle">Canonical role-family breadth</h3><p id="universeRoleNote">Mutually exclusive canonical role_family · current Broad Dynamic PIT universe · counts sum to the current universe</p></div><span class="badge good" id="universeRoleBadge">CURRENT PIT</span></div>
+    <div class="panel-title"><div><h3 id="universeRoleTitle">Current ML universe by role</h3><p id="universeRoleNote">Role groups within the current point-in-time ML universe; counts sum to the current universe</p></div><span class="badge good" id="universeRoleBadge">CURRENT UNIVERSE</span></div>
     <div class="status-list" id="universeRoleCounts"></div>
   </section>
  </div>
 
  <section class="panel section">
   <div class="panel-title">
-    <div><h3 id="universeInventoryTitle">Full universe inventory</h3><p id="universeInventoryNote"><b>Broad rank</b> is the 90% Broad-engine rank. <b>Blend strength</b> is an internal normalized ranking diagnostic, not an expected return or probability. Lower rank is stronger.</p></div>
+    <div><h3 id="universeInventoryTitle">ML universe ranking</h3><p id="universeInventoryNote"><b>Broad rank</b> is the current ML Broad rank. <b>Blend score</b> is a normalized ranking diagnostic, not an expected return or probability. Lower rank is stronger.</p></div>
     <div class="universe-controls">
       <div class="profile-tabs compact" id="universeEngineTabs"></div>
       <div class="profile-tabs compact" id="universeViewTabs"></div>
@@ -234,7 +233,7 @@
   </div>
   <div class="tablewrap universe-table">
    <table class="tbl">
-    <thead id="universeTableHead"><tr><th class="num">Broad rank</th><th>ETF</th><th>Name</th><th class="num">Blend strength</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Rank band</th><th>Current broad state</th><th>Role family</th><th>Exposure</th><th class="num">Rep months</th><th>60M ready</th></tr></thead>
+    <thead id="universeTableHead"><tr><th class="num">Broad rank</th><th>ETF</th><th>Name</th><th class="num">Blend strength</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Rank band</th><th>Broad state</th><th>Role family</th><th>Exposure</th><th class="num">Rep months</th><th>60M ready</th></tr></thead>
     <tbody id="universeBody"></tbody>
    </table>
   </div>
@@ -243,16 +242,16 @@
 
 <section class="page" id="page-history">
  <section class="panel">
-   <div class="panel-title"><div><h3 id="historyHeatmapTitle">Broad 90% selection heatmap</h3><p id="historyHeatmapNote">Last 36 Broad decisions · completed history plus the current Official open holding month</p></div><div class="profile-tabs compact" id="historySleeveTabs"></div></div>
+   <div class="panel-title"><div><h3 id="historyHeatmapTitle">ML Broad selection heatmap</h3><p id="historyHeatmapNote">Last 36 ML Broad decisions · completed history plus the current Official open holding month</p></div><div class="profile-tabs compact" id="historySleeveTabs"></div></div>
    <div class="heatmap" id="historyHeatmap"></div>
  </section>
  <section class="panel section">
    <div class="panel-title">
-    <div><h3>Portfolio decision history</h3><p id="historyProfileContext"></p></div>
-    <span class="badge dark">COMPLETED + CURRENT OFFICIAL</span>
+    <div><h3>Monthly portfolio history</h3><p id="historyProfileContext"></p></div>
+    <div class="panel-actions"><a class="export-btn" href="exports/Global_Equity_Alpha_Full_History.xlsx" download>Download full history (.xlsx)</a><span class="badge dark">HISTORY + CURRENT</span></div>
    </div>
-   <div class="history-clock-note">Completed rows use closed holding-month returns. The current Official row is shown separately as <b>OPEN</b>; its return columns show Current MTD and are not part of completed performance history. Broad and Static-v1 selections are shown separately; final alpha returns already include the 90% Broad / 10% Static merge. Historical Static ranks are not reconstructed.</div>
-   <div class="tablewrap"><table class="tbl"><thead><tr><th>State</th><th>Signal</th><th>Holding</th><th>Core / Alpha</th><th>Broad 90% selections</th><th>Static 10% selections</th><th class="num">Alpha turnover</th><th class="num">Return / MTD</th><th class="num">Excess / MTD</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+   <div class="history-clock-note">Completed rows show closed holding-month returns. The current Official row is shown separately as <b>OPEN</b>; its return columns show Current MTD and are excluded from completed performance history. ML Broad and ML Static holdings are shown as diagnostics of the primary ML layer. Final Global returns and turnover reflect the full three-layer portfolio. The Excel export includes the full final target-weight history.</div>
+   <div class="tablewrap"><table class="tbl"><thead><tr><th>State</th><th>Signal</th><th>Holding</th><th>ACWI / Global Alpha</th><th>ML Broad holdings</th><th>ML Static holdings</th><th class="num">Portfolio turnover</th><th class="num">Return / MTD</th><th class="num">Excess / MTD</th></tr></thead><tbody id="historyBody"></tbody></table></div>
  </section>
 </section>
 
@@ -260,50 +259,50 @@
  <div class="grid cols4" id="riskKpis"></div>
  <div class="support-strip" id="riskSupportStrip"></div>
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Static core / sleeve profile ladder</h3><p>Same alpha model, different ACWI core weights</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Profile</th><th class="num">Core</th><th class="num">Alpha</th><th class="num">TE</th><th class="num">Active</th><th class="num">IR · daily</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="riskProfileBody"></tbody></table></div></section>
-  <section class="panel"><div class="panel-title"><div><h3>TE budget map</h3><p>Historical realized TE across alpha-sleeve weights</p></div></div><div id="riskBars"></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>ACWI core / Global Alpha profile ladder</h3><p>Same Global model, different investor risk budgets</p></div></div><div class="tablewrap"><table class="tbl risk-profile-table"><thead><tr><th>Profile</th><th class="num">TE</th><th class="num">Ann. active</th><th class="num">IR</th><th class="num">CAGR</th><th class="num">MDD</th><th class="num">Relative DD</th></tr></thead><tbody id="riskProfileBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>Tracking-error map</h3><p>Realized historical TE by Global Alpha weight</p></div></div><div id="riskBars"></div></section>
  </div>
- <div class="notice section"><strong>Risk-budget interpretation.</strong> Core weight changes portfolio risk and performance only; it does not change ETF selection, model scores, or the underlying Broad-PIT alpha engine.</div>
+ <div class="notice section"><strong>Risk-profile interpretation.</strong> The ACWI core changes investor-level risk and performance only; it does not alter the underlying Global model, ETF selections, or the three decision layers.</div>
 </section>
 
 <section class="page" id="page-robustness">
  <div class="grid cols4" id="robustKpis"></div>
  <div class="support-strip" id="robustnessBasisStrip"></div>
  <div class="grid cols2 section">
-  <section class="panel"><div class="panel-title"><div><h3>Transaction-cost stress</h3><p>Final alpha model · Broad 90% + Static 10%</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Cost / side</th><th class="num">IR · monthly</th><th class="num">Active</th><th class="num">TE</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="costBody"></tbody></table></div></section>
-  <section class="panel"><div class="panel-title"><div><h3>Near-optimal plateau</h3><p>Broad-engine selector neighborhood · Static regularization is evaluated separately</p></div></div><div class="tablewrap"><table class="tbl"><thead><tr><th>Lane</th><th class="num">REX2</th><th class="num">Chronos</th><th class="num">Hold</th><th class="num">All IR · monthly</th><th class="num">Dev IR · monthly</th><th class="num">Bridge IR · monthly</th><th class="num">Turnover</th></tr></thead><tbody id="plateauBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>ML transaction-cost sensitivity</h3><p>Primary ML layer only · internal Broad / Static structure</p></div></div><div class="tablewrap compact-tablewrap"><table class="tbl robustness-cost-table"><thead><tr><th>Cost / side</th><th class="num">IR</th><th class="num">Ann. active</th><th class="num">TE</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="costBody"></tbody></table></div></section>
+  <section class="panel"><div class="panel-title"><div><h3>ML blend sensitivity</h3><p>Nearby REX2 / Chronos-2 blends and hold thresholds for the primary ML layer</p></div></div><div class="tablewrap compact-tablewrap"><table class="tbl robustness-blend-table"><thead><tr><th>REX2 / Chronos-2 · Hold</th><th class="num">Full IR</th><th class="num">Earlier IR</th><th class="num">Later IR</th><th class="num">Turnover</th></tr></thead><tbody id="plateauBody"></tbody></table></div></section>
  </div>
 </section>
 
 <section class="page" id="page-method">
  <div class="grid cols4" id="architectureKpis"></div>
  <section class="panel section">
-  <div class="panel-title"><div><h3>Decision architecture</h3><p>Source-governed broad-universe forecast-to-rank system</p></div></div>
+  <div class="panel-title"><div><h3>ML selection engine</h3><p>Internal forecast-to-rank process used by the primary alpha layer</p></div></div>
   <div class="flow architecture-flow">
-   <div class="step"><div class="n">01</div><b>Broad PIT universe</b><p>Dynamic U.S.-listed ETF representatives under PIT liquidity/history and semantic exposure gates.</p></div>
-   <div class="step"><div class="n">02</div><b>Broad own-history features</b><p>Per-ETF price/return features under point-in-time clocks.</p></div>
-   <div class="step"><div class="n">03</div><b>Broad REX2</b><p>Ridge + ElasticNet forecast transformed to cross-sectional rank strength.</p></div>
-   <div class="step"><div class="n">04</div><b>Broad Chronos-2</b><p>Pinned pretrained time-series forecast transformed to the same rank-strength scale.</p></div>
-   <div class="step"><div class="n">05</div><b>Broad rank-strength blend</b><p id="blendDescription">80% REX2 + 20% Chronos-2 normalized rank strength.</p></div>
-   <div class="step"><div class="n">06</div><b>Broad Entry / Hold</b><p>10 positions · Entry rank 1–10 · incumbent Hold through rank 15.</p></div>
-   <div class="step static-step"><div class="n">07</div><b>Static-74 anchor</b><p>10% model-risk regularizer. Static-v1 uses REX2/Chronos/multi-signal with its own Entry10/Hold15 mapping.</p></div>
-   <div class="step"><div class="n">08</div><b>Merge sleeves</b><p>90% Broad + 10% Static. Overlapping ETFs are merged into one final target weight.</p></div>
-   <div class="step"><div class="n">09</div><b>Risk translation</b><p>Optional ACWI core scales active risk without refitting either alpha sleeve.</p></div>
+   <div class="step"><div class="n">01</div><b>Point-in-time Broad universe</b><p>Dynamic U.S.-listed ETF representatives under point-in-time liquidity, history and exposure rules.</p></div>
+   <div class="step"><div class="n">02</div><b>Broad price / return features</b><p>Per-ETF price and return features measured with point-in-time availability.</p></div>
+   <div class="step"><div class="n">03</div><b>REX2 forecast</b><p>Ridge + ElasticNet forecasts transformed to cross-sectional rank strength.</p></div>
+   <div class="step"><div class="n">04</div><b>Chronos-2 forecast</b><p>Pretrained time-series forecasts transformed to the same rank-strength scale.</p></div>
+   <div class="step"><div class="n">05</div><b>Blend ML rank strength</b><p id="blendDescription">80% REX2 + 20% Chronos-2 normalized rank strength.</p></div>
+   <div class="step"><div class="n">06</div><b>Entry / hold rule</b><p>10 positions · enter at ranks 1–10 · existing holdings may remain through rank 15.</p></div>
+   <div class="step static-step"><div class="n">07</div><b>Static universe diversifier</b><p>Small static-universe sub-portfolio using the ML ranking framework with its own entry / hold mapping.</p></div>
+   <div class="step"><div class="n">08</div><b>Merge ML sub-portfolios</b><p>Broad and Static targets are combined inside the ML layer; overlapping ETFs are merged before the Global layers are combined.</p></div>
+   <div class="step"><div class="n">09</div><b>Investor risk translation</b><p>Optional ACWI core changes investor-level active risk after the Global portfolio is formed; model selections are unchanged.</p></div>
   </div>
  </section>
  <section class="panel section"><div class="panel-title"><div><h3>Model contract</h3></div></div><div class="status-list" id="contractRows"></div></section>
 </section>
 
 <div class="footer">
- <span>SlackQuant Equity Alpha · Live Research Dashboard</span>
+ <span>SlackQuant Global Equity Alpha Dashboard</span>
  <span id="footerModel"></span>
 </div>
 </main>
 </div>
 </div>
 
-<script src="data/dashboard_data.js?v=f2950d58ea95"></script>
-<script src="data/live_overlay.js?v=131210b7b342"></script>
-<script src="assets/app.js?v=11560c74f611"></script>
+<script src="data/dashboard_data.js?v=v1593"></script>
+<script src="data/live_overlay.js?v=v1593"></script>
+<script src="assets/app.js?v=v1593"></script>
 </body>
 </html>
