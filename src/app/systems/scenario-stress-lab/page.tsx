@@ -259,7 +259,7 @@ export default function ScenarioStressLabPage() {
               ) : null}
               {item.links.fullManual ? (
                 <a className="artifact" href={item.links.fullManual} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">MANUAL · v1.1</span><strong>Full Manual (Korean)</strong>
+                  <span className="artifact-kicker">MANUAL · v1.2</span><strong>Full Manual (Korean)</strong>
                   <small>Comprehensive operating and explanatory manual covering concepts, workflow, interpretation, and system use</small><span className="artifact-action">Open PDF ↗</span>
                 </a>
               ) : null}
@@ -271,7 +271,7 @@ export default function ScenarioStressLabPage() {
               ) : null}
             </div>
             <p className="body-copy documentation-note">
-              The Korean Full Manual v1.1 is the comprehensive operating and explanatory guide. The Technical White Paper is the research and validation artifact.
+              The Korean Full Manual v1.2 is the comprehensive operating and explanatory guide. The Technical White Paper is the research and validation artifact.
               Dashboard-specific interpretation is kept within the dashboard and the Full Manual rather than maintained as a separate public guide layer.
             </p>
             {item.links.deploymentRepository ? (

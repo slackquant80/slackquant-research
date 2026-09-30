@@ -295,7 +295,7 @@ def main() -> int:
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed returns and historical evidence views.",
+        "Recent completed returns with their evidence boundaries",
         "the PDS dashboard shows the current decision",
         "Research review & portfolio admission",
     )
@@ -403,7 +403,7 @@ def main() -> int:
     )
     need(
         "src/app/systems/pds/page.tsx",
-        "PDS Core, Adaptive Risk Control, and Dynamic FX.",
+        "PDS Core, Adaptive Risk Control, and Dynamic FX",
         "Chronos-2 pretrained time-series forecasting",
         "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
     )

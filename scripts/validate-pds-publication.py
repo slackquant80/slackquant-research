@@ -105,7 +105,7 @@ def main() -> int:
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed returns and historical evidence views.",
+        "Recent completed returns with their evidence boundaries",
         "Core rows begin in May 2017",
         "Historical prior-parent results are therefore not a current-Core Adaptive track record",
         "longer current-definition Core / Dynamic FX reconstruction beginning in December 2005",
@@ -306,7 +306,8 @@ def main() -> int:
                 raise RuntimeError(f"PDS canonical platform summary performance mismatch: {label} {key}")
 
     # The route cache key must be bound to current dashboard bytes.
-    dashboard_sha = hashlib.sha256(PUBLIC_DASHBOARD.read_bytes()).hexdigest()
+    dashboard_bytes = PUBLIC_DASHBOARD.read_bytes().replace(b"\r\n", b"\n")
+    dashboard_sha = hashlib.sha256(dashboard_bytes).hexdigest()
     require(route, dashboard_sha[:16], "PDS dashboard route cache key")
     require(route, "/assets/systems/pds/Portfolio_Decision_System_Public.html", "PDS dashboard route")
 

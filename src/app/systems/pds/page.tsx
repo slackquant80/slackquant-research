@@ -150,8 +150,6 @@ export default function PdsSystemPage() {
             >
               System Documentation ↗
             </a>
-            <Link className="btn soft" href="/systems/adaa/">Explore ADAA</Link>
-            <Link className="btn soft" href="/systems/f2r/">Explore F2R</Link>
           </div>
         </div>
       </section>
@@ -159,21 +157,18 @@ export default function PdsSystemPage() {
       <div className="shell detail-layout system-detail-layout">
         <aside className="toc">
           <strong>On this page</strong>
-          <a href="#decision-state">System Role & Current State</a>
-          <a href="#variants">Core / Adaptive / Dynamic FX</a>
-          <a href="#architecture">Decision Architecture</a>
-          <a href="#adoption">Research Review & Portfolio Admission</a>
-          <a href="#providers">Strategy Provider Layer</a>
+          <a href="#decision-state">System Role & Operating Layers</a>
+          <a href="#architecture">Decision Architecture & Admission</a>
+          <a href="#providers">Strategy Providers</a>
           <a href="#performance">Performance</a>
-          <a href="#monitoring">Operations & Monitoring</a>
+          <a href="#monitoring">Operations & Public Boundary</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#boundary">Public & Internal Detail</a>
         </aside>
 
         <article>
           <section className="prose-section" id="decision-state">
             <div className="kicker">Portfolio operating layer</div>
-            <h2>Turn independent strategy systems into one portfolio decision process.</h2>
+            <h2>Turn independent strategy systems into one portfolio decision process</h2>
             <p className="lede">
               PDS sits above individual strategy engines. It evaluates providers, separates research credibility from portfolio
               usefulness, manages integration, forms portfolio-level decisions, and monitors whether each role remains justified.
@@ -211,11 +206,8 @@ export default function PdsSystemPage() {
               performance, and Dynamic FX monitoring. Local paths, caches, credentials, and debug controls are excluded from the
               public interface.
             </div>
-          </section>
-
-          <section className="prose-section" id="variants">
-            <div className="kicker">Three operating layers</div>
-            <h2>PDS Core, Adaptive Risk Control, and Dynamic FX.</h2>
+            <div className="kicker pds-inline-kicker">Three operating layers</div>
+            <h2>PDS Core, Adaptive Risk Control, and Dynamic FX</h2>
             <p className="body-copy">
               PDS separates the source of portfolio opportunity from the controls applied around it. PDS Core is the main
               multi-strategy portfolio. PDS Adaptive is a bounded hybrid risk-control layer that can reduce total Core exposure
@@ -257,11 +249,8 @@ export default function PdsSystemPage() {
                 </div>
               ))}
             </div>
-          </section>
-
-          <section className="prose-section" id="adoption">
-            <div className="kicker">Research review & portfolio admission</div>
-            <h2>Research quality and portfolio usefulness are related, but they are evaluated separately.</h2>
+            <div className="kicker pds-inline-kicker">Research review & portfolio admission</div>
+            <h2>Research quality and portfolio usefulness are evaluated separately</h2>
             <p className="body-copy">
               PDS keeps research review separate from portfolio admission. A strategy can be well specified as research yet add
               little incremental portfolio value, while a useful portfolio role does not change the status of a failed or
@@ -307,7 +296,7 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="performance">
             <div className="kicker">Integrated performance</div>
-            <h2>Recent completed returns and historical evidence views.</h2>
+            <h2>Recent completed returns with their evidence boundaries</h2>
             <p className="body-copy">
               The chart shows the most recent 12 completed holding months for the two Dynamic FX historical series; current MTD is
               excluded. The table summarizes the historical series surfaced in this platform summary. Core rows begin in May 2017.
@@ -361,7 +350,7 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="monitoring">
             <div className="kicker">Operations & monitoring</div>
-            <h2>The public dashboard uses the operating data and clock while omitting private infrastructure.</h2>
+            <h2>One operating clock, with private infrastructure kept out of the public view</h2>
             <p className="body-copy">
               The public dashboard uses the same decision state, clocks, and portfolio data as the operating system. It omits
               machine-specific infrastructure and private controls rather than maintaining a separate investment view. Current
@@ -373,13 +362,8 @@ export default function PdsSystemPage() {
               <div><strong>Provider separation.</strong><span> ADAA and F2R remain independent systems connected to PDS through defined interfaces rather than copied into PDS.</span></div>
               <div><strong>Release checks.</strong><span> Release checks cover data consistency, clocks, identity, responsive layout, and private-environment boundaries before deployment.</span></div>
             </div>
-          </section>
-
-          <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
-
-          <section className="prose-section" id="boundary">
-            <div className="kicker">Public and internal detail</div>
-            <h2>What is public and what remains internal.</h2>
+            <div className="kicker pds-inline-kicker">Public and internal detail</div>
+            <h2>Public operating views, private implementation</h2>
             <div className="system-boundary-grid">
               <div className="system-boundary-card allowed">
                 <h3>Public</h3>
@@ -406,6 +390,8 @@ export default function PdsSystemPage() {
               for research and monitoring, not brokerage execution.
             </div>
           </section>
+
+          <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
         </article>
       </div>
     </main>

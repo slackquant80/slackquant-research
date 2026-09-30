@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { getSystem } from "@/data/systems";
@@ -44,7 +43,6 @@ export default function EquityAlphaSystemPage() {
                 Open Dashboard ↗
               </a>
             ) : null}
-            <Link className="btn soft" href="/systems/">Explore All Systems</Link>
           </div>
         </div>
       </section>
@@ -52,7 +50,7 @@ export default function EquityAlphaSystemPage() {
       <div className="shell detail-layout system-detail-layout">
         <aside className="toc">
           <strong>On this page</strong>
-          <a href="#overview">Overview</a>
+          <a href="#overview">System Role</a>
           <a href="#architecture">Portfolio Architecture</a>
           <a href="#clocks">Operating Clocks</a>
           <a href="#risk">Benchmark & Risk</a>
@@ -129,23 +127,14 @@ export default function EquityAlphaSystemPage() {
 
           <section className="prose-section" id="public">
             <div className="kicker">Dashboard</div>
-            <h2>From portfolio decisions to investable exposure</h2>
+            <h2>A public operating view of the unified portfolio</h2>
             <p className="body-copy">
               The live dashboard shows Official and Preview portfolios, ETF target weights, investment-exposure groupings, current MTD/YTD, completed daily performance, ACWI-relative risk, portfolio history, and ML-layer diagnostics. A full-history workbook provides the completed daily and monthly record together with the unified target-weight history.
             </p>
             <p className="body-copy">
               The public view is designed to explain portfolio construction, operating state, and portfolio-level evidence; proprietary implementation details are not published.
             </p>
-            {item.links.publicDashboard ? (
-              <div className="repro-links documentation-artifacts">
-                <a className="artifact artifact-primary" href={item.links.publicDashboard} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
-                  <span className="artifact-kicker">LIVE</span>
-                  <strong>Equity Alpha Dashboard</strong>
-                  <small>Official / Preview holdings, investment exposures, daily-first performance, ACWI-relative risk, and full portfolio history.</small>
-                  <span className="artifact-action">Open Dashboard ↗</span>
-                </a>
-              </div>
-            ) : null}
+
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />

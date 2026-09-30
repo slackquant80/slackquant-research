@@ -29,9 +29,8 @@ export default function AdaaSystemPage() {
           <div className="paper-subtitle">{item.subtitle}</div>
           <div className="paper-meta">
             <span>{item.status}</span>
-            <span>{item.role}</span>
-            <span>Monthly official decision cycle</span>
-            <span>{item.evidenceLabel ?? "SSRN"} · SSRN {item.ssrnId}</span>
+            <span>Monthly decision cycle</span>
+            <span>Official · Current MTD · Preview</span>
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (
@@ -56,17 +55,17 @@ export default function AdaaSystemPage() {
       <div className="shell detail-layout system-detail-layout">
         <aside className="toc">
           <strong>On this page</strong>
-          <a href="#overview">Overview</a>
-          <a href="#operating-state">Operating State</a>
+          <a href="#overview">System Role</a>
+          <a href="#operating-state">Operating States</a>
           <a href="#architecture">Strategy Architecture</a>
-          <a href="#evidence">Research & Versioning</a>
+          <a href="#evidence">Research & Public Artifacts</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#access">Access & Documentation</a>
         </aside>
 
         <article>
           <section className="prose-section" id="overview">
-            <h2>Overview</h2>
+            <div className="kicker">System role</div>
+            <h2>Decision Diversification for a live multi-asset portfolio</h2>
             <p className="lede">
               ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification: diversify the
               decision process before relying on asset diversification alone. Complementary allocation perspectives carry
@@ -153,7 +152,7 @@ export default function AdaaSystemPage() {
 
           <section className="prose-section" id="evidence">
             <div className="kicker">Research & versioning</div>
-            <h2>Live operation updates; published research remains versioned</h2>
+            <h2>Live operation and published research remain distinct</h2>
             <div className="dual adaa-evidence-dual">
               <div className="dual-card operational">
                 <div className="kicker">Live operation</div>
@@ -187,54 +186,17 @@ export default function AdaaSystemPage() {
               <div><strong>Live dashboard.</strong><span> Market data are refreshed and the current strategy state is checked before release; the public application displays the prepared result.</span></div>
               <div><strong>Interpretation.</strong><span> The dashboard reports the current strategy state alongside the related research record; it is not a claim of guaranteed future performance.</span></div>
             </div>
-
-          </section>
-
-          <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
-
-          <section className="prose-section" id="access">
-            <div className="kicker">Public resources</div>
-            <h2>Access & documentation</h2>
-            <p className="body-copy">
-              Use the live dashboard for current operation, the Investment Research and SSRN record for published
-              research, the replication release and DOI for reproducibility, and Quantitative Methods for reusable
-              methodology.
-            </p>
-            <div className="repro-links documentation-artifacts adaa-artifact-grid">
-              {item.links.liveDashboard ? (
-                <a className="artifact artifact-primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">LIVE</span><strong>Operational Dashboard</strong>
-                  <small>Current ADAA portfolio monitoring, decision state, and implementation views.</small><span className="artifact-action">Open Dashboard ↗</span>
-                </a>
-              ) : null}
-              {item.links.relatedResearch ? (
-                <Link className="artifact" href={item.links.relatedResearch}>
-                  <span className="artifact-kicker">RESEARCH</span><strong>Investment Research</strong>
-                  <small>Paper-aligned research page for the published study.</small><span className="artifact-action">View Research →</span>
-                </Link>
-              ) : null}
+            <div className="repro-links documentation-artifacts adaa-artifact-grid compact-artifact-grid">
               {item.links.ssrn ? (
-                <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
+                <a className="artifact artifact-primary" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">SSRN</span><strong>Public Working Paper v1.34</strong>
-                  <small>Citable research record for Decision Diversification and the documented historical implementation.</small><span className="artifact-action">Open SSRN ↗</span>
-                </a>
-              ) : null}
-              {item.links.researchDashboard ? (
-                <a className="artifact" href={item.links.researchDashboard} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">RESEARCH</span><strong>Research Dashboard</strong>
-                  <small>Versioned visual results aligned to the public paper.</small><span className="artifact-action">Open Research Dashboard ↗</span>
+                  <small>Citable research record for the Decision Diversification study.</small><span className="artifact-action">Open SSRN ↗</span>
                 </a>
               ) : null}
               {item.links.replicationRepository ? (
                 <a className="artifact" href={item.links.replicationRepository} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">GITHUB</span><strong>Replication Repository</strong>
-                  <small>Source repository for the versioned public research and replication record.</small><span className="artifact-action">Open Repository ↗</span>
-                </a>
-              ) : null}
-              {item.links.replication ? (
-                <a className="artifact" href={item.links.replication} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">REPLICATION</span><strong>Public Release v1.1.4</strong>
-                  <small>Tagged reproducibility package synchronized to the public research record.</small><span className="artifact-action">Open Release ↗</span>
+                  <small>Versioned public research and replication source.</small><span className="artifact-action">Open Repository ↗</span>
                 </a>
               ) : null}
               {item.links.archivalRelease ? (
@@ -244,8 +206,12 @@ export default function AdaaSystemPage() {
                 </a>
               ) : null}
             </div>
+
           </section>
-        </article>
+
+          <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
+
+       </article>
       </div>
     </main>
   );

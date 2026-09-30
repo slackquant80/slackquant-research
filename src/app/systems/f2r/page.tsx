@@ -28,9 +28,8 @@ export default function F2rSystemPage() {
           <div className="paper-subtitle">{item.subtitle}</div>
           <div className="paper-meta">
             <span>{item.status}</span>
-            <span>{item.role}</span>
-            <span>Heterogeneous forecasting · conventional ML + Chronos-2</span>
-            <span>Independent strategy system · current PDS Active Core provider</span>
+            <span>Monthly decision cycle</span>
+            <span>Conventional ML + Chronos-2 · rank-based portfolio formation</span>
           </div>
           <div className="actions">
             {item.links.liveDashboard ? (
@@ -49,11 +48,6 @@ export default function F2rSystemPage() {
             {item.links.relatedResearch ? (
               <Link className="btn soft" href={item.links.relatedResearch}>View Related Research</Link>
             ) : null}
-            {item.links.deploymentRepository ? (
-              <a className="btn soft ext" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
-                GitHub Repository
-              </a>
-            ) : null}
           </div>
         </div>
       </section>
@@ -61,18 +55,17 @@ export default function F2rSystemPage() {
       <div className="shell detail-layout system-detail-layout">
         <aside className="toc">
           <strong>On this page</strong>
-          <a href="#overview">Overview</a>
+          <a href="#overview">System Role</a>
           <a href="#process">Forecast-to-Rank Process</a>
-          <a href="#live">Live System</a>
-          <a href="#relationship">Relationship to PDS</a>
+          <a href="#live">Live Operation</a>
           <a href="#evidence">Research Context</a>
           <a href="#methods">Quantitative Methods</a>
-          <a href="#boundary">Public & Internal Detail</a>
         </aside>
 
         <article>
           <section className="prose-section" id="overview">
-            <h2>Overview</h2>
+            <div className="kicker">System role</div>
+            <h2>Forecast first, rank second, allocate last</h2>
             <p className="lede">
               F2R is a live cross-asset Portfolio Strategy System that separates forecasting from portfolio choice.
               Conventional supervised models and Chronos-2 produce distinct forecasts, which are brought into a common
@@ -88,6 +81,9 @@ export default function F2rSystemPage() {
               <div className="metric"><div className="value">Chronos-2</div><div className="label">Pretrained time-series model</div></div>
               <div className="metric"><div className="value">Rank</div><div className="label">Portfolio translation</div></div>
               <div className="metric"><div className="value">Monthly</div><div className="label">Decision cycle</div></div>
+            </div>
+            <div className="system-operating-list f2r-pds-relationship">
+              <div><strong>Relationship to PDS.</strong><span> F2R remains an independent Portfolio Strategy System and currently serves as an admitted Active Core provider within </span><Link href="/systems/pds/">PDS</Link><span>. PDS governs provider admission and portfolio integration; it does not redefine the F2R strategy.</span></div>
             </div>
           </section>
 
@@ -119,7 +115,7 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="live">
             <div className="kicker">Live operation</div>
-            <h2>The public dashboard separates the actionable decision from the provisional next state</h2>
+            <h2>Official and Preview are shown as different operating states</h2>
             <p className="body-copy">
               The standalone F2R dashboard publishes the current official monthly target alongside a separately labeled
               intramonth preview. The preview is indicative only: it may change before month-end, is not executed, and is kept
@@ -143,34 +139,14 @@ export default function F2rSystemPage() {
                 </a>
               ) : null}
             </div>
-          </section>
-
-          <section className="prose-section" id="relationship">
-            <div className="kicker">System relationship</div>
-            <h2>F2R is a strategy system; PDS is the portfolio operating layer</h2>
-            <p className="body-copy">
-              F2R produces a strategy-level portfolio decision. PDS governs how independent providers are qualified,
-              admitted, integrated, and monitored at the portfolio level. F2R and ADAA are the current Active Core providers;
-              that configuration is a current operating state, not the definition of PDS.
-            </p>
-            <div className="dual f2r-relationship-dual">
-              <div className="dual-card">
-                <div className="kicker">Strategy layer</div>
-                <h3>F2R</h3>
-                <p>Forecast-ranked multi-asset strategy with its own timing rules, research record, and public dashboard.</p>
-              </div>
-              <div className="dual-card operational">
-                <div className="kicker">Operating layer</div>
-                <h3>Portfolio Decision System</h3>
-                <p>Portfolio-level system for provider qualification, admission, integration, decision governance, refresh, and monitoring.</p>
-                <Link className="btn inverse" href="/systems/pds/">Open PDS</Link>
-              </div>
+            <div className="evidence-note">
+              The public surface shows formal system identity, Official and Preview states, portfolio history, related research, and the deployment package. Exact feature horizons, sequence settings, model-combination settings, local operating paths, and unpromoted research branches remain internal.
             </div>
           </section>
 
           <section className="prose-section" id="evidence">
             <div className="kicker">Related research</div>
-            <h2>Two public research papers document distinct stages of the F2R research record</h2>
+            <h2>Research papers document distinct stages of the F2R research record</h2>
             <p className="body-copy">
               The earlier information-set study tests whether historical-vintage macro
               information adds decision value beyond price information under matched
@@ -205,36 +181,7 @@ export default function F2rSystemPage() {
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />
 
-          <section className="prose-section" id="boundary">
-            <div className="kicker">Public and internal detail</div>
-            <h2>One live system, multiple public access points</h2>
-            <p className="body-copy">
-              The GitHub repository contains the public deployment package, while Streamlit serves the public application.
-              Both are access points to the same live system. Detailed configuration, validation, and release work remains
-              in the local F2R project; the public surfaces show the system description and reader-facing results.
-            </p>
-            <div className="system-boundary-grid">
-              <div className="system-boundary-card allowed">
-                <h3>Public surface</h3>
-                <ul>
-                  <li>Formal F2R system identity, decision architecture, and named use of conventional supervised ML plus Chronos-2</li>
-                  <li>Official and provisional portfolio states, clearly labeled</li>
-                  <li>Historical performance and portfolio target-history views</li>
-                  <li>Public deployment repository and related research</li>
-                </ul>
-              </div>
-              <div className="system-boundary-card prohibited">
-                <h3>Internal / not public</h3>
-                <ul>
-                  <li>Exact feature horizons, Chronos-2 sequence settings, model-combination settings, and low-level conflict-resolution rules</li>
-                  <li>Local operating paths, credentials, and environment state</li>
-                  <li>Research branches not promoted to the live specification</li>
-                  <li>Internal validation records and release-engineering details</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-        </article>
+       </article>
       </div>
     </main>
   );

@@ -25,10 +25,9 @@ def main() -> int:
     need_text(root, "src/app/systems/scenario-stress-lab/page.tsx", "Open Dashboard ↗")
     need_text(root, "src/app/research/adaa/page.tsx", "canonical 19-ETF snapshot is validated")
     need_text(root, "src/data/research.ts", "papers.cfm?abstract_id=7340100")
-    need_text(root, "src/app/systems/pds/page.tsx", "public_recent_12m_returns.xlsx")
-    need_text(root, "src/app/systems/pds/page.tsx", "12-month table Excel (.xlsx)")
-    need_text(root, "src/app/systems/pds/page.tsx", "PDS + Dynamic FX (5bp)")
-    need_text(root, "src/app/systems/pds/page.tsx", "historical comparison series only")
+    need_text(root, "src/app/systems/pds/page.tsx", "Recent completed returns with their evidence boundaries")
+    need_text(root, "src/app/systems/pds/page.tsx", "certified frozen-policy comparison under the prior Core parent")
+    need_text(root, "src/app/systems/pds/page.tsx", "Open Full PDS Dashboard ↗")
     need_text(root, "public/methods/index.html", "application-driven rather than encyclopedic")
 
     xlsx = root / "public/data/systems/pds/public_recent_12m_returns.xlsx"
@@ -48,7 +47,7 @@ def main() -> int:
     print("Stress Lab system context/date/CTA + documentation IA: PASS")
     print("ADAA v3.93 research/runtime wording: PASS")
     print("Methods application-driven principle: PASS")
-    print("PDS real 12-month XLSX: PASS")
+    print("PDS recent-return evidence boundary + retained XLSX artifact: PASS")
     print("Price-Macro canonical SSRN URL: PASS")
     return 0
 
