@@ -58,6 +58,33 @@ def num(v: Any) -> float:
     return float(v)
 
 
+def optional_num(v: Any, *, label: str) -> float | None:
+    if v is None or str(v).strip() == "":
+        return None
+    try:
+        return float(v)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(f"{label} must be numeric when available: {v!r}") from exc
+
+
+def adaptive_current_binding(row: Any) -> tuple[bool, str | None, float | None]:
+    if not isinstance(row, dict):
+        raise RuntimeError("PDS Adaptive operational summary row must be an object")
+    state = str(row.get("state") or "").strip()
+    risk_budget = optional_num(row.get("risk_budget"), label="PDS Adaptive current risk budget")
+    # At month-end before the next execution/current-MTD clock opens, the Adaptive
+    # engine deliberately writes state=UNAVAILABLE and an empty risk_budget.  This
+    # is a valid non-blocking current-state boundary, not a zero-risk decision.
+    unavailable = state in {"", "UNAVAILABLE"} and risk_budget is None
+    if unavailable:
+        return False, None, None
+    if state not in {"NORMAL", "DEFENSIVE"}:
+        raise RuntimeError(f"PDS Adaptive current state is invalid: {state!r}")
+    if risk_budget is None:
+        raise RuntimeError(f"PDS Adaptive current state {state!r} is missing risk_budget")
+    return True, state, risk_budget
+
+
 def perf(row: dict[str, Any], *, label: str) -> dict[str, Any]:
     terminal = num(row["terminal_wealth"])
     return {
@@ -175,6 +202,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
     clock = canonical_clock(data)
     adaptive = data["adaptive"]
     adaptive_op = adaptive["operational_summary"][0]
+    adaptive_current_available, adaptive_state, adaptive_risk_budget = adaptive_current_binding(adaptive_op)
     adaptive_hist = adaptive["historical_summary"][0]
     preview = optional_bound_summary(data.get("pds_forward_preview", {}), label="PDS Forward Preview")
     adaptive_preview = optional_bound_summary(data.get("adaptive_preview", {}), label="Adaptive Preview")
@@ -199,8 +227,8 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
         "markThrough": clock["markThrough"],
         "completedThrough": clock["completedThrough"],
         "coreProviders": ["ADAA", "F2R"],
-        "adaptiveState": str(adaptive_op["state"]),
-        "adaptiveRiskBudget": num(adaptive_op["risk_budget"]),
+        "adaptiveState": adaptive_state,
+        "adaptiveRiskBudget": adaptive_risk_budget,
         "previewAvailable": preview is not None,
         "previewSignal": str(preview["preview_signal_month"]) if preview is not None else None,
         "previewHolding": str(preview["preview_holding_month"]) if preview is not None else None,
@@ -225,7 +253,8 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
 
 def render_ts(summary: dict[str, Any]) -> str:
     payload = json.dumps(summary, ensure_ascii=False, indent=2)
-    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewAvailable: boolean;\n  previewSignal: string | null;\n  previewHolding: string | null;\n  previewThrough: string | null;\n  adaptivePreviewAvailable: boolean;\n  adaptivePreviewState: string | null;\n  adaptivePreviewRiskBudget: number | null;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxAvailable: boolean;\n  previewFxHedge: number | null;\n  previewFxZscore: number | null;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
+    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string | null;\n  adaptiveRiskBudget: number | null;\n  previewAvailable: boolean;\n  previewSignal: string | null;\n  previewHolding: string | null;\n  previewThrough: string | null;\n  adaptivePreviewAvailable: boolean;\n  adaptivePreviewState: string | null;\n  adaptivePreviewRiskBudget: number | null;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxAvailable: boolean;\n  previewFxHedge: number | null;\n  previewFxZscore: number | null;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.
+// MONTH_END_UNAVAILABLE_IS_VALID: current Adaptive/Preview states bind as explicit nulls until their execution clocks open.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
 
 
 def main() -> int:

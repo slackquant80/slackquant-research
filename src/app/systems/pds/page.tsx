@@ -184,8 +184,8 @@ export default function PdsSystemPage() {
               </div>
               <div>
                 <span className="pds-state-label">Adaptive Risk Control</span>
-                <strong>{state.adaptiveState} · {pct(state.adaptiveRiskBudget, 0)} risk budget</strong>
-                <small>Adaptive risk control is a bounded hybrid layer that uses an RL signal alongside independent volatility confirmation; it is not a standalone alpha engine.</small>
+                <strong>{state.adaptiveState && state.adaptiveRiskBudget !== null ? `${state.adaptiveState} · ${pct(state.adaptiveRiskBudget, 0)} risk budget` : "Unavailable"}</strong>
+                <small>{state.adaptiveState && state.adaptiveRiskBudget !== null ? "Adaptive risk control is a bounded hybrid layer that uses an RL signal alongside independent volatility confirmation; it is not a standalone alpha engine." : "Current Adaptive state is intentionally unavailable until the new holding month has an executable current-MTD clock; historical Adaptive evidence remains separate."}</small>
               </div>
               <div>
                 <span className="pds-state-label">Dynamic FX Overlay</span>

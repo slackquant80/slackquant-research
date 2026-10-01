@@ -94,6 +94,30 @@ def close(a: Any, b: Any, tol: float = 1e-12) -> bool:
     return abs(float(a) - float(b)) <= tol
 
 
+def optional_num(v: Any, *, label: str) -> float | None:
+    if v is None or str(v).strip() == "":
+        return None
+    try:
+        return float(v)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(f"{label} must be numeric when available: {v!r}") from exc
+
+
+def adaptive_current_binding(row: Any) -> tuple[bool, str | None, float | None]:
+    if not isinstance(row, dict):
+        raise RuntimeError("PDS Adaptive operational summary row must be an object")
+    state = str(row.get("state") or "").strip()
+    risk_budget = optional_num(row.get("risk_budget"), label="PDS Adaptive current risk budget")
+    unavailable = state in {"", "UNAVAILABLE"} and risk_budget is None
+    if unavailable:
+        return False, None, None
+    if state not in {"NORMAL", "DEFENSIVE"}:
+        raise RuntimeError(f"PDS Adaptive current state is invalid: {state!r}")
+    if risk_budget is None:
+        raise RuntimeError(f"PDS Adaptive current state {state!r} is missing risk_budget")
+    return True, state, risk_budget
+
+
 def re_match_month(value: str) -> bool:
     return len(value) == 7 and value[:4].isdigit() and value[4] == "-" and value[5:].isdigit() and 1 <= int(value[5:]) <= 12
 
@@ -233,6 +257,9 @@ def main() -> int:
     require(binder, "recent_monthly_returns", "PDS canonical summary binder")
     require(binder, "PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END", "PDS canonical summary binder")
     require(binder, "previewAvailable", "PDS canonical summary binder")
+    require(binder, "adaptive_current_binding", "PDS canonical summary binder")
+    require(binder, "adaptiveState: string | null;", "PDS canonical summary binder")
+    require(binder, "adaptiveRiskBudget: number | null;", "PDS canonical summary binder")
 
     # Canonical public dashboard safety and identity.
     required_dashboard = [
@@ -311,8 +338,13 @@ def main() -> int:
             raise RuntimeError(f"PDS canonical platform summary stale: {key}={summary.get(key)!r} != {value!r}")
 
     adaptive_op = data["adaptive"]["operational_summary"][0]
-    if summary.get("adaptiveState") != str(adaptive_op["state"]) or not close(summary.get("adaptiveRiskBudget"), adaptive_op["risk_budget"]):
-        raise RuntimeError("PDS canonical platform summary Adaptive state/risk budget mismatch")
+    adaptive_available, adaptive_state, adaptive_risk_budget = adaptive_current_binding(adaptive_op)
+    if not adaptive_available:
+        if summary.get("adaptiveState") is not None or summary.get("adaptiveRiskBudget") is not None:
+            raise RuntimeError("PDS canonical platform summary unavailable Adaptive current state must bind null state/risk budget")
+    else:
+        if summary.get("adaptiveState") != adaptive_state or not close(summary.get("adaptiveRiskBudget"), adaptive_risk_budget):
+            raise RuntimeError("PDS canonical platform summary Adaptive state/risk budget mismatch")
 
     preview = optional_bound_summary(data.get("pds_forward_preview", {}), label="Forward Preview")
     if preview is None:
@@ -418,7 +450,10 @@ def main() -> int:
 
     print("PDS_PUBLICATION_VALIDATION_PASS")
     print(f"Canonical current clock : {summary['officialSignal']} -> {summary['holdingMonth']} / through {summary['markThrough']}")
-    print(f"Adaptive state          : {summary['adaptiveState']} / risk budget {summary['adaptiveRiskBudget']:.0%}")
+    if summary.get("adaptiveState") is not None and summary.get("adaptiveRiskBudget") is not None:
+        print(f"Adaptive state          : {summary['adaptiveState']} / risk budget {summary['adaptiveRiskBudget']:.0%}")
+    else:
+        print("Adaptive state          : unavailable until current execution/MTD clock opens")
     print("Four-portfolio summary  : exact parity with current public dashboard")
     print("Platform provider mix   : roles visible / exact ratio not foregrounded")
     print("Legacy delayed binding  : not used by platform pages")
