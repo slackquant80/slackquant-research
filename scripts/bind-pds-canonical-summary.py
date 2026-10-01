@@ -104,12 +104,10 @@ def recent_monthly_returns(data: dict[str, Any], limit: int = 12) -> list[dict[s
     core_monthly = data["core_daily_performance"]["monthly"]
     fx_monthly = data["fx_operational_sensitivity"]["monthly"]
 
-    # The platform chart is a like-for-like historical comparison.  At a month-end
-    # rollover the Core/Dynamic-FX series can already have the newly completed month
-    # while the certified prior-parent Adaptive/Dynamic-FX comparison has no value for
-    # that month.  A blank Adaptive value is therefore not zero and must not be coerced.
-    # Bind the latest 12 *common completed* months instead, while still failing on
-    # malformed numbers or gaps inside the selected common window.
+    # The platform chart uses the continuous Adaptive monitored path. Certified
+    # historical evidence ends at its frozen boundary, but the same frozen controller
+    # continues forward as a separately labeled monitoring track.  Completed months
+    # therefore remain continuous; current MTD is still excluded until completion.
     core_periods = sorted({
         str(r.get("calendar_month", ""))
         for r in core_monthly
@@ -132,35 +130,29 @@ def recent_monthly_returns(data: dict[str, Any], limit: int = 12) -> list[dict[s
         # completed Core month whenever an FX monthly row is present.
         if optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}") is None:
             raise RuntimeError(f"missing Core Dynamic-FX return for completed month {month}")
-        # Adaptive may be blank only as an unavailable historical observation.  A
-        # nonblank malformed value still fails through optional_num().
+        # Adaptive completed monitoring should exist on every completed month once the
+        # continuous monitor is materialized. A nonblank malformed value still fails.
         optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
         fx_by_month[month] = row
 
-    common_periods = [
-        month for month in core_periods
-        if month in fx_by_month
-        and optional_num(fx_by_month[month].get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}") is not None
-    ]
-    if len(common_periods) < limit:
-        raise RuntimeError(f"expected at least {limit} common completed Core/Adaptive Dynamic-FX months for platform chart; found {len(common_periods)}")
-    periods = common_periods[-limit:]
-
-    # Do not silently bridge an internal historical gap.  The selected comparison
-    # window must be consecutive in the completed Core monthly lineage; only trailing
-    # Core months after the latest Adaptive observation may be excluded.
-    start = core_periods.index(periods[0])
-    expected = core_periods[start:start + limit]
-    if periods != expected:
-        raise RuntimeError(f"PDS common completed monthly comparison contains an internal gap: {periods}")
-
+    # The chart is anchored to the latest completed Core months.  Adaptive is a
+    # continuous frozen-policy monitor, so a missing Adaptive completed month is a
+    # production error rather than permission to silently roll the chart backward.
+    periods = core_periods[-limit:]
     out: list[dict[str, Any]] = []
     for month in periods:
+        if month not in fx_by_month:
+            raise RuntimeError(f"missing Dynamic-FX monthly row for completed PDS month {month}")
         row = fx_by_month[month]
         core_fx = optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}")
         adaptive_fx = optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
-        if core_fx is None or adaptive_fx is None:
-            raise RuntimeError(f"common completed FX comparison unexpectedly unavailable for {month}")
+        if core_fx is None:
+            raise RuntimeError(f"missing Core Dynamic-FX return for completed month {month}")
+        if adaptive_fx is None:
+            raise RuntimeError(
+                f"missing Adaptive forward-monitor return for completed month {month}; "
+                "do not silently truncate the completed-month window"
+            )
         out.append({
             "holdingMonth": month,
             "coreDynamicFx": core_fx,
@@ -235,7 +227,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
     adaptive = data["adaptive"]
     adaptive_op = adaptive["operational_summary"][0]
     adaptive_current_available, adaptive_state, adaptive_risk_budget = adaptive_current_binding(adaptive_op)
-    adaptive_hist = adaptive["historical_summary"][0]
+    adaptive_monitor = (adaptive.get("monitoring_summary") or adaptive.get("historical_summary") or [])[0]
     preview = optional_bound_summary(data.get("pds_forward_preview", {}), label="PDS Forward Preview")
     adaptive_preview = optional_bound_summary(data.get("adaptive_preview", {}), label="Adaptive Preview")
     fx = data["fx_operational_sensitivity"]
@@ -278,7 +270,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
             perf(core_fx, label="PDS Core + Dynamic FX"),
             perf(core, label="PDS Core"),
             perf(adaptive_fx, label="PDS Adaptive + Dynamic FX"),
-            perf(adaptive_hist, label="PDS Adaptive"),
+            perf(adaptive_monitor, label="PDS Adaptive"),
         ],
     }
 

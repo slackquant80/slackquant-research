@@ -201,17 +201,19 @@ def expected_recent_common_months(data: dict[str, Any], limit: int = 12) -> list
         optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
         fx_by_month[month] = row
 
-    common = [
-        month for month in core_periods
-        if month in fx_by_month
-        and optional_num(fx_by_month[month].get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}") is not None
-    ]
-    if len(common) < limit:
-        raise RuntimeError(f"PDS dashboard has fewer than {limit} common completed Core/Adaptive Dynamic-FX months")
-    periods = common[-limit:]
-    start = core_periods.index(periods[0])
-    if periods != core_periods[start:start + limit]:
-        raise RuntimeError("PDS dashboard common completed monthly comparison contains an internal gap")
+    # Anchor the platform to the latest completed Core months. Adaptive is a continuous
+    # frozen-policy forward monitor, so a missing completed Adaptive month is a release
+    # failure rather than permission to truncate the reader-facing window backward.
+    periods = core_periods[-limit:]
+    for month in periods:
+        row = fx_by_month.get(month)
+        if row is None:
+            raise RuntimeError(f"PDS dashboard missing Dynamic-FX monthly row for completed month {month}")
+        if optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}") is None:
+            raise RuntimeError(
+                f"PDS dashboard missing Adaptive forward-monitor return for completed month {month}; "
+                "do not silently truncate the completed-month window"
+            )
     return periods
 
 
@@ -443,7 +445,7 @@ def main() -> int:
     fx_monthly = {str(r.get("holding_month")): r for r in data["fx_operational_sensitivity"]["monthly"]}
     common_periods = expected_recent_common_months(data, 12)
     if [str(r.get("holdingMonth")) for r in recent] != common_periods:
-        raise RuntimeError("PDS canonical platform summary recent common-month lineage mismatch")
+        raise RuntimeError("PDS canonical platform summary recent completed-month lineage mismatch")
     for row in recent:
         month = str(row["holdingMonth"])
         source = fx_monthly.get(month)
@@ -456,7 +458,10 @@ def main() -> int:
 
     core_rows = data["core_daily_performance"]["summary"]
     fx_rows = data["fx_operational_sensitivity"]["summary"]
-    adaptive_row = data["adaptive"]["historical_summary"][0]
+    adaptive_rows = data["adaptive"].get("monitoring_summary") or data["adaptive"].get("historical_summary") or []
+    if len(adaptive_rows) != 1:
+        raise RuntimeError(f"PDS Adaptive monitoring summary row count mismatch: {len(adaptive_rows)}")
+    adaptive_row = adaptive_rows[0]
     expected_perf = {
         "PDS Core + Dynamic FX": one(fx_rows, "series_id", "DYNAMIC_COSTED"),
         "PDS Core": one(core_rows, "series_id", "PDS_CORE_FIXED_CURRENT_POLICY"),
