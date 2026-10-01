@@ -67,6 +67,29 @@ def one(rows: list[dict[str, Any]], key: str, value: str) -> dict[str, Any]:
     return found[0]
 
 
+def optional_bound_summary(section: Any, *, label: str) -> dict[str, Any] | None:
+    if not isinstance(section, dict):
+        raise RuntimeError(f"PDS dashboard {label} section must be an object")
+    rows = section.get("summary") or []
+    if not isinstance(rows, list):
+        raise RuntimeError(f"PDS dashboard {label} summary must be a list")
+    available = section.get("available") is True
+    if available:
+        if len(rows) != 1:
+            raise RuntimeError(f"PDS dashboard {label} marked available but expected one summary row; found {len(rows)}")
+        return rows[0]
+    if rows:
+        raise RuntimeError(f"PDS dashboard {label} marked unavailable but contains {len(rows)} summary row(s)")
+    return None
+
+
+def optional_one(rows: list[dict[str, Any]], key: str, value: str) -> dict[str, Any] | None:
+    found = [r for r in rows if str(r.get(key)) == value]
+    if len(found) > 1:
+        raise RuntimeError(f"PDS dashboard expected at most one {key}={value!r}; found {len(found)}")
+    return found[0] if found else None
+
+
 def close(a: Any, b: Any, tol: float = 1e-12) -> bool:
     return abs(float(a) - float(b)) <= tol
 
@@ -151,6 +174,8 @@ def main() -> int:
     require(summary_text, '"recentMonthlyReturns": [', "PDS canonical summary")
     require(binder, "PDS_CANONICAL_PLATFORM_SUMMARY_BIND_PASS", "PDS canonical summary binder")
     require(binder, "recent_monthly_returns", "PDS canonical summary binder")
+    require(binder, "PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END", "PDS canonical summary binder")
+    require(binder, "previewAvailable", "PDS canonical summary binder")
 
     # Canonical public dashboard safety and identity.
     required_dashboard = [
@@ -239,26 +264,56 @@ def main() -> int:
     if summary.get("adaptiveState") != str(adaptive_op["state"]) or not close(summary.get("adaptiveRiskBudget"), adaptive_op["risk_budget"]):
         raise RuntimeError("PDS canonical platform summary Adaptive state/risk budget mismatch")
 
-    preview = data["pds_forward_preview"]["summary"][0]
-    for key, source_key in [
-        ("previewSignal", "preview_signal_month"),
-        ("previewHolding", "preview_holding_month"),
-        ("previewThrough", "market_data_through_ny_date"),
-    ]:
-        if str(summary.get(key)) != str(preview[source_key]):
-            raise RuntimeError(f"PDS canonical platform summary Preview mismatch: {key}")
+    preview = optional_bound_summary(data.get("pds_forward_preview", {}), label="Forward Preview")
+    if preview is None:
+        if summary.get("previewAvailable") is not False:
+            raise RuntimeError("PDS canonical platform summary must mark unavailable Preview explicitly")
+        for key in ("previewSignal", "previewHolding", "previewThrough"):
+            if summary.get(key) is not None:
+                raise RuntimeError(f"PDS canonical platform summary unavailable Preview must bind {key}=null")
+    else:
+        if summary.get("previewAvailable") is not True:
+            raise RuntimeError("PDS canonical platform summary available Preview is not marked available")
+        for key, source_key in [
+            ("previewSignal", "preview_signal_month"),
+            ("previewHolding", "preview_holding_month"),
+            ("previewThrough", "market_data_through_ny_date"),
+        ]:
+            if str(summary.get(key)) != str(preview[source_key]):
+                raise RuntimeError(f"PDS canonical platform summary Preview mismatch: {key}")
+
+    adaptive_preview = optional_bound_summary(data.get("adaptive_preview", {}), label="Adaptive Preview")
+    if adaptive_preview is None:
+        if summary.get("adaptivePreviewAvailable") is not False:
+            raise RuntimeError("PDS canonical platform summary must mark unavailable Adaptive Preview explicitly")
+        if summary.get("adaptivePreviewState") is not None or summary.get("adaptivePreviewRiskBudget") is not None:
+            raise RuntimeError("PDS canonical platform summary unavailable Adaptive Preview must bind null state/risk budget")
+    else:
+        if summary.get("adaptivePreviewAvailable") is not True:
+            raise RuntimeError("PDS canonical platform summary available Adaptive Preview is not marked available")
+        if summary.get("adaptivePreviewState") != str(adaptive_preview["adaptive_state"]) or not close(summary.get("adaptivePreviewRiskBudget"), adaptive_preview["risk_budget"]):
+            raise RuntimeError("PDS canonical platform summary Adaptive Preview mismatch")
 
     fx_state = data["fx_operational_sensitivity"]["state"]
     off_fx = one(fx_state, "state_type", "OFFICIAL_DECISION_SENSITIVITY")
-    prev_fx = one(fx_state, "state_type", "INTRAMONTH_PREVIEW")
+    prev_fx = optional_one(fx_state, "state_type", "INTRAMONTH_PREVIEW")
     for key, value in [
         ("officialFxHedge", off_fx["hedge_ratio"]),
         ("officialFxZscore", off_fx["zscore"]),
-        ("previewFxHedge", prev_fx["hedge_ratio"]),
-        ("previewFxZscore", prev_fx["zscore"]),
     ]:
         if not close(summary.get(key), value):
             raise RuntimeError(f"PDS canonical platform summary FX mismatch: {key}")
+    if prev_fx is None:
+        if summary.get("previewFxAvailable") is not False:
+            raise RuntimeError("PDS canonical platform summary must mark unavailable FX Preview explicitly")
+        if summary.get("previewFxHedge") is not None or summary.get("previewFxZscore") is not None:
+            raise RuntimeError("PDS canonical platform summary unavailable FX Preview must bind null hedge/z-score")
+    else:
+        if summary.get("previewFxAvailable") is not True:
+            raise RuntimeError("PDS canonical platform summary available FX Preview is not marked available")
+        for key, value in [("previewFxHedge", prev_fx["hedge_ratio"]), ("previewFxZscore", prev_fx["zscore"])]:
+            if not close(summary.get(key), value):
+                raise RuntimeError(f"PDS canonical platform summary FX mismatch: {key}")
 
     recent = summary.get("recentMonthlyReturns", [])
     if len(recent) != 12:

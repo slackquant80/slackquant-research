@@ -190,7 +190,7 @@ export default function PdsSystemPage() {
               <div>
                 <span className="pds-state-label">Dynamic FX Overlay</span>
                 <strong>{pct(state.officialFxHedge, 0)} official hedge</strong>
-                <small>Monthly USD/KRW implementation overlay; the current Preview hedge is {pct(state.previewFxHedge, 0)} under the present monitoring state.</small>
+                <small>{state.previewFxAvailable && state.previewFxHedge !== null ? `Monthly USD/KRW implementation overlay; the current Preview hedge is ${pct(state.previewFxHedge, 0)} under the present monitoring state.` : "Monthly USD/KRW implementation overlay; the next Preview hedge is currently unavailable."}</small>
               </div>
             </div>
 
@@ -198,7 +198,7 @@ export default function PdsSystemPage() {
               <div className="metric"><div className="value">{state.officialSignal}</div><div className="label">Official signal</div></div>
               <div className="metric"><div className="value">{state.holdingMonth}</div><div className="label">Current holding</div></div>
               <div className="metric"><div className="value">{state.markThrough}</div><div className="label">Market through</div></div>
-              <div className="metric"><div className="value">{state.previewSignal} → {state.previewHolding}</div><div className="label">Preview signal → holding</div></div>
+              <div className="metric"><div className="value">{state.previewAvailable && state.previewSignal && state.previewHolding ? `${state.previewSignal} → ${state.previewHolding}` : "Unavailable"}</div><div className="label">Preview signal → holding</div></div>
             </div>
 
             <div className="boundary-note">

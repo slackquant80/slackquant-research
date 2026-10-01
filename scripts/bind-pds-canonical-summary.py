@@ -29,6 +29,31 @@ def one(rows: list[dict[str, Any]], key: str, value: str) -> dict[str, Any]:
     return found[0]
 
 
+def optional_bound_summary(section: Any, *, label: str) -> dict[str, Any] | None:
+    if not isinstance(section, dict):
+        raise RuntimeError(f"{label} section must be an object")
+    rows = section.get("summary") or []
+    if not isinstance(rows, list):
+        raise RuntimeError(f"{label} summary must be a list")
+    available = section.get("available") is True
+    if available:
+        if len(rows) != 1:
+            raise RuntimeError(f"{label} marked available but expected exactly one summary row; found {len(rows)}")
+        if not isinstance(rows[0], dict):
+            raise RuntimeError(f"{label} summary row must be an object")
+        return rows[0]
+    if rows:
+        raise RuntimeError(f"{label} marked unavailable but contains {len(rows)} summary row(s)")
+    return None
+
+
+def optional_one(rows: list[dict[str, Any]], key: str, value: str) -> dict[str, Any] | None:
+    found = [r for r in rows if str(r.get(key)) == value]
+    if len(found) > 1:
+        raise RuntimeError(f"expected at most one row where {key}={value!r}; found {len(found)}")
+    return found[0] if found else None
+
+
 def num(v: Any) -> float:
     return float(v)
 
@@ -95,15 +120,15 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
     adaptive = data["adaptive"]
     adaptive_op = adaptive["operational_summary"][0]
     adaptive_hist = adaptive["historical_summary"][0]
-    preview = data["pds_forward_preview"]["summary"][0]
-    adaptive_preview = data["adaptive_preview"]["summary"][0]
+    preview = optional_bound_summary(data.get("pds_forward_preview", {}), label="PDS Forward Preview")
+    adaptive_preview = optional_bound_summary(data.get("adaptive_preview", {}), label="Adaptive Preview")
     fx = data["fx_operational_sensitivity"]
     fx_state = fx["state"]
     fx_summary = fx["summary"]
     core_summary = data["core_daily_performance"]["summary"]
 
     official_fx = one(fx_state, "state_type", "OFFICIAL_DECISION_SENSITIVITY")
-    preview_fx = one(fx_state, "state_type", "INTRAMONTH_PREVIEW")
+    preview_fx = optional_one(fx_state, "state_type", "INTRAMONTH_PREVIEW")
     core = one(core_summary, "series_id", "PDS_CORE_FIXED_CURRENT_POLICY")
     core_fx = one(fx_summary, "series_id", "DYNAMIC_COSTED")
     adaptive_fx = one(fx_summary, "series_id", "ADAPTIVE_DYNAMIC_COSTED")
@@ -120,15 +145,18 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
         "coreProviders": ["ADAA", "F2R"],
         "adaptiveState": str(adaptive_op["state"]),
         "adaptiveRiskBudget": num(adaptive_op["risk_budget"]),
-        "previewSignal": str(preview["preview_signal_month"]),
-        "previewHolding": str(preview["preview_holding_month"]),
-        "previewThrough": str(preview["market_data_through_ny_date"]),
-        "adaptivePreviewState": str(adaptive_preview["adaptive_state"]),
-        "adaptivePreviewRiskBudget": num(adaptive_preview["risk_budget"]),
+        "previewAvailable": preview is not None,
+        "previewSignal": str(preview["preview_signal_month"]) if preview is not None else None,
+        "previewHolding": str(preview["preview_holding_month"]) if preview is not None else None,
+        "previewThrough": str(preview["market_data_through_ny_date"]) if preview is not None else None,
+        "adaptivePreviewAvailable": adaptive_preview is not None,
+        "adaptivePreviewState": str(adaptive_preview["adaptive_state"]) if adaptive_preview is not None else None,
+        "adaptivePreviewRiskBudget": num(adaptive_preview["risk_budget"]) if adaptive_preview is not None else None,
         "officialFxHedge": num(official_fx["hedge_ratio"]),
         "officialFxZscore": num(official_fx["zscore"]),
-        "previewFxHedge": num(preview_fx["hedge_ratio"]),
-        "previewFxZscore": num(preview_fx["zscore"]),
+        "previewFxAvailable": preview_fx is not None,
+        "previewFxHedge": num(preview_fx["hedge_ratio"]) if preview_fx is not None else None,
+        "previewFxZscore": num(preview_fx["zscore"]) if preview_fx is not None else None,
         "recentMonthlyReturns": recent_monthly_returns(data, 12),
         "performance": [
             perf(core_fx, label="PDS Core + Dynamic FX"),
@@ -141,7 +169,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
 
 def render_ts(summary: dict[str, Any]) -> str:
     payload = json.dumps(summary, ensure_ascii=False, indent=2)
-    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewSignal: string;\n  previewHolding: string;\n  previewThrough: string;\n  adaptivePreviewState: string;\n  adaptivePreviewRiskBudget: number;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxHedge: number;\n  previewFxZscore: number;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
+    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string;\n  adaptiveRiskBudget: number;\n  previewAvailable: boolean;\n  previewSignal: string | null;\n  previewHolding: string | null;\n  previewThrough: string | null;\n  adaptivePreviewAvailable: boolean;\n  adaptivePreviewState: string | null;\n  adaptivePreviewRiskBudget: number | null;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxAvailable: boolean;\n  previewFxHedge: number | null;\n  previewFxZscore: number | null;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
 
 
 def main() -> int:

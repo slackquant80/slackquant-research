@@ -28,20 +28,24 @@ export type PdsCanonicalSummary = {
   coreProviders: string[];
   adaptiveState: string;
   adaptiveRiskBudget: number;
-  previewSignal: string;
-  previewHolding: string;
-  previewThrough: string;
-  adaptivePreviewState: string;
-  adaptivePreviewRiskBudget: number;
+  previewAvailable: boolean;
+  previewSignal: string | null;
+  previewHolding: string | null;
+  previewThrough: string | null;
+  adaptivePreviewAvailable: boolean;
+  adaptivePreviewState: string | null;
+  adaptivePreviewRiskBudget: number | null;
   officialFxHedge: number;
   officialFxZscore: number;
-  previewFxHedge: number;
-  previewFxZscore: number;
+  previewFxAvailable: boolean;
+  previewFxHedge: number | null;
+  previewFxZscore: number | null;
   recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];
   performance: PdsCanonicalPerformanceRow[];
 };
 
 // Generated from the current PDS public dashboard.
+// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.
 // Do not hand-edit numerical values; refresh through the PDS publication workflow.
 export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
@@ -58,13 +62,16 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   ],
   "adaptiveState": "NORMAL",
   "adaptiveRiskBudget": 1.0,
+  "previewAvailable": true,
   "previewSignal": "2026-09",
   "previewHolding": "2026-10",
   "previewThrough": "2026-09-28",
+  "adaptivePreviewAvailable": true,
   "adaptivePreviewState": "DEFENSIVE",
   "adaptivePreviewRiskBudget": 0.7104738354682922,
   "officialFxHedge": 0.5,
   "officialFxZscore": 0.24941947094137737,
+  "previewFxAvailable": true,
   "previewFxHedge": 0.5,
   "previewFxZscore": 0.09100232665823078,
   "recentMonthlyReturns": [
