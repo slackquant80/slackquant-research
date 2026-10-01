@@ -103,36 +103,68 @@ def perf(row: dict[str, Any], *, label: str) -> dict[str, Any]:
 def recent_monthly_returns(data: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
     core_monthly = data["core_daily_performance"]["monthly"]
     fx_monthly = data["fx_operational_sensitivity"]["monthly"]
-    periods = sorted({
+
+    # The platform chart is a like-for-like historical comparison.  At a month-end
+    # rollover the Core/Dynamic-FX series can already have the newly completed month
+    # while the certified prior-parent Adaptive/Dynamic-FX comparison has no value for
+    # that month.  A blank Adaptive value is therefore not zero and must not be coerced.
+    # Bind the latest 12 *common completed* months instead, while still failing on
+    # malformed numbers or gaps inside the selected common window.
+    core_periods = sorted({
         str(r.get("calendar_month", ""))
         for r in core_monthly
         if str(r.get("series_id")) == "PDS_CORE_FIXED_CURRENT_POLICY"
         and re_match_month(str(r.get("calendar_month", "")))
-        and r.get("net_return") is not None
-    })[-limit:]
-    if len(periods) != limit:
-        raise RuntimeError(f"expected {limit} completed PDS Core months for platform chart; found {len(periods)}")
+        and optional_num(r.get("net_return"), label=f"PDS Core monthly return {r.get('calendar_month', '')}") is not None
+    })
+    if len(core_periods) < limit:
+        raise RuntimeError(f"expected at least {limit} completed PDS Core months for platform chart; found {len(core_periods)}")
 
+    core_period_set = set(core_periods)
     fx_by_month: dict[str, dict[str, Any]] = {}
     for row in fx_monthly:
         month = str(row.get("holding_month", ""))
-        if month not in periods:
+        if month not in core_period_set:
             continue
         if month in fx_by_month:
             raise RuntimeError(f"duplicate FX monthly row for {month}")
+        # Dynamic FX is the current-definition Core comparison and must exist for a
+        # completed Core month whenever an FX monthly row is present.
+        if optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}") is None:
+            raise RuntimeError(f"missing Core Dynamic-FX return for completed month {month}")
+        # Adaptive may be blank only as an unavailable historical observation.  A
+        # nonblank malformed value still fails through optional_num().
+        optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
         fx_by_month[month] = row
+
+    common_periods = [
+        month for month in core_periods
+        if month in fx_by_month
+        and optional_num(fx_by_month[month].get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}") is not None
+    ]
+    if len(common_periods) < limit:
+        raise RuntimeError(f"expected at least {limit} common completed Core/Adaptive Dynamic-FX months for platform chart; found {len(common_periods)}")
+    periods = common_periods[-limit:]
+
+    # Do not silently bridge an internal historical gap.  The selected comparison
+    # window must be consecutive in the completed Core monthly lineage; only trailing
+    # Core months after the latest Adaptive observation may be excluded.
+    start = core_periods.index(periods[0])
+    expected = core_periods[start:start + limit]
+    if periods != expected:
+        raise RuntimeError(f"PDS common completed monthly comparison contains an internal gap: {periods}")
 
     out: list[dict[str, Any]] = []
     for month in periods:
-        row = fx_by_month.get(month)
-        if row is None:
-            raise RuntimeError(f"missing FX monthly row for recent completed month {month}")
-        if row.get("dynamic_costed_return") is None or row.get("adaptive_dynamic_costed_return") is None:
-            raise RuntimeError(f"missing Core/Adaptive Dynamic-FX return for recent completed month {month}")
+        row = fx_by_month[month]
+        core_fx = optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}")
+        adaptive_fx = optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
+        if core_fx is None or adaptive_fx is None:
+            raise RuntimeError(f"common completed FX comparison unexpectedly unavailable for {month}")
         out.append({
             "holdingMonth": month,
-            "coreDynamicFx": num(row["dynamic_costed_return"]),
-            "adaptiveDynamicFx": num(row["adaptive_dynamic_costed_return"]),
+            "coreDynamicFx": core_fx,
+            "adaptiveDynamicFx": adaptive_fx,
         })
     return out
 

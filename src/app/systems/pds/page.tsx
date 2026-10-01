@@ -74,7 +74,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
       <figcaption className="pds-monthly-chart-head">
         <div>
           <h3>Recent Completed Monthly Returns</h3>
-          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · historical series · current MTD excluded</p>
+          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · latest common completed months · current MTD excluded</p>
         </div>
         <div className="pds-monthly-legend" aria-label="Chart legend">
           <span><i className="pds-legend-swatch core" />Core + Dynamic FX</span>
@@ -82,7 +82,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
         </div>
       </figcaption>
       <div className="pds-monthly-chart-scroll" role="region" aria-label="Recent completed monthly returns chart" tabIndex={0}>
-        <svg className="pds-monthly-svg" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Twelve completed holding-month returns for PDS Core plus Dynamic FX and PDS Adaptive plus Dynamic FX">
+        <svg className="pds-monthly-svg" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Twelve common completed holding-month returns for PDS Core plus Dynamic FX and PDS Adaptive plus Dynamic FX">
           {ticks.map((tick) => (
             <g key={tick}>
               <line className={tick === 0 ? "pds-chart-zero" : "pds-chart-grid"} x1={left} x2={width - right} y1={yForTick(tick)} y2={yForTick(tick)} />
@@ -107,7 +107,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
           })}
         </svg>
       </div>
-      <div className="pds-monthly-chart-note">Adaptive results are the certified prior-parent historical comparison and are not rebased to the current Core definition. Detailed same-period and provider comparisons remain in the PDS dashboard.</div>
+      <div className="pds-monthly-chart-note">Adaptive results are the certified prior-parent historical comparison and are not rebased to the current Core definition. The chart therefore uses the latest 12 completed months available for both series and may end before the latest Core-only completed month. Detailed same-period and provider comparisons remain in the PDS dashboard.</div>
     </figure>
   );
 }
@@ -298,7 +298,7 @@ export default function PdsSystemPage() {
             <div className="kicker">Integrated performance</div>
             <h2>Recent completed returns with their evidence boundaries</h2>
             <p className="body-copy">
-              The chart shows the most recent 12 completed holding months for the two Dynamic FX historical series; current MTD is
+              The chart shows the most recent 12 common completed holding months available for both Dynamic FX historical series; current MTD and months without a completed Adaptive historical observation are
               excluded. The table summarizes the historical series surfaced in this platform summary. Core rows begin in May 2017.
               Adaptive rows begin in May 2021 and belong to the certified frozen-policy comparison under the prior Core parent
               definition; they are research evidence, not a current-Core Adaptive track record. The PDS dashboard separately shows

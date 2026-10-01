@@ -175,6 +175,46 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def expected_recent_common_months(data: dict[str, Any], limit: int = 12) -> list[str]:
+    core_monthly = data["core_daily_performance"]["monthly"]
+    fx_monthly = data["fx_operational_sensitivity"]["monthly"]
+    core_periods = sorted({
+        str(r.get("calendar_month", ""))
+        for r in core_monthly
+        if str(r.get("series_id")) == "PDS_CORE_FIXED_CURRENT_POLICY"
+        and re_match_month(str(r.get("calendar_month", "")))
+        and optional_num(r.get("net_return"), label=f"PDS Core monthly return {r.get('calendar_month', '')}") is not None
+    })
+    if len(core_periods) < limit:
+        raise RuntimeError(f"PDS dashboard has fewer than {limit} completed Core months")
+
+    core_period_set = set(core_periods)
+    fx_by_month: dict[str, dict[str, Any]] = {}
+    for row in fx_monthly:
+        month = str(row.get("holding_month", ""))
+        if month not in core_period_set:
+            continue
+        if month in fx_by_month:
+            raise RuntimeError(f"PDS dashboard duplicate FX monthly row for {month}")
+        if optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}") is None:
+            raise RuntimeError(f"PDS dashboard missing Core Dynamic-FX return for completed month {month}")
+        optional_num(row.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
+        fx_by_month[month] = row
+
+    common = [
+        month for month in core_periods
+        if month in fx_by_month
+        and optional_num(fx_by_month[month].get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}") is not None
+    ]
+    if len(common) < limit:
+        raise RuntimeError(f"PDS dashboard has fewer than {limit} common completed Core/Adaptive Dynamic-FX months")
+    periods = common[-limit:]
+    start = core_periods.index(periods[0])
+    if periods != core_periods[start:start + limit]:
+        raise RuntimeError("PDS dashboard common completed monthly comparison contains an internal gap")
+    return periods
+
+
 def main() -> int:
     systems = need(SYSTEMS)
     systems_page = need(SYSTEMS_PAGE)
@@ -401,17 +441,17 @@ def main() -> int:
     if len(recent) != 12:
         raise RuntimeError(f"PDS canonical platform summary recent monthly return row count mismatch: {len(recent)}")
     fx_monthly = {str(r.get("holding_month")): r for r in data["fx_operational_sensitivity"]["monthly"]}
-    core_periods = sorted({
-        str(r.get("calendar_month"))
-        for r in data["core_daily_performance"]["monthly"]
-        if str(r.get("series_id")) == "PDS_CORE_FIXED_CURRENT_POLICY" and r.get("net_return") is not None
-    })[-12:]
-    if [str(r.get("holdingMonth")) for r in recent] != core_periods:
-        raise RuntimeError("PDS canonical platform summary recent monthly holding-month lineage mismatch")
+    common_periods = expected_recent_common_months(data, 12)
+    if [str(r.get("holdingMonth")) for r in recent] != common_periods:
+        raise RuntimeError("PDS canonical platform summary recent common-month lineage mismatch")
     for row in recent:
         month = str(row["holdingMonth"])
         source = fx_monthly.get(month)
-        if source is None or not close(row["coreDynamicFx"], source["dynamic_costed_return"]) or not close(row["adaptiveDynamicFx"], source["adaptive_dynamic_costed_return"]):
+        if source is None:
+            raise RuntimeError(f"PDS canonical platform summary FX monthly source missing: {month}")
+        source_core = optional_num(source.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}")
+        source_adaptive = optional_num(source.get("adaptive_dynamic_costed_return"), label=f"PDS Adaptive Dynamic-FX return {month}")
+        if source_core is None or source_adaptive is None or not close(row["coreDynamicFx"], source_core) or not close(row["adaptiveDynamicFx"], source_adaptive):
             raise RuntimeError(f"PDS canonical platform summary recent monthly return mismatch: {month}")
 
     core_rows = data["core_daily_performance"]["summary"]
