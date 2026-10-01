@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PdsDashboardPage() {
   // Replaced with the validated canonical-mirror SHA during the governed PDS publish pipeline.
-  const dashboardVersion = "57711cd364cd6a26";
+  const dashboardVersion = "557f58d8e3d0359c";
 
   return (
     <iframe
