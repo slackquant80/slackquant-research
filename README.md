@@ -117,3 +117,8 @@ npm.cmd run install:hooks
 `00_VALIDATE_RELEASE.cmd` remains available as a manual preflight tool, but it is no longer the only local safeguard.
 
 The local hook may be bypassed deliberately with Git's `--no-verify`; that is not an approved SlackQuant release path. Even if the local hook is bypassed or unavailable, GitHub Pages deployment remains fail-closed behind the same `npm run validate:release` CI gate.
+
+
+## System publication boundary
+
+Routine system/dashboard releases follow the repository ownership contract in `docs/SYSTEM_PUBLICATION_BOUNDARIES.md`. Shared platform source is edited in this repository; strategy projects publish only governed, bounded artifacts.

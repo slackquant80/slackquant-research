@@ -127,6 +127,7 @@ function assertCanonicalReleaseContract() {
     "scripts/validate-f2r-documentation.py",
     "scripts/validate-platform-full-audit.py",
     "scripts/validate-three-systems-surface.py",
+    "scripts/validate-system-publication-boundaries.py",
   ]) {
     requireFile(rel);
   }
@@ -140,6 +141,7 @@ assertCanonicalReleaseContract();
 
 runPowerShell("Normalize rendered Methods shell", "scripts/normalize-methods-navigation.ps1", ["-PlatformRoot", "."]);
 
+runPython("System publication boundary audit", "scripts/validate-system-publication-boundaries.py");
 runPython("PDS publication source audit", "scripts/validate-pds-publication.py");
 runPython("Methods UI source audit", "scripts/validate-methods-ui-integrity.py");
 runPython("F2R documentation source audit", "scripts/validate-f2r-documentation.py");
