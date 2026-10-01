@@ -114,9 +114,65 @@ def re_match_month(value: str) -> bool:
     return len(value) == 7 and value[:4].isdigit() and value[4] == "-" and value[5:].isdigit() and 1 <= int(value[5:]) <= 12
 
 
+
+def shift_month(period: str, delta: int = 1) -> str:
+    if not re_match_month(period):
+        return ""
+    y, m = map(int, period.split("-"))
+    n = y * 12 + m - 1 + delta
+    return f"{n // 12:04d}-{n % 12 + 1:02d}"
+
+
+def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
+    meta = data.get("meta") if isinstance(data.get("meta"), dict) else {}
+    current_mark = data.get("current_mark") if isinstance(data.get("current_mark"), dict) else {}
+    mark = current_mark.get("manifest") if isinstance(current_mark.get("manifest"), dict) else {}
+    core = data.get("core") if isinstance(data.get("core"), dict) else {}
+    core_manifest = core.get("manifest") if isinstance(core.get("manifest"), dict) else {}
+    core_summary = data.get("core_daily_performance", {}).get("summary", [])
+    core_row = one(core_summary, "series_id", "PDS_CORE_FIXED_CURRENT_POLICY")
+
+    signal_candidates = [
+        str(mark.get("decision_period") or "").strip(),
+        str(core_manifest.get("current_core_period") or "").strip(),
+        str(meta.get("latest_signal_period") or "").strip(),
+    ]
+    signals = {x for x in signal_candidates if x}
+    if not signals:
+        fallback = str(meta.get("latest_sealed_signal_period") or "").strip()
+        if fallback:
+            signals = {fallback}
+    if len(signals) != 1:
+        raise RuntimeError(f"PDS canonical Official signal clock is ambiguous: {sorted(signals)}")
+    official_signal = next(iter(signals))
+    if not re_match_month(official_signal):
+        raise RuntimeError(f"PDS canonical Official signal month is invalid: {official_signal!r}")
+
+    expected_holding = shift_month(official_signal, 1)
+    mark_holding = str(mark.get("holding_month") or "").strip()
+    if mark_holding and mark_holding != expected_holding:
+        raise RuntimeError(f"PDS canonical holding clock mismatch: Official {official_signal} implies {expected_holding}, mark has {mark_holding}")
+
+    completed = str(mark.get("completed_performance_cutoff") or core_row.get("end_date") or "").strip()
+    if not completed:
+        raise RuntimeError("PDS canonical completed-performance cutoff is unavailable")
+    mark_through = str(mark.get("latest_price_date") or mark.get("data_through_ny_close") or completed).strip()
+    mark_available = current_mark.get("available") is True and str(mark.get("status") or "") == "PASS_PROVISIONAL_MARK"
+    execution = str(mark.get("execution_date") or "").strip()
+    if mark_available and not execution:
+        raise RuntimeError("PDS Current MTD is marked available but execution_date is missing")
+
+    return {
+        "systemAsOfKst": str(mark.get("system_as_of_kst") or meta.get("dashboard_generated_at") or ""),
+        "officialSignal": official_signal,
+        "holdingMonth": expected_holding,
+        "executionClose": execution,
+        "markThrough": mark_through,
+        "completedThrough": completed,
+    }
+
 def build_summary(data: dict[str, Any]) -> dict[str, Any]:
-    meta = data["meta"]
-    mark = data["current_mark"]["manifest"]
+    clock = canonical_clock(data)
     adaptive = data["adaptive"]
     adaptive_op = adaptive["operational_summary"][0]
     adaptive_hist = adaptive["historical_summary"][0]
@@ -135,13 +191,13 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
-        "generatedAt": str(meta.get("dashboard_generated_at", "")),
-        "systemAsOfKst": str(mark.get("system_as_of_kst", "")),
-        "officialSignal": str(mark["decision_period"]),
-        "holdingMonth": str(mark["holding_month"]),
-        "executionClose": str(mark["execution_date"]),
-        "markThrough": str(mark["latest_price_date"]),
-        "completedThrough": str(mark["completed_performance_cutoff"]),
+        "generatedAt": str(data.get("meta", {}).get("dashboard_generated_at", "")),
+        "systemAsOfKst": clock["systemAsOfKst"],
+        "officialSignal": clock["officialSignal"],
+        "holdingMonth": clock["holdingMonth"],
+        "executionClose": clock["executionClose"],
+        "markThrough": clock["markThrough"],
+        "completedThrough": clock["completedThrough"],
         "coreProviders": ["ADAA", "F2R"],
         "adaptiveState": str(adaptive_op["state"]),
         "adaptiveRiskBudget": num(adaptive_op["risk_budget"]),
