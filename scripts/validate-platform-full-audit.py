@@ -290,7 +290,8 @@ def main() -> int:
     pds = need(
         "src/app/systems/pds/page.tsx",
         "PDS_CANONICAL_PLATFORM_PAGE_V1",
-        "Adaptive Risk Control · bounded hybrid",
+        "canonicalWording.pds.fxImplementationKicker",
+        "canonicalWording.pds.adaptiveRiskMeta",
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",

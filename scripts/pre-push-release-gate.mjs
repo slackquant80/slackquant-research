@@ -5,6 +5,16 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+const GOVERNED_PUSH_ENV = "SQ_GOVERNED_GIT_PUSH";
+
+function assertGovernedPushInvocation() {
+  if (process.env[GOVERNED_PUSH_ENV] !== "1") {
+    console.error("\n[PRE-PUSH GUARD FAIL] Direct git push is disabled for this repository.");
+    console.error("[PRE-PUSH GUARD FAIL] Use 00_GOVERNED_RELEASE.ps1 so validation, whitelist, commit, and push stay coupled.");
+    process.exit(1);
+  }
+}
+
 function capture(args) {
   const r = spawnSync("git", args, { cwd: ROOT, encoding: "utf8", shell: false });
   if (r.error || r.status !== 0) {
@@ -23,6 +33,8 @@ function ensureClean(label) {
     process.exit(1);
   }
 }
+
+assertGovernedPushInvocation();
 
 const beforeHead = capture(["rev-parse", "HEAD"]);
 ensureClean("Uncommitted or untracked files detected before release validation.");

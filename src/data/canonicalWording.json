@@ -1,0 +1,16 @@
+{
+  "schema": "SLACKQUANT_CANONICAL_WORDING_V1",
+  "pds": {
+    "adaptiveRiskMeta": "Adaptive Risk Control · bounded hybrid",
+    "fxImplementationKicker": "FX implementation"
+  },
+  "shared": {
+    "officialSignal": "Official signal",
+    "preview": "Preview",
+    "pending": "PENDING"
+  },
+  "retired": [
+    "Adaptive Risk Control · RL-assisted hybrid",
+    "Investor implementation"
+  ]
+}

@@ -4,6 +4,18 @@ cd /d "%~dp0"
 
 echo [SlackQuant] Canonical release validation
 
+echo [SlackQuant] Canonical wording lock
+where py >nul 2>nul
+if not errorlevel 1 (
+  py -3 scripts\validate-canonical-wording.py
+) else (
+  python scripts\validate-canonical-wording.py
+)
+if errorlevel 1 (
+  echo [FAIL] Canonical wording lock failed. Do not push.
+  exit /b 1
+)
+
 where npm.cmd >nul 2>nul
 if errorlevel 1 (
   echo [FAIL] Node.js/npm is not available on PATH.
