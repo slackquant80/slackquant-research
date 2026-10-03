@@ -11,8 +11,9 @@ export const adaaPublishedEvidence = {
 } as const;
 
 export const f2rPublishedEvidence = {
-  sourceLabel: "Public model-adoption study · retrospective historical evidence",
-  support: "May 1, 2017 → August 3, 2026",
+  sourceLabel: "Public model-adoption study · retrospective historical research evidence",
+  signalWindow: "112 historical signal dates · March 2017 → June 2026",
+  performancePath: "Research performance path · May 1, 2017 → August 3, 2026",
   metrics: [
     ["17.13%", "Selected hybrid CAGR"],
     ["0.987", "Selected hybrid Sharpe"],
@@ -25,5 +26,5 @@ export const f2rPublishedEvidence = {
     ["Three-model + Chronos-2 hybrid", "17.13%", "0.987", "Selected historical research configuration"],
   ] as const,
   boundary:
-    "This is a retrospective technology counterfactual, not a 2017–2026 live track record. The historical hybrid configuration is research evidence and does not disclose the current protected production recipe.",
+    "This is a retrospective technology counterfactual, not a live F2R performance period. The dates above belong to the frozen model-adoption study; current Official, Preview, and completed production performance are maintained separately by the live F2R release workflow. The historical hybrid configuration is research evidence and does not disclose the current protected production recipe.",
 } as const;

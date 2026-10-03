@@ -1,10 +1,7 @@
-00_GOVERNED_RELEASE.ps1
-00_INSTALL_GOVERNED_GIT_HOOKS.ps1
-00_VALIDATE_RELEASE.cmd
 GOVERNED_RELEASE_ALLOWLIST_20261003.txt
-scripts/pre-push-release-gate.mjs
-scripts/validate-canonical-wording.py
 scripts/validate-pds-publication.py
 scripts/validate-platform-full-audit.py
+scripts/validate-three-systems-surface.py
+src/app/systems/f2r/page.tsx
 src/app/systems/pds/page.tsx
-src/data/canonicalWording.json
+src/data/systemEvidence.ts

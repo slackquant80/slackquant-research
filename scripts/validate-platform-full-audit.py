@@ -303,6 +303,9 @@ def main() -> int:
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
         "Recent completed returns with their evidence boundaries",
+        "completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth}",
+        "Adaptive evidence-classification cutoff:",
+        "This cutoff is not the chart end date",
         "the PDS dashboard shows the current decision",
         "Research review & portfolio admission",
     )
@@ -389,12 +392,21 @@ def main() -> int:
         "Published empirical evidence",
         "Historical portfolio comparison",
         "f2rPublishedEvidence",
+        "signalWindow",
+        "performancePath",
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
     )
     for forbidden in ("252-session", "C3_REX_SCORE_CHRONOS20", "C3_REX", "exact contribution weight"):
         if forbidden in f2r:
             raise RuntimeError(f"F2R public recipe-protection regression: {forbidden}")
+    f2r_evidence = need(
+        "src/data/systemEvidence.ts",
+        "112 historical signal dates · March 2017 → June 2026",
+        "Research performance path · May 1, 2017 → August 3, 2026",
+        "not a live F2R performance period",
+        "current Official, Preview, and completed production performance",
+    )
     f2r_documentation = ROOT / "public/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
     if not f2r_documentation.is_file() or f2r_documentation.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("F2R System Documentation v2.1 PDF missing or invalid")

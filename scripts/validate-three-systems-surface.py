@@ -202,7 +202,10 @@ def audit_static(require_build: bool) -> list[Check]:
 
     f2r = text(SYSTEM_PAGE_FILES["f2r"])
     add(c, "F2R identity on page", "Forecast-to-Rank Allocation (F2R)" in systems and "item.title" in f2r, "registry-driven formal identity")
-    add(c, "F2R visible empirical evidence", all(x in f2r for x in ["Published empirical evidence", "Historical portfolio comparison", "f2rPublishedEvidence"]), "model-adoption evidence visible on System page")
+    add(c, "F2R visible empirical evidence", all(x in f2r for x in ["Published empirical evidence", "Historical portfolio comparison", "f2rPublishedEvidence", "signalWindow", "performancePath"]), "model-adoption evidence visible with signal window and research performance path separated")
+    evidence = text(ROOT / "src/data/systemEvidence.ts")
+    add(c, "F2R research/live clock separation", all(x in evidence for x in ["112 historical signal dates", "Research performance path", "not a live F2R performance period", "current Official, Preview, and completed production performance"]), "frozen research dates cannot read as the current live performance cutoff")
+    add(c, "PDS chart/evidence clock separation", all(x in pds for x in ["completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth}", "Adaptive evidence-classification cutoff:", "This cutoff is not the chart end date", "evidence-classification cutoff, not the end of the displayed performance period"]), "chart support is canonical-data-derived and distinct from the Adaptive evidence cutoff")
     equity = text(ROOT / "src/app/systems/equity-alpha/page.tsx")
     equity_helper = text(ROOT / "src/lib/equityAlphaEvidence.ts")
     add(c, "Equity Alpha canonical evidence binding", all(x in equity for x in ["Completed daily evidence", "getEquityAlphaEvidence", "Annualized active return vs. ACWI", "Relative drawdown"]) and all(x in equity_helper for x in ["dashboard_data.js", "globalFinalDaily", "informationRatio", "relativeDrawdown"]), "System page derives completed evidence from public dashboard authority")

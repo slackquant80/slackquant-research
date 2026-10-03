@@ -134,7 +134,7 @@ export default function F2rSystemPage() {
             <div className="selected-table-block">
               <div className="selected-exhibits-head">
                 <div className="section-title">Historical portfolio comparison</div>
-                <p>{f2rPublishedEvidence.support} · same Top-4 portfolio interface</p>
+                <p>{f2rPublishedEvidence.signalWindow}<br />{f2rPublishedEvidence.performancePath} · same Top-4 research portfolio interface</p>
               </div>
               <div className="evidence-table-wrap" role="region" aria-label="F2R historical portfolio comparison" tabIndex={0}>
                 <table className="evidence-table">

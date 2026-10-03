@@ -75,7 +75,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
       <figcaption className="pds-monthly-chart-head">
         <div>
           <h3>Recent Completed Monthly Returns</h3>
-          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · latest completed months · current MTD excluded</p>
+          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth} · current MTD excluded</p>
         </div>
         <div className="pds-monthly-legend" aria-label="Chart legend">
           <span><i className="pds-legend-swatch core" />Core + Dynamic FX</span>
@@ -108,7 +108,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
           })}
         </svg>
       </div>
-      <div className="pds-monthly-chart-note">Adaptive is shown as one continuous frozen-policy monitored path. Certified historical evidence ends on 2026-08-31; the same frozen controller then continues as forward monitoring without retraining. Current MTD remains excluded until the holding month is completed.</div>
+      <div className="pds-monthly-chart-note"><b>Adaptive evidence-classification cutoff:</b> 2026-08-31. Returns through that date are certified historical evidence under the prior Core parent definition; later returns are forward monitoring of the same frozen controller without retraining. This cutoff is not the chart end date. Current MTD remains excluded until the holding month is completed.</div>
     </figure>
   );
 }
@@ -299,7 +299,7 @@ export default function PdsSystemPage() {
             <div className="kicker">Integrated performance</div>
             <h2>Recent completed returns with their evidence boundaries</h2>
             <p className="body-copy">
-              The chart shows the most recent 12 completed holding months for Core + Dynamic FX and the continuous Adaptive + Dynamic FX monitored path; current MTD is excluded. The table summarizes the corresponding completed series. Core rows begin in May 2017. Adaptive begins in May 2021: observations through 2026-08-31 are certified historical evidence under the prior Core parent definition, and subsequent observations are forward monitoring of the same frozen controller without retraining. The PDS dashboard separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
+              The chart shows the most recent 12 completed holding months for Core + Dynamic FX and the continuous Adaptive + Dynamic FX monitored path; its displayed window is taken directly from the canonical PDS summary, and current MTD is excluded. The table summarizes the corresponding completed series. Core rows begin in May 2017. Adaptive begins in May 2021. Its 2026-08-31 date is an evidence-classification cutoff, not the end of the displayed performance period: observations through that date are certified historical evidence under the prior Core parent definition, and subsequent observations are forward monitoring of the same frozen controller without retraining. The PDS dashboard separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
             </p>
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
@@ -333,7 +333,7 @@ export default function PdsSystemPage() {
               </table>
             </div>
             <div className="boundary-note">
-              <b>Evidence boundary:</b> Adaptive begins later than Core and retains a provenance break at 2026-08-31: prior observations are certified historical evidence, while later observations are forward monitoring of the frozen controller. The longer PDS reconstruction is a
+              <b>Adaptive evidence-classification cutoff:</b> Adaptive begins later than Core and retains a provenance break at 2026-08-31: prior observations are certified historical evidence, while later observations are forward monitoring of the frozen controller. The longer PDS reconstruction is a
               separate current-definition research series; standalone F2R and ADAA histories remain separate. Use the PDS dashboard
               for full portfolio detail.
             </div>
