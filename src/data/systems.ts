@@ -104,7 +104,7 @@ export const systemItems: SystemItem[] = [
     systemGroup: "equity-alpha",
     prominence: "standard",
     status: "Public live",
-    dateLabel: "Official signal 2026-08 · holding 2026-09",
+    dateLabel: "Monthly decision cycle",
     shortSummary:
       "A three-layer global equity strategy combining ML-based ETF selection, independent regional momentum allocation, and a selective Theme / Sector / Style path. ETF-level decisions are merged into one final portfolio and evaluated against ACWI with daily-first performance and explicit active-risk measures.",
     role: "Benchmark-Aware Global Equity ETF Portfolio",

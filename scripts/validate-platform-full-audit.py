@@ -180,6 +180,12 @@ def main() -> int:
         raise RuntimeError("Stress Lab standalone Dashboard Guide must be absent from the public registry")
     if systems_registry.count('status: "Public live"') < 5:
         raise RuntimeError("All public system cards must use the same Public live status label")
+    # EQUITY_ALPHA_DYNAMIC_CARD_CLOCK_V1
+    equity_registry_block = systems_registry.split('slug: "equity-alpha"', 1)[1].split('slug: "scenario-stress-lab"', 1)[0]
+    if 'dateLabel: "Monthly decision cycle"' not in equity_registry_block:
+        raise RuntimeError("Equity Alpha system card must use a non-dated monthly decision-cycle label")
+    if re.search(r'Official signal 20\d{2}-\d{2}|holding 20\d{2}-\d{2}', equity_registry_block):
+        raise RuntimeError("Equity Alpha system card must not duplicate live dashboard Official/holding dates")
     equity_css = need(
         "src/app/globals.css",
         ".equity-alpha-clock-grid",
