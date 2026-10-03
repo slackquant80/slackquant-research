@@ -50,7 +50,7 @@ export type PdsCanonicalSummary = {
 // Do not hand-edit numerical values; refresh through the PDS publication workflow.
 export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
-  "generatedAt": "2026-10-02T15:58:26.641617+09:00",
+  "generatedAt": "2026-10-03T11:51:32.780148+09:00",
   "systemAsOfKst": "2026-10-02T15:55:01.483458+09:00",
   "officialSignal": "2026-09",
   "holdingMonth": "2026-10",
