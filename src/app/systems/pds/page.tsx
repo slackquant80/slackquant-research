@@ -130,7 +130,7 @@ export default function PdsSystemPage() {
           <div className="paper-meta">
             <span>{item.status}</span>
             <span>Current Core providers · ADAA + F2R</span>
-            <span>Adaptive Risk Control · RL-assisted hybrid</span>
+            <span>Adaptive Risk Control · bounded hybrid</span>
           </div>
           <div className="actions">
             <Link
@@ -225,7 +225,7 @@ export default function PdsSystemPage() {
                 <p>PDS Adaptive uses an RL signal inside a bounded hybrid controller with independent point-in-time volatility confirmation. It does not select securities or replace the Core allocation engines.</p>
               </div>
               <div className="system-role-card">
-                <div className="kicker">Investor implementation</div>
+                <div className="kicker">FX implementation</div>
                 <h3>Dynamic FX Overlay</h3>
                 <p>Applies a monthly USD/KRW hedge decision and cost schedule while keeping the underlying USD portfolio decision separate.</p>
               </div>

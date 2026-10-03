@@ -246,7 +246,7 @@ def main() -> int:
 
     for tok in [
         "PDS_CANONICAL_PLATFORM_PAGE_V1",
-        "Adaptive Risk Control · RL-assisted hybrid",
+        "Adaptive Risk Control · bounded hybrid",
         "Current Active Core",
         "ADAA + F2R",
         "Dynamic FX Overlay",
