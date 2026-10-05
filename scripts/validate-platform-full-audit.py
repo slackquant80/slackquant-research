@@ -408,6 +408,36 @@ def main() -> int:
         "not a live F2R performance period",
         "current Official, Preview, and completed production performance",
     )
+    # LIVE_EVIDENCE_CANONICAL_PROVIDER_PATH_GATE_V1
+    live_sync = need(
+        "scripts/sync-live-system-evidence.py",
+        'Path("01_Post_IJF_Research") / "05_ADAA"',
+        'Path("01_Post_IJF_Research") / "12_MACRO_FORECAST_ALLOCATION"',
+        'root-level compatibility/shadow copies are not accepted',
+        'provider_project_root(research_root, "ADAA")',
+        'provider_project_root(research_root, "F2R")',
+        'F2R_OPERATOR_STATE_REL',
+        'f2r_operator_state.json',
+        'CURRENT_CANONICAL_MODEL_PORTFOLIO',
+        'CURRENT_CANONICAL_MODEL_RECONSTRUCTION',
+        'completed_performance',
+        'daily_series',
+        'Current MTD, Official decision, and Preview states are excluded.',
+    )
+    for forbidden in (
+        'research_root / "05_ADAA"',
+        'research_root / "12_MACRO_FORECAST_ALLOCATION"',
+    ):
+        if forbidden in live_sync:
+            raise RuntimeError(
+                "Live-evidence importer regressed to a noncanonical root-level provider path: " + forbidden
+            )
+    if 'f2r_public_state.json' in live_sync or '10_PUBLIC_SYSTEM") / "dashboard" / "public_data"' in live_sync:
+        raise RuntimeError(
+            "F2R live-performance importer regressed to the decision-only public-state artifact; "
+            "completed performance must come from the source-owned current-model operator state."
+        )
+
     # LIVE_COMPLETED_EVIDENCE_CONTRACT_V1
     for slug, expected_system in (("adaa", "ADAA"), ("f2r", "F2R")):
         evidence_path = ROOT / "public" / "data" / "systems" / slug / "live_evidence.json"

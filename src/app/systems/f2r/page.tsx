@@ -125,7 +125,7 @@ export default function F2rSystemPage() {
             <div className="kicker">Live operational evidence</div>
             <h2>Current-model performance updates with the governed F2R release</h2>
             <p className="body-copy">
-              This block is generated from the governed F2R public state and follows the current canonical model definition.
+              This block is generated from the source-owned F2R current-model performance state and follows the current canonical model definition.
               It advances only through completed performance; current MTD and Preview remain separate operating states and are excluded here.
             </p>
             <LivePerformanceChart

@@ -11,9 +11,37 @@ import argparse
 import json
 from pathlib import Path
 import csv
+import math
+import statistics
 from collections import OrderedDict
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 SCHEMA = "SLACKQUANT_LIVE_EVIDENCE_V1"
+
+# Canonical provider projects are nested under 01_Post_IJF_Research.
+# Root-level lookalikes are noncanonical deployment residue and must never be
+# used as live-evidence authority. This mirrors the PDS provider registry and
+# ADAA/F2R source-location contracts.
+CANONICAL_PROVIDER_PROJECTS = {
+    "ADAA": Path("01_Post_IJF_Research") / "05_ADAA",
+    "F2R": Path("01_Post_IJF_Research") / "12_MACRO_FORECAST_ALLOCATION",
+}
+
+
+def provider_project_root(research_root: Path, system: str) -> Path:
+    try:
+        rel = CANONICAL_PROVIDER_PROJECTS[system]
+    except KeyError as exc:
+        raise RuntimeError(f"Unknown provider system: {system}") from exc
+    root = research_root / rel
+    if not root.is_dir():
+        raise FileNotFoundError(
+            f"{system} canonical provider project missing: {root}. "
+            "Expected provider authority under 01_Post_IJF_Research; "
+            "root-level compatibility/shadow copies are not accepted."
+        )
+    return root
 
 
 def read_csv(path: Path):
@@ -35,7 +63,7 @@ def compound(rows, key):
 
 
 def build_adaa(research_root: Path):
-    base = research_root / "05_ADAA" / "09_RUNTIME" / "LIVE_DASHBOARD" / "PUBLIC_VIEW_SNAPSHOT" / "performance"
+    base = provider_project_root(research_root, "ADAA") / "09_RUNTIME" / "LIVE_DASHBOARD" / "PUBLIC_VIEW_SNAPSHOT" / "performance"
     path_rows = read_csv(base / "performance_path.csv")
     summary_rows = read_csv(base / "performance_summary.csv")
     if not path_rows or not summary_rows:
@@ -89,45 +117,133 @@ def build_adaa(research_root: Path):
     }
 
 
+F2R_OPERATOR_STATE_REL = Path("10_PUBLIC_SYSTEM") / "operator_dashboard" / "local_data" / "f2r_operator_state.json"
+F2R_CURRENT_ARCHITECTURE_ID = "C3_REX_SCORE_CHRONOS20"
+F2R_COST_POLICY_ID = "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1"
+F2R_EXECUTION_BOUNDARY = "FIRST_NEXT_COMMON_TRADING_DAY_CLOSE"
+KST = ZoneInfo("Asia/Seoul")
+
+
+def _f2r_current_model_performance(data: dict) -> dict:
+    ident = data.get("performance_identity") or {}
+    perf = data.get("completed_performance") or {}
+    if ident.get("identity") != "CURRENT_CANONICAL_MODEL_PORTFOLIO":
+        raise RuntimeError(f"F2R performance identity is not current canonical: {ident.get('identity')}")
+    if ident.get("architecture_id") != F2R_CURRENT_ARCHITECTURE_ID or perf.get("architecture_id") != F2R_CURRENT_ARCHITECTURE_ID:
+        raise RuntimeError("F2R current architecture is not the promoted C3 model")
+    if bool(ident.get("version_splice", True)):
+        raise RuntimeError("F2R current-model performance is version-spliced")
+    if not str(perf.get("status") or "").startswith("PASS"):
+        raise RuntimeError(f"F2R current-model performance is not PASS: {perf.get('status')}")
+    if str(perf.get("provenance_class") or "") != "CURRENT_CANONICAL_MODEL_RECONSTRUCTION":
+        raise RuntimeError(f"F2R current-model provenance mismatch: {perf.get('provenance_class')}")
+    if str(perf.get("risk_frequency") or "").upper() != "DAILY":
+        raise RuntimeError(f"F2R current-model risk frequency is not DAILY: {perf.get('risk_frequency')}")
+    if str(perf.get("transaction_cost_policy_id") or "") != F2R_COST_POLICY_ID:
+        raise RuntimeError(f"F2R current-model transaction-cost policy mismatch: {perf.get('transaction_cost_policy_id')}")
+    if str(perf.get("execution_boundary") or "") != F2R_EXECUTION_BOUNDARY:
+        raise RuntimeError(f"F2R current-model execution boundary mismatch: {perf.get('execution_boundary')}")
+    rows = perf.get("daily_series") or []
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("F2R current-model completed_performance.daily_series is unavailable")
+    return perf
+
+
+def _daily_metrics(returns: list[float], first_date: str, last_date: str) -> dict:
+    if len(returns) < 2:
+        raise RuntimeError("F2R completed daily history is too short for live metrics")
+    wealth = 1.0
+    peak = 1.0
+    mdd = 0.0
+    for ret in returns:
+        wealth *= 1.0 + ret
+        peak = max(peak, wealth)
+        mdd = min(mdd, wealth / peak - 1.0)
+    start = datetime.fromisoformat(first_date[:10]).date()
+    end = datetime.fromisoformat(last_date[:10]).date()
+    years = max((end - start).days / 365.25, len(returns) / 252.0)
+    cagr = wealth ** (1.0 / years) - 1.0
+    vol_d = statistics.stdev(returns)
+    ann_vol = vol_d * math.sqrt(252.0)
+    sharpe = (statistics.mean(returns) / vol_d) * math.sqrt(252.0) if vol_d > 0 else 0.0
+    calmar = cagr / abs(mdd) if mdd < -1e-12 else 0.0
+    return {
+        "cumulativeReturn": wealth - 1.0,
+        "cagr": cagr,
+        "annVol": ann_vol,
+        "sharpe": sharpe,
+        "mdd": mdd,
+        "calmar": calmar,
+    }
+
+
 def build_f2r(research_root: Path):
-    source = research_root / "12_MACRO_FORECAST_ALLOCATION" / "10_PUBLIC_SYSTEM" / "dashboard" / "public_data" / "f2r_public_state.json"
+    # F2R's public decision-state artifact intentionally excludes performance.
+    # Completed live performance authority is the source-owned current-model
+    # operator state that PDS also consumes after strict identity validation.
+    source = provider_project_root(research_root, "F2R") / F2R_OPERATOR_STATE_REL
+    if not source.is_file():
+        raise FileNotFoundError(f"F2R current-model operator state missing: {source}")
     data = json.loads(source.read_text(encoding="utf-8-sig"))
-    completed = data["completed_performance"]
-    comparison = data["benchmark_comparison"]
+    if not isinstance(data, dict):
+        raise RuntimeError("F2R operator state root is not an object")
+    perf = _f2r_current_model_performance(data)
 
-    by_month = OrderedDict()
-    for row in completed["growth_series"]:
-        by_month[row["date"][:7]] = row
-    path = [{"date": row["date"], "primary": float(row["growth"])} for row in by_month.values()]
-    recent = [{"month": row["month"], "primary": float(row["return"])} for row in completed["monthly_returns"][-12:]]
+    # Platform system pages show completed holding months only. The calendar
+    # month containing the KST run date is always treated as open and excluded,
+    # even if daily closes already exist. This prevents current MTD leakage.
+    open_month = datetime.now(KST).strftime("%Y-%m")
+    daily = []
+    seen_dates = set()
+    for raw in perf.get("daily_series") or []:
+        if not isinstance(raw, dict):
+            continue
+        d = str(raw.get("date") or "")[:10]
+        if len(d) != 10:
+            raise RuntimeError(f"F2R daily_series row has invalid date: {raw.get('date')}")
+        if d in seen_dates:
+            raise RuntimeError(f"F2R daily_series has duplicate date: {d}")
+        seen_dates.add(d)
+        month = d[:7]
+        if month >= open_month:
+            continue
+        ret = float(raw.get("net_return"))
+        if not math.isfinite(ret) or ret <= -1.0:
+            raise RuntimeError(f"F2R daily_series has invalid net_return on {d}: {raw.get('net_return')}")
+        daily.append((d, ret))
+    daily.sort(key=lambda x: x[0])
+    if len(daily) < 252:
+        raise RuntimeError(f"F2R completed current-model daily history is unexpectedly short: {len(daily)}")
 
-    primary = next(row for row in comparison["summary"] if str(row["series"]).startswith("F2R"))
-    benchmark = next(row for row in comparison["summary"] if str(row["series"]).startswith("SPY / AGG"))
-    def metrics(row):
-        return {
-            "cumulativeReturn": float(row["cumulative_return"]),
-            "cagr": float(row["cagr"]),
-            "annVol": float(row["ann_vol"]),
-            "sharpe": float(row["sharpe_rf0"]),
-            "mdd": float(row["max_drawdown"]),
-            "calmar": float(row["calmar"]),
-        }
+    wealth = 1.0
+    month_path: OrderedDict[str, dict] = OrderedDict()
+    month_returns: OrderedDict[str, float] = OrderedDict()
+    for d, ret in daily:
+        wealth *= 1.0 + ret
+        month = d[:7]
+        month_path[month] = {"date": d, "primary": wealth}
+        month_returns[month] = (1.0 + month_returns.get(month, 0.0)) * (1.0 + ret) - 1.0
+
+    if len(month_path) < 12:
+        raise RuntimeError(f"F2R completed current-model monthly coverage is unexpectedly short: {len(month_path)}")
+    path = list(month_path.values())
+    recent = [{"month": m, "primary": r} for m, r in list(month_returns.items())[-12:]]
+    completed_through = path[-1]["date"]
+    metrics = _daily_metrics([ret for _, ret in daily], daily[0][0], completed_through)
 
     return {
         "schema": SCHEMA,
         "system": "F2R",
-        "sourceAuthority": "F2R governed public state",
-        "completedThrough": completed["as_of_date"],
-        "supportStart": completed["support_start"],
-        "supportEnd": completed["support_end"],
+        "sourceAuthority": "F2R source-owned current-model operator state · completed history only",
+        "completedThrough": completed_through,
+        "supportStart": daily[0][0],
+        "supportEnd": completed_through,
         "primaryLabel": "F2R · current canonical model",
-        "benchmarkLabel": "SPY / AGG 60 / 40 · practitioner",
         "path": path,
         "recentMonthly": recent,
-        "metrics": {"primary": metrics(primary), "benchmark": metrics(benchmark)},
-        "boundary": completed["performance_note"],
+        "metrics": {"primary": metrics},
+        "boundary": "Completed current-model history only. Current MTD, Official decision, and Preview states are excluded.",
     }
-
 
 def render(payload):
     return json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
