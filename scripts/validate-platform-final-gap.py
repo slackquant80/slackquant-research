@@ -25,7 +25,7 @@ def main() -> int:
     need_text(root, "src/app/systems/scenario-stress-lab/page.tsx", "Open Dashboard ↗")
     need_text(root, "src/app/research/adaa/page.tsx", "canonical 19-ETF snapshot is validated")
     need_text(root, "src/data/research.ts", "papers.cfm?abstract_id=7340100")
-    need_text(root, "src/app/systems/pds/page.tsx", "Completed performance that advances with the canonical PDS release")
+    need_text(root, "src/app/systems/pds/page.tsx", "Live Completed Performance")
     need_text(root, "src/app/systems/pds/page.tsx", "certified historical evidence under the prior Core parent definition")
     need_text(root, "src/app/systems/pds/page.tsx", "Open Full PDS Dashboard ↗")
     need_text(root, "src/app/systems/adaa/page.tsx", "Live operational evidence")

@@ -843,6 +843,15 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .pds-chart-bar{transition:opacity .12s ease}
 .pds-chart-bar:hover{opacity:.72}
 .pds-monthly-chart-note{margin-top:8px;color:var(--muted);font-size:11.5px;line-height:1.5}
+
+/* PDS live-evidence presentation: dense enough for desktop, scrollable only when genuinely narrow. */
+.pds-live-performance-copy{max-width:780px}
+.pds-live-performance-table{min-width:0;table-layout:fixed;font-size:12px}
+.pds-live-performance-table th,.pds-live-performance-table td{padding:12px 8px}
+.pds-live-performance-table th:first-child,.pds-live-performance-table td:first-child{width:25%;white-space:normal}
+.pds-live-performance-table th:nth-child(2),.pds-live-performance-table td:nth-child(2){width:24%}
+.pds-live-performance-table th:nth-child(n+3),.pds-live-performance-table td:nth-child(n+3){width:8.5%}
+.pds-adaptive-history-note{margin-top:14px}
 .pds-fx-history-note{
   max-width:760px;
   margin:12px 0 0;

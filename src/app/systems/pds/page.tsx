@@ -76,7 +76,7 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
       <figcaption className="pds-monthly-chart-head">
         <div>
           <h3>Recent Completed Monthly Returns</h3>
-          <p>PDS Core + Dynamic FX vs PDS Adaptive + Dynamic FX · completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth} · current MTD excluded</p>
+          <p>Latest 12 completed holding months · {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth} · current MTD excluded</p>
         </div>
         <div className="pds-monthly-legend" aria-label="Chart legend">
           <span><i className="pds-legend-swatch core" />Core + Dynamic FX</span>
@@ -109,7 +109,6 @@ function RecentMonthlyReturnsChart({ rows }: { rows: typeof pdsCanonicalSummary.
           })}
         </svg>
       </div>
-      <div className="pds-monthly-chart-note"><b>Adaptive evidence-classification cutoff:</b> 2026-08-31. Returns through that date are certified historical evidence under the prior Core parent definition; later returns are forward monitoring of the same frozen controller without retraining. This cutoff is not the chart end date. Current MTD remains excluded until the holding month is completed.</div>
     </figure>
   );
 }
@@ -297,10 +296,10 @@ export default function PdsSystemPage() {
           </section>
 
           <section className="prose-section" id="performance">
-            <div className="kicker">Integrated performance</div>
-            <h2>Completed performance that advances with the canonical PDS release</h2>
-            <p className="body-copy">
-              Core rows begin in May 2017, which is the common inception used by the cumulative chart. The cumulative chart compares completed PDS Core + Dynamic FX with the same Core before the FX overlay on the canonical PDS completed-history clock. Recent completed returns with their evidence boundaries are shown in the second chart: the most recent 12 completed holding-month returns for Core + Dynamic FX and Adaptive + Dynamic FX. The table reports all four completed-series statistics. Current MTD is excluded throughout. Adaptive begins in May 2021. The Adaptive 2026-08-31 date is an evidence-classification cutoff, not the end of the displayed performance period: observations through that date are certified historical evidence under the prior Core parent definition, and subsequent observations are forward monitoring of the same frozen controller without retraining. The PDS dashboard separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
+            <div className="kicker">Live operational evidence</div>
+            <h2>Live Completed Performance</h2>
+            <p className="body-copy pds-live-performance-copy">
+              Updated with each canonical PDS release. The cumulative chart compares PDS Core + Dynamic FX with PDS Core over their common history beginning in May 2017. The longer current-definition Core / Dynamic FX reconstruction begins in December 2005 and remains available in the full dashboard. The second chart shows the latest 12 completed holding months for Core + Dynamic FX and Adaptive + Dynamic FX. Adaptive begins in May 2021. Current MTD is excluded throughout.
             </p>
             <LivePerformanceChart
               points={state.cumulativePath.map((row) => ({
@@ -310,11 +309,11 @@ export default function PdsSystemPage() {
               }))}
               primaryLabel="PDS Core + Dynamic FX"
               benchmarkLabel="PDS Core"
-              subtitle={`Completed monthly path through ${state.completedThrough} · current MTD excluded`}
+              subtitle={`Common comparable history from May 2017 · completed through ${state.completedThrough} · current MTD excluded`}
             />
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
-              <table className="evidence-table pds-public-table">
+              <table className="evidence-table pds-public-table pds-live-performance-table">
                 <thead>
                   <tr>
                     <th>Portfolio</th>
@@ -343,10 +342,8 @@ export default function PdsSystemPage() {
                 </tbody>
               </table>
             </div>
-            <div className="boundary-note">
-              <b>Adaptive evidence-classification cutoff:</b> Adaptive begins later than Core and retains a provenance break at 2026-08-31: prior observations are certified historical evidence, while later observations are forward monitoring of the frozen controller. The longer PDS reconstruction is a
-              separate current-definition research series; standalone F2R and ADAA histories remain separate. Use the PDS dashboard
-              for full portfolio detail.
+            <div className="boundary-note pds-adaptive-history-note">
+              <b>Adaptive history note:</b> Adaptive begins in May 2021. Observations through 2026-08-31 are certified historical evidence under the prior Core parent definition; later observations are forward monitoring of the same frozen controller without retraining. The cutoff is a provenance boundary, not the end of the performance series. Standalone ADAA and F2R histories remain separate.
             </div>
             <div className="actions">
               <Link className="btn primary" href="/systems/pds/dashboard/" target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
