@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { LivePerformanceChart } from "@/components/LivePerformanceChart";
 import { getSystem } from "@/data/systems";
 import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
 
@@ -144,6 +145,12 @@ export default function EquityAlphaSystemPage() {
               shipped with the public dashboard. Current MTD is excluded. This keeps the System page tied to the same evidence
               source rather than maintaining a separate hand-entered performance snapshot.
             </p>
+            <LivePerformanceChart
+              points={evidence.cumulativePath}
+              primaryLabel="Global Equity Alpha"
+              benchmarkLabel={evidence.benchmarkLabel}
+              subtitle={`${evidence.supportStart} → ${evidence.supportEnd} · completed history only`}
+            />
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">{pct(evidence.portfolio.cagr)}</div><div className="label">Global Alpha CAGR</div></div>
               <div className="metric"><div className="value">{pct(evidence.activeReturn)}</div><div className="label">Annualized active return vs. ACWI</div></div>
@@ -175,6 +182,15 @@ export default function EquityAlphaSystemPage() {
                 </table>
               </div>
               <div className="evidence-table-source">Public dashboard authority · {evidence.sourceVersion}</div>
+            </div>
+            <div className="selected-table-block live-recent-block">
+              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD excluded</p></div>
+              <div className="evidence-table-wrap" role="region" aria-label="Global Equity Alpha recent 12 completed monthly returns" tabIndex={0}>
+                <table className="evidence-table compact-monthly-table">
+                  <thead><tr><th>Month</th><th>Global Equity Alpha</th><th>{evidence.benchmarkLabel}</th></tr></thead>
+                  <tbody>{[...evidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td><td>{pct(row.benchmark)}</td></tr>)}</tbody>
+                </table>
+              </div>
             </div>
             <div className="evidence-note">
               These are historical completed-period results for the production model definition shown in the public dashboard. They are not a guarantee of future alpha. Investor-level ACWI Core / Global Alpha mixing changes the investor portfolio, not the underlying model selections.

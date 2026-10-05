@@ -18,6 +18,8 @@ type DashboardPayload = {
 };
 
 export type EquityAlphaEvidence = {
+  cumulativePath: { date: string; primary: number; benchmark: number }[];
+  recentMonthly: { month: string; primary: number; benchmark: number }[];
   supportStart: string;
   supportEnd: string;
   observations: number;
@@ -116,7 +118,30 @@ export function getEquityAlphaEvidence(): EquityAlphaEvidence {
   const benchmarkCagr = benchmarkWealth[benchmarkWealth.length - 1] ** (1 / years) - 1;
   const relativeWealth = portfolioWealth.map((value, index) => value / benchmarkWealth[index]);
 
+  const monthly = new Map<string, { date: string; primary: number; benchmark: number }>();
+  rows.forEach((row, index) => {
+    const month = String(row.date).slice(0, 7);
+    monthly.set(month, { date: String(row.date), primary: portfolioWealth[index], benchmark: benchmarkWealth[index] });
+  });
+  const cumulativePath = Array.from(monthly.values());
+
+  const monthlyReturns = new Map<string, { primary: number; benchmark: number }>();
+  rows.slice(1).forEach((row) => {
+    const month = String(row.date).slice(0, 7);
+    const current = monthlyReturns.get(month) ?? { primary: 1, benchmark: 1 };
+    current.primary *= 1 + Number(row.portfolio_return);
+    current.benchmark *= 1 + Number(row.benchmark_return);
+    monthlyReturns.set(month, current);
+  });
+  const recentMonthly = Array.from(monthlyReturns.entries()).slice(-12).map(([month, value]) => ({
+    month,
+    primary: value.primary - 1,
+    benchmark: value.benchmark - 1,
+  }));
+
   return {
+    cumulativePath,
+    recentMonthly,
     supportStart: String(rows[0].date),
     supportEnd: String(rows[rows.length - 1].date),
     observations,

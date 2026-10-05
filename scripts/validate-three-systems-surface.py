@@ -193,7 +193,7 @@ def audit_static(require_build: bool) -> list[Check]:
         "Intramonth Preview",
     ]
     add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-release refresh/check → prepared public state")
-    add(c, "ADAA visible empirical evidence", all(x in adaa for x in ["Published empirical evidence", "adaaPublishedEvidence", "Evidence boundary"]), "paper-bound historical metrics visible on System page")
+    add(c, "ADAA live empirical evidence", all(x in adaa for x in ["Live operational evidence", "getLiveSystemEvidence", "LivePerformanceChart", "Recent 12 completed months", "Frozen research snapshot", "adaaPublishedEvidence"]), "live completed-performance evidence is primary while frozen paper evidence remains preserved")
     adaa_forbidden = [
         "19-source-series market snapshot", "public Thin-Shiny", "Decision authority:",
         "canonical snapshot validation", "no execution authority"
@@ -202,7 +202,7 @@ def audit_static(require_build: bool) -> list[Check]:
 
     f2r = text(SYSTEM_PAGE_FILES["f2r"])
     add(c, "F2R identity on page", "Forecast-to-Rank Allocation (F2R)" in systems and "item.title" in f2r, "registry-driven formal identity")
-    add(c, "F2R visible empirical evidence", all(x in f2r for x in ["Published empirical evidence", "Historical portfolio comparison", "f2rPublishedEvidence", "signalWindow", "performancePath"]), "model-adoption evidence visible with signal window and research performance path separated")
+    add(c, "F2R live empirical evidence", all(x in f2r for x in ["Live operational evidence", "getLiveSystemEvidence", "LivePerformanceChart", "Recent 12 completed months", "Frozen research snapshot", "f2rPublishedEvidence"]), "live current-model completed evidence is primary while frozen model-adoption research evidence remains preserved")
     evidence = text(ROOT / "src/data/systemEvidence.ts")
     add(c, "F2R research/live clock separation", all(x in evidence for x in ["112 historical signal dates", "Research performance path", "not a live F2R performance period", "current Official, Preview, and completed production performance"]), "frozen research dates cannot read as the current live performance cutoff")
     add(c, "PDS chart/evidence clock separation", all(x in pds for x in ["completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth}", "Adaptive evidence-classification cutoff:", "This cutoff is not the chart end date", "evidence-classification cutoff, not the end of the displayed performance period"]), "chart support is canonical-data-derived and distinct from the Adaptive evidence cutoff")
@@ -213,7 +213,7 @@ def audit_static(require_build: bool) -> list[Check]:
     pds_public_dashboard = ROOT / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
     if pds_summary.is_file() and pds_public_dashboard.is_file():
         st = text(pds_summary); dh = text(pds_public_dashboard)
-        ok = all(tok in st for tok in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1", '"officialSignal":', '"adaptiveState":', '"recentMonthlyReturns": [', '"performance": [']) and all(tok in dh for tok in ["window.PDS_PUBLIC_SURFACE=true", "PM Cockpit", "<h2>Adaptive</h2>", "<h2>Preview</h2>", "<h2>FX</h2>"])
+        ok = all(tok in st for tok in ["PDS_CANONICAL_PLATFORM_SUMMARY_V1", '"officialSignal":', '"adaptiveState":', '"recentMonthlyReturns": [', '"cumulativePath": [', '"performance": [']) and all(tok in dh for tok in ["window.PDS_PUBLIC_SURFACE=true", "PM Cockpit", "<h2>Adaptive</h2>", "<h2>Preview</h2>", "<h2>FX</h2>"])
         add(c, "PDS disclosure boundary", ok, "current operational dashboard public / environment-only infrastructure suppressed")
     else: add(c, "PDS disclosure boundary", False, "canonical PDS summary/dashboard missing")
 

@@ -302,7 +302,7 @@ def main() -> int:
         "ADAA + F2R",
         "Dynamic FX Overlay",
         "Recent Completed Monthly Returns",
-        "Recent completed returns with their evidence boundaries",
+        "Completed performance that advances with the canonical PDS release",
         "completed holding months {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth}",
         "Adaptive evidence-classification cutoff:",
         "This cutoff is not the chart end date",
@@ -389,11 +389,12 @@ def main() -> int:
         "Conventional supervised models and Chronos-2 produce distinct forecasts",
         "Heterogeneous forecasts, one common ranking process",
         "Public disclosure names the forecasting technologies and the decision architecture.",
-        "Published empirical evidence",
-        "Historical portfolio comparison",
+        "Live operational evidence",
+        "Current-model performance updates with the governed F2R release",
+        "LivePerformanceChart",
+        "Recent 12 completed months",
+        "Frozen research snapshot",
         "f2rPublishedEvidence",
-        "signalWindow",
-        "performancePath",
         "/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf",
         "System Documentation ↗",
     )
@@ -407,6 +408,39 @@ def main() -> int:
         "not a live F2R performance period",
         "current Official, Preview, and completed production performance",
     )
+    # LIVE_COMPLETED_EVIDENCE_CONTRACT_V1
+    for slug, expected_system in (("adaa", "ADAA"), ("f2r", "F2R")):
+        evidence_path = ROOT / "public" / "data" / "systems" / slug / "live_evidence.json"
+        if not evidence_path.is_file():
+            raise RuntimeError(f"{expected_system} live evidence JSON is missing")
+        payload = json.loads(evidence_path.read_text(encoding="utf-8-sig"))
+        if payload.get("schema") != "SLACKQUANT_LIVE_EVIDENCE_V1" or payload.get("system") != expected_system:
+            raise RuntimeError(f"{expected_system} live evidence schema/system mismatch")
+        completed = str(payload.get("completedThrough", ""))
+        support_end = str(payload.get("supportEnd", ""))
+        if not completed or completed != support_end:
+            raise RuntimeError(f"{expected_system} live evidence completedThrough/supportEnd mismatch")
+        path_rows = payload.get("path") or []
+        recent = payload.get("recentMonthly") or []
+        if len(path_rows) < 12 or len(recent) != 12:
+            raise RuntimeError(f"{expected_system} live evidence path/recent-month coverage is invalid")
+        if str(path_rows[-1].get("date", ""))[:7] != completed[:7] or str(recent[-1].get("month", "")) != completed[:7]:
+            raise RuntimeError(f"{expected_system} live evidence tail does not match completedThrough")
+        prior = ""
+        for row in path_rows:
+            date = str(row.get("date", ""))
+            if prior and date < prior:
+                raise RuntimeError(f"{expected_system} live evidence path is not monotone")
+            prior = date
+            for key in ("primary", "benchmark"):
+                if key in row and row[key] is not None and not isinstance(row[key], (int, float)):
+                    raise RuntimeError(f"{expected_system} live evidence contains non-numeric {key}")
+        if any(str(row.get("month", "")) > completed[:7] for row in recent):
+            raise RuntimeError(f"{expected_system} live evidence leaks an open month")
+        boundary = str(payload.get("boundary", "")).casefold()
+        if "current mtd" not in boundary or (slug == "adaa" and "preview" not in boundary):
+            raise RuntimeError(f"{expected_system} live evidence boundary wording is incomplete")
+
     f2r_documentation = ROOT / "public/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
     if not f2r_documentation.is_file() or f2r_documentation.read_bytes()[:5] != b"%PDF-":
         raise RuntimeError("F2R System Documentation v2.1 PDF missing or invalid")
@@ -417,7 +451,11 @@ def main() -> int:
         "src/app/systems/adaa/page.tsx",
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
-        "Published empirical evidence",
+        "Live operational evidence",
+        "Completed performance updates with the operating system",
+        "LivePerformanceChart",
+        "Recent 12 completed months",
+        "Frozen research snapshot",
         "adaaPublishedEvidence",
         "not the exact construction",
         "Before release, ADAA refreshes its market and FX inputs",

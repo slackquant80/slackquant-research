@@ -222,6 +222,39 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
         "completedThrough": completed,
     }
 
+def cumulative_path(data: dict[str, Any]) -> list[dict[str, Any]]:
+    fx_rows = data["fx_operational_sensitivity"]["monthly"]
+    core_rows = {
+        str(row.get("calendar_month", "")): row
+        for row in data["core_daily_performance"]["monthly"]
+        if str(row.get("series_id", "")) == "PDS_CORE_FIXED_CURRENT_POLICY"
+    }
+    dynamic_wealth = 1.0
+    core_wealth = 1.0
+    out: list[dict[str, Any]] = []
+    for row in sorted(fx_rows, key=lambda r: str(r.get("holding_month", ""))):
+        month = str(row.get("holding_month", ""))
+        if not re_match_month(month):
+            continue
+        core_row = core_rows.get(month)
+        if core_row is None:
+            raise RuntimeError(f"PDS Core monthly return is missing for {month}")
+        dynamic_ret = optional_num(row.get("dynamic_costed_return"), label=f"PDS Core Dynamic-FX return {month}")
+        core_ret = optional_num(core_row.get("net_return"), label=f"PDS Core return {month}")
+        if dynamic_ret is None or core_ret is None:
+            raise RuntimeError(f"PDS completed cumulative-path return is missing for {month}")
+        dynamic_wealth *= 1.0 + dynamic_ret
+        core_wealth *= 1.0 + core_ret
+        out.append({
+            "holdingMonth": month,
+            "coreDynamicFxWealth": dynamic_wealth,
+            "coreWealth": core_wealth,
+        })
+    if len(out) < 12:
+        raise RuntimeError(f"PDS cumulative path is unexpectedly short: {len(out)} months")
+    return out
+
+
 def build_summary(data: dict[str, Any]) -> dict[str, Any]:
     clock = canonical_clock(data)
     adaptive = data["adaptive"]
@@ -266,6 +299,7 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
         "previewFxHedge": num(preview_fx["hedge_ratio"]) if preview_fx is not None else None,
         "previewFxZscore": num(preview_fx["zscore"]) if preview_fx is not None else None,
         "recentMonthlyReturns": recent_monthly_returns(data, 12),
+        "cumulativePath": cumulative_path(data),
         "performance": [
             perf(core_fx, label="PDS Core + Dynamic FX"),
             perf(core, label="PDS Core"),
@@ -277,7 +311,13 @@ def build_summary(data: dict[str, Any]) -> dict[str, Any]:
 
 def render_ts(summary: dict[str, Any]) -> str:
     payload = json.dumps(summary, ensure_ascii=False, indent=2)
-    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string | null;\n  adaptiveRiskBudget: number | null;\n  previewAvailable: boolean;\n  previewSignal: string | null;\n  previewHolding: string | null;\n  previewThrough: string | null;\n  adaptivePreviewAvailable: boolean;\n  adaptivePreviewState: string | null;\n  adaptivePreviewRiskBudget: number | null;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxAvailable: boolean;\n  previewFxHedge: number | null;\n  previewFxZscore: number | null;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.
+    return f'''export type PdsCanonicalMonthlyReturnRow = {{\n  holdingMonth: string;\n  coreDynamicFx: number;\n  adaptiveDynamicFx: number;\n}};\n\nexport type PdsCanonicalCumulativeRow = {{
+  holdingMonth: string;
+  coreDynamicFxWealth: number;
+  coreWealth: number;
+}};
+
+export type PdsCanonicalPerformanceRow = {{\n  label: string;\n  supportStart: string;\n  supportEnd: string;\n  cumulativeReturn: number;\n  cagr: number;\n  annVol: number;\n  sharpe: number;\n  mdd: number;\n  calmar: number;\n}};\n\nexport type PdsCanonicalSummary = {{\n  contract: "PDS_CANONICAL_PLATFORM_SUMMARY_V1";\n  generatedAt: string;\n  systemAsOfKst: string;\n  officialSignal: string;\n  holdingMonth: string;\n  executionClose: string;\n  markThrough: string;\n  completedThrough: string;\n  coreProviders: string[];\n  adaptiveState: string | null;\n  adaptiveRiskBudget: number | null;\n  previewAvailable: boolean;\n  previewSignal: string | null;\n  previewHolding: string | null;\n  previewThrough: string | null;\n  adaptivePreviewAvailable: boolean;\n  adaptivePreviewState: string | null;\n  adaptivePreviewRiskBudget: number | null;\n  officialFxHedge: number;\n  officialFxZscore: number;\n  previewFxAvailable: boolean;\n  previewFxHedge: number | null;\n  previewFxZscore: number | null;\n  recentMonthlyReturns: PdsCanonicalMonthlyReturnRow[];\n  cumulativePath: PdsCanonicalCumulativeRow[];\n  performance: PdsCanonicalPerformanceRow[];\n}};\n\n// Generated from the current PDS public dashboard.\n// PREVIEW_UNAVAILABLE_IS_VALID_AT_MONTH_END: empty Preview arrays bind as explicit null state.
 // MONTH_END_UNAVAILABLE_IS_VALID: current Adaptive/Preview states bind as explicit nulls until their execution clocks open.\n// Do not hand-edit numerical values; refresh through the PDS publication workflow.\nexport const pdsCanonicalSummary: PdsCanonicalSummary = {payload} as PdsCanonicalSummary;\n'''
 
 

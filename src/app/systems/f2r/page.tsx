@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { LivePerformanceChart } from "@/components/LivePerformanceChart";
+import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
 import { getSystem } from "@/data/systems";
 import { f2rPublishedEvidence } from "@/data/systemEvidence";
 
@@ -14,8 +16,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/systems/f2r/" },
 };
 
+function pct(value: number, digits = 2) { return `${(value * 100).toFixed(digits)}%`; }
+function num(value: number, digits = 2) { return value.toFixed(digits); }
+
 export default function F2rSystemPage() {
   if (!item) notFound();
+  const liveEvidence = getLiveSystemEvidence("f2r");
 
   return (
     <main>
@@ -116,43 +122,52 @@ export default function F2rSystemPage() {
           </section>
 
           <section className="prose-section" id="empirical-evidence">
-            <div className="kicker">Published empirical evidence</div>
-            <h2>The model-adoption study shows where forecast changes became portfolio changes</h2>
+            <div className="kicker">Live operational evidence</div>
+            <h2>Current-model performance updates with the governed F2R release</h2>
             <p className="body-copy">
-              The public model-adoption study evaluates Chronos-2 inside the same Forecast-to-Rank portfolio interface used for
-              the conventional models. The evidence is intentionally shown at the portfolio-decision layer: forecast accuracy,
-              changed Top-4 selections, and historical portfolio outcomes are evaluated separately.
+              This block is generated from the governed F2R public state and follows the current canonical model definition.
+              It advances only through completed performance; current MTD and Preview remain separate operating states and are excluded here.
             </p>
+            <LivePerformanceChart
+              points={liveEvidence.path}
+              primaryLabel={liveEvidence.primaryLabel}
+              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed history through ${liveEvidence.completedThrough}`}
+            />
             <div className="metrics system-metrics">
-              {f2rPublishedEvidence.metrics.map(([value, label]) => (
-                <div className="metric" key={label}>
-                  <div className="value">{value}</div>
-                  <div className="label">{label}</div>
-                </div>
-              ))}
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.cagr)}</div><div className="label">Current-model CAGR</div></div>
+              <div className="metric"><div className="value">{num(liveEvidence.metrics.primary.sharpe)}</div><div className="label">Sharpe (Rf=0)</div></div>
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.mdd)}</div><div className="label">Maximum drawdown</div></div>
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.annVol)}</div><div className="label">Annualized volatility</div></div>
             </div>
-            <div className="selected-table-block">
-              <div className="selected-exhibits-head">
-                <div className="section-title">Historical portfolio comparison</div>
-                <p>{f2rPublishedEvidence.signalWindow}<br />{f2rPublishedEvidence.performancePath} · same Top-4 research portfolio interface</p>
-              </div>
-              <div className="evidence-table-wrap" role="region" aria-label="F2R historical portfolio comparison" tabIndex={0}>
-                <table className="evidence-table">
-                  <thead>
-                    <tr><th>Research configuration</th><th>CAGR</th><th>Sharpe</th><th>Interpretation</th></tr>
-                  </thead>
-                  <tbody>
-                    {f2rPublishedEvidence.comparisonRows.map((row) => (
-                      <tr key={row[0]}>
-                        <th scope="row">{row[0]}</th><td>{row[1]}</td><td>{row[2]}</td><td>{row[3]}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+            <div className="evidence-table-wrap" role="region" aria-label="F2R live completed performance summary" tabIndex={0}>
+              <table className="evidence-table">
+                <thead><tr><th>Series</th><th>Cumulative</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MDD</th><th>Calmar</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">{liveEvidence.primaryLabel}</th><td>{pct(liveEvidence.metrics.primary.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.primary.cagr)}</td><td>{pct(liveEvidence.metrics.primary.annVol)}</td><td>{num(liveEvidence.metrics.primary.sharpe)}</td><td>{pct(liveEvidence.metrics.primary.mdd)}</td><td>{num(liveEvidence.metrics.primary.calmar)}</td></tr>
+                  {liveEvidence.metrics.benchmark ? <tr><th scope="row">{liveEvidence.benchmarkLabel}</th><td>{pct(liveEvidence.metrics.benchmark.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.benchmark.cagr)}</td><td>{pct(liveEvidence.metrics.benchmark.annVol)}</td><td>{num(liveEvidence.metrics.benchmark.sharpe)}</td><td>{pct(liveEvidence.metrics.benchmark.mdd)}</td><td>{num(liveEvidence.metrics.benchmark.calmar)}</td></tr> : null}
+                </tbody>
+              </table>
+            </div>
+            <div className="selected-table-block live-recent-block">
+              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD and Preview excluded</p></div>
+              <div className="evidence-table-wrap" role="region" aria-label="F2R recent 12 completed monthly returns" tabIndex={0}>
+                <table className="evidence-table compact-monthly-table">
+                  <thead><tr><th>Month</th><th>F2R current model</th></tr></thead>
+                  <tbody>{[...liveEvidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td></tr>)}</tbody>
                 </table>
               </div>
-              <div className="evidence-table-source">{f2rPublishedEvidence.sourceLabel}</div>
             </div>
-            <div className="evidence-note">{f2rPublishedEvidence.boundary}</div>
+            <div className="evidence-note"><b>Live evidence boundary:</b> {liveEvidence.boundary}</div>
+
+            <div className="research-snapshot-block">
+              <div className="kicker">Frozen research snapshot</div>
+              <h3>The model-adoption study remains a separate retrospective record</h3>
+              <p className="body-copy">Chronos-2 adoption evidence remains citable as a frozen research counterfactual. It is preserved for research provenance and no longer serves as the primary performance evidence for the live F2R System page.</p>
+              <div className="metrics system-metrics research-snapshot-metrics">
+                {f2rPublishedEvidence.metrics.map(([value, label]) => <div className="metric" key={label}><div className="value">{value}</div><div className="label">{label}</div></div>)}
+              </div>
+              <div className="evidence-note">{f2rPublishedEvidence.sourceLabel}. {f2rPublishedEvidence.boundary}</div>
+            </div>
           </section>
 
           <section className="prose-section" id="live">

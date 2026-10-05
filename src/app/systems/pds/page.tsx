@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { LivePerformanceChart } from "@/components/LivePerformanceChart";
 import { pdsCanonicalSummary } from "@/data/pdsCanonicalSummary";
 import canonicalWording from "@/data/canonicalWording.json";
 import { getSystem } from "@/data/systems";
@@ -297,10 +298,20 @@ export default function PdsSystemPage() {
 
           <section className="prose-section" id="performance">
             <div className="kicker">Integrated performance</div>
-            <h2>Recent completed returns with their evidence boundaries</h2>
+            <h2>Completed performance that advances with the canonical PDS release</h2>
             <p className="body-copy">
-              The chart shows the most recent 12 completed holding months for Core + Dynamic FX and the continuous Adaptive + Dynamic FX monitored path; its displayed window is taken directly from the canonical PDS summary, and current MTD is excluded. The table summarizes the corresponding completed series. Core rows begin in May 2017. Adaptive begins in May 2021. Its 2026-08-31 date is an evidence-classification cutoff, not the end of the displayed performance period: observations through that date are certified historical evidence under the prior Core parent definition, and subsequent observations are forward monitoring of the same frozen controller without retraining. The PDS dashboard separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
+              Core rows begin in May 2017, which is the common inception used by the cumulative chart. The cumulative chart compares completed PDS Core + Dynamic FX with the same Core before the FX overlay on the canonical PDS completed-history clock. Recent completed returns with their evidence boundaries are shown in the second chart: the most recent 12 completed holding-month returns for Core + Dynamic FX and Adaptive + Dynamic FX. The table reports all four completed-series statistics. Current MTD is excluded throughout. Adaptive begins in May 2021. The Adaptive 2026-08-31 date is an evidence-classification cutoff, not the end of the displayed performance period: observations through that date are certified historical evidence under the prior Core parent definition, and subsequent observations are forward monitoring of the same frozen controller without retraining. The PDS dashboard separately shows the longer current-definition Core / Dynamic FX reconstruction beginning in December 2005.
             </p>
+            <LivePerformanceChart
+              points={state.cumulativePath.map((row) => ({
+                date: `${row.holdingMonth}-01`,
+                primary: row.coreDynamicFxWealth,
+                benchmark: row.coreWealth,
+              }))}
+              primaryLabel="PDS Core + Dynamic FX"
+              benchmarkLabel="PDS Core"
+              subtitle={`Completed monthly path through ${state.completedThrough} · current MTD excluded`}
+            />
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
               <table className="evidence-table pds-public-table">

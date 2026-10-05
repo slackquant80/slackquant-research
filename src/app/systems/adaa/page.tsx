@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { LivePerformanceChart } from "@/components/LivePerformanceChart";
+import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
 import { adaaPublishedEvidence } from "@/data/systemEvidence";
 
 const item = getSystem("adaa");
@@ -15,8 +17,12 @@ export const metadata: Metadata = {
 };
 
 
+function pct(value: number, digits = 2) { return `${(value * 100).toFixed(digits)}%`; }
+function num(value: number, digits = 2) { return value.toFixed(digits); }
+
 export default function AdaaSystemPage() {
   if (!item) notFound();
+  const liveEvidence = getLiveSystemEvidence("adaa");
 
   return (
     <main>
@@ -153,37 +159,53 @@ export default function AdaaSystemPage() {
           </section>
 
           <section className="prose-section" id="empirical-evidence">
-            <div className="kicker">Published empirical evidence</div>
-            <h2>Historical evidence behind the Decision Diversification design</h2>
+            <div className="kicker">Live operational evidence</div>
+            <h2>Completed performance updates with the operating system</h2>
             <p className="body-copy">
-              The public working paper evaluates ADAA as a retrospective historical simulation and reports the risk/return
-              profile of the practitioner composite alongside decision-diversification diagnostics. The system page shows a
-              compact evidence snapshot here so the empirical basis is visible without requiring a separate dashboard or paper first.
+              This is the current completed-history record from ADAA&apos;s governed public-view snapshot, not a paper-frozen exhibit.
+              It updates as the canonical ADAA performance history advances. Current MTD and Intramonth Preview remain outside this evidence block until the holding month is completed.
             </p>
+            <LivePerformanceChart
+              points={liveEvidence.path}
+              primaryLabel={liveEvidence.primaryLabel}
+              benchmarkLabel={liveEvidence.benchmarkLabel}
+              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed history through ${liveEvidence.completedThrough}`}
+            />
             <div className="metrics system-metrics">
-              {adaaPublishedEvidence.metrics.map(([value, label]) => (
-                <div className="metric" key={label}>
-                  <div className="value">{value}</div>
-                  <div className="label">{label}</div>
-                </div>
-              ))}
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.cagr)}</div><div className="label">ADAA Dynamic CAGR</div></div>
+              <div className="metric"><div className="value">{num(liveEvidence.metrics.primary.sharpe)}</div><div className="label">Sharpe (Rf=0)</div></div>
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.mdd)}</div><div className="label">Maximum drawdown</div></div>
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.annVol)}</div><div className="label">Annualized volatility</div></div>
             </div>
-            <div className="selected-table-block">
-              <div className="selected-exhibits-head">
-                <div className="section-title">Evidence boundary</div>
-                <p>{adaaPublishedEvidence.sourceLabel}</p>
-              </div>
-              <div className="evidence-table-wrap" role="region" aria-label="ADAA evidence boundary" tabIndex={0}>
-                <table className="evidence-table">
-                  <tbody>
-                    <tr><th scope="row">Evidence type</th><td>Retrospective historical simulation reported in the public working paper</td></tr>
-                    <tr><th scope="row">What it supports</th><td>Historical risk/return behavior and the case for diversifying portfolio decisions across complementary rules</td></tr>
-                    <tr><th scope="row">What it does not establish</th><td>A live track record, a uniquely optimal weight vector, or guaranteed future performance</td></tr>
-                  </tbody>
+            <div className="evidence-table-wrap" role="region" aria-label="ADAA live completed performance summary" tabIndex={0}>
+              <table className="evidence-table">
+                <thead><tr><th>Series</th><th>Cumulative</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MDD</th><th>Calmar</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">{liveEvidence.primaryLabel}</th><td>{pct(liveEvidence.metrics.primary.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.primary.cagr)}</td><td>{pct(liveEvidence.metrics.primary.annVol)}</td><td>{num(liveEvidence.metrics.primary.sharpe)}</td><td>{pct(liveEvidence.metrics.primary.mdd)}</td><td>{num(liveEvidence.metrics.primary.calmar)}</td></tr>
+                  {liveEvidence.metrics.benchmark ? <tr><th scope="row">{liveEvidence.benchmarkLabel}</th><td>{pct(liveEvidence.metrics.benchmark.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.benchmark.cagr)}</td><td>{pct(liveEvidence.metrics.benchmark.annVol)}</td><td>{num(liveEvidence.metrics.benchmark.sharpe)}</td><td>{pct(liveEvidence.metrics.benchmark.mdd)}</td><td>{num(liveEvidence.metrics.benchmark.calmar)}</td></tr> : null}
+                </tbody>
+              </table>
+            </div>
+            <div className="selected-table-block live-recent-block">
+              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD excluded</p></div>
+              <div className="evidence-table-wrap" role="region" aria-label="ADAA recent 12 completed monthly returns" tabIndex={0}>
+                <table className="evidence-table compact-monthly-table">
+                  <thead><tr><th>Month</th><th>ADAA Dynamic</th><th>60/40 SPY/IEF</th></tr></thead>
+                  <tbody>{[...liveEvidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td><td>{typeof row.benchmark === "number" ? pct(row.benchmark) : "—"}</td></tr>)}</tbody>
                 </table>
               </div>
             </div>
-            <div className="evidence-note">{adaaPublishedEvidence.boundary}</div>
+            <div className="evidence-note"><b>Live evidence boundary:</b> {liveEvidence.boundary}</div>
+
+            <div className="research-snapshot-block">
+              <div className="kicker">Frozen research snapshot</div>
+              <h3>Published paper evidence remains citable and unchanged</h3>
+              <p className="body-copy">The public working paper remains the frozen research record. It is preserved below for reproducibility, but it is no longer the primary performance evidence on the live System page.</p>
+              <div className="metrics system-metrics research-snapshot-metrics">
+                {adaaPublishedEvidence.metrics.map(([value, label]) => <div className="metric" key={label}><div className="value">{value}</div><div className="label">{label}</div></div>)}
+              </div>
+              <div className="evidence-note">{adaaPublishedEvidence.sourceLabel}. {adaaPublishedEvidence.boundary}</div>
+            </div>
           </section>
 
           <section className="prose-section" id="evidence">
