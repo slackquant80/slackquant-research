@@ -125,6 +125,7 @@ function assertCanonicalReleaseContract() {
     "scripts/validate-pds-publication.py",
     "scripts/validate-methods-ui-integrity.py",
     "scripts/validate-f2r-documentation.py",
+    "scripts/validate-stress-live-evidence.py",
     "scripts/validate-platform-full-audit.py",
     "scripts/validate-three-systems-surface.py",
     "scripts/validate-system-publication-boundaries.py",
@@ -145,6 +146,7 @@ runPython("System publication boundary audit", "scripts/validate-system-publicat
 runPython("PDS publication source audit", "scripts/validate-pds-publication.py");
 runPython("Methods UI source audit", "scripts/validate-methods-ui-integrity.py");
 runPython("F2R documentation source audit", "scripts/validate-f2r-documentation.py");
+runPython("Stress Lab live-evidence audit", "scripts/validate-stress-live-evidence.py");
 runPython("Platform source audit", "scripts/validate-platform-full-audit.py");
 
 runNpm("Typecheck", "typecheck");

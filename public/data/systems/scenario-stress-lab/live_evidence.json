@@ -1,0 +1,79 @@
+{
+  "schema": "SLACKQUANT_STRESS_LIVE_EVIDENCE_V1",
+  "system": "SCENARIO_STRESS_LAB",
+  "sourceAuthority": "Stress Lab current public deployment artifact",
+  "canonicalVersion": "0.1.71",
+  "dataAsOf": "2026-10-02",
+  "horizonTradingDays": 20,
+  "scenarioCount": 5000,
+  "currentModel": "B1 EWMA-t",
+  "historicalComparator": "B0 block bootstrap",
+  "portfolioLabel": "Equal-weight 8 assets",
+  "dominantFamily": {
+    "key": "BROAD_CROSS_ASSET_SELLOFF",
+    "label": "Broad cross-asset selloff",
+    "currentShare": 0.8,
+    "historicalShare": 0.28
+  },
+  "familyShares": [
+    {
+      "key": "BROAD_CROSS_ASSET_SELLOFF",
+      "label": "Broad cross-asset selloff",
+      "current": 0.8,
+      "historical": 0.28,
+      "gap": 0.52
+    },
+    {
+      "key": "CREDIT_REIT_LED_STRESS",
+      "label": "Credit / REIT-led stress",
+      "current": 0.0,
+      "historical": 0.052,
+      "gap": -0.052
+    },
+    {
+      "key": "COMMODITY_UP_DURATION_DOWN",
+      "label": "Commodity-up / duration-down",
+      "current": 0.056,
+      "historical": 0.0,
+      "gap": 0.056
+    },
+    {
+      "key": "EQUITY_BOND_JOINT_SELLOFF",
+      "label": "Equity-bond joint selloff",
+      "current": 0.016,
+      "historical": 0.0,
+      "gap": 0.016
+    },
+    {
+      "key": "EQUITY_SELLOFF_BOND_HEDGE",
+      "label": "Equity selloff with bond hedge",
+      "current": 0.128,
+      "historical": 0.668,
+      "gap": -0.54
+    },
+    {
+      "key": "OTHER_TAIL",
+      "label": "Other tail",
+      "current": 0.0,
+      "historical": 0.0,
+      "gap": 0.0
+    }
+  ],
+  "distributionMetrics": {
+    "current": {
+      "median_return": 0.006096854768700921,
+      "q05_return": -0.0366511546538792,
+      "es05": -0.04924347050784463,
+      "q05_mdd": -0.04811231082386398,
+      "share_le_minus5": 0.0202
+    },
+    "historical": {
+      "median_return": 0.008556910305984822,
+      "q05_return": -0.04406986237884663,
+      "es05": -0.07872158216567249,
+      "q05_mdd": -0.0702629096817976,
+      "share_le_minus5": 0.039
+    }
+  },
+  "boundary": "Current conditional scenario evidence from the reviewed public Stress Lab snapshot. Stress-family shares are generated-scenario frequencies, not calibrated event probabilities. These outputs support stress analysis, not market timing, crash prediction, portfolio optimization, or an automated trading signal."
+}

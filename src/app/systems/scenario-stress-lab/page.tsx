@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
 import { MethodsUsed } from "@/components/MethodsUsed";
+import { getLiveStressEvidence } from "@/lib/liveStressEvidence";
 
 const item = getSystem("scenario-stress-lab");
 
@@ -27,8 +28,19 @@ const useCases = [
 
 const universe = ["SPY", "EFA", "EEM", "IEF", "LQD", "GLD", "DBC", "VNQ"];
 
+function pct(value: number, digits = 1) {
+  return `${(value * 100).toFixed(digits)}%`;
+}
+
+function pp(value: number, digits = 1) {
+  const x = value * 100;
+  return `${x >= 0 ? "+" : ""}${x.toFixed(digits)}pp`;
+}
+
 export default function ScenarioStressLabPage() {
   if (!item) notFound();
+
+  const liveEvidence = getLiveStressEvidence();
 
   return (
     <main>
@@ -74,7 +86,8 @@ export default function ScenarioStressLabPage() {
           <a href="#current-scope">Current Scope</a>
           <a href="#evidence-position">What the Evidence Supports</a>
           <a href="#contract">How the System Works</a>
-          <a href="#evidence">Selected Evidence</a>
+          <a href="#live-evidence">Live Operational Evidence</a>
+          <a href="#frozen-evidence">Frozen Research Snapshot</a>
           <a href="#operation">Operating Model</a>
           <a href="#boundaries">Interpretation Boundaries</a>
           <a href="#methods">Quantitative Methods</a>
@@ -174,8 +187,99 @@ export default function ScenarioStressLabPage() {
             </div>
           </section>
 
-          <section className="prose-section" id="evidence">
-            <h2>Selected Evidence</h2>
+          <section className="prose-section" id="live-evidence">
+            <div className="kicker">Live operational evidence</div>
+            <h2>Current Conditional Stress Snapshot</h2>
+            <p className="body-copy">
+              This is the current reviewed Stress Lab snapshot, not a frozen paper exhibit.
+              The conditional B1 scenario structure is shown directly against the B0 historical
+              resampling comparator using the same public operating authority as the dashboard.
+            </p>
+
+            <div className="metrics system-evidence-metrics">
+              <div className="metric">
+                <div className="value">{pct(liveEvidence.dominantFamily.currentShare)}</div>
+                <div className="label">Current dominant-family share ? {liveEvidence.dominantFamily.label}</div>
+              </div>
+              <div className="metric">
+                <div className="value">{pct(liveEvidence.dominantFamily.historicalShare)}</div>
+                <div className="label">Historical B0 share ? same family</div>
+              </div>
+              <div className="metric">
+                <div className="value">{pct(liveEvidence.distributionMetrics.current.es05, 2)}</div>
+                <div className="label">Current portfolio ES 5%</div>
+              </div>
+              <div className="metric">
+                <div className="value">{pct(liveEvidence.distributionMetrics.historical.es05, 2)}</div>
+                <div className="label">Historical-resampling ES 5%</div>
+              </div>
+            </div>
+
+            <div className="selected-table-block">
+              <div className="section-title">Stress-family structure ? current B1 vs historical B0</div>
+              <div className="evidence-table-wrap">
+                <table className="evidence-table system-evidence-table">
+                  <thead>
+                    <tr>
+                      <th>Stress family</th>
+                      <th>Current B1</th>
+                      <th>Historical B0</th>
+                      <th>Gap</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {liveEvidence.familyShares.map((row) => (
+                      <tr key={row.key}>
+                        <th>{row.label}</th>
+                        <td>{pct(row.current)}</td>
+                        <td>{pct(row.historical)}</td>
+                        <td>{pp(row.gap)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="evidence-table-source">
+                Canonical Stress Lab v{liveEvidence.canonicalVersion} ? data through {liveEvidence.dataAsOf} ?
+                {" "}{liveEvidence.horizonTradingDays}-trading-day horizon ? {liveEvidence.scenarioCount.toLocaleString("en-US")} scenarios per model
+              </div>
+            </div>
+
+            <div className="system-role-grid">
+              <div className="system-role-card">
+                <div className="kicker">Current B1</div>
+                <h3>{pct(liveEvidence.distributionMetrics.current.share_le_minus5, 2)}</h3>
+                <p>Generated scenarios with equal-weight portfolio return at or below ?5%.</p>
+              </div>
+              <div className="system-role-card">
+                <div className="kicker">Historical B0</div>
+                <h3>{pct(liveEvidence.distributionMetrics.historical.share_le_minus5, 2)}</h3>
+                <p>Historical-resampling scenarios with equal-weight portfolio return at or below ?5%.</p>
+              </div>
+              <div className="system-role-card">
+                <div className="kicker">Portfolio basis</div>
+                <h3>{liveEvidence.portfolioLabel}</h3>
+                <p>Distribution metrics use the same transparent reference portfolio for B1 and B0.</p>
+              </div>
+            </div>
+
+            <div className="evidence-note">
+              <strong>Interpretation boundary.</strong>{" "}
+              {liveEvidence.boundary}
+            </div>
+
+            {item.links.liveDashboard ? (
+              <div className="actions">
+                <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                  Open Full Stress Lab Dashboard ?
+                </a>
+              </div>
+            ) : null}
+          </section>
+
+          <section className="prose-section" id="frozen-evidence">
+            <div className="kicker">Frozen research snapshot</div>
+            <h2>Published Stage-D evidence remains citable and unchanged</h2>
             <p className="body-copy">
               Stage D tests whether the adverse scenario set contains a stable and externally relevant
               representation of the joint stress pattern that subsequently occurred. Across 56 fixed
