@@ -2174,3 +2174,44 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   .live-performance-head { display:block; }
   .live-performance-legend { margin-top:.6rem; }
 }
+
+
+/* SYSTEM_DETAIL_WIDTH_CONTRACT_V1
+   All public System pages use one canonical desktop content boundary.
+   Individual sections must not shrink according to their intrinsic content. */
+.system-detail-layout > article{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+
+.system-detail-layout > article > .prose-section{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+
+.system-detail-layout .prose-section > .kicker,
+.system-detail-layout .prose-section > h2,
+.system-detail-layout .prose-section > .lede,
+.system-detail-layout .prose-section > .body-copy,
+.system-detail-layout .prose-section > .boundary-note,
+.system-detail-layout .prose-section > .evidence-note{
+  box-sizing:border-box;
+}
+
+.system-detail-layout .prose-section > .boundary-note,
+.system-detail-layout .prose-section > .evidence-note,
+.system-detail-layout .prose-section > .metrics,
+.system-detail-layout .prose-section > .system-role-grid,
+.system-detail-layout .prose-section > .dual,
+.system-detail-layout .prose-section > .pds-architecture-flow,
+.system-detail-layout .prose-section > .selected-table-block,
+.system-detail-layout .prose-section > .evidence-table-wrap,
+.system-detail-layout .prose-section > figure{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+/* /SYSTEM_DETAIL_WIDTH_CONTRACT_V1 */

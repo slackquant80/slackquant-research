@@ -149,7 +149,7 @@ export default function EquityAlphaSystemPage() {
               points={evidence.cumulativePath}
               primaryLabel="Global Equity Alpha"
               benchmarkLabel={evidence.benchmarkLabel}
-              subtitle={`${evidence.supportStart} ? ${evidence.supportEnd} ? completed history only`}
+              subtitle={`${evidence.supportStart} → ${evidence.supportEnd} · completed history only`}
             />
 
             <LiveMonthlyReturnsChart
@@ -157,7 +157,7 @@ export default function EquityAlphaSystemPage() {
               primaryLabel="Global Equity Alpha"
               benchmarkLabel={evidence.benchmarkLabel}
               title="Recent Completed Monthly Returns"
-              subtitle={`Latest 12 completed months ? ${evidence.recentMonthly[0]?.month ?? "?"} ? ${evidence.recentMonthly[evidence.recentMonthly.length - 1]?.month ?? "?"} ? current MTD excluded`}
+              subtitle={`Latest 12 completed months · ${evidence.recentMonthly[0]?.month ?? "N/A"} → ${evidence.recentMonthly[evidence.recentMonthly.length - 1]?.month ?? "N/A"} · current MTD excluded`}
             />
 
             <div className="metrics system-metrics">
@@ -170,7 +170,7 @@ export default function EquityAlphaSystemPage() {
             <div className="selected-table-block">
               <div className="selected-exhibits-head">
                 <div className="section-title">Completed-history risk / return</div>
-                <p>{evidence.supportStart} ? {evidence.supportEnd} ? {evidence.observations.toLocaleString("en-US")} completed daily returns ? daily-first accounting</p>
+                <p>{evidence.supportStart} → {evidence.supportEnd} · {evidence.observations.toLocaleString("en-US")} completed daily returns · daily-first accounting</p>
               </div>
 
               <div className="evidence-table-wrap" role="region" aria-label="Global Equity Alpha completed daily evidence" tabIndex={0}>
@@ -206,7 +206,7 @@ export default function EquityAlphaSystemPage() {
                 </table>
               </div>
 
-              <div className="evidence-table-source">Public dashboard authority ? {evidence.sourceVersion}</div>
+              <div className="evidence-table-source">Public dashboard authority · {evidence.sourceVersion}</div>
             </div>
 
             <div className="evidence-note">
@@ -222,7 +222,7 @@ export default function EquityAlphaSystemPage() {
                   rel="noopener noreferrer"
                   data-sq-dashboard-app="true"
                 >
-                  Open Full Equity Alpha Dashboard ?
+                  Open Full Equity Alpha Dashboard ↗
                 </a>
               </div>
             ) : null}
