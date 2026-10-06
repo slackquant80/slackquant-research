@@ -126,7 +126,7 @@ export default function F2rSystemPage() {
             <div className="kicker">Live operational evidence</div>
             <h2>Live Completed Performance</h2>
             <p className="body-copy">
-              Current-model performance updates with the governed F2R release. This block is generated from the source-owned F2R current-model performance state and follows the current canonical model definition. It advances only through completed performance; current MTD and Preview remain separate operating states and are excluded here.
+              Updated with each F2R release. The chart and statistics show completed performance for the current F2R model. Current MTD and Preview are kept separate and are excluded until the holding month is complete.
             </p>
             <LivePerformanceChart
               points={liveEvidence.path}
@@ -154,7 +154,7 @@ export default function F2rSystemPage() {
                 </tbody>
               </table>
             </div>
-            <div className="evidence-note"><b>Live evidence boundary:</b> {liveEvidence.boundary}</div>
+            <div className="evidence-note"><b>Performance boundary:</b> Completed history only. Current MTD and Preview are excluded.</div>
             <div className="actions">
               {item.links.liveDashboard ? (
                 <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
