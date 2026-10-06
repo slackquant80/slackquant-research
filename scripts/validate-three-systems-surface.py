@@ -208,7 +208,7 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "PDS chart/evidence clock separation", all(x in pds for x in ["Latest 12 completed holding months · {rows[0].holdingMonth} → {rows[rows.length - 1].holdingMonth}", "Adaptive history note:", "The cutoff is a provenance boundary, not the end of the performance series", "Current MTD is excluded throughout"]), "chart support is canonical-data-derived and distinct from the Adaptive evidence cutoff")
     equity = text(ROOT / "src/app/systems/equity-alpha/page.tsx")
     equity_helper = text(ROOT / "src/lib/equityAlphaEvidence.ts")
-    add(c, "Equity Alpha canonical evidence binding", all(x in equity for x in ["Completed daily evidence", "getEquityAlphaEvidence", "Annualized active return vs. ACWI", "Relative drawdown"]) and all(x in equity_helper for x in ["dashboard_data.js", "globalFinalDaily", "informationRatio", "relativeDrawdown"]), "System page derives completed evidence from public dashboard authority")
+    add(c, "Equity Alpha canonical evidence binding", all(x in equity for x in ["Live operational evidence", "Live Completed Performance", "LiveMonthlyReturnsChart", "getEquityAlphaEvidence", "Annualized active return vs. ACWI", "Tracking error vs. ACWI", "Information ratio vs. ACWI", "Relative drawdown", "Performance boundary:", "Open Full Equity Alpha Dashboard ?"]) and all(x in equity_helper for x in ["dashboard_data.js", "globalFinalDaily", "informationRatio", "relativeDrawdown"]), "System page derives completed evidence from public dashboard authority")
     pds_summary = ROOT / "src/data/pdsCanonicalSummary.ts"
     pds_public_dashboard = ROOT / "public/assets/systems/pds/Portfolio_Decision_System_Public.html"
     if pds_summary.is_file() and pds_public_dashboard.is_file():

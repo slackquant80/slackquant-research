@@ -515,10 +515,12 @@ def main() -> int:
     )
     need(
         "src/app/systems/equity-alpha/page.tsx",
-        "Completed daily evidence",
-        "ACWI-relative evidence from the same daily history used by the public dashboard",
+        "Live operational evidence",
+        "Live Completed Performance",
         "getEquityAlphaEvidence",
         "Annualized active return vs. ACWI",
+        "Tracking error vs. ACWI",
+        "Information ratio vs. ACWI",
         "Relative drawdown",
     )
     need(

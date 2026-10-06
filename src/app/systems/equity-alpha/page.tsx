@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { LivePerformanceChart } from "@/components/LivePerformanceChart";
+import { LiveMonthlyReturnsChart } from "@/components/LiveMonthlyReturnsChart";
 import { getSystem } from "@/data/systems";
 import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
 
@@ -138,63 +139,93 @@ export default function EquityAlphaSystemPage() {
           </section>
 
           <section className="prose-section" id="empirical-evidence">
-            <div className="kicker">Completed daily evidence</div>
-            <h2>ACWI-relative evidence from the same daily history used by the public dashboard</h2>
+            <div className="kicker">Live operational evidence</div>
+            <h2>Live Completed Performance</h2>
             <p className="body-copy">
-              The figures below are calculated at build time from the canonical Global Equity Alpha completed-daily dataset
-              shipped with the public dashboard. Current MTD is excluded. This keeps the System page tied to the same evidence
-              source rather than maintaining a separate hand-entered performance snapshot.
+              Updated with each canonical Equity Alpha release. The figures below show completed daily performance for the 100% Global Equity Alpha portfolio against {evidence.benchmarkLabel}, using the same completed-history authority as the public dashboard. Current MTD and Preview remain separate operating states and are excluded here.
             </p>
+
             <LivePerformanceChart
               points={evidence.cumulativePath}
               primaryLabel="Global Equity Alpha"
               benchmarkLabel={evidence.benchmarkLabel}
-              subtitle={`${evidence.supportStart} → ${evidence.supportEnd} · completed history only`}
+              subtitle={`${evidence.supportStart} ? ${evidence.supportEnd} ? completed history only`}
             />
+
+            <LiveMonthlyReturnsChart
+              rows={evidence.recentMonthly}
+              primaryLabel="Global Equity Alpha"
+              benchmarkLabel={evidence.benchmarkLabel}
+              title="Recent Completed Monthly Returns"
+              subtitle={`Latest 12 completed months ? ${evidence.recentMonthly[0]?.month ?? "?"} ? ${evidence.recentMonthly[evidence.recentMonthly.length - 1]?.month ?? "?"} ? current MTD excluded`}
+            />
+
             <div className="metrics system-metrics">
-              <div className="metric"><div className="value">{pct(evidence.portfolio.cagr)}</div><div className="label">Global Alpha CAGR</div></div>
               <div className="metric"><div className="value">{pct(evidence.activeReturn)}</div><div className="label">Annualized active return vs. ACWI</div></div>
+              <div className="metric"><div className="value">{pct(evidence.trackingError)}</div><div className="label">Tracking error vs. ACWI</div></div>
               <div className="metric"><div className="value">{num(evidence.informationRatio)}</div><div className="label">Information ratio vs. ACWI</div></div>
               <div className="metric"><div className="value">{pct(evidence.relativeDrawdown)}</div><div className="label">Relative drawdown</div></div>
             </div>
+
             <div className="selected-table-block">
               <div className="selected-exhibits-head">
                 <div className="section-title">Completed-history risk / return</div>
-                <p>{evidence.supportStart} → {evidence.supportEnd} · {evidence.observations.toLocaleString("en-US")} completed daily returns · daily-first accounting</p>
+                <p>{evidence.supportStart} ? {evidence.supportEnd} ? {evidence.observations.toLocaleString("en-US")} completed daily returns ? daily-first accounting</p>
               </div>
+
               <div className="evidence-table-wrap" role="region" aria-label="Global Equity Alpha completed daily evidence" tabIndex={0}>
                 <table className="evidence-table">
                   <thead>
                     <tr>
-                      <th>Series</th><th>Cumulative</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MDD</th><th>Ann. active</th><th>TE</th><th>IR</th><th>Relative DD</th>
+                      <th>Series</th>
+                      <th>Cumulative</th>
+                      <th>CAGR</th>
+                      <th>Vol</th>
+                      <th>Sharpe</th>
+                      <th>MDD</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <th scope="row">Global Equity Alpha</th>
-                      <td>{pct(evidence.portfolio.cumulative)}</td><td>{pct(evidence.portfolio.cagr)}</td><td>{pct(evidence.portfolio.vol)}</td><td>{num(evidence.portfolio.sharpe)}</td><td>{pct(evidence.portfolio.mdd)}</td><td>{pct(evidence.activeReturn)}</td><td>{pct(evidence.trackingError)}</td><td>{num(evidence.informationRatio)}</td><td>{pct(evidence.relativeDrawdown)}</td>
+                      <td>{pct(evidence.portfolio.cumulative)}</td>
+                      <td>{pct(evidence.portfolio.cagr)}</td>
+                      <td>{pct(evidence.portfolio.vol)}</td>
+                      <td>{num(evidence.portfolio.sharpe)}</td>
+                      <td>{pct(evidence.portfolio.mdd)}</td>
                     </tr>
                     <tr>
                       <th scope="row">{evidence.benchmarkLabel} benchmark</th>
-                      <td>{pct(evidence.benchmark.cumulative)}</td><td>{pct(evidence.benchmark.cagr)}</td><td>{pct(evidence.benchmark.vol)}</td><td>{num(evidence.benchmark.sharpe)}</td><td>{pct(evidence.benchmark.mdd)}</td><td>—</td><td>—</td><td>—</td><td>—</td>
+                      <td>{pct(evidence.benchmark.cumulative)}</td>
+                      <td>{pct(evidence.benchmark.cagr)}</td>
+                      <td>{pct(evidence.benchmark.vol)}</td>
+                      <td>{num(evidence.benchmark.sharpe)}</td>
+                      <td>{pct(evidence.benchmark.mdd)}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div className="evidence-table-source">Public dashboard authority · {evidence.sourceVersion}</div>
+
+              <div className="evidence-table-source">Public dashboard authority ? {evidence.sourceVersion}</div>
             </div>
-            <div className="selected-table-block live-recent-block">
-              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD excluded</p></div>
-              <div className="evidence-table-wrap" role="region" aria-label="Global Equity Alpha recent 12 completed monthly returns" tabIndex={0}>
-                <table className="evidence-table compact-monthly-table">
-                  <thead><tr><th>Month</th><th>Global Equity Alpha</th><th>{evidence.benchmarkLabel}</th></tr></thead>
-                  <tbody>{[...evidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td><td>{pct(row.benchmark)}</td></tr>)}</tbody>
-                </table>
-              </div>
-            </div>
+
             <div className="evidence-note">
-              These are historical completed-period results for the production model definition shown in the public dashboard. They are not a guarantee of future alpha. Investor-level ACWI Core / Global Alpha mixing changes the investor portfolio, not the underlying model selections.
+              <b>Performance boundary:</b> Completed production-model history only. Current MTD and Preview are excluded. Investor-level ACWI Core / Global Alpha mixing changes the investor portfolio, not the underlying model selections.
             </div>
+
+            {item.links.publicDashboard ? (
+              <div className="actions">
+                <a
+                  className="btn primary"
+                  href={item.links.publicDashboard}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-sq-dashboard-app="true"
+                >
+                  Open Full Equity Alpha Dashboard ?
+                </a>
+              </div>
+            ) : null}
           </section>
 
           <section className="prose-section" id="public">
