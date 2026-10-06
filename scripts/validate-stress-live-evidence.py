@@ -190,8 +190,8 @@ def main() -> int:
         'id="live-evidence"',
         'Live operational evidence',
         'Current Conditional Stress Snapshot',
-        'Stress-family structure ? current B1 vs historical B0',
-        'Open Full Stress Lab Dashboard ?',
+        'Stress-family structure · current B1 vs historical B0',
+        'Open Full Stress Lab Dashboard ↗',
         'id="frozen-evidence"',
         'Frozen research snapshot',
         'Published Stage-D evidence remains citable and unchanged',
@@ -199,6 +199,19 @@ def main() -> int:
     for token in page_required:
         if token not in page:
             fail(f"Stress System page missing live/frozen contract token: {token}")
+
+    broken_visible_tokens = (
+        "Current dominant-family share ? ",
+        "Historical B0 share ? same family",
+        "Stress-family structure ? current B1 vs historical B0",
+        "Canonical Stress Lab v{liveEvidence.canonicalVersion} ? ",
+        "trading-day horizon ? ",
+        "return at or below ?5%",
+        "Open Full Stress Lab Dashboard ?",
+    )
+    for token in broken_visible_tokens:
+        if token in page:
+            fail(f"Stress System page contains broken visible glyph token: {token}")
 
     sync_required = (
         "SLACKQUANT_STRESS_LIVE_EVIDENCE_V1",

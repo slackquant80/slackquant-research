@@ -199,11 +199,11 @@ export default function ScenarioStressLabPage() {
             <div className="metrics system-evidence-metrics">
               <div className="metric">
                 <div className="value">{pct(liveEvidence.dominantFamily.currentShare)}</div>
-                <div className="label">Current dominant-family share ? {liveEvidence.dominantFamily.label}</div>
+                <div className="label">Current dominant-family share · {liveEvidence.dominantFamily.label}</div>
               </div>
               <div className="metric">
                 <div className="value">{pct(liveEvidence.dominantFamily.historicalShare)}</div>
-                <div className="label">Historical B0 share ? same family</div>
+                <div className="label">Historical B0 share · same family</div>
               </div>
               <div className="metric">
                 <div className="value">{pct(liveEvidence.distributionMetrics.current.es05, 2)}</div>
@@ -216,7 +216,7 @@ export default function ScenarioStressLabPage() {
             </div>
 
             <div className="selected-table-block">
-              <div className="section-title">Stress-family structure ? current B1 vs historical B0</div>
+              <div className="section-title">Stress-family structure · current B1 vs historical B0</div>
               <div className="evidence-table-wrap">
                 <table className="evidence-table system-evidence-table">
                   <thead>
@@ -240,8 +240,8 @@ export default function ScenarioStressLabPage() {
                 </table>
               </div>
               <div className="evidence-table-source">
-                Canonical Stress Lab v{liveEvidence.canonicalVersion} ? data through {liveEvidence.dataAsOf} ?
-                {" "}{liveEvidence.horizonTradingDays}-trading-day horizon ? {liveEvidence.scenarioCount.toLocaleString("en-US")} scenarios per model
+                Canonical Stress Lab v{liveEvidence.canonicalVersion} · data through {liveEvidence.dataAsOf} ·
+                {" "}{liveEvidence.horizonTradingDays}-trading-day horizon · {liveEvidence.scenarioCount.toLocaleString("en-US")} scenarios per model
               </div>
             </div>
 
@@ -249,12 +249,12 @@ export default function ScenarioStressLabPage() {
               <div className="system-role-card">
                 <div className="kicker">Current B1</div>
                 <h3>{pct(liveEvidence.distributionMetrics.current.share_le_minus5, 2)}</h3>
-                <p>Generated scenarios with equal-weight portfolio return at or below ?5%.</p>
+                <p>Generated scenarios with equal-weight portfolio return at or below −5%.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Historical B0</div>
                 <h3>{pct(liveEvidence.distributionMetrics.historical.share_le_minus5, 2)}</h3>
-                <p>Historical-resampling scenarios with equal-weight portfolio return at or below ?5%.</p>
+                <p>Historical-resampling scenarios with equal-weight portfolio return at or below −5%.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Portfolio basis</div>
@@ -271,7 +271,7 @@ export default function ScenarioStressLabPage() {
             {item.links.liveDashboard ? (
               <div className="actions">
                 <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                  Open Full Stress Lab Dashboard ?
+                  Open Full Stress Lab Dashboard ↗
                 </a>
               </div>
             ) : null}
