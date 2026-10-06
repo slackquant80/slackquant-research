@@ -73,8 +73,11 @@ def build_adaa(research_root: Path):
     for row in path_rows:
         month = row["Date"][:7]
         by_month[month] = row
+    # Investor-facing primary implementation is ADAA Core with the governed Dynamic FX overlay.
+    # The underlying ADAA Core (fully hedged series in the source artifact) is the direct
+    # implementation comparison; 60/40 remains a secondary reference in the summary table.
     path = [
-        {"date": row["Date"], "primary": float(row["ADAA_DH_Wealth"]), "benchmark": float(row["60/40_Wealth"])}
+        {"date": row["Date"], "primary": float(row["ADAA_DH_Wealth"]), "benchmark": float(row["ADAA_H_Wealth"])}
         for row in by_month.values()
     ]
 
@@ -85,7 +88,7 @@ def build_adaa(research_root: Path):
         {
             "month": month,
             "primary": compound(rows, "ADAA_DH"),
-            "benchmark": compound(rows, "60/40"),
+            "benchmark": compound(rows, "ADAA_H"),
         }
         for month, rows in list(daily_by_month.items())[-12:]
     ]
@@ -108,12 +111,17 @@ def build_adaa(research_root: Path):
         "completedThrough": path_rows[-1]["Date"],
         "supportStart": path_rows[0]["Date"],
         "supportEnd": path_rows[-1]["Date"],
-        "primaryLabel": "ADAA Dynamic",
-        "benchmarkLabel": "60/40 SPY/IEF",
+        "primaryLabel": "ADAA Core + Dynamic FX",
+        "benchmarkLabel": "ADAA Core",
+        "referenceLabel": "60/40 SPY/IEF",
         "path": path,
         "recentMonthly": recent,
-        "metrics": {"primary": metrics("ADAA Dynamic"), "benchmark": metrics("60/40 SPY/IEF")},
-        "boundary": "Completed historical performance from the current ADAA public-view snapshot. Current MTD and Preview are excluded.",
+        "metrics": {
+            "primary": metrics("ADAA Dynamic"),
+            "benchmark": metrics("ADAA Fully Hedged"),
+            "reference": metrics("60/40 SPY/IEF"),
+        },
+        "boundary": "Completed historical performance from the current ADAA public-view snapshot. Dynamic FX is the investor-facing implementation layer; Current MTD and Preview are excluded.",
     }
 
 

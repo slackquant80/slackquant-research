@@ -193,7 +193,7 @@ def audit_static(require_build: bool) -> list[Check]:
         "Intramonth Preview",
     ]
     add(c, "ADAA public runtime parity", all(x in adaa for x in adaa_required), "pre-release refresh/check → prepared public state")
-    add(c, "ADAA live empirical evidence", all(x in adaa for x in ["Live operational evidence", "getLiveSystemEvidence", "LivePerformanceChart", "Recent 12 completed months", "Frozen research snapshot", "adaaPublishedEvidence"]), "live completed-performance evidence is primary while frozen paper evidence remains preserved")
+    add(c, "ADAA live empirical evidence", all(x in adaa for x in ["Live operational evidence", "Live Completed Performance", "getLiveSystemEvidence", "LivePerformanceChart", "LiveMonthlyReturnsChart", "ADAA Core + Dynamic FX", "Core + Dynamic FX CAGR", "60/40 SPY/IEF", "Frozen research snapshot", "adaaPublishedEvidence"]), "Core + Dynamic FX is the investor-facing live implementation, ADAA Core is the direct comparison, and frozen paper evidence remains preserved")
     adaa_forbidden = [
         "19-source-series market snapshot", "public Thin-Shiny", "Decision authority:",
         "canonical snapshot validation", "no execution authority"

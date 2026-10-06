@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getSystem } from "@/data/systems";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { LivePerformanceChart } from "@/components/LivePerformanceChart";
+import { LiveMonthlyReturnsChart } from "@/components/LiveMonthlyReturnsChart";
 import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
 import { adaaPublishedEvidence } from "@/data/systemEvidence";
 
@@ -160,42 +161,46 @@ export default function AdaaSystemPage() {
 
           <section className="prose-section" id="empirical-evidence">
             <div className="kicker">Live operational evidence</div>
-            <h2>Completed performance updates with the operating system</h2>
-            <p className="body-copy">
-              This is the current completed-history record from ADAA&apos;s governed public-view snapshot, not a paper-frozen exhibit.
-              It updates as the canonical ADAA performance history advances. Current MTD and Intramonth Preview remain outside this evidence block until the holding month is completed.
+            <h2>Live Completed Performance</h2>
+            <p className="body-copy adaa-live-performance-copy">
+              Updated with each canonical ADAA release. For a Korean investor implementation, ADAA Core + Dynamic FX is the primary live series: the asset-allocation Core remains intact while the governed FX overlay manages currency exposure. The cumulative and recent-return charts compare that implementation directly with ADAA Core. The 60/40 SPY/IEF portfolio remains a secondary market reference in the summary table. Current MTD and Intramonth Preview are excluded throughout.
             </p>
             <LivePerformanceChart
               points={liveEvidence.path}
               primaryLabel={liveEvidence.primaryLabel}
               benchmarkLabel={liveEvidence.benchmarkLabel}
-              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed history through ${liveEvidence.completedThrough}`}
+              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed through ${liveEvidence.completedThrough} · current MTD excluded`}
+            />
+            <LiveMonthlyReturnsChart
+              rows={liveEvidence.recentMonthly}
+              primaryLabel={liveEvidence.primaryLabel}
+              benchmarkLabel={liveEvidence.benchmarkLabel}
+              subtitle={`Latest 12 completed holding months · ${liveEvidence.recentMonthly[0]?.month} → ${liveEvidence.recentMonthly[liveEvidence.recentMonthly.length - 1]?.month} · current MTD excluded`}
             />
             <div className="metrics system-metrics">
-              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.cagr)}</div><div className="label">ADAA Dynamic CAGR</div></div>
+              <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.cagr)}</div><div className="label">Core + Dynamic FX CAGR</div></div>
               <div className="metric"><div className="value">{num(liveEvidence.metrics.primary.sharpe)}</div><div className="label">Sharpe (Rf=0)</div></div>
               <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.mdd)}</div><div className="label">Maximum drawdown</div></div>
               <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.annVol)}</div><div className="label">Annualized volatility</div></div>
             </div>
             <div className="evidence-table-wrap" role="region" aria-label="ADAA live completed performance summary" tabIndex={0}>
-              <table className="evidence-table">
+              <table className="evidence-table adaa-live-performance-table">
                 <thead><tr><th>Series</th><th>Cumulative</th><th>CAGR</th><th>Vol</th><th>Sharpe</th><th>MDD</th><th>Calmar</th></tr></thead>
                 <tbody>
-                  <tr><th scope="row">{liveEvidence.primaryLabel}</th><td>{pct(liveEvidence.metrics.primary.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.primary.cagr)}</td><td>{pct(liveEvidence.metrics.primary.annVol)}</td><td>{num(liveEvidence.metrics.primary.sharpe)}</td><td>{pct(liveEvidence.metrics.primary.mdd)}</td><td>{num(liveEvidence.metrics.primary.calmar)}</td></tr>
+                  <tr className="adaa-primary-row"><th scope="row">{liveEvidence.primaryLabel}</th><td>{pct(liveEvidence.metrics.primary.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.primary.cagr)}</td><td>{pct(liveEvidence.metrics.primary.annVol)}</td><td>{num(liveEvidence.metrics.primary.sharpe)}</td><td>{pct(liveEvidence.metrics.primary.mdd)}</td><td>{num(liveEvidence.metrics.primary.calmar)}</td></tr>
                   {liveEvidence.metrics.benchmark ? <tr><th scope="row">{liveEvidence.benchmarkLabel}</th><td>{pct(liveEvidence.metrics.benchmark.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.benchmark.cagr)}</td><td>{pct(liveEvidence.metrics.benchmark.annVol)}</td><td>{num(liveEvidence.metrics.benchmark.sharpe)}</td><td>{pct(liveEvidence.metrics.benchmark.mdd)}</td><td>{num(liveEvidence.metrics.benchmark.calmar)}</td></tr> : null}
+                  {liveEvidence.metrics.reference ? <tr className="adaa-reference-row"><th scope="row">{liveEvidence.referenceLabel}</th><td>{pct(liveEvidence.metrics.reference.cumulativeReturn)}</td><td>{pct(liveEvidence.metrics.reference.cagr)}</td><td>{pct(liveEvidence.metrics.reference.annVol)}</td><td>{num(liveEvidence.metrics.reference.sharpe)}</td><td>{pct(liveEvidence.metrics.reference.mdd)}</td><td>{num(liveEvidence.metrics.reference.calmar)}</td></tr> : null}
                 </tbody>
               </table>
             </div>
-            <div className="selected-table-block live-recent-block">
-              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD excluded</p></div>
-              <div className="evidence-table-wrap" role="region" aria-label="ADAA recent 12 completed monthly returns" tabIndex={0}>
-                <table className="evidence-table compact-monthly-table">
-                  <thead><tr><th>Month</th><th>ADAA Dynamic</th><th>60/40 SPY/IEF</th></tr></thead>
-                  <tbody>{[...liveEvidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td><td>{typeof row.benchmark === "number" ? pct(row.benchmark) : "—"}</td></tr>)}</tbody>
-                </table>
-              </div>
+            <div className="evidence-note"><b>Implementation note:</b> ADAA Core + Dynamic FX is the investor-facing implementation shown here. ADAA Core isolates the underlying allocation engine; 60/40 SPY/IEF is retained as a secondary reference rather than the direct FX-overlay comparison.</div>
+            <div className="actions">
+              {item.links.liveDashboard ? (
+                <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                  Open Full ADAA Dashboard ↗
+                </a>
+              ) : null}
             </div>
-            <div className="evidence-note"><b>Live evidence boundary:</b> {liveEvidence.boundary}</div>
 
             <div className="research-snapshot-block">
               <div className="kicker">Frozen research snapshot</div>

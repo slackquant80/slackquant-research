@@ -416,6 +416,16 @@ def main() -> int:
         'root-level compatibility/shadow copies are not accepted',
         'provider_project_root(research_root, "ADAA")',
         'provider_project_root(research_root, "F2R")',
+        'ADAA_DH_Wealth',
+        'ADAA_H_Wealth',
+        'compound(rows, "ADAA_DH")',
+        'compound(rows, "ADAA_H")',
+        'metrics("ADAA Dynamic")',
+        'metrics("ADAA Fully Hedged")',
+        'metrics("60/40 SPY/IEF")',
+        '"primaryLabel": "ADAA Core + Dynamic FX"',
+        '"benchmarkLabel": "ADAA Core"',
+        '"referenceLabel": "60/40 SPY/IEF"',
         'F2R_OPERATOR_STATE_REL',
         'f2r_operator_state.json',
         'CURRENT_CANONICAL_MODEL_PORTFOLIO',
@@ -446,6 +456,11 @@ def main() -> int:
         payload = json.loads(evidence_path.read_text(encoding="utf-8-sig"))
         if payload.get("schema") != "SLACKQUANT_LIVE_EVIDENCE_V1" or payload.get("system") != expected_system:
             raise RuntimeError(f"{expected_system} live evidence schema/system mismatch")
+        if slug == "adaa":
+            if payload.get("primaryLabel") != "ADAA Core + Dynamic FX" or payload.get("benchmarkLabel") != "ADAA Core":
+                raise RuntimeError("ADAA live evidence must present Core + Dynamic FX as primary and ADAA Core as the direct comparison")
+            if payload.get("referenceLabel") != "60/40 SPY/IEF" or not (payload.get("metrics") or {}).get("reference"):
+                raise RuntimeError("ADAA live evidence must retain 60/40 SPY/IEF as a metrics-only secondary reference")
         completed = str(payload.get("completedThrough", ""))
         support_end = str(payload.get("supportEnd", ""))
         if not completed or completed != support_end:
@@ -482,9 +497,12 @@ def main() -> int:
         "Decision Diversification: diversify the",
         "Diversify the decision process before diversifying the portfolio",
         "Live operational evidence",
-        "Completed performance updates with the operating system",
+        "Live Completed Performance",
         "LivePerformanceChart",
-        "Recent 12 completed months",
+        "LiveMonthlyReturnsChart",
+        "Core + Dynamic FX CAGR",
+        "ADAA Core + Dynamic FX",
+        "60/40 SPY/IEF",
         "Frozen research snapshot",
         "adaaPublishedEvidence",
         "not the exact construction",

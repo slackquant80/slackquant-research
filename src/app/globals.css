@@ -844,6 +844,39 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 .pds-chart-bar:hover{opacity:.72}
 .pds-monthly-chart-note{margin-top:8px;color:var(--muted);font-size:11.5px;line-height:1.5}
 
+/* Reusable live-system completed-month return chart. */
+.live-monthly-figure{margin:28px 0 30px;border:1px solid var(--line);background:var(--paper);padding:20px 20px 14px}
+.live-monthly-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:14px}
+.live-monthly-head h3{font-family:Georgia,"Times New Roman",serif;font-size:23px;font-weight:500;line-height:1.2;margin:0 0 5px}
+.live-monthly-head p{font-size:12.5px;line-height:1.5;color:var(--muted);margin:0;max-width:560px}
+.live-monthly-legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end;font-size:11.5px;color:#4f555a;white-space:nowrap}
+.live-monthly-legend span{display:inline-flex;align-items:center;gap:6px}
+.live-monthly-swatch{display:inline-block;width:12px;height:8px}
+.live-monthly-swatch.primary,.live-monthly-bar.primary{background:var(--accent);fill:var(--accent)}
+.live-monthly-swatch.benchmark,.live-monthly-bar.benchmark{background:#7b8790;fill:#7b8790}
+.live-monthly-scroll{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.live-monthly-svg{display:block;width:100%;height:auto;min-width:680px}
+.live-monthly-grid{stroke:#e0e3df;stroke-width:1}
+.live-monthly-zero{stroke:#899198;stroke-width:1.1}
+.live-monthly-axis,.live-monthly-month{fill:#6a7075;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:10px}
+.live-monthly-bar{transition:opacity .12s ease}
+.live-monthly-bar:hover{opacity:.72}
+@media(max-width:760px){
+  .live-monthly-head{display:block}
+  .live-monthly-legend{justify-content:flex-start;margin-top:10px;white-space:normal}
+  .live-monthly-figure{padding:16px 14px 12px}
+}
+
+/* ADAA live-evidence presentation: implementation first, Core as direct comparison. */
+.adaa-live-performance-copy{max-width:790px}
+.adaa-live-performance-table{min-width:0;table-layout:fixed;font-size:12px}
+.adaa-live-performance-table th,.adaa-live-performance-table td{padding:12px 8px}
+.adaa-live-performance-table th:first-child,.adaa-live-performance-table td:first-child{width:27%;white-space:normal}
+.adaa-live-performance-table th:nth-child(n+2),.adaa-live-performance-table td:nth-child(n+2){width:12.16%}
+.adaa-live-performance-table .adaa-primary-row{background:#eef4f5}
+.adaa-live-performance-table .adaa-primary-row th{color:#173f51;font-weight:800}
+.adaa-live-performance-table .adaa-reference-row{color:var(--muted)}
+
 /* PDS live-evidence presentation: dense enough for desktop, scrollable only when genuinely narrow. */
 .pds-live-performance-copy{max-width:780px}
 .pds-live-performance-table{min-width:0;table-layout:fixed;font-size:12px}

@@ -31,11 +31,13 @@ export type LiveSystemEvidence = {
   supportEnd: string;
   primaryLabel: string;
   benchmarkLabel?: string;
+  referenceLabel?: string;
   path: LiveEvidencePoint[];
   recentMonthly: LiveEvidenceMonthlyRow[];
   metrics: {
     primary: LiveEvidenceMetrics;
     benchmark?: LiveEvidenceMetrics;
+    reference?: LiveEvidenceMetrics;
   };
   boundary: string;
 };
