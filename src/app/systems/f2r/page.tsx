@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { LivePerformanceChart } from "@/components/LivePerformanceChart";
+import { LiveMonthlyReturnsChart } from "@/components/LiveMonthlyReturnsChart";
 import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
 import { getSystem } from "@/data/systems";
 import { f2rPublishedEvidence } from "@/data/systemEvidence";
@@ -123,15 +124,20 @@ export default function F2rSystemPage() {
 
           <section className="prose-section" id="empirical-evidence">
             <div className="kicker">Live operational evidence</div>
-            <h2>Current-model performance updates with the governed F2R release</h2>
+            <h2>Live Completed Performance</h2>
             <p className="body-copy">
-              This block is generated from the source-owned F2R current-model performance state and follows the current canonical model definition.
-              It advances only through completed performance; current MTD and Preview remain separate operating states and are excluded here.
+              Current-model performance updates with the governed F2R release. This block is generated from the source-owned F2R current-model performance state and follows the current canonical model definition. It advances only through completed performance; current MTD and Preview remain separate operating states and are excluded here.
             </p>
             <LivePerformanceChart
               points={liveEvidence.path}
               primaryLabel={liveEvidence.primaryLabel}
-              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed history through ${liveEvidence.completedThrough}`}
+              subtitle={`${liveEvidence.supportStart} → ${liveEvidence.supportEnd} · completed through ${liveEvidence.completedThrough} · current MTD excluded`}
+            />
+            <LiveMonthlyReturnsChart
+              rows={liveEvidence.recentMonthly}
+              primaryLabel={liveEvidence.primaryLabel}
+              title="Recent Completed Monthly Returns"
+              subtitle={`Recent 12 completed months · ${liveEvidence.recentMonthly[0]?.month} → ${liveEvidence.recentMonthly[liveEvidence.recentMonthly.length - 1]?.month} · current MTD and Preview excluded`}
             />
             <div className="metrics system-metrics">
               <div className="metric"><div className="value">{pct(liveEvidence.metrics.primary.cagr)}</div><div className="label">Current-model CAGR</div></div>
@@ -148,16 +154,14 @@ export default function F2rSystemPage() {
                 </tbody>
               </table>
             </div>
-            <div className="selected-table-block live-recent-block">
-              <div className="selected-exhibits-head"><div className="section-title">Recent 12 completed months</div><p>Current MTD and Preview excluded</p></div>
-              <div className="evidence-table-wrap" role="region" aria-label="F2R recent 12 completed monthly returns" tabIndex={0}>
-                <table className="evidence-table compact-monthly-table">
-                  <thead><tr><th>Month</th><th>F2R current model</th></tr></thead>
-                  <tbody>{[...liveEvidence.recentMonthly].reverse().map((row) => <tr key={row.month}><th scope="row">{row.month}</th><td>{pct(row.primary)}</td></tr>)}</tbody>
-                </table>
-              </div>
-            </div>
             <div className="evidence-note"><b>Live evidence boundary:</b> {liveEvidence.boundary}</div>
+            <div className="actions">
+              {item.links.liveDashboard ? (
+                <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                  Open Full F2R Dashboard ↗
+                </a>
+              ) : null}
+            </div>
 
             <div className="research-snapshot-block">
               <div className="kicker">Frozen research snapshot</div>
