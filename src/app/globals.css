@@ -2176,42 +2176,19 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
 }
 
 
-/* SYSTEM_DETAIL_WIDTH_CONTRACT_V1
-   All public System pages use one canonical desktop content boundary.
-   Individual sections must not shrink according to their intrinsic content. */
-.system-detail-layout > article{
-  width:100%;
-  max-width:100%;
-  min-width:0;
+/* SYSTEM_DETAIL_VERTICAL_RHYTHM_V1
+   A new subsection inside the same major System-page section
+   must have clear visual separation from the preceding block. */
+.system-detail-layout .prose-section > .kicker:not(:first-child){
+  margin-top:48px;
 }
 
-.system-detail-layout > article > .prose-section{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
+/* If a subsection begins immediately after a bordered/note block,
+   preserve the same major-subsection rhythm. */
+.system-detail-layout .prose-section > .boundary-note + .kicker,
+.system-detail-layout .prose-section > .evidence-note + .kicker,
+.system-detail-layout .prose-section > .system-operating-list + .kicker,
+.system-detail-layout .prose-section > .pds-architecture-flow + .kicker{
+  margin-top:48px;
 }
-
-.system-detail-layout .prose-section > .kicker,
-.system-detail-layout .prose-section > h2,
-.system-detail-layout .prose-section > .lede,
-.system-detail-layout .prose-section > .body-copy,
-.system-detail-layout .prose-section > .boundary-note,
-.system-detail-layout .prose-section > .evidence-note{
-  box-sizing:border-box;
-}
-
-.system-detail-layout .prose-section > .boundary-note,
-.system-detail-layout .prose-section > .evidence-note,
-.system-detail-layout .prose-section > .metrics,
-.system-detail-layout .prose-section > .system-role-grid,
-.system-detail-layout .prose-section > .dual,
-.system-detail-layout .prose-section > .pds-architecture-flow,
-.system-detail-layout .prose-section > .selected-table-block,
-.system-detail-layout .prose-section > .evidence-table-wrap,
-.system-detail-layout .prose-section > figure{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
-/* /SYSTEM_DETAIL_WIDTH_CONTRACT_V1 */
+/* /SYSTEM_DETAIL_VERTICAL_RHYTHM_V1 */
