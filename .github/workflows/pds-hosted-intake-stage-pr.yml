@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
-      BUNDLE: ${{ runner.temp }}/pds-reviewed/PDS_HOSTED_INTAKE_PROPOSAL.zip
+      BUNDLE: /tmp/pds-reviewed/PDS_HOSTED_INTAKE_PROPOSAL.zip
       PDS_SOURCE_TAG: ${{ inputs.source_release_tag }}
       PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}
       PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}
