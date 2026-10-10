@@ -100,7 +100,7 @@ class IntakeSafetyTests(unittest.TestCase):
     def test_archive_missing_member(self):
         records = dict(self.files)
         records.pop(sorted(records)[0])
-        self.assert_rejected(records)
+        self.assert_rejected(records, meta=sealed_index(self.files))
 
     def test_archive_extra_member(self):
         self.assert_rejected(extra={"public/data/systems/pds/unexpected.csv": b"nope"})
