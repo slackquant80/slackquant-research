@@ -17,6 +17,7 @@ import unittest
 import warnings
 import zipfile
 from pathlib import Path
+from datetime import date, timedelta
 
 ROOT = Path(__file__).resolve().parents[1]
 S = ROOT / "scripts/receive-pds-hosted-intake.py"
@@ -164,12 +165,12 @@ class IntakeSafetyTests(unittest.TestCase):
         location.parent.mkdir(parents=True)
         receipt = json.loads(self.files[receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"])
         clock = receiver.receipt_clock(self.files)
-        receipt["official_signal_period"] = "2026-12"
+        receipt["official_signal_period"] = receiver.holding_after(clock["official_signal"])
         location.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(root, self.files, clock)
         receipt["official_signal_period"] = clock["official_signal"]
-        receipt["official_mark_through"] = "2026-12-01"
+        receipt["official_mark_through"] = (date.fromisoformat(clock["mark_through"]) + timedelta(days=1)).isoformat()
         location.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(root, self.files, clock)
@@ -189,7 +190,7 @@ class IntakeSafetyTests(unittest.TestCase):
         location = root / receiver.EXPORT_PREFIX / "public_disclosure_state.json"
         location.parent.mkdir(parents=True)
         disclosure = json.loads(self.files[receiver.EXPORT_PREFIX + "public_disclosure_state.json"])
-        disclosure["latest_released_signal_period"] = "2026-09"
+        disclosure["latest_released_signal_period"] = receiver.holding_after(receiver.receipt_clock(self.files)["compatibility_released"])
         location.write_text(json.dumps(disclosure))
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(root, self.files, receiver.receipt_clock(self.files))
