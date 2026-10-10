@@ -7,6 +7,7 @@ on:
       - "scripts/receive-pds-hosted-intake.py"
       - "scripts/test-pds-hosted-intake.py"
       - ".github/workflows/pds-hosted-intake-review.yml"
+      - ".github/workflows/pds-hosted-intake-stage-pr.yml"
       - "scripts/bind-pds-public-export.py"
       - "scripts/bind-pds-canonical-summary.py"
       - "scripts/validate-pds-publication.py"
@@ -32,6 +33,8 @@ jobs:
           python3 -m py_compile scripts/receive-pds-hosted-intake.py scripts/test-pds-hosted-intake.py
       - name: Attack / exact-inventory / production-public-fixture / disposable-workspace binder tests
         run: python3 scripts/test-pds-hosted-intake.py
+      - name: Parse hosted manual-stage workflow YAML (syntax only)
+        run: ruby -e 'require "yaml"; YAML.parse_file(".github/workflows/pds-hosted-intake-stage-pr.yml"); puts "PDS_STAGE_WORKFLOW_YAML_PARSE_PASS"'
       - name: Verify this review workflow never deploys
         run: |
           python3 - <<'PY'
