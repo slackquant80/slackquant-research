@@ -1,0 +1,45 @@
+name: PDS Hosted Intake Review Contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/receive-pds-hosted-intake.py"
+      - "scripts/test-pds-hosted-intake.py"
+      - ".github/workflows/pds-hosted-intake-review.yml"
+      - "scripts/bind-pds-public-export.py"
+      - "scripts/bind-pds-canonical-summary.py"
+      - "scripts/validate-pds-publication.py"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/receive-pds-hosted-intake.py"
+      - "scripts/test-pds-hosted-intake.py"
+      - ".github/workflows/pds-hosted-intake-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-source-artifact-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax
+        run: |
+          python3 -m py_compile scripts/receive-pds-hosted-intake.py scripts/test-pds-hosted-intake.py
+      - name: Attack / exact-inventory / production-public-fixture / disposable-workspace binder tests
+        run: python3 scripts/test-pds-hosted-intake.py
+      - name: Verify this review workflow never deploys
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s = Path('scripts/receive-pds-hosted-intake.py').read_text()
+          w = Path('.github/workflows/pds-hosted-intake-review.yml').read_text()
+          for banned in ('git push', 'gh pr merge', 'deploy-pages', 'repository_dispatch'):
+              assert banned not in w and banned not in s, banned
+          assert 'contents: read' in w
+          print('PDS_HOSTED_INTAKE_READ_ONLY_CI_PASS')
+          PY
