@@ -124,7 +124,10 @@ def receipt_clock(records: dict[str, bytes]) -> dict:
     mark = real_day(str(receipt.get("official_mark_through") or ""))
     rel = str(disclosure.get("latest_released_signal_period") or "")
     elig = str(disclosure.get("latest_eligible_signal_period") or "")
-    require(bool(YM.fullmatch(rel)) and bool(YM.fullmatch(elig)) and rel <= elig, "invalid compatibility signal period")
+    completed = str(disclosure.get("completed_holding_month_cutoff") or "")
+    require(bool(YM.fullmatch(rel)) and bool(YM.fullmatch(elig)) and rel <= elig,
+            "invalid compatibility signal period")
+    require(bool(YM.fullmatch(completed)), "invalid compatibility completed holding clock")
     indexed = export.get("files_sha256")
     require(isinstance(indexed, dict) and set(indexed) ==
             (public_expected(ROOT) - {"public_export_manifest.json"}), "source manifest inventory mismatch")
@@ -132,7 +135,10 @@ def receipt_clock(records: dict[str, bytes]) -> dict:
         require(isinstance(checksum, str) and bool(SHA.fullmatch(checksum)) and
                 digest(records[EXPORT_PREFIX + name]) == checksum, f"source manifest checksum mismatch: {name}")
     return {"official_signal": official, "holding_month": holding, "mark_through": mark,
-            "compatibility_released": rel, "compatibility_eligible": elig}
+            "compatibility_released": rel, "compatibility_eligible": elig,
+            "compatibility_completed": completed,
+            "source_program_version": str(export.get("source_program_version") or ""),
+            "source_rs03_version": str(export.get("source_rs03_version") or "")}
 
 
 def verify_archive(path: Path, app: Path) -> tuple[dict[str, bytes], dict]:
@@ -163,6 +169,8 @@ def verify_archive(path: Path, app: Path) -> tuple[dict[str, bytes], dict]:
     require(manifest.get("release_authorized") is False and
             manifest.get("public_deployment_authorized") is False, "transport asserts release authority")
     require(manifest.get("stage") == "INTAKE_REVIEW_ONLY", "transport not in review-only stage")
+    require(manifest.get("publication_pipeline") == "PENDING_SLACKQUANT_HOSTED_INTAKE",
+            "transport publication pipeline unexpectedly authorized")
     require(manifest.get("derived_platform_bindings") == "NOT_INCLUDED_REBUILD_AND_VALIDATE_IN_DEPLOYMENT_REPO",
             "derived binding claim mismatch")
     require(manifest.get("adaa_f2r_live_evidence") == "NOT_INCLUDED_REVIEW_REQUIRED", "provider evidence claim mismatch")
@@ -184,6 +192,9 @@ def verify_archive(path: Path, app: Path) -> tuple[dict[str, bytes], dict]:
         "canonical_mark_through": "mark_through",
         "compatibility_released_signal": "compatibility_released",
         "compatibility_eligible_signal": "compatibility_eligible",
+        "compatibility_completed_through": "compatibility_completed",
+        "source_program_version": "source_program_version",
+        "source_rs03_version": "source_rs03_version",
     }.items():
         require(supplied.get(key) == clock[source], "transport clock mismatch: " + key)
     require(supplied.get("source_export_manifest_sha256") ==
