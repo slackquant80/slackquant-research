@@ -8,7 +8,7 @@ Keep the existing PDS publisher until source-vs-hosted and live-site gates pass.
 
 - Source: private `slackquant80/research-multiasset` generates and source-audits
   the **16** compatibility files and **3** canonical public-mirror files.
-- Transport: `pds_hosted_release_bundle.py` makes a signed-by-content
+- Transport: `pds_hosted_release_bundle.py` makes a content-addressed,
   SHA256-indexed, **review-only** ZIP; it has **no publication authority**.
 - Receiver: `scripts/receive-pds-hosted-intake.py --bundle <path>`
   validates manifest, exact paths, SHA256, independent receipts, Official /
