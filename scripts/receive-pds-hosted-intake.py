@@ -144,7 +144,8 @@ def verify_archive(path: Path, app: Path) -> tuple[dict[str, bytes], dict]:
         names = [x.filename for x in infos]
         require(len(infos) == MAX_MEMBERS and len(names) == len(set(names)), "duplicate or unexpected archive member count")
         require(set(names) == expected | {META}, "PDS archive file-set mismatch")
-        require(z.testzip() is None, "PDS archive CRC mismatch")
+        # Bound declared uncompressed sizes BEFORE inflating any archive member.
+        # ZipFile.read verifies each member's CRC independently.
         total = 0
         records = {}
         for info in infos:
