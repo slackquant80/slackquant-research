@@ -151,6 +151,49 @@ class IntakeSafetyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             receiver.holding_after("2026-13")
 
+    def test_transport_clock_mismatch_rejected(self):
+        meta = sealed_index(self.files)
+        meta["clock"]["canonical_holding_month"] = "2026-12"
+        self.assert_rejected(meta=meta)
+
+    def test_future_rollback_clock_rejected(self):
+        # A forged older release must never replace a newer public Official
+        # or market-through date, even when its individual hashes are valid.
+        root = Path(self.temp.name) / "old_release_guard"
+        location = root / receiver.MIRROR_PREFIX / "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        location.parent.mkdir(parents=True)
+        receipt = json.loads(self.files[receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"])
+        clock = receiver.receipt_clock(self.files)
+        receipt["official_signal_period"] = "2026-12"
+        location.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, "would regress"):
+            receiver.nonregression(root, self.files, clock)
+        receipt["official_signal_period"] = clock["official_signal"]
+        receipt["official_mark_through"] = "2026-12-01"
+        location.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, "would regress"):
+            receiver.nonregression(root, self.files, clock)
+
+    def test_same_clock_html_revision_requires_review(self):
+        root = Path(self.temp.name) / "fixed_clock_guard"
+        location = root / receiver.MIRROR_PREFIX / "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        location.parent.mkdir(parents=True)
+        receipt = json.loads(self.files[receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"])
+        receipt["html_sha256"] = "0" * 64
+        location.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, "explicit review"):
+            receiver.nonregression(root, self.files, receiver.receipt_clock(self.files))
+
+    def test_compatibility_rollback_clock_rejected(self):
+        root = Path(self.temp.name) / "compatibility_guard"
+        location = root / receiver.EXPORT_PREFIX / "public_disclosure_state.json"
+        location.parent.mkdir(parents=True)
+        disclosure = json.loads(self.files[receiver.EXPORT_PREFIX + "public_disclosure_state.json"])
+        disclosure["latest_released_signal_period"] = "2026-09"
+        location.write_text(json.dumps(disclosure))
+        with self.assertRaisesRegex(ValueError, "would regress"):
+            receiver.nonregression(root, self.files, receiver.receipt_clock(self.files))
+
     def test_apply_only_inside_disposable_review_workspace(self):
         # Exercise existing platform binders and full PDS publication validator,
         # but NEVER mutate the checked-out repository in CI.
