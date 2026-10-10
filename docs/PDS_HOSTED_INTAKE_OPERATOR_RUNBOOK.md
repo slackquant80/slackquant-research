@@ -36,6 +36,27 @@ Keep the existing PDS publisher until source-vs-hosted and live-site gates pass.
    calls it or pushes `main`. Normal Pages activation occurs only after
    separately approved PR merge, followed by independent live-site checks.
 
+## Activation boundary — manual staging is not runnable from this draft PR
+
+GitHub Actions requires the `workflow_dispatch` YAML to exist on the
+**default branch** before the manual Run workflow control is available.
+The receiver and staging workflow are currently **only in an unmerged Draft PR**.
+Therefore the manual private-release transport cannot yet run.
+
+A separate, expressly reviewed **infrastructure-only activation** must first
+bring the staging workflow to `main` without unintentionally changing or
+publishing PDS investment artifacts. Before activation, confirm how the
+existing `deploy-pages.yml` reacts to a `main` push, because it presently
+builds/publishes on every main push. Do not misrepresent ordinary source CI as
+live operational verification. No bypassing Pages release gates, automatic
+merging, or direct `main` edits.
+
+When the staging workflow creates a PR using the repository `GITHUB_TOKEN`,
+GitHub may place its PR-triggered CI jobs in an **approval-required** state.
+A repository writer must approve the workflow runs and review the resulting
+release-validation evidence. Do not assume a newly created draft PR has
+automatically run all PR checks.
+
 ## Candidate transport (manual until end-to-end cutover approval)
 
 1. On the calculation host, run the current source-owned PDS
@@ -47,13 +68,15 @@ Keep the existing PDS publisher until source-vs-hosted and live-site gates pass.
    pre-release** in `research-multiasset`. Use the GitHub CLI release API
    on the calculation PC if needed; no local deployment-repo checkout,
    Git commit or Git Push is necessary. Verify the release tag and digest.
-3. Manually run `pds-hosted-intake-stage-pr.yml` in `slackquant-research`
+3. **After the controlled default-branch activation described above**, manually run
+   `pds-hosted-intake-stage-pr.yml` in `slackquant-research`
    with `source_release_tag` and the **exact independent lowercase 64-digit**
    `expected_sha256`. The workflow fetches only the pinned private asset,
    verifies the hash, applies the bundle in an isolated GitHub runner,
    executes the established `npm run validate:release` and exact changed-file
    boundary, then creates a **DRAFT PR** if changes exist.
-4. Review the draft PR. Compare the same frozen source snapshot against the
+4. Review the draft PR; approve its PR-triggered CI if GitHub requests
+   approval. Compare the same frozen source snapshot against the
    old Windows production result and the staged site: Official/Preview,
    first-business-day execution, FX paths/accounting, period/weights, HTML,
    XLSX, provider evidence and cache key. Do not merge merely because CI
