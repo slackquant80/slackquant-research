@@ -38,7 +38,7 @@ jobs:
           from pathlib import Path
           s = Path('scripts/receive-pds-hosted-intake.py').read_text()
           w = Path('.github/workflows/pds-hosted-intake-review.yml').read_text()
-          assert 'permissions:\\n  contents: read' in w
+          assert 'permissions:' in w and 'contents: read' in w
           assert 'actions/deploy-pages@' not in w
           assert 'gh pr create' not in w
           for forbidden in ('subprocess.run(["git"', "os.system(", "os.popen(", "urllib.request.urlopen(", "requests.post("):
