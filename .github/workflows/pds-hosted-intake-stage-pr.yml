@@ -47,6 +47,12 @@ jobs:
           set -euo pipefail
           test -n "${GH_TOKEN}" || { echo "PDS_SOURCE_READ_TOKEN is not configured" >&2; exit 2; }
           [[ "$PDS_EXPECTED_SHA" =~ ^[a-f0-9]{64}$ ]] || { echo "Expected lowercase SHA256 required" >&2; exit 2; }
+          test -n "$PDS_SOURCE_TAG" || { echo "Explicit source release tag required" >&2; exit 2; }
+          gh release view "$PDS_SOURCE_TAG" \
+            --repo slackquant80/research-multiasset \
+            --json isPrerelease,isDraft,tagName \
+            --jq 'select(.isPrerelease == true and .isDraft == false)' \
+            | grep -q .
           mkdir -p "$(dirname "$BUNDLE")"
           gh release download "$PDS_SOURCE_TAG" \
             --repo slackquant80/research-multiasset \
