@@ -1,0 +1,130 @@
+name: Stage reviewed PDS artifact intake as draft PR
+
+# Manual and fail-closed. NEVER merges or deploys a PDS release.
+# Requires private-source Contents:read token in PDS_SOURCE_READ_TOKEN.
+on:
+  workflow_dispatch:
+    inputs:
+      source_release_tag:
+        description: "Existing private research-multiasset release tag (explicitly reviewed)"
+        type: string
+        required: true
+      expected_sha256:
+        description: "Independent SHA256 of PDS_HOSTED_INTAKE_PROPOSAL.zip"
+        type: string
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: pds-hosted-intake-stage-review
+  cancel-in-progress: false
+
+jobs:
+  stage-reviewed-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BUNDLE: /tmp/pds-reviewed/PDS_HOSTED_INTAKE_PROPOSAL.zip
+      PDS_SOURCE_TAG: ${{ inputs.source_release_tag }}
+      PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}
+      PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Fetch explicitly pinned artifact from private source release
+        env:
+          GH_TOKEN: ${{ secrets.PDS_SOURCE_READ_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${GH_TOKEN}" || { echo "PDS_SOURCE_READ_TOKEN is not configured" >&2; exit 2; }
+          [[ "$PDS_EXPECTED_SHA" =~ ^[a-f0-9]{64}$ ]] || { echo "Expected lowercase SHA256 required" >&2; exit 2; }
+          test -n "$PDS_SOURCE_TAG" || { echo "Explicit source release tag required" >&2; exit 2; }
+          gh release view "$PDS_SOURCE_TAG" \
+            --repo slackquant80/research-multiasset \
+            --json isPrerelease,isDraft,tagName \
+            --jq 'select(.isPrerelease == true and .isDraft == false)' \
+            | grep -q .
+          mkdir -p "$(dirname "$BUNDLE")"
+          gh release download "$PDS_SOURCE_TAG" \
+            --repo slackquant80/research-multiasset \
+            --pattern PDS_HOSTED_INTAKE_PROPOSAL.zip \
+            --dir "$(dirname "$BUNDLE")"
+          echo "$PDS_EXPECTED_SHA  $BUNDLE" | sha256sum --check --status
+          echo "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS"
+      - name: Immutable 19-file clock/hash/leakage review
+        run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE"
+      - name: Bind only approved PDS source-owned artifact paths in temporary runner
+        run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --apply-reviewed
+      - name: Install canonical platform dependencies and managed release guard
+        run: npm ci --no-audit --no-fund
+      - name: Full existing cross-system release validation (no Pages deployment)
+        run: npm run validate:release
+      - name: Stage exact PDS file boundary, block unrelated platform changes
+        id: stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- \
+            public/data/systems/pds/ \
+            public/assets/systems/pds/ \
+            src/data/pdsPublicSnapshot.ts \
+            src/data/pdsCanonicalSummary.ts \
+            src/app/systems/pds/dashboard/page.tsx
+          python3 - <<'PY'
+          import subprocess
+          allowed = {
+              "src/data/pdsPublicSnapshot.ts",
+              "src/data/pdsCanonicalSummary.ts",
+              "src/app/systems/pds/dashboard/page.tsx",
+          }
+          dirty = subprocess.check_output(
+              ["git", "status", "--porcelain=v1", "--untracked-files=all"], text=True)
+          for line in dirty.splitlines():
+              path = line[3:].split(" -> ")[-1].replace("\\", "/")
+              if path not in allowed and not path.startswith((
+                  "public/data/systems/pds/", "public/assets/systems/pds/")):
+                  raise SystemExit("PDS_INTAKE_SCOPE_HOLD: " + path)
+          print("PDS_INTAKE_EXACT_PLATFORM_CHANGE_BOUNDARY_PASS")
+          PY
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "PDS_INTAKE_NO_PUBLIC_DELTA; NO_BRANCH_NO_PR"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Commit reviewed staging branch (not main)
+        if: steps.stage.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "slackquant-pds-intake-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$PDS_REVIEW_BRANCH"
+          git commit -m "Stage reviewed PDS hosted artifacts (not released)"
+          SQ_GOVERNED_GIT_PUSH=1 git push origin "$PDS_REVIEW_BRANCH"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Open human-reviewed DRAFT publication PR; never auto-merge
+        if: steps.stage.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr create --draft --base main --head "$PDS_REVIEW_BRANCH" \
+            --title "Review PDS hosted intake: $PDS_SOURCE_TAG" \
+            --body "PDS source artifact SHA256 (pinned): $PDS_EXPECTED_SHA
+          Intake receiver and canonical npm run validate:release passed in an isolated GitHub runner.
+          Compatibility export and current canonical public surface retain separate clocks.
+          ADAA/F2R standalone completed-evidence was NOT transported; review its current source freshness separately.
+          Requires independent PR approval, source-vs-hosted parity, Pages release audit and live-site identity check.
+          NO PUBLICATION AUTHORITY IS CONFERRED BY THIS PR."
