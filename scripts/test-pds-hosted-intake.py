@@ -129,7 +129,7 @@ class IntakeSafetyTests(unittest.TestCase):
         records = dict(self.files)
         name = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
         receipt = json.loads(records[name])
-        receipt["official_mark_through"] = "2026-10-09"
+        receipt["official_mark_through"] = (date.fromisoformat(receipt["official_mark_through"]) + timedelta(days=1)).isoformat()
         records[name] = json.dumps(receipt, sort_keys=True).encode()
         self.assertEqual(receiver.material_changes(records, ROOT), [name])
 
