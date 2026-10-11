@@ -35,6 +35,28 @@ jobs:
         run: python3 scripts/test-pds-hosted-intake.py
       - name: Parse hosted manual-stage workflow YAML (syntax only)
         run: ruby -e 'require "yaml"; YAML.parse_file(".github/workflows/pds-hosted-intake-stage-pr.yml"); puts "PDS_STAGE_WORKFLOW_YAML_PARSE_PASS"'
+      - name: Assert short-lived source-only App token scope and safe PAT fallback
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s = Path(".github/workflows/pds-hosted-intake-stage-pr.yml").read_text()
+          required = [
+              "actions/create-github-app-token@v3",
+              "client-id: ${{ vars.PDS_APP_CLIENT_ID }}",
+              "private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}",
+              "owner: slackquant80",
+              "repositories: research-multiasset",
+              "permission-contents: read",
+              "if: ${{ vars.PDS_APP_CLIENT_ID != '' }}",
+              "steps.source-reader-app.outputs.token || secrets.PDS_SOURCE_READ_TOKEN",
+              "gh release download",
+              "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS",
+          ]
+          for token in required:
+              assert token in s, "PDS_AUTH_CONTRACT_MISSING: " + token
+          assert "permission-contents: write" not in s
+          print("PDS_ONE_HOUR_SOURCE_ONLY_APP_TOKEN_CONTRACT_PASS")
+          PY
       - name: Verify this review workflow never deploys
         run: |
           python3 - <<'PY'
