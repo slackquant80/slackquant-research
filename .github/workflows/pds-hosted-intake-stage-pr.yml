@@ -75,13 +75,41 @@ jobs:
           echo "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS"
       - name: Immutable 19-file clock/hash/leakage review
         run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE"
+      - name: Detect material PDS change before binding (avoid metadata-only PR/deploy)
+        id: material
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          from pathlib import Path
+          script = Path("scripts/receive-pds-hosted-intake.py").resolve()
+          spec = importlib.util.spec_from_file_location("pds_material_check", script)
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          app = Path.cwd()
+          records, clock = mod.verify_archive(Path(os.environ["BUNDLE"]), app)
+          mod.nonregression(app, records, clock)
+          changed = mod.material_changes(records, app)
+          for name in changed:
+              print("PDS_MATERIAL_SOURCE_DELTA:", name)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as result:
+              result.write("changed=" + ("true" if changed else "false") + "\n")
+          print("PDS_HOSTED_MATERIAL_DELTA_REVIEW_REQUIRED" if changed
+                else "PDS_HOSTED_NO_MATERIAL_DELTA; NO_PR_NO_REDEPLOY")
+          PY
       - name: Bind only approved PDS source-owned artifact paths in temporary runner
+        if: steps.material.outputs.changed == 'true'
         run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --apply-reviewed
       - name: Install canonical platform dependencies and managed release guard
+        if: steps.material.outputs.changed == 'true'
         run: npm ci --no-audit --no-fund
       - name: Full existing cross-system release validation (no Pages deployment)
+        if: steps.material.outputs.changed == 'true'
         run: npm run validate:release
       - name: Stage exact PDS file boundary, block unrelated platform changes
+        if: steps.material.outputs.changed == 'true'
         id: stage
         shell: bash
         run: |
@@ -115,7 +143,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Commit reviewed staging branch (not main)
-        if: steps.stage.outputs.changed == 'true'
+        if: steps.material.outputs.changed == 'true' && steps.stage.outputs.changed == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -127,7 +155,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Open human-reviewed DRAFT publication PR; never auto-merge
-        if: steps.stage.outputs.changed == 'true'
+        if: steps.material.outputs.changed == 'true' && steps.stage.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
