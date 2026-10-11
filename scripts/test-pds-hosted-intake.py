@@ -129,7 +129,7 @@ class IntakeSafetyTests(unittest.TestCase):
         records = dict(self.files)
         name = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
         receipt = json.loads(records[name])
-        receipt["official_mark_through"] = "2026-10-09"
+        receipt["official_mark_through"] = (date.fromisoformat(receipt["official_mark_through"]) + timedelta(days=1)).isoformat()
         records[name] = json.dumps(receipt, sort_keys=True).encode()
         self.assertEqual(receiver.material_changes(records, ROOT), [name])
 
@@ -225,6 +225,77 @@ class IntakeSafetyTests(unittest.TestCase):
         location.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, "explicit review"):
             receiver.nonregression(root, self.files, receiver.receipt_clock(self.files))
+
+    def test_scoped_same_clock_review_stages_only_bounded_private_draft(self):
+        # A changed html hash is a hard HOLD by default, even for tiny returns.
+        # Explicit intake review requires identical published decisions and
+        # independently bounded FX-return revisions; NEVER grants deployment.
+        app = Path(self.temp.name) / "same_clock_bounded_candidate"
+        for source in (
+            "PDS_PUBLIC_DASHBOARD_RECEIPT.json",
+        ):
+            rel = receiver.MIRROR_PREFIX + source
+            target = app / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(self.files[rel])
+        for filename in ("public_active_core_asset_targets.csv",
+                         "public_fx_hedge_history.csv",
+                         "public_fx_performance_path.csv"):
+            rel = receiver.EXPORT_PREFIX + filename
+            target = app / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(self.files[rel])
+
+        candidate = dict(self.files)
+        html_rel = receiver.MIRROR_PREFIX + "Portfolio_Decision_System_Public.html"
+        receipt_rel = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        candidate[html_rel] += b"<!-- synthetic same-clock provenance change -->"
+        receipt = json.loads(candidate[receipt_rel])
+        receipt["html_sha256"] = receiver.digest(candidate[html_rel])
+        candidate[receipt_rel] = json.dumps(receipt).encode()
+        clock = receiver.receipt_clock(candidate)
+        with self.assertRaisesRegex(ValueError, "explicit review"):
+            receiver.nonregression(app, candidate, clock)
+
+        fx_rel = receiver.EXPORT_PREFIX + "public_fx_performance_path.csv"
+        baseline = candidate[fx_rel].decode("utf-8").splitlines()
+        field = baseline[0].split(",").index("net_return")
+        row = baseline[1].split(",")
+        row[field] = str(float(row[field]) + 1e-8)
+        baseline[1] = ",".join(row)
+        candidate[fx_rel] = ("\n".join(baseline) + "\n").encode()
+        # This is a method-level staging gate; the independent ZIP/source
+        # manifest verification is deliberately NOT faked by these fixtures.
+        receiver.nonregression(app, candidate, clock, review_same_clock_html=True)
+
+        # No unchanged-weights/hedge exemption if even one decision differs.
+        weights_rel = receiver.EXPORT_PREFIX + "public_active_core_asset_targets.csv"
+        weighted = dict(candidate)
+        lines = weighted[weights_rel].decode().splitlines()
+        field = lines[0].split(",").index("aggregate_weight")
+        row = lines[1].split(",")
+        row[field] = str(float(row[field]) + 0.01)
+        lines[1] = ",".join(row)
+        weighted[weights_rel] = ("\n".join(lines) + "\n").encode()
+        with self.assertRaisesRegex(ValueError, "released decision changed"):
+            receiver.nonregression(app, weighted, clock, review_same_clock_html=True)
+
+        # FX correction cannot be waved through with an arbitrary bp drift.
+        large = dict(candidate)
+        lines = large[fx_rel].decode().splitlines()
+        row = lines[1].split(",")
+        row[field if False else lines[0].split(",").index("net_return")] = str(
+            float(row[lines[0].split(",").index("net_return")]) + 0.0001)
+        lines[1] = ",".join(row)
+        large[fx_rel] = ("\n".join(lines) + "\n").encode()
+        with self.assertRaisesRegex(ValueError, "outside bounded"):
+            receiver.nonregression(app, large, clock, review_same_clock_html=True)
+
+        # A clock regression cannot be approved using the new opt-in switch.
+        bad_clock = dict(clock)
+        bad_clock["mark_through"] = "2026-01-01"
+        with self.assertRaisesRegex(ValueError, "would regress"):
+            receiver.nonregression(app, candidate, bad_clock, review_same_clock_html=True)
 
     def test_compatibility_rollback_clock_rejected(self):
         root = Path(self.temp.name) / "compatibility_guard"

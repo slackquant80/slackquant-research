@@ -14,6 +14,11 @@ on:
         description: "Independent SHA256 of PDS_HOSTED_INTAKE_PROPOSAL.zip"
         type: string
         required: true
+      review_same_clock_html:
+        description: "Explicitly stage bounded same-clock HTML revision for DRAFT review only; NEVER authorizes merge or deploy"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -33,6 +38,7 @@ jobs:
       BUNDLE: /tmp/pds-reviewed/PDS_HOSTED_INTAKE_PROPOSAL.zip
       PDS_SOURCE_TAG: ${{ inputs.source_release_tag }}
       PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}
+      PDS_SAME_CLOCK_HTML_REVIEW: ${{ inputs.review_same_clock_html }}
       PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +80,14 @@ jobs:
           echo "$PDS_EXPECTED_SHA  $BUNDLE" | sha256sum --check --status
           echo "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS"
       - name: Immutable 19-file clock/hash/leakage review
-        run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PDS_SAME_CLOCK_HTML_REVIEW" = "true" ]; then
+            python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --review-same-clock-html
+          else
+            python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE"
+          fi
       - name: Detect material PDS change before binding (avoid metadata-only PR/deploy)
         id: material
         shell: bash
@@ -90,7 +103,8 @@ jobs:
           spec.loader.exec_module(mod)
           app = Path.cwd()
           records, clock = mod.verify_archive(Path(os.environ["BUNDLE"]), app)
-          mod.nonregression(app, records, clock)
+          mod.nonregression(app, records, clock,
+                            review_same_clock_html=os.environ.get("PDS_SAME_CLOCK_HTML_REVIEW") == "true")
           changed = mod.material_changes(records, app)
           for name in changed:
               print("PDS_MATERIAL_SOURCE_DELTA:", name)
@@ -101,7 +115,14 @@ jobs:
           PY
       - name: Bind only approved PDS source-owned artifact paths in temporary runner
         if: steps.material.outputs.changed == 'true'
-        run: python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --apply-reviewed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PDS_SAME_CLOCK_HTML_REVIEW" = "true" ]; then
+            python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --apply-reviewed --review-same-clock-html
+          else
+            python3 scripts/receive-pds-hosted-intake.py --bundle "$BUNDLE" --apply-reviewed
+          fi
       - name: Install canonical platform dependencies and managed release guard
         if: steps.material.outputs.changed == 'true'
         run: npm ci --no-audit --no-fund
@@ -168,4 +189,6 @@ jobs:
           Compatibility export and current canonical public surface retain separate clocks.
           ADAA/F2R standalone completed-evidence was NOT transported; review its current source freshness separately.
           Requires independent PR approval, source-vs-hosted parity, Pages release audit and live-site identity check.
+          Same-clock canonical HTML changes, if present, are REVIEW STAGING ONLY. They were not proven to be financial-number-only diffs; require independent exact HTML/UI review before any merge.
+          Same-clock review override explicitly requested: $PDS_SAME_CLOCK_HTML_REVIEW
           NO PUBLICATION AUTHORITY IS CONFERRED BY THIS PR."
