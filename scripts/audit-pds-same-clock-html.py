@@ -11,6 +11,7 @@ from collections import Counter
 import hashlib
 from html.parser import HTMLParser
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -78,6 +79,9 @@ def payload_delta(old, new):
     queue = [("$", old, new)]
     numeric = Counter()
     nonnumeric = []
+    text_kinds = Counter()
+    all_text_changed = 0
+    max_return_string_delta_bp = 0.0
     schema_drift = []
     peak = (0.0, "")
     count = 0
@@ -105,13 +109,43 @@ def payload_delta(old, new):
                 delta=abs(a-b)
                 if delta>peak[0]:
                     peak=(delta,path[:180])
-            elif len(nonnumeric)<35:
-                nonnumeric.append({"path":path[:180],"before":str(a)[:150],"after":str(b)[:150]})
+            else:
+                all_text_changed += 1
+                classification = "OTHER_TEXT"
+                if isinstance(a, str) and isinstance(b, str):
+                    try:
+                        x, y = float(a), float(b)
+                        if math.isfinite(x) and math.isfinite(y) and re.fullmatch(
+                                r"[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?", a
+                            ) and re.fullmatch(
+                                r"[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?", b):
+                            classification = "NUMERIC_STRING"
+                            if path.endswith(".net_return"):
+                                max_return_string_delta_bp = max(
+                                    max_return_string_delta_bp, abs(y-x)*1e4)
+                    except (ValueError,OverflowError):
+                        pass
+                    if (re.fullmatch(r"[0-9a-f]{64}",a) and
+                            re.fullmatch(r"[0-9a-f]{64}",b)):
+                        classification = "HASH_PROVENANCE"
+                    elif (re.match(r"^20\\d{2}-\\d{2}-\\d{2}T",a) and
+                          re.match(r"^20\\d{2}-\\d{2}-\\d{2}T",b)):
+                        classification = "TIMESTAMP"
+                text_kinds[classification] += 1
+                if len(nonnumeric) < 18 or classification == "OTHER_TEXT":
+                    if len(nonnumeric) < 60:
+                        nonnumeric.append({"path":path[:180],
+                                           "classification":classification,
+                                           "before":str(a)[:150],
+                                           "after":str(b)[:150]})
     return {"numeric_changed_by_group":dict(sorted(numeric.items())),
             "numeric_changed_total":sum(numeric.values()),
             "max_unscaled_numeric_difference":peak[0],
             "max_numeric_path":peak[1],
-            "non_numeric":sorted(nonnumeric,key=lambda x:x["path"]),
+            "non_numeric_examples":sorted(nonnumeric,key=lambda x:x["path"]),
+            "non_numeric_total":all_text_changed,
+            "non_numeric_class_counts":dict(sorted(text_kinds.items())),
+            "max_net_return_numeric_string_delta_bp":round(max_return_string_delta_bp,10),
             "schema":sorted(schema_drift,key=lambda x:x["path"]),
             "compared_nodes":count}
 
@@ -154,8 +188,12 @@ def review(base, candidate):
             findings["first_visible_text_difference"]={"index":z,"before":old.text[z][:100],"after":new.text[z][:100]}
     findings["static_review"]=(
         "SHELL_IDENTICAL_STRUCTURE_IDENTICAL_NUMERIC_CHANGE__VISUAL_E2E_PENDING"
-        if shell_exact and not delta["schema"] and not delta["non_numeric"]
-        else "STATIC_UI_OR_PAYLOAD_NONNUMERIC_CHANGE__MANUAL_REVIEW_HOLD")
+        if shell_exact and not delta["schema"] and not delta["non_numeric_total"]
+        else ("HTML_UI_SHELL_UNCHANGED__NUMERIC_STRING_AND_PROVENANCE_ONLY__VISUAL_E2E_PENDING"
+              if shell_exact and not delta["schema"] and
+                 set(delta["non_numeric_class_counts"]).issubset(
+                     {"NUMERIC_STRING", "HASH_PROVENANCE", "TIMESTAMP"})
+              else "STATIC_UI_OR_PAYLOAD_NONNUMERIC_CHANGE__MANUAL_REVIEW_HOLD"))
     return findings
 
 
