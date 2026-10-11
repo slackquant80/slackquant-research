@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/receive-pds-hosted-intake.py"
       - "scripts/test-pds-hosted-intake.py"
+      - "scripts/audit-pds-same-clock-html.py"
       - ".github/workflows/pds-hosted-intake-review.yml"
       - ".github/workflows/pds-hosted-intake-stage-pr.yml"
       - "scripts/bind-pds-public-export.py"
@@ -16,6 +17,7 @@ on:
     paths:
       - "scripts/receive-pds-hosted-intake.py"
       - "scripts/test-pds-hosted-intake.py"
+      - "scripts/audit-pds-same-clock-html.py"
       - ".github/workflows/pds-hosted-intake-review.yml"
   workflow_dispatch:
 
@@ -30,7 +32,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: Python syntax
         run: |
-          python3 -m py_compile scripts/receive-pds-hosted-intake.py scripts/test-pds-hosted-intake.py
+          python3 -m py_compile scripts/receive-pds-hosted-intake.py scripts/test-pds-hosted-intake.py scripts/audit-pds-same-clock-html.py
+      - name: Reproducible PDS full HTML static audit negative fixtures
+        run: python3 scripts/audit-pds-same-clock-html.py --selftest
+      - name: One-time independently inspect PDS Draft PR 9 full canonical HTML bytes
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin \
+            '+refs/heads/main:refs/remotes/origin/pds-audit-main' \
+            '+refs/pull/9/head:refs/remotes/origin/pds-audit-review'
+          mkdir -p "$RUNNER_TEMP/pds-html-review"
+          git show 'refs/remotes/origin/pds-audit-main:public/assets/systems/pds/Portfolio_Decision_System_Public.html' > "$RUNNER_TEMP/pds-html-review/base.html"
+          git show 'refs/remotes/origin/pds-audit-review:public/assets/systems/pds/Portfolio_Decision_System_Public.html' > "$RUNNER_TEMP/pds-html-review/candidate.html"
+          python3 scripts/audit-pds-same-clock-html.py "$RUNNER_TEMP/pds-html-review/base.html" "$RUNNER_TEMP/pds-html-review/candidate.html"
       - name: Attack / exact-inventory / production-public-fixture / disposable-workspace binder tests
         run: python3 scripts/test-pds-hosted-intake.py
       - name: Parse hosted manual-stage workflow YAML (syntax only)
