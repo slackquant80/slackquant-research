@@ -47,7 +47,7 @@ jobs:
               "owner: slackquant80",
               "repositories: research-multiasset",
               "permission-contents: read",
-              "if: ${{ vars.PDS_APP_CLIENT_ID != '' }}",
+              "vars.PDS_APP_CLIENT_ID",
               "steps.source-reader-app.outputs.token || secrets.PDS_SOURCE_READ_TOKEN",
               "gh release download",
               "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS",
