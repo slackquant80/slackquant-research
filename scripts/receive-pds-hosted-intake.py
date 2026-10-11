@@ -20,6 +20,10 @@ import zipfile
 from datetime import date
 from pathlib import Path
 
+# Read-only validation imports existing platform binders dynamically.
+# Suppress importlib's normal __pycache__ writes, independent of caller environment.
+sys.dont_write_bytecode = True
+
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = "PDS_HOSTED_ARTIFACT_INTAKE_PROPOSAL_V1"
 META = "PDS_HOSTED_INTAKE_PROPOSAL.json"
