@@ -116,9 +116,9 @@ def payload_delta(old, new):
                     try:
                         x, y = float(a), float(b)
                         if math.isfinite(x) and math.isfinite(y) and re.fullmatch(
-                                r"[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?", a
+                                r"[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?", a
                             ) and re.fullmatch(
-                                r"[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?", b):
+                                r"[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?", b):
                             classification = "NUMERIC_STRING"
                             if path.endswith(".net_return"):
                                 max_return_string_delta_bp = max(
@@ -128,8 +128,8 @@ def payload_delta(old, new):
                     if (re.fullmatch(r"[0-9a-f]{64}",a) and
                             re.fullmatch(r"[0-9a-f]{64}",b)):
                         classification = "HASH_PROVENANCE"
-                    elif (re.match(r"^20\\d{2}-\\d{2}-\\d{2}T",a) and
-                          re.match(r"^20\\d{2}-\\d{2}-\\d{2}T",b)):
+                    elif (re.match(r"^20\d{2}-\d{2}-\d{2}T",a) and
+                          re.match(r"^20\d{2}-\d{2}-\d{2}T",b)):
                         classification = "TIMESTAMP"
                 text_kinds[classification] += 1
                 if len(nonnumeric) < 18 or classification == "OTHER_TEXT":
