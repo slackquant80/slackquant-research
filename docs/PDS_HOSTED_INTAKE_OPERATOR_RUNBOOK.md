@@ -22,53 +22,66 @@ Keep the existing PDS publisher until source-vs-hosted and live-site gates pass.
   transport. Preserve them; explicitly verify their freshness and the
   cross-system publication boundary before a live release.
 
-## One-time restricted GitHub setup
+## Long-lived, least-privilege GitHub authentication (preferred)
 
-1. Give the platform repository Actions permission to create pull requests
-   only for the governed PDS staging workflow, subject to normal repo review.
-   Confirm the workflow's `contents: write` and `pull-requests: write`
-   permissions are allowed; do not elevate access across unrelated repos.
-2. Store a GitHub fine-grained token in **platform repository Actions secret**
-   `PDS_SOURCE_READ_TOKEN`. Grant it **Contents: read** on the **private
-   `slackquant80/research-multiasset` repository only**. Do not include it
-   in a workflow log, URL, ZIP, public release or platform source.
-3. The normal Pages workflow remains `deploy-pages.yml`. Staging NEVER
-   calls it or pushes `main`. Normal Pages activation occurs only after
-   separately approved PR merge, followed by independent live-site checks.
+The repository-owned platform receiver can read private source Release assets
+without repeatedly renewing a personal access token:
 
-## Activation boundary — manual staging is not runnable from this draft PR
+1. Create a **private GitHub App** owned by `slackquant80`; enable only
+   Repository `Contents: Read-only` and required `Metadata: Read-only`.
+   Disable Webhooks; no OAuth login or user authorization is needed.
+2. Install that App on **Only select repositories: research-multiasset**.
+   Do not grant it write permission on any repo and do not install on the
+   public platform repository.
+3. Generate an App private key (.pem) in the App settings. In
+   `slackquant-research` Actions repository variables set
+   `PDS_APP_CLIENT_ID` (the App Client ID). In the platform Actions Secrets
+   set `PDS_APP_PRIVATE_KEY` to the exact multiline PEM contents.
+   NEVER upload the PEM to GitHub code, chat, a release, or screenshots.
+4. The manual intake workflow runs `actions/create-github-app-token@v3`
+   to mint a **1-hour, Contents:read, research-multiasset-only** installation
+   token for each execution. App private keys do not automatically expire,
+   but must be revoked/rotated if compromised.
+5. Until the first actual source Release read, ZIP hash comparison, draft PR,
+   CI, and parity review pass with the App, keep the existing secret
+   `PDS_SOURCE_READ_TOKEN` as a temporary fallback. **After verified
+   cutover, delete the old PAT secret and revoke that PAT** to remove
+   periodic manual renewal.
 
-GitHub Actions requires the `workflow_dispatch` YAML to exist on the
-**default branch** before the manual Run workflow control is available.
-The receiver and staging workflow are currently **only in an unmerged Draft PR**.
-Therefore the manual private-release transport cannot yet run.
+The GitHub App is restricted to source reads. The platform's built-in
+`GITHUB_TOKEN` remains responsible for a scoped branch push and **DRAFT PR
+creation only**, using repository Actions permissions. A GitHub Actions-created
+PR may not automatically trigger all downstream PR events with
+`GITHUB_TOKEN`; review the staged workflow's own full release validation
+and explicitly check any required PR checks before approval.
 
-A separate, expressly reviewed **infrastructure-only activation** must first
-bring the staging workflow to `main` without unintentionally changing or
-publishing PDS investment artifacts. Before activation, confirm how the
-existing `deploy-pages.yml` reacts to a `main` push, because it presently
-builds/publishes on every main push. Do not misrepresent ordinary source CI as
-live operational verification. No bypassing Pages release gates, automatic
-merging, or direct `main` edits.
+## Current operational boundary (2026-10-11)
 
-When the staging workflow creates a PR using the repository `GITHUB_TOKEN`,
-GitHub may place its PR-triggered CI jobs in an **approval-required** state.
-A repository writer must approve the workflow runs and review the resulting
-release-validation evidence. Do not assume a newly created draft PR has
-automatically run all PR checks.
+The workflow files are now present on `slackquant-research/main`, and the
+previous infrastructure-only deployment CI passed. This is not a hosted
+production PDS cutover. The old Windows PDS `[3]` remains operational.
+
+The calculation host keeps the only necessary private runtime. The source
+`research-multiasset` repo provides `SEND_PDS_HOSTED_INTAKE.ps1`:
+its default mode is **READ ONLY**; with explicit `-Send` it takes the
+already-validated 16 compatibility + 3 canonical mirror files, freezes and
+audits a public-safe transport ZIP, uploads it to a **private prerelease**,
+downloads it again to confirm SHA256, and triggers the manual platform
+review workflow. No model refresh, local platform clone, Git Push, or public
+Pages deployment is part of this source handoff.
 
 ## Candidate transport (manual until end-to-end cutover approval)
 
-1. On the calculation host, run the current source-owned PDS
-   `pds_hosted_release_bundle.py` against the already validated export and
-   canonical mirror. Use `--output-zip PDS_HOSTED_INTAKE_PROPOSAL.zip` only
-   after the source-owned audit passes. The output is **not** an approval.
-2. Compute independent SHA256 of the ZIP. Upload it as the single asset named
-   `PDS_HOSTED_INTAKE_PROPOSAL.zip` in an explicitly named **private
-   pre-release** in `research-multiasset`. Use the GitHub CLI release API
-   on the calculation PC if needed; no local deployment-repo checkout,
-   Git commit or Git Push is necessary. Verify the release tag and digest.
-3. **After the controlled default-branch activation described above**, manually run
+1. On the calculation host, use the source-owned, default READ-ONLY
+   `SEND_PDS_HOSTED_INTAKE.ps1` to audit the current already validated
+   snapshot. Only use explicit `-Send` after local audit PASS; the output
+   is **not** a publication approval.
+2. The source helper writes the ZIP into an OS temporary directory, creates
+   the **private prerelease** in `research-multiasset`, downloads the exact
+   release asset and verifies its SHA256 before triggering the receiver.
+   It checks the platform's App variable/key pair or legacy PAT secret name
+   but does not expose credentials.
+3. After confirming App read permission and the frozen source ZIP, run
    `pds-hosted-intake-stage-pr.yml` in `slackquant-research`
    with `source_release_tag` and the **exact independent lowercase 64-digit**
    `expected_sha256`. The workflow fetches only the pinned private asset,
