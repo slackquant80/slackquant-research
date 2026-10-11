@@ -8,6 +8,9 @@ Source-owned model computation and provider live-evidence refresh are excluded.
 from __future__ import annotations
 
 import argparse
+import csv
+import io
+import math
 import hashlib
 import importlib.util
 import json
@@ -208,7 +211,84 @@ def verify_archive(path: Path, app: Path) -> tuple[dict[str, bytes], dict]:
     return records, clock
 
 
-def nonregression(app: Path, records: dict[str, bytes], clock: dict) -> None:
+def require_reviewed_same_clock_artifact(app: Path, records: dict[str, bytes]) -> None:
+    """Only permit an EXPLICITLY OPTED-IN PRIVATE DRAFT PR examination.
+
+    This does not approve changed HTML layout, current portfolio information,
+    source causality or public deployment. The same-clock correction must have
+    exactly unchanged *released* decision keys/weights/hedge ratios and a
+    bounded correction to historical public FX returns. A different failure
+    class or larger economic impact still fails closed.
+    """
+    classes = {
+        "weights": ("public_active_core_asset_targets.csv",
+                    ("signal_period", "holding_month", "portfolio_id", "policy_id", "asset_id"),
+                    "aggregate_weight"),
+        "hedge": ("public_fx_hedge_history.csv",
+                  ("signal_period", "holding_month"), "dynamic_hedge_ratio"),
+        "fx": ("public_fx_performance_path.csv",
+               ("signal_period", "holding_month", "series_id"), "net_return"),
+    }
+
+    def index(label: str, raw: bytes, keys: tuple[str, ...], value: str) -> dict:
+        require(len(raw) < 25 * 1024 * 1024, "same-clock review file too large")
+        reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig"), newline=""))
+        expected = set(keys) | {value}
+        if label == "hedge":
+            expected.add("layer_status")
+        require(reader.fieldnames is not None and expected.issubset(reader.fieldnames),
+                "same-clock review CSV schema changed: " + label)
+        rows = {}
+        for row in reader:
+            key = tuple((row.get(k) or "").strip() for k in keys)
+            require(all(key) and key not in rows, "same-clock review missing/duplicate key: " + label)
+            rows[key] = row
+        require(bool(rows), "same-clock review empty rows: " + label)
+        return rows
+
+    stats = {}
+    for label,(filename,keys,value_name) in classes.items():
+        path = EXPORT_PREFIX + filename
+        previous = app / path
+        require(previous.is_file(), "same-clock previous public artifact missing")
+        old = index(label, previous.read_bytes(), keys, value_name)
+        candidate = index(label, records[path], keys, value_name)
+        require(old.keys() == candidate.keys(),
+                "same-clock released public periods/holdings changed: " + label)
+        max_bp = 0.0
+        changed = 0
+        for key in old:
+            try:
+                a = float(old[key][value_name])
+                b = float(candidate[key][value_name])
+            except (TypeError, ValueError) as exc:
+                raise ValueError("same-clock review nonnumeric value: " + label) from exc
+            require(math.isfinite(a) and math.isfinite(b),
+                    "same-clock review nonfinite value: " + label)
+            d = abs(a-b)
+            max_bp = max(max_bp, d*1e4)
+            changed += d > 1e-12
+            if label == "hedge":
+                require(old[key]["layer_status"] == candidate[key]["layer_status"],
+                        "same-clock FX hedge definition changed")
+        if label in ("weights", "hedge"):
+            require(changed == 0, "same-clock released decision changed: " + label)
+        if label == "fx":
+            # Routing limit for *review only*, NOT an identity tolerance and
+            # NEVER a standing authorization for future historical corrections.
+            require(changed > 0 and max_bp <= 0.05,
+                    "same-clock FX revision outside bounded review candidate")
+        stats[label] = {"rows":len(old),"changed":changed,"max_abs_delta_bp":round(max_bp,10)}
+    print("PDS_SAME_CLOCK_HTML_REVIEW_STAGING_ONLY", json.dumps({
+        "reported_public_deltas":stats,
+        "current_layout_review":"REQUIRED_BEFORE_ANY_RELEASE",
+        "private_execution_evidence":"NOT_CERTIFIED",
+        "auto_release_authorized":False,
+    },sort_keys=True))
+
+
+def nonregression(app: Path, records: dict[str, bytes], clock: dict, *,
+                  review_same_clock_html: bool = False) -> None:
     old = app / MIRROR_PREFIX / "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
     if old.is_file():
         prior = json_obj(old.read_bytes(), "current deployed mirror receipt")
@@ -217,8 +297,12 @@ def nonregression(app: Path, records: dict[str, bytes], clock: dict) -> None:
         require(clock["official_signal"] >= last_signal and clock["mark_through"] >= last_mark,
                 "canonical Official/market clock would regress")
         if clock["official_signal"] == last_signal and clock["mark_through"] == last_mark:
-            require(digest(records[MIRROR_PREFIX + "Portfolio_Decision_System_Public.html"]) ==
-                    str(prior.get("html_sha256") or ""), "same-clock canonical HTML drift requires explicit review")
+            same_html = (digest(records[MIRROR_PREFIX + "Portfolio_Decision_System_Public.html"]) ==
+                         str(prior.get("html_sha256") or ""))
+            if not same_html and review_same_clock_html:
+                require_reviewed_same_clock_artifact(app, records)
+            else:
+                require(same_html, "same-clock canonical HTML drift requires explicit review")
     previous = app / EXPORT_PREFIX / "public_disclosure_state.json"
     if previous.is_file():
         prior = json_obj(previous.read_bytes(), "deployed disclosure")
@@ -289,12 +373,14 @@ def main() -> int:
     parser.add_argument("--app-root", type=Path, default=ROOT)
     parser.add_argument("--apply-reviewed", action="store_true",
                         help="modify only an isolated review workspace; does not deploy or authorize")
+    parser.add_argument("--review-same-clock-html", action="store_true",
+                        help="explicit manual DRAFT PR staging only; never bypasses released weights/FX checks")
     args = parser.parse_args()
     try:
         app = args.app_root.resolve()
         require((app / "scripts/validate-pds-publication.py").is_file(), "invalid platform workspace")
         records, clock = verify_archive(args.bundle, app)
-        nonregression(app, records, clock)
+        nonregression(app, records, clock, review_same_clock_html=args.review_same_clock_html)
         with tempfile.TemporaryDirectory(prefix="pds_receiver_scan_") as tmp:
             source = Path(tmp)
             for name in public_expected(app):
