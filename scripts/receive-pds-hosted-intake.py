@@ -226,6 +226,36 @@ def nonregression(app: Path, records: dict[str, bytes], clock: dict) -> None:
         require(clock["compatibility_released"] >= old_released, "compatibility released clock would regress")
 
 
+
+def material_changes(records: dict[str, bytes], app: Path) -> list[str]:
+    """Compare published source-owned bytes, ignoring only receipt whitespace.
+
+    PDS transport includes 16 compatibility files plus three canonical assets.
+    Existing deployed receipt JSON can be LF while a Windows-produced signed
+    receipt is CRLF: JSON object identity matters, not line-ending noise.
+    All other transport files retain byte-exact comparisons; caller must
+    separately verify ZIP signatures, inventory, provenance and clock first.
+    """
+    expected = expected_paths(app)
+    require(set(records) == expected, "material comparison received unexpected paths")
+    changed = []
+    receipt_name = MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+    for name in sorted(expected):
+        file_path = app / name
+        if not file_path.is_file():
+            changed.append(name)
+            continue
+        current = file_path.read_bytes()
+        candidate = records[name]
+        if name == receipt_name:
+            same = json_obj(current, "existing canonical receipt") == json_obj(candidate, "incoming canonical receipt")
+        else:
+            same = current == candidate
+        if not same:
+            changed.append(name)
+    return changed
+
+
 def apply_to_review_workspace(records: dict[str, bytes], app: Path) -> None:
     export_path = app / EXPORT_PREFIX
     mirror_path = app / MIRROR_PREFIX
