@@ -20,6 +20,12 @@ on:
       - "scripts/audit-pds-same-clock-html.py"
       - ".github/workflows/pds-hosted-intake-review.yml"
   workflow_dispatch:
+    inputs:
+      candidate_pr:
+        description: "Optional PDS Draft PR number for read-only full canonical HTML comparison"
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -35,14 +41,18 @@ jobs:
           python3 -m py_compile scripts/receive-pds-hosted-intake.py scripts/test-pds-hosted-intake.py scripts/audit-pds-same-clock-html.py
       - name: Reproducible PDS full HTML static audit negative fixtures
         run: python3 scripts/audit-pds-same-clock-html.py --selftest
-      - name: One-time independently inspect PDS Draft PR 9 full canonical HTML bytes
-        if: github.event_name == 'pull_request'
+      - name: Manually audit selected PDS Draft PR full canonical HTML (read only)
+        if: github.event_name == 'workflow_dispatch' && inputs.candidate_pr != ''
         shell: bash
+        env:
+          PDS_REVIEW_PR: ${{ inputs.candidate_pr }}
         run: |
           set -euo pipefail
+          pr="$PDS_REVIEW_PR"
+          [[ "$pr" =~ ^[1-9][0-9]{0,4}$ ]] || { echo "Invalid PDS candidate PR ID" >&2; exit 2; }
           git fetch --no-tags --depth=1 origin \
             '+refs/heads/main:refs/remotes/origin/pds-audit-main' \
-            '+refs/pull/9/head:refs/remotes/origin/pds-audit-review'
+            "+refs/pull/$pr/head:refs/remotes/origin/pds-audit-review"
           mkdir -p "$RUNNER_TEMP/pds-html-review"
           git show 'refs/remotes/origin/pds-audit-main:public/assets/systems/pds/Portfolio_Decision_System_Public.html' > "$RUNNER_TEMP/pds-html-review/base.html"
           git show 'refs/remotes/origin/pds-audit-review:public/assets/systems/pds/Portfolio_Decision_System_Public.html' > "$RUNNER_TEMP/pds-html-review/candidate.html"
