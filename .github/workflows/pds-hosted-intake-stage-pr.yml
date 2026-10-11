@@ -28,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
+      # No importlib/validator Python bytecode may contaminate exact PDS-only scope.
+      PYTHONDONTWRITEBYTECODE: '1'
       BUNDLE: /tmp/pds-reviewed/PDS_HOSTED_INTAKE_PROPOSAL.zip
       PDS_SOURCE_TAG: ${{ inputs.source_release_tag }}
       PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}

@@ -102,6 +102,19 @@ class IntakeSafetyTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("READ_ONLY_RECEIVER_PASS; NO_WRITE_NO_DEPLOY_NO_GIT", result.stdout)
 
+    def test_imported_public_binder_does_not_write_python_bytecode(self):
+        # The previous first private-source E2E passed model/UX validation but
+        # stopped at exact-scope gate due to untracked scripts/__pycache__.
+        # This regression runs the importer with default CPython settings.
+        isolated = Path(self.temp.name) / "isolated_receiver"
+        (isolated / "scripts").mkdir(parents=True)
+        shutil.copy2(ROOT / "scripts/bind-pds-public-export.py",
+                     isolated / "scripts/bind-pds-public-export.py")
+        names = receiver.public_expected(isolated)
+        self.assertEqual(len(names), 16)
+        self.assertFalse((isolated / "scripts/__pycache__").exists(),
+                         "receiver import modified an otherwise read-only checkout")
+
     def test_archive_missing_member(self):
         records = dict(self.files)
         records.pop(sorted(records)[0])
