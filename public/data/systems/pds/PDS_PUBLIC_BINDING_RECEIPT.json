@@ -2,7 +2,7 @@
   "active_core_policy": "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED",
   "active_core_public_identity": "ADAA + F2R",
   "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
-  "bound_at": "2026-10-09T22:02:08.121387+09:00",
+  "bound_at": "2026-10-11T04:25:20.514049+00:00",
   "bound_files_sha256": {
     "public_active_core_asset_targets.csv": "841bdf0677f8cada6b66993d82ec5661362604828c2badcd5f2395dac8357ec3",
     "public_core_calendar_returns.csv": "343265c787e5d6a666961eb5ea6d557387ac77b2467d0a638ed9a685c46c5f52",
