@@ -255,5 +255,84 @@ class IntakeSafetyTests(unittest.TestCase):
                          self.files[receiver.MIRROR_PREFIX + "Portfolio_Decision_System_Public.html"])
 
 
+
+class CurrentMtdClockContractTests(unittest.TestCase):
+    """Check the actual platform release clock with bounded synthetic dates.
+
+    No live source data, trade calendar, SDK, network or additional CI job.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        path = ROOT / "scripts/validate-pds-publication.py"
+        spec = importlib.util.spec_from_file_location("pds_publication_validator", path)
+        cls.validator = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.validator)
+
+    @staticmethod
+    def record(*, signal="2026-09", completed="2026-09-30",
+               execution="2026-10-01", through="2026-10-08", available=True):
+        holding = receiver.holding_after(signal)
+        return {
+            "meta": {"latest_signal_period": signal},
+            "core": {"manifest": {"current_core_period": signal}},
+            "core_daily_performance": {"summary": [
+                {"series_id": "PDS_CORE_FIXED_CURRENT_POLICY", "end_date": completed}
+            ]},
+            "current_mark": {
+                "available": available,
+                "manifest": {
+                    "decision_period": signal,
+                    "holding_month": holding,
+                    "completed_performance_cutoff": completed,
+                    "latest_price_date": through,
+                    "execution_date": execution,
+                    "status": "PASS_PROVISIONAL_MARK" if available else "NOT_READY",
+                },
+            },
+        }
+
+    def test_valid_executed_current_mtd_date_order(self):
+        clock = self.validator.canonical_clock(self.record())
+        self.assertEqual((clock["officialSignal"], clock["holdingMonth"],
+                          clock["executionClose"], clock["markThrough"]),
+                         ("2026-09", "2026-10", "2026-10-01", "2026-10-08"))
+
+    def test_valid_december_january_rollover(self):
+        clock = self.validator.canonical_clock(self.record(
+            signal="2026-12", completed="2026-12-31",
+            execution="2027-01-04", through="2027-01-08"))
+        self.assertEqual(clock["holdingMonth"], "2027-01")
+
+    def test_unavailable_month_end_mtd_remains_valid(self):
+        clock = self.validator.canonical_clock(self.record(
+            available=False, execution="", through="2026-09-30"))
+        self.assertEqual(clock["executionClose"], "")
+        self.assertEqual(clock["holdingMonth"], "2026-10")
+
+    def test_invalid_current_mtd_execution_month_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "outside Official holding month"):
+            self.validator.canonical_clock(self.record(execution="2026-11-02"))
+
+    def test_execution_preceding_completed_cutoff_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "execution cannot precede"):
+            self.validator.canonical_clock(self.record(
+                completed="2026-10-02", execution="2026-10-01"))
+
+    def test_mtd_mark_earlier_than_execution_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "market-through precedes rebalance"):
+            self.validator.canonical_clock(self.record(
+                execution="2026-10-05", through="2026-10-02"))
+
+    def test_invalid_calendar_date_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "not a real calendar date"):
+            self.validator.canonical_clock(self.record(through="2026-10-32"))
+
+    def test_current_mtd_mark_cannot_belong_to_next_month(self):
+        with self.assertRaisesRegex(RuntimeError, "outside Official holding month"):
+            self.validator.canonical_clock(self.record(through="2026-11-02"))
+
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
