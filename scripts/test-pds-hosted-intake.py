@@ -115,6 +115,30 @@ class IntakeSafetyTests(unittest.TestCase):
         self.assertFalse((isolated / "scripts/__pycache__").exists(),
                          "receiver import modified an otherwise read-only checkout")
 
+    def test_exact_existing_source_snapshot_has_no_material_delta(self):
+        self.assertEqual(receiver.material_changes(self.files, ROOT), [])
+
+    def test_windows_crlf_receipt_is_not_a_new_pds_release(self):
+        records = dict(self.files)
+        name = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        records[name] = records[name].replace(b"\n", b"\r\n")
+        self.assertNotEqual(records[name], self.files[name])
+        self.assertEqual(receiver.material_changes(records, ROOT), [])
+
+    def test_changed_receipt_clock_cannot_be_suppressed_as_noop(self):
+        records = dict(self.files)
+        name = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        receipt = json.loads(records[name])
+        receipt["official_mark_through"] = "2026-10-09"
+        records[name] = json.dumps(receipt, sort_keys=True).encode()
+        self.assertEqual(receiver.material_changes(records, ROOT), [name])
+
+    def test_changed_financial_data_requires_review(self):
+        records = dict(self.files)
+        name = receiver.EXPORT_PREFIX + "public_fx_calendar_returns.csv"
+        records[name] = records[name] + b"\n"
+        self.assertEqual(receiver.material_changes(records, ROOT), [name])
+
     def test_archive_missing_member(self):
         records = dict(self.files)
         records.pop(sorted(records)[0])

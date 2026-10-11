@@ -70,6 +70,31 @@ downloads it again to confirm SHA256, and triggers the manual platform
 review workflow. No model refresh, local platform clone, Git Push, or public
 Pages deployment is part of this source handoff.
 
+## First actual transport checkpoint — 2026-10-11
+
+Private source release `pds-intake-20261011-042009-8b328d3839029268-5f5a33d1`
+and independently downloaded SHA256
+`8b328d3839029268ee7768585fe707d42fae83ffa2cbadea7a21b738c83ace55`
+passed real private token auth, 19-file contract, clock/FX/leakage validation,
+canonical binding and full Next.js release build (Actions run `38111517352`).
+Its resulting Draft PR #4 changes only the canonical JSON receipt's
+CRLF/LF formatting and the regenerated compatibility binding timestamp.
+**The live PDS HTML, workbook and 16 source-owned compatibility files are
+unchanged from the current platform main.** No operational data release or
+model-refresh claim is supported. Do not merge a metadata-only PR simply
+to tick a cutover gate; preserve it as intake validation evidence and
+close it without publication after the no-delta guard is proven.
+
+Prospective intake logic now detects the exact 19 source-owned artifact
+delta before binder execution: canonical mirror receipt is compared by
+decoded JSON content (Windows CRLF does not imply a release), all other
+source files are compared byte-for-byte. Only genuine source-asset changes
+may produce a Draft PR. The receiver still verifies input hashes,
+complete inventory, privacy markers, source/auditor lineage and separate
+clocks **before** no-op classification. No-op skips unnecessary npm build,
+Git Push and public deploy. In all cases, live/FX/Preview parity and
+month-rollover evidence remain independent before operational cutover.
+
 ## Candidate transport (manual until end-to-end cutover approval)
 
 1. On the calculation host, use the source-owned, default READ-ONLY
@@ -81,7 +106,7 @@ Pages deployment is part of this source handoff.
    release asset and verifies its SHA256 before triggering the receiver.
    It checks the platform's App variable/key pair or legacy PAT secret name
    but does not expose credentials.
-3. After confirming App read permission and the frozen source ZIP, run
+3. After confirming at least the configured restricted PAT or App reader and the frozen source ZIP, run
    `pds-hosted-intake-stage-pr.yml` in `slackquant-research`
    with `source_release_tag` and the **exact independent lowercase 64-digit**
    `expected_sha256`. The workflow fetches only the pinned private asset,
@@ -106,6 +131,7 @@ Pages deployment is part of this source handoff.
   merging.
 - Existing local production PDS [3], public site, Google/GitHub secrets
   and system architecture are unchanged by simply adding these source files.
-- The first real private-release transfer has **not** been tested; treat
-  workflow success on existing public fixture as receiver/contract QA, not
-  as proof of a production migration.
+- The private-source E2E **has been tested** through Draft PR creation;
+  neither a metadata-only PR nor a pass on that transport authorizes
+  production migration. Genuine new artifact/FX/Preview/rollover parity,
+  public URL identity and rollback evidence are still pending.
