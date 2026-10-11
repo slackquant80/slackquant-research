@@ -1,7 +1,8 @@
 name: Stage reviewed PDS artifact intake as draft PR
 
 # Manual and fail-closed. NEVER merges or deploys a PDS release.
-# Requires private-source Contents:read token in PDS_SOURCE_READ_TOKEN.
+# Preferred: PDS_APP_CLIENT_ID + PDS_APP_PRIVATE_KEY (ephemeral read-only App token).
+# Temporary fallback: expiring PDS_SOURCE_READ_TOKEN until real App E2E is proven.
 on:
   workflow_dispatch:
     inputs:
@@ -39,13 +40,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Mint ephemeral, source-repo-only GitHub App read token
+        id: source-reader-app
+        if: ${{ vars.PDS_APP_CLIENT_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PDS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}
+          owner: slackquant80
+          repositories: research-multiasset
+          permission-contents: read
       - name: Fetch explicitly pinned artifact from private source release
         env:
-          GH_TOKEN: ${{ secrets.PDS_SOURCE_READ_TOKEN }}
+          GH_TOKEN: ${{ steps.source-reader-app.outputs.token || secrets.PDS_SOURCE_READ_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          test -n "${GH_TOKEN}" || { echo "PDS_SOURCE_READ_TOKEN is not configured" >&2; exit 2; }
+          test -n "${GH_TOKEN}" || { echo "Neither PDS read-only GitHub App credentials nor legacy source token are available" >&2; exit 2; }
           [[ "$PDS_EXPECTED_SHA" =~ ^[a-f0-9]{64}$ ]] || { echo "Expected lowercase SHA256 required" >&2; exit 2; }
           test -n "$PDS_SOURCE_TAG" || { echo "Explicit source release tag required" >&2; exit 2; }
           gh release view "$PDS_SOURCE_TAG" \
