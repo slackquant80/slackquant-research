@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import zipfile
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -130,6 +131,18 @@ def shift_month(period: str, delta: int = 1) -> str:
     return f"{n // 12:04d}-{n % 12 + 1:02d}"
 
 
+
+def strict_calendar_day(value: str, label: str) -> date:
+    # Python date.fromisoformat also accepts compact dates; require canonical
+    # YYYY-MM-DD clock notation in published PDS operational records.
+    if not re.fullmatch(r"20[0-9]{2}-[0-9]{2}-[0-9]{2}", value):
+        raise RuntimeError(f"PDS {label} must be a YYYY-MM-DD date: {value!r}")
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise RuntimeError(f"PDS {label} is not a real calendar date: {value!r}") from exc
+
+
 def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     meta = data.get("meta") if isinstance(data.get("meta"), dict) else {}
     current_mark = data.get("current_mark") if isinstance(data.get("current_mark"), dict) else {}
@@ -163,8 +176,22 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     mark_through = str(mark.get("latest_price_date") or mark.get("data_through_ny_close") or completed).strip()
     mark_available = current_mark.get("available") is True and str(mark.get("status") or "") == "PASS_PROVISIONAL_MARK"
     execution = str(mark.get("execution_date") or "").strip()
-    if mark_available and not execution:
-        raise RuntimeError("PDS Current MTD is marked available but execution_date is missing")
+    completed_day = strict_calendar_day(completed, "completed-performance cutoff")
+    mark_day = strict_calendar_day(mark_through, "market-through")
+    if mark_day < completed_day:
+        raise RuntimeError("PDS market-through precedes completed-performance cutoff")
+    if mark_available:
+        if not execution:
+            raise RuntimeError("PDS Current MTD is marked available but execution_date is missing")
+        execution_day = strict_calendar_day(execution, "first executed rebalance close")
+        if execution[:7] != expected_holding:
+            raise RuntimeError("PDS MTD execution date is outside Official holding month")
+        if execution_day <= completed_day:
+            raise RuntimeError("PDS MTD execution cannot precede or equal completed-performance cutoff")
+        if mark_day < execution_day:
+            raise RuntimeError("PDS Current MTD market-through precedes rebalance execution close")
+        if mark_through[:7] != expected_holding:
+            raise RuntimeError("PDS current MTD mark-through is outside Official holding month")
     return {
         "systemAsOfKst": str(mark.get("system_as_of_kst") or meta.get("dashboard_generated_at") or ""),
         "officialSignal": official_signal,
