@@ -37,7 +37,7 @@ jobs:
         id: private-source
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.PDS_APP_CLIENT_ID }}
+          client-id: ${{ vars.PDS_APP_CLIENT_ID }}
           private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}
           owner: slackquant80
           repositories: research-multiasset
@@ -51,6 +51,7 @@ jobs:
           [[ "$SOURCE_RELEASE" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{1,100}$ ]] || exit 2
           [[ "$SOURCE_SHA256" =~ ^[a-f0-9]{64}$ ]] || exit 2
           test -n "$GH_TOKEN"
+          gh release view "$SOURCE_RELEASE" -R slackquant80/research-multiasset             --json isPrerelease,isDraft             --jq 'select(.isPrerelease == true and .isDraft == false)' | grep -q .
           mkdir -p "$ADAA_ASSETS"
           gh release download "$SOURCE_RELEASE" -R slackquant80/research-multiasset --dir "$ADAA_ASSETS"
           echo "$SOURCE_SHA256  $ADAA_ASSETS/ADAA_HOSTED_INTAKE_PROPOSAL.json" | sha256sum -c -
