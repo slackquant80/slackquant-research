@@ -120,7 +120,7 @@ class ReadOnlyHostileTests(unittest.TestCase):
                 for name,b in files.items(): z.writestr(name,b)
                 z.writestr(v.META,asbytes(proposal))
                 z.writestr("www/snapshot.js",files["www/snapshot.js"])
-            with self.assertRaisesRegex(ValueError,"count"):v.verify_archive(p)
+            with self.assertRaisesRegex(ValueError,"duplicated|inventory"):v.verify_archive(p)
 
     def test_symlink_zip_forbidden(self):
         files,proposal=fixture()
