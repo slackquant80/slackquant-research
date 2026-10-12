@@ -122,6 +122,18 @@ class ReadOnlyHostileTests(unittest.TestCase):
                 z.writestr("www/snapshot.js",files["www/snapshot.js"])
             with self.assertRaisesRegex(ValueError,"duplicated|inventory"):v.verify_archive(p)
 
+    def test_flat_github_release_assets_no_zip(self):
+        files,proposal=fixture()
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            for name,data in files.items():
+                (root/Path(name).name).write_bytes(data)
+            (root/v.META).write_bytes(asbytes(proposal))
+            self.assertEqual(v.verify_assets_directory(root)["market_data_through"], CLOCK)
+            (root/"extra.txt").write_text("unexpected")
+            with self.assertRaisesRegex(ValueError,"count/names"):
+                v.verify_assets_directory(root)
+
     def test_symlink_zip_forbidden(self):
         files,proposal=fixture()
         with tempfile.TemporaryDirectory() as d:
