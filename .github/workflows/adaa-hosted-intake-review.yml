@@ -7,6 +7,7 @@ on:
       - "scripts/receive-adaa-hosted-intake.py"
       - "scripts/test-adaa-hosted-intake.py"
       - ".github/workflows/adaa-hosted-intake-review.yml"
+      - ".github/workflows/adaa-hosted-intake-stage-pr.yml"
   workflow_dispatch:
 
 permissions:
@@ -36,6 +37,25 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: python3 scripts/test-adaa-hosted-intake.py
+      - name: Verify manual staged PR workflow is syntactically valid and fail-closed
+        run: |
+          ruby -e 'require "yaml"; YAML.parse_file(".github/workflows/adaa-hosted-intake-stage-pr.yml"); puts "ADAA_STAGE_WORKFLOW_YAML_PARSE_PASS"'
+          python3 - <<'PY'
+          from pathlib import Path
+          y=Path(".github/workflows/adaa-hosted-intake-stage-pr.yml").read_text()
+          expected=("workflow_dispatch:", "actions/create-github-app-token@v3",
+                    "repositories: research-multiasset", "permission-contents: read",
+                    "gh release download", "receive-adaa-hosted-intake.py --assets-dir",
+                    "ADAA_CANONICAL_BROWSER_TEMPLATE_PARITY_PASS",
+                    "npm run validate:release", "gh pr create --draft",
+                    "ADAA_DRAFT_PR_CREATED_NO_AUTO_RELEASE")
+          for token in expected: assert token in y, "STAGE_CONTRACT_MISSING: "+token
+          for token in ("gh pr merge", "gh release create", "rsconnect::deployApp",
+                        "actions/deploy-pages@", "secrets.PDS_SOURCE_READ_TOKEN"):
+              assert token not in y, "STAGE_CONTRACT_FORBIDDEN: "+token
+          assert y.count("on:")>=1 and "contents: write" in y and "pull-requests: write" in y
+          print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
+          PY
       - name: No network, Git mutation, or production route in receiver
         run: |
           python3 - <<'PY'
