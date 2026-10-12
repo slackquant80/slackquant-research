@@ -109,32 +109,19 @@ jobs:
         run: |
           npm ci --no-audit --no-fund
           npm run validate:release
-      - name: Scope-lock and create Draft PR (never merge)
+      - name: Governed six-file review-branch transaction (preserve pre-push hook)
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git add -- public/assets/systems/adaa src/app/systems/adaa/dashboard/page.tsx
-          if git diff --cached --quiet; then
-            echo "ADAA_SAME_CONTENT_NO_PR"
-            exit 0
-          fi
-          python3 - <<'PY'
-          import subprocess
-          changed=set(subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines())
-          allowed={"public/assets/systems/adaa/"+name for name in (
-              "index.html","adaa-theme.css","dashboard.js","snapshot.js","ADAA_Portfolio_Target_History.xlsx")}
-          allowed.add("src/app/systems/adaa/dashboard/page.tsx")
-          if not changed or not changed.issubset(allowed):
-              raise SystemExit("ADAA_UNAPPROVED_FILE_SCOPE_HOLD")
-          print("ADAA_PUBLIC_STAGING_REVIEW_BOUNDARY_PASS")
-          PY
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git switch -c "$REVIEW_BRANCH"
-          git commit -m "Stage reviewed ADAA public-safe candidate (NOT RELEASED)"
-          git push origin "$REVIEW_BRANCH"
+          node scripts/governed-adaa-draft-pr-branch.mjs
+      - name: Open Draft PR without merging or deploying
+        shell: bash
+        env:
+          GH_TOKEN: {{ github.token }}
+        run: |
+          set -euo pipefail
           gh pr create --draft --head "$REVIEW_BRANCH" --base main \
             --title "ADAA 7-file Thin source candidate — review only" \
             --body "Private source Release: $SOURCE_RELEASE. Pinned manifest SHA256: $SOURCE_SHA256. Public candidate only, NOT approved for production. Keep existing Shiny live. Independently review clock, source/host parity, disclosure, browser functions and release consent before merge or URL change."
