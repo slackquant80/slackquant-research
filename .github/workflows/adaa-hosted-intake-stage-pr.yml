@@ -1,0 +1,138 @@
+name: Stage ADAA validated source assets as Draft PR
+
+# Manual intake only. There is no merge, production push or Shiny deployment.
+on:
+  workflow_dispatch:
+    inputs:
+      source_release_tag:
+        required: true
+        type: string
+        description: "Pinned existing private source Release tag"
+      manifest_sha256:
+        required: true
+        type: string
+        description: "Independent lowercase SHA256 of intake manifest"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  stage-private-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SOURCE_RELEASE: ${{ inputs.source_release_tag }}
+      SOURCE_SHA256: ${{ inputs.manifest_sha256 }}
+      ADAA_ASSETS: ${{ runner.temp }}/adaa-assets
+      REVIEW_BRANCH: review/adaa-hosted-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Authenticate READ-only against the existing private source
+        id: private-source
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.PDS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}
+          owner: slackquant80
+          repositories: research-multiasset
+          permission-contents: read
+      - name: Retrieve precisely pinned flat source-owned Release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.private-source.outputs.token }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_RELEASE" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{1,100}$ ]] || exit 2
+          [[ "$SOURCE_SHA256" =~ ^[a-f0-9]{64}$ ]] || exit 2
+          test -n "$GH_TOKEN"
+          mkdir -p "$ADAA_ASSETS"
+          gh release download "$SOURCE_RELEASE" -R slackquant80/research-multiasset --dir "$ADAA_ASSETS"
+          echo "$SOURCE_SHA256  $ADAA_ASSETS/ADAA_HOSTED_INTAKE_PROPOSAL.json" | sha256sum -c -
+          python3 scripts/receive-adaa-hosted-intake.py --assets-dir "$ADAA_ASSETS"
+      - name: Compare exact fixed UI templates against the private pinned source commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.private-source.outputs.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, pathlib, subprocess, json, hashlib, base64
+          folder=pathlib.Path(os.environ["ADAA_ASSETS"])
+          sha=json.loads((folder/"ADAA_HOSTED_INTAKE_PROPOSAL.json").read_text())["source_commit"]
+          prefix="01_Post_IJF_Research/05_ADAA/09_RUNTIME/LIVE_DASHBOARD/"
+          for name,source in {
+              "app.R":"THIN_SHINY_CANDIDATE/app.R",
+              "index.html":"VIEW_TEMPLATE/index.html",
+              "adaa-theme.css":"VIEW_TEMPLATE/adaa-theme.css",
+              "dashboard.js":"VIEW_TEMPLATE/dashboard.js",
+          }.items():
+              payload=subprocess.check_output(
+                  ["gh","api",f"repos/slackquant80/research-multiasset/contents/{prefix}{source}?ref={sha}",
+                   "--jq",".content"],text=True)
+              actual=hashlib.sha256((folder/name).read_bytes()).digest()
+              expected=hashlib.sha256(base64.b64decode(payload)).digest()
+              if actual!=expected: raise SystemExit("ADAA_SOURCE_UI_IDENTITY_HOLD:"+name)
+          print("ADAA_CANONICAL_BROWSER_TEMPLATE_PARITY_PASS")
+          PY
+      - name: Stage only approved static public assets and a direct-link preview route
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/assets/systems/adaa src/app/systems/adaa/dashboard
+          for f in index.html adaa-theme.css dashboard.js snapshot.js ADAA_Portfolio_Target_History.xlsx; do
+            install -m 644 "$ADAA_ASSETS/$f" "public/assets/systems/adaa/$f"
+          done
+          cat > src/app/systems/adaa/dashboard/page.tsx <<'TSX'
+          import type { Metadata } from "next";
+          export const metadata: Metadata = {
+            title: "ADAA Public Dashboard — SlackQuant",
+            alternates: { canonical: "/systems/adaa/dashboard/" }
+          };
+          export default function AdaaDashboardPage() {
+            return <iframe
+              src="/assets/systems/adaa/index.html"
+              title="ADAA Public Dashboard"
+              style={{position:"fixed",inset:0,width:"100vw",height:"100dvh",
+                      border:0,zIndex:2147483000,background:"#f3f6fa"}}
+            />;
+          }
+          TSX
+      - name: Run canonical platform build and review safety gates, no publication
+        shell: bash
+        run: |
+          npm ci --no-audit --no-fund
+          npm run validate:release
+      - name: Scope-lock and create Draft PR (never merge)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git add -- public/assets/systems/adaa src/app/systems/adaa/dashboard/page.tsx
+          if git diff --cached --quiet; then
+            echo "ADAA_SAME_CONTENT_NO_PR"
+            exit 0
+          fi
+          python3 - <<'PY'
+          import subprocess
+          changed=set(subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines())
+          allowed={"public/assets/systems/adaa/"+name for name in (
+              "index.html","adaa-theme.css","dashboard.js","snapshot.js","ADAA_Portfolio_Target_History.xlsx")}
+          allowed.add("src/app/systems/adaa/dashboard/page.tsx")
+          if not changed or not changed.issubset(allowed):
+              raise SystemExit("ADAA_UNAPPROVED_FILE_SCOPE_HOLD")
+          print("ADAA_PUBLIC_STAGING_REVIEW_BOUNDARY_PASS")
+          PY
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git switch -c "$REVIEW_BRANCH"
+          git commit -m "Stage reviewed ADAA public-safe candidate (NOT RELEASED)"
+          git push origin "$REVIEW_BRANCH"
+          gh pr create --draft --head "$REVIEW_BRANCH" --base main \
+            --title "ADAA 7-file Thin source candidate — review only" \
+            --body "Private source Release: $SOURCE_RELEASE. Pinned manifest SHA256: $SOURCE_SHA256. Public candidate only, NOT approved for production. Keep existing Shiny live. Independently review clock, source/host parity, disclosure, browser functions and release consent before merge or URL change."
+          echo "ADAA_DRAFT_PR_CREATED_NO_AUTO_RELEASE"
