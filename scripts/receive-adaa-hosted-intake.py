@@ -146,11 +146,30 @@ def verify(files, proposal, previous=None):
 def verify_archive(path, previous=None):
     return verify(*unpack(path), previous=previous)
 
+def verify_assets_directory(path, previous=None):
+    """Verify exactly eight flat GitHub Release assets, with no ZIP transport."""
+    need(path.is_dir() and not path.is_symlink(), "release asset directory unavailable or linked")
+    members = {Path(n).name: n for n in FILES}
+    names = set(members) | {META}
+    need(len(members)==len(FILES), "duplicate release asset basenames")
+    actual = list(path.iterdir())
+    need(len(actual)==len(names) and set(p.name for p in actual)==names,
+         "unexpected release asset count/names")
+    for p in actual:
+        need(p.is_file() and not p.is_symlink() and 0 < p.stat().st_size <= 24*1024*1024,
+             "release asset missing, linked, empty or oversize")
+    records = {full: (path / flat).read_bytes() for flat, full in members.items()}
+    proposal = obj((path / META).read_bytes())
+    return verify(records, proposal, previous)
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument("archive",type=Path)
+    p.add_argument("archive",type=Path,nargs="?")
+    p.add_argument("--assets-dir",type=Path)
     a=p.parse_args()
-    try: result=verify_archive(a.archive)
+    if (a.archive is None)==(a.assets_dir is None):
+        p.error("specify exactly one candidate archive or --assets-dir")
+    try: result=verify_assets_directory(a.assets_dir) if a.assets_dir else verify_archive(a.archive)
     except (OSError,ValueError,UnicodeError,zipfile.BadZipFile) as e:
         print("ADAA_HOSTED_INTAKE_REVIEW_HOLD",str(e),file=sys.stderr); return 2
     print("ADAA_HOSTED_INTAKE_READONLY_PASS",json.dumps(result,sort_keys=True))
