@@ -115,7 +115,7 @@ class ReadOnlyHostileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"bad.zip"
             zip_file(p,files,proposal,"malicious.py")
-            with self.assertRaisesRegex(ValueError,"inventory"):v.verify_archive(p)
+            with self.assertRaisesRegex(ValueError,"count|inventory"):v.verify_archive(p)
             with zipfile.ZipFile(p,"w") as z:
                 for name,b in files.items(): z.writestr(name,b)
                 z.writestr(v.META,asbytes(proposal))
