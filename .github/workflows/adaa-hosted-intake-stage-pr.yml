@@ -119,7 +119,7 @@ jobs:
       - name: Open Draft PR without merging or deploying
         shell: bash
         env:
-          GH_TOKEN: {{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           gh pr create --draft --head "$REVIEW_BRANCH" --base main \
