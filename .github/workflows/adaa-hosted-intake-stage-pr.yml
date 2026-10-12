@@ -24,9 +24,11 @@ jobs:
     env:
       SOURCE_RELEASE: ${{ inputs.source_release_tag }}
       SOURCE_SHA256: ${{ inputs.manifest_sha256 }}
-      ADAA_ASSETS: ${{ runner.temp }}/adaa-assets
       REVIEW_BRANCH: review/adaa-hosted-${{ github.run_id }}
     steps:
+      - name: Configure runner-scoped temporary asset directory
+        shell: bash
+        run: echo "ADAA_ASSETS=$RUNNER_TEMP/adaa-assets" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:

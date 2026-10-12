@@ -54,6 +54,7 @@ jobs:
                         "actions/deploy-pages@", "secrets.PDS_SOURCE_READ_TOKEN"):
               assert token not in y, "STAGE_CONTRACT_FORBIDDEN: "+token
           assert y.count("on:")>=1 and "contents: write" in y and "pull-requests: write" in y
+          assert "runner.temp" not in y and "ADAA_ASSETS=$RUNNER_TEMP/adaa-assets" in y
           print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
           PY
       - name: No network, Git mutation, or production route in receiver
