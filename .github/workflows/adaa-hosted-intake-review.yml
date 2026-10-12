@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/receive-adaa-hosted-intake.py"
       - "scripts/test-adaa-hosted-intake.py"
+      - "scripts/governed-adaa-draft-pr-branch.mjs"
       - ".github/workflows/adaa-hosted-intake-review.yml"
       - ".github/workflows/adaa-hosted-intake-stage-pr.yml"
   workflow_dispatch:
@@ -57,7 +58,33 @@ jobs:
           assert "runner.temp" not in y and "ADAA_ASSETS=$RUNNER_TEMP/adaa-assets" in y
           assert "client-id:" in y and "vars.PDS_APP_CLIENT_ID" in y and "app-id:" not in y
           assert "isPrerelease == true" in y and "isDraft == false" in y
+          assert "node scripts/governed-adaa-draft-pr-branch.mjs" in y
+          assert "git push origin" not in y and "git -c" not in y
+          assert "SQ_GOVERNED_GIT_PUSH" not in y and "git config core.hooksPath" not in y
+          assert "gh pr create --draft" in y and "github.token" in y
           print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
+          PY
+      - name: Check governed review-only branch publisher and its fail-closed context
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/governed-adaa-draft-pr-branch.mjs
+          if node scripts/governed-adaa-draft-pr-branch.mjs > /tmp/adaa-failclosed.out 2>&1; then
+            echo "ADAA_GOVERNED_PUBLISHER_UNEXPECTEDLY_ACCEPTED_UNTRUSTED_CONTEXT"
+            exit 1
+          fi
+          grep -q 'ADAA_GOVERNED_DRAFT_HOLD:' /tmp/adaa-failclosed.out
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("scripts/governed-adaa-draft-pr-branch.mjs").read_text()
+          for must in ("GITHUB_EVENT_NAME", "workflow_dispatch", "GITHUB_REPOSITORY",
+                       "GITHUB_WORKFLOW", "GITHUB_REF", "GITHUB_RUN_ID",
+                       "SOURCE_SHA256", "SQ_GOVERNED_GIT_PUSH", "pre-push-release-gate.mjs",
+                       'git(["push","origin",branch]', "NO_MAIN_PUSH_NO_MERGE_NO_DEPLOYMENT"):
+              assert must in p, "GOVERNED_TRANSACTION_CONTRACT_MISSING: " + must
+          for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", 'git(["push","origin","main"]'):
+              assert bad not in p, "UNSAFE_DRAFT_PUSH_CONTRACT: " + bad
+          print("ADAA_GOVERNED_REVIEW_PUSH_CONTRACT_PASS")
           PY
       - name: No network, Git mutation, or production route in receiver
         run: |
