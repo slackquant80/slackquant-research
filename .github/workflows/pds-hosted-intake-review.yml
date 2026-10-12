@@ -68,13 +68,16 @@ jobs:
           s = Path(".github/workflows/pds-hosted-intake-stage-pr.yml").read_text()
           required = [
               "actions/create-github-app-token@v3",
-              "client-id: ${{ vars.PDS_APP_CLIENT_ID }}",
-              "private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}",
+              "client-id:",
+              "vars.PDS_APP_CLIENT_ID",
+              "private-key:",
+              "secrets.PDS_APP_PRIVATE_KEY",
               "owner: slackquant80",
               "repositories: research-multiasset",
               "permission-contents: read",
               "vars.PDS_APP_CLIENT_ID",
-              "GH_TOKEN: ${{ steps.source-reader-app.outputs.token }}",
+              "GH_TOKEN:",
+              "steps.source-reader-app.outputs.token",
               "gh release download",
               "PDS_PINNED_PRIVATE_TRANSPORT_SHA_PASS",
           ]
@@ -82,7 +85,7 @@ jobs:
               assert token in s, "PDS_AUTH_CONTRACT_MISSING: " + token
           assert "permission-contents: write" not in s
           assert "PDS_SOURCE_READ_TOKEN" not in s
-          assert "if: ${{ vars.PDS_APP_CLIENT_ID != '' }}" not in s
+          assert "if: " + "$" + "{{ vars.PDS_APP_CLIENT_ID != '' }}" not in s
           print("PDS_ONE_HOUR_SOURCE_ONLY_APP_TOKEN_CONTRACT_PASS")
           PY
       - name: Verify this review workflow never deploys
