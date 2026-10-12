@@ -1,0 +1,51 @@
+name: ADAA Hosted Intake Read-Only Contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/receive-adaa-hosted-intake.py"
+      - "scripts/test-adaa-hosted-intake.py"
+      - ".github/workflows/adaa-hosted-intake-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-intake-without-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Parse verifier and adversarial tests without bytecode in repository
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python3 - <<'PY'
+          import ast
+          from pathlib import Path
+          for f in ("scripts/receive-adaa-hosted-intake.py", "scripts/test-adaa-hosted-intake.py"):
+              ast.parse(Path(f).read_text(encoding="utf-8"))
+          print("ADAA_INTAKE_PYTHON_AST_PASS")
+          PY
+      - name: Synthetic positive and hostile security/clock/size tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 scripts/test-adaa-hosted-intake.py
+      - name: No network, Git mutation, or production route in receiver
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("scripts/receive-adaa-hosted-intake.py").read_text()
+          w=Path(".github/workflows/adaa-hosted-intake-review.yml").read_text()
+          for banned in ("subprocess", "urllib", "requests", "rsconnect::deployApp", "git push",
+                         "git commit", "shutil.copy", "shutil.move"):
+              assert banned not in p, banned
+          assert "contents: read" in w and not any(line.strip().startswith("uses: actions/deploy-pages@") for line in w.splitlines())
+          assert "public_deployment_authorized" in p
+          print("ADAA_REVIEW_ONLY_CI_NO_PUBLIC_MUTATION_PASS")
+          PY
