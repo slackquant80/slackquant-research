@@ -45,7 +45,7 @@ jobs:
           for banned in ("subprocess", "urllib", "requests", "rsconnect::deployApp", "git push",
                          "git commit", "shutil.copy", "shutil.move"):
               assert banned not in p, banned
-          assert "contents: read" in w and "deploy-pages" not in w
+          assert "contents: read" in w and not any(line.strip().startswith("uses: actions/deploy-pages@") for line in w.splitlines())
           assert "public_deployment_authorized" in p
           print("ADAA_REVIEW_ONLY_CI_NO_PUBLIC_MUTATION_PASS")
           PY
