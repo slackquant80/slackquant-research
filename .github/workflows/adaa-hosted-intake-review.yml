@@ -80,9 +80,9 @@ jobs:
           for must in ("GITHUB_EVENT_NAME", "workflow_dispatch", "GITHUB_REPOSITORY",
                        "GITHUB_WORKFLOW", "GITHUB_REF", "GITHUB_RUN_ID",
                        "SOURCE_SHA256", "SQ_GOVERNED_GIT_PUSH", "pre-push-release-gate.mjs",
-                       "git([\\"push\\",\\"origin\\",branch]", "NO_MAIN_PUSH_NO_MERGE_NO_DEPLOYMENT"):
+                       'git(["push","origin",branch]', "NO_MAIN_PUSH_NO_MERGE_NO_DEPLOYMENT"):
               assert must in p, "GOVERNED_TRANSACTION_CONTRACT_MISSING: " + must
-          for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", "git([\\"push\\",\\"origin\\",\\"main\\"]"):
+          for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", 'git(["push","origin","main"]'):
               assert bad not in p, "UNSAFE_DRAFT_PUSH_CONTRACT: " + bad
           print("ADAA_GOVERNED_REVIEW_PUSH_CONTRACT_PASS")
           PY
