@@ -63,7 +63,7 @@ jobs:
           assert "SQ_GOVERNED_GIT_PUSH" not in y and "git config core.hooksPath" not in y
           assert "gh pr create --draft" in y and "github.token" in y
           assert "ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS" in y
-          assert "verify_assets_directory(Path(os.environ[" + chr(34) + "ADAA_ASSETS" + chr(34) + "]),previous)" in y
+          assert 'verify_assets_directory(Path(os.environ["ADAA_ASSETS"]),previous)' in y
           assert "cat > src/app/systems/adaa/dashboard/page.tsx" not in y
           print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
           PY
