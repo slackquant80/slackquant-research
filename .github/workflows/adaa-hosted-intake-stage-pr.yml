@@ -25,6 +25,7 @@ jobs:
       SOURCE_RELEASE: ${{ inputs.source_release_tag }}
       SOURCE_SHA256: ${{ inputs.manifest_sha256 }}
       REVIEW_BRANCH: review/adaa-hosted-${{ github.run_id }}
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Configure runner-scoped temporary asset directory
         shell: bash
