@@ -88,6 +88,8 @@ jobs:
           assert 'staged.every((p) => allow.includes(p))' in p
           assert 'staged.includes("public/assets/systems/adaa/snapshot.js")' in p
           assert "sorted(staged)===sorted(allow)" not in p
+          assert "ADAA_UNSTAGED_TRACKED_PATHS=" in p and "ADAA_UNTRACKED_PATHS=" in p
+          assert 'fail("unvalidated working-tree changes present")' in p
           for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", 'git(["push","origin","main"]'):
               assert bad not in p, "UNSAFE_DRAFT_PUSH_CONTRACT: " + bad
           print("ADAA_GOVERNED_REVIEW_PUSH_CONTRACT_PASS")
