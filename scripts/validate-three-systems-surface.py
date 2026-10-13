@@ -101,6 +101,12 @@ def audit_static(require_build: bool) -> list[Check]:
     add(c, "PDS dashboard route source", (ROOT / "src/app/systems/pds/dashboard/page.tsx").is_file(), "src/app/systems/pds/dashboard/page.tsx")
     add(c, "ADAA first-party dashboard route source", (ROOT / "src/app/systems/adaa/dashboard/page.tsx").is_file(), "src/app/systems/adaa/dashboard/page.tsx")
     add(c, "ADAA canonical operating registry", 'publicDashboard: "/systems/adaa/dashboard/"' in systems and 'liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/"' not in systems, "registry routes current ADAA operating dashboard to SlackQuant Pages")
+    adaa_system_page = text(SYSTEM_PAGE_FILES["adaa"])
+    add(c, "ADAA dashboard CTA consistency",
+        adaa_system_page.count("href={dashboardHref}") == 3
+        and adaa_system_page.count('data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}') == 3
+        and "const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard" in adaa_system_page,
+        "all 3 ADAA System page dashboard links share registry-owned first-party path and secure new-tab marker")
 
     add(c, "Three-system card CTA wording", "Open Dashboard ↗" in card and "Open Live Dashboard" not in card and "Public Dashboard →" not in card, "SystemCard uses Open Dashboard ↗")
     for slug in ("pds", "adaa", "f2r", "scenario-stress-lab"):
@@ -261,6 +267,10 @@ def audit_static(require_build: bool) -> list[Check]:
             hp=HeadParser(); hp.feed(text(f))
             if not hp.canonical: bad_head.append(f"{r}:canonical")
         add(c, "Built representative canonical audit", not bad_head, "Next + Method routes have canonical", ", ".join(bad_head[:12]))
+        adaa_live_html = text(expected_out_file("/systems/adaa/"))
+        add(c, "Built ADAA System page dashboard link parity",
+            adaa_live_html.count('href="/systems/adaa/dashboard/"') >= 3,
+            "all three production CTA routes point at the same first-party ADAA dashboard")
     else:
         status_ok = not require_build
         c.append(Check("Production build artifact audit", "SKIP" if status_ok else "FAIL", "out/ not available; run after npm run build"))
