@@ -8,6 +8,7 @@ on:
       - "scripts/test-adaa-hosted-intake.py"
       - "scripts/governed-adaa-draft-pr-branch.mjs"
       - ".github/workflows/adaa-hosted-intake-review.yml"
+      - ".gitignore"
       - ".github/workflows/adaa-hosted-intake-stage-pr.yml"
   workflow_dispatch:
 
@@ -65,8 +66,20 @@ jobs:
           assert "ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS" in y
           assert 'verify_assets_directory(Path(os.environ["ADAA_ASSETS"]),previous)' in y
           assert "cat > src/app/systems/adaa/dashboard/page.tsx" not in y
+          assert 'PYTHONDONTWRITEBYTECODE: "1"' in y
           print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
           PY
+      - name: Python bytecode cache is ignored without relaxing other dirty-tree guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          git check-ignore -q scripts/__pycache__/receive-adaa-hosted-intake.cpython-311.pyc
+          git check-ignore -q scripts/receive-adaa-hosted-intake.pyc
+          if git check-ignore -q scripts/unrelated_generated_file.logically_unexpected; then
+            echo "ADAA_GITIGNORE_SCOPE_TOO_BROAD"
+            exit 1
+          fi
+          echo "ADAA_PYTHON_BYTECODE_ONLY_IGNORE_PASS"
       - name: Check governed review-only branch publisher and its fail-closed context
         shell: bash
         run: |
