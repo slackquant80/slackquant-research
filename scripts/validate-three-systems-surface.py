@@ -99,6 +99,8 @@ def audit_static(require_build: bool) -> list[Check]:
 
     for slug, p in SYSTEM_PAGE_FILES.items(): add(c, f"{slug.upper()} system route source", p.is_file(), str(p.relative_to(ROOT)))
     add(c, "PDS dashboard route source", (ROOT / "src/app/systems/pds/dashboard/page.tsx").is_file(), "src/app/systems/pds/dashboard/page.tsx")
+    add(c, "ADAA first-party dashboard route source", (ROOT / "src/app/systems/adaa/dashboard/page.tsx").is_file(), "src/app/systems/adaa/dashboard/page.tsx")
+    add(c, "ADAA canonical operating registry", 'publicDashboard: "/systems/adaa/dashboard/"' in systems and 'liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/"' not in systems, "registry routes current ADAA operating dashboard to SlackQuant Pages")
 
     add(c, "Three-system card CTA wording", "Open Dashboard ↗" in card and "Open Live Dashboard" not in card and "Public Dashboard →" not in card, "SystemCard uses Open Dashboard ↗")
     for slug in ("pds", "adaa", "f2r", "scenario-stress-lab"):
@@ -106,7 +108,7 @@ def audit_static(require_build: bool) -> list[Check]:
         add(c, f"{slug.upper()} page CTA wording", "Open Dashboard ↗" in s, "Open Dashboard ↗")
     pds = text(SYSTEM_PAGE_FILES["pds"])
     add(c, "PDS approved same-origin new-tab marker", 'href="/systems/pds/dashboard/"' in pds and 'target="_blank"' in pds and 'rel="noopener noreferrer"' in pds and 'data-sq-dashboard-app="true"' in pds, "PDS dashboard opens securely in new tab")
-    add(c, "ExternalLinkPolicy approved first-party exceptions", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "isFirstPartyPdf", ".pdf", "/systems/pds/dashboard/", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]), "PDF documents plus the marked dashboard application route are eligible")
+    add(c, "ExternalLinkPolicy approved first-party exceptions", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "isFirstPartyPdf", ".pdf", "/systems/pds/dashboard/", "/systems/adaa/dashboard/", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]), "PDF documents plus marked PDS and ADAA dashboard application routes are eligible")
 
     unauthorized = []
     for p in (ROOT / "src").rglob("*.tsx"):
@@ -251,7 +253,7 @@ def audit_static(require_build: bool) -> list[Check]:
                 add(c, "Sitemap URL ↔ built route parity", not missing_routes, f"{len(urls)} sitemap routes resolve in out", ", ".join(missing_routes[:12]))
             except Exception as e: add(c, "Sitemap URL ↔ built route parity", False, str(e))
         if robots_file.is_file(): add(c, "Built robots → sitemap", f"Sitemap: {CANONICAL}/sitemap.xml" in text(robots_file), "root sitemap declared")
-        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/pds/dashboard/"] + list(hrefs.values())
+        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/adaa/dashboard/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/pds/dashboard/"] + list(hrefs.values())
         bad_head=[]
         for r in built_routes:
             f=expected_out_file(r)
@@ -275,13 +277,15 @@ def live_urls() -> list[tuple[str,str]]:
         ("F2R system", f"{CANONICAL}/systems/f2r/"),
         ("Methods root", f"{CANONICAL}/methods/"),
     ]
-    for label,key in [("ADAA live", "liveDashboard"),("F2R live", "liveDashboard"),("ADAA SSRN", "ssrn"),("ADAA research dashboard","researchDashboard"),("ADAA replication repository","replicationRepository"),("ADAA DOI","archivalRelease"),("F2R deployment repository","deploymentRepository")]:
+    for label,key in [("ADAA live", "publicDashboard"),("F2R live", "liveDashboard"),("ADAA SSRN", "ssrn"),("ADAA research dashboard","researchDashboard"),("ADAA replication repository","replicationRepository"),("ADAA DOI","archivalRelease"),("F2R deployment repository","deploymentRepository")]:
         # scope sequentially by slug where duplicate keys exist
         slug = "f2r" if label.startswith("F2R") else "adaa"
         blockm=re.search(rf'slug:\s*"{slug}"([\s\S]*?)(?=\n\s*\{{\n\s*slug:|\n\];)',systems)
         if blockm:
             m=re.search(rf'{key}:\s*"([^"]+)"',blockm.group(1))
-            if m: urls.append((label,m.group(1)))
+            if m:
+                url=m.group(1)
+                urls.append((label,f"{CANONICAL}{url}" if url.startswith("/") else url))
     return urls
 
 
