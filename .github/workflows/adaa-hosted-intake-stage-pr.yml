@@ -81,29 +81,37 @@ jobs:
               if actual!=expected: raise SystemExit("ADAA_SOURCE_UI_IDENTITY_HOLD:"+name)
           print("ADAA_CANONICAL_BROWSER_TEMPLATE_PARITY_PASS")
           PY
-      - name: Stage only approved static public assets and a direct-link preview route
+      - name: Validate against already published ADAA market clock (read-only)
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p public/assets/systems/adaa src/app/systems/adaa/dashboard
+          python3 - <<'PY'
+          from pathlib import Path
+          import importlib.util, json, os, re
+          prior=Path("public/assets/systems/adaa/snapshot.js")
+          if not prior.is_file():
+              raise SystemExit("ADAA_PRIOR_PUBLIC_SNAPSHOT_MISSING_HOLD")
+          text=prior.read_text(encoding="utf-8-sig")
+          match=re.fullmatch(r"\s*window\.ADAA_SNAPSHOT\s*=\s*(\{.*\})\s*;\s*",text,re.S)
+          if not match:
+              raise SystemExit("ADAA_PRIOR_PUBLIC_SNAPSHOT_INVALID_HOLD")
+          previous=json.loads(match.group(1))
+          spec=importlib.util.spec_from_file_location("adaa_intake",Path("scripts/receive-adaa-hosted-intake.py"))
+          verifier=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(verifier)
+          result=verifier.verify_assets_directory(Path(os.environ["ADAA_ASSETS"]),previous)
+          print("ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS",result["market_data_through"])
+          PY
+      - name: Stage only changed, source-validated ADAA static assets; preserve preview UI route
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f src/app/systems/adaa/dashboard/page.tsx
+          grep -q 'src="/assets/systems/adaa/index.html"' src/app/systems/adaa/dashboard/page.tsx
+          test -d public/assets/systems/adaa
           for f in index.html adaa-theme.css dashboard.js snapshot.js ADAA_Portfolio_Target_History.xlsx; do
             install -m 644 "$ADAA_ASSETS/$f" "public/assets/systems/adaa/$f"
           done
-          cat > src/app/systems/adaa/dashboard/page.tsx <<'TSX'
-          import type { Metadata } from "next";
-          export const metadata: Metadata = {
-            title: "ADAA Public Dashboard — SlackQuant",
-            alternates: { canonical: "/systems/adaa/dashboard/" }
-          };
-          export default function AdaaDashboardPage() {
-            return <iframe
-              src="/assets/systems/adaa/index.html"
-              title="ADAA Public Dashboard"
-              style={{position:"fixed",inset:0,width:"100vw",height:"100dvh",
-                      border:0,zIndex:2147483000,background:"#f3f6fa"}}
-            />;
-          }
-          TSX
       - name: Run canonical platform build and review safety gates, no publication
         shell: bash
         run: |
