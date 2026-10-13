@@ -89,13 +89,15 @@ function check() {
 function publishBoundedReviewBranch() {
   git(["add","--",...allow]);
   const staged=git(["diff","--cached","--name-only"]).split("\n").filter(Boolean);
-  need(sorted(staged)===sorted(allow),
-       "staged files not exactly six allowed ADAA draft paths");
+  need(staged.length >= 1 && staged.every((p) => allow.includes(p)),
+       "staged file outside ADAA review-only allowlist or no delta");
+  need(staged.includes("public/assets/systems/adaa/snapshot.js"),
+       "no revised public snapshot; refuse cosmetic-only review submission");
   need(!git(["diff","--name-only"]) &&
        !git(["ls-files","--others","--exclude-standard"]),
        "unvalidated working-tree changes present");
   git(["switch","-c",branch]);
-  git(["commit","-m","Stage validated ADAA 2026-10-09 candidate for Draft PR review"]);
+  git(["commit","-m","Stage SHA-pinned ADAA public-safe refreshed candidate for Draft PR review"]);
   need(!git(["status","--porcelain=v1","--untracked-files=all"]),
        "post-commit working tree not clean");
   // The managed hook is NOT disabled. This governed transaction gives it
