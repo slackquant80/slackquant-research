@@ -28,6 +28,7 @@ foreach ($token in @(
   "CANONICAL_HOST",
   "FIRST_PARTY_NEW_TAB_APP_PATHS",
   "/systems/pds/dashboard/",
+  "/systems/adaa/dashboard/",
   "noopener",
   "noreferrer"
 )) {
