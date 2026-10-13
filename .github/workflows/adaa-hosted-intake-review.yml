@@ -62,6 +62,9 @@ jobs:
           assert "git push origin" not in y and "git -c" not in y
           assert "SQ_GOVERNED_GIT_PUSH" not in y and "git config core.hooksPath" not in y
           assert "gh pr create --draft" in y and "github.token" in y
+          assert "ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS" in y
+          assert "verify_assets_directory(Path(os.environ[" + chr(34) + "ADAA_ASSETS" + chr(34) + "]),previous)" in y
+          assert "cat > src/app/systems/adaa/dashboard/page.tsx" not in y
           print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
           PY
       - name: Check governed review-only branch publisher and its fail-closed context
@@ -82,6 +85,9 @@ jobs:
                        "SOURCE_SHA256", "SQ_GOVERNED_GIT_PUSH", "pre-push-release-gate.mjs",
                        'git(["push","origin",branch]', "NO_MAIN_PUSH_NO_MERGE_NO_DEPLOYMENT"):
               assert must in p, "GOVERNED_TRANSACTION_CONTRACT_MISSING: " + must
+          assert 'staged.every((p) => allow.includes(p))' in p
+          assert 'staged.includes("public/assets/systems/adaa/snapshot.js")' in p
+          assert "sorted(staged)===sorted(allow)" not in p
           for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", 'git(["push","origin","main"]'):
               assert bad not in p, "UNSAFE_DRAFT_PUSH_CONTRACT: " + bad
           print("ADAA_GOVERNED_REVIEW_PUSH_CONTRACT_PASS")
