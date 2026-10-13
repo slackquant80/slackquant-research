@@ -23,7 +23,7 @@ foreach ($token in @(
   'category: "Portfolio Strategy System"',
   'systemGroup: "portfolio-strategy"',
   'status: "Public live"',
-  'https://slackquant.shinyapps.io/adaa_strategy_main/',
+  'publicDashboard: "/systems/adaa/dashboard/"',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518',
   'relatedResearch: "/research/adaa/"',
   'replicationRepository: "https://github.com/slackquant80/adaa-decision-diversification"'
