@@ -24,6 +24,8 @@ function num(value: number, digits = 2) { return value.toFixed(digits); }
 export default function AdaaSystemPage() {
   if (!item) notFound();
   const liveEvidence = getLiveSystemEvidence("adaa");
+  const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard;
+  const dashboardIsFirstPartyApp = Boolean(item.links.publicDashboard);
 
   return (
     <main>
@@ -41,8 +43,8 @@ export default function AdaaSystemPage() {
             <span>Official · Current MTD · Preview</span>
           </div>
           <div className="actions">
-            {item.links.liveDashboard ? (
-              <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+            {dashboardHref ? (
+              <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                 Open Dashboard ↗
               </a>
             ) : null}
@@ -195,8 +197,8 @@ export default function AdaaSystemPage() {
             </div>
             <div className="evidence-note"><b>Implementation note:</b> ADAA Core + Dynamic FX is the investor-facing implementation shown here. ADAA Core isolates the underlying allocation engine; 60/40 SPY/IEF is retained as a secondary reference rather than the direct FX-overlay comparison.</div>
             <div className="actions">
-              {item.links.liveDashboard ? (
-                <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+              {dashboardHref ? (
+                <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                   Open Full ADAA Dashboard ↗
                 </a>
               ) : null}
@@ -225,8 +227,8 @@ export default function AdaaSystemPage() {
                   checks. The public dashboard then displays that prepared state; it does not rerun the strategy or fetch source
                   data during a public session.
                 </p>
-                {item.links.liveDashboard ? (
-                  <a className="btn inverse" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+                {dashboardHref ? (
+                  <a className="btn inverse" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                     Open Dashboard ↗
                   </a>
                 ) : null}

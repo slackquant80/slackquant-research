@@ -37,6 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/research/",
     "/systems/",
     "/systems/pds/dashboard/",
+    "/systems/adaa/dashboard/",
     "/methods/",
     ...researchItems.map((item) => `/research/${item.slug}/`),
     ...systemItems.map((item) => `/systems/${item.slug}/`),

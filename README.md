@@ -21,6 +21,7 @@ Next.js App Router + React + TypeScript static export.
 /systems/pds/
 /systems/pds/dashboard/
 /systems/adaa/
+/systems/adaa/dashboard/
 /systems/f2r/
 /systems/equity-alpha/
 /systems/scenario-stress-lab/
