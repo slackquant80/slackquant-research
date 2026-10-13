@@ -77,7 +77,7 @@ export const researchItems: ResearchItem[] = [
       researchDashboard:
         "https://slackquant80.github.io/adaa-slackquant/",
       operationalDashboard:
-        "https://slackquant.shinyapps.io/adaa_strategy_main/"
+        "https://research.slackquant.com/systems/adaa/dashboard/"
     }
   },
   {
