@@ -93,9 +93,16 @@ function publishBoundedReviewBranch() {
        "staged file outside ADAA review-only allowlist or no delta");
   need(staged.includes("public/assets/systems/adaa/snapshot.js"),
        "no revised public snapshot; refuse cosmetic-only review submission");
-  need(!git(["diff","--name-only"]) &&
-       !git(["ls-files","--others","--exclude-standard"]),
-       "unvalidated working-tree changes present");
+  const unstaged = git(["diff","--name-only"]).split("\n").filter(Boolean);
+  const untracked = git(["ls-files","--others","--exclude-standard"]).split("\n").filter(Boolean);
+  if (unstaged.length || untracked.length) {
+    // Only names of repo-local files, never file contents, credentials or private bytes.
+    console.error("ADAA_UNSTAGED_TRACKED_PATHS=" + JSON.stringify(unstaged.slice(0,20)));
+    console.error("ADAA_UNTRACKED_PATHS=" + JSON.stringify(untracked.slice(0,20)));
+    console.error("ADAA_UNSTAGED_TRACKED_COUNT=" + unstaged.length);
+    console.error("ADAA_UNTRACKED_COUNT=" + untracked.length);
+    fail("unvalidated working-tree changes present");
+  }
   git(["switch","-c",branch]);
   git(["commit","-m","Stage SHA-pinned ADAA public-safe refreshed candidate for Draft PR review"]);
   need(!git(["status","--porcelain=v1","--untracked-files=all"]),
