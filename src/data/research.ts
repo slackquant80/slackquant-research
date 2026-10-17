@@ -398,6 +398,53 @@ export const researchItems: ResearchItem[] = [
     }
   }
 
+
+  {
+    slug: "global-equity-alpha",
+    title: "What Do Additional Models Add to a Global Equity Portfolio?",
+    subtitle: "Evidence from ETF Selection, Regional Allocation, and Selective Tilts",
+    stream: "investment",
+    streamLabel: "Investment Research Series",
+    investmentTrack: "empirical",
+    investmentTrackLabel: "Empirical Research",
+    status: "Public Working Paper",
+    publicVersion: "v0.8.2",
+    ssrnId: "7622538",
+    dateLabel: "October 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation: "Graduate School of Computing, Yonsei University",
+    featured: false,
+    shortSummary: "Does adding regional and selective decision layers improve an ACWI-benchmarked global equity ETF portfolio after overlapping holdings, active risk, turnover, and trading costs are combined? The evidence favors different roles for each layer rather than automatic gains from additional models.",
+    researchQuestion: "What do regional allocation and selective equity tilts contribute to an ETF selection portfolio once the final holdings and ACWI-relative risk are evaluated together?",
+    findings: [
+      "Over the 2019–August 2026 common reconstructed daily research history, the integrated portfolio earns 18.9% annualized versus 13.8% for ACWI; tracking error is 6.15% and the information ratio is 0.819.",
+      "The combined portfolio has a maximum relative drawdown of 8.10% and lags ACWI in 2022; positive long-run active returns do not imply consistent benchmark outperformance.",
+      "The regional layer has a meaningful benchmark-risk role, but primary ETF selection alone offers a stronger recent active-return-versus-tracking-error trade-off than the full blend.",
+      "The small selective theme/sector/style layer shows mixed standalone and recent evidence, so the research does not establish that more models or a particular mix are optimal."
+    ],
+    tags: ["Global Equities", "ETF Portfolios", "Machine Learning", "Active Risk"],
+    selectedEvidence: [
+      {
+        id: "equity-alpha-wealth",
+        title: "Long-run wealth growth is not the whole comparison",
+        description: "A $1 investment grows to about $3.71 in the reconstructed integrated portfolio versus $2.66 in ACWI. Month-end samples of the paper's fixed daily wealth paths; not an operational performance chart.",
+        imageUrl: "/assets/equity-alpha-research/integrated-wealth-v082.svg",
+        alt: "Reconstructed fixed-study month-end wealth paths for the combined global equity portfolio and ACWI from 2019 to August 2026.",
+        sourceLabel: "SSRN working paper v0.8.2 · Fixed daily wealth data, month-end samples"
+      },
+      {
+        id: "equity-alpha-rolling",
+        title: "Active performance varies substantially through time",
+        description: "The paper's rolling 12-month active return fluctuates above and below zero. The figure samples the frozen daily diagnostic at month-end; it is not an investment signal.",
+        imageUrl: "/assets/equity-alpha-research/rolling-active-return-v082.svg",
+        alt: "Historical month-end snapshots of the rolling 12-month active return versus ACWI, including periods below zero.",
+        sourceLabel: "SSRN working paper v0.8.2 · Figure 6 rolling-active-return source"
+      }
+    ],
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7622538"
+    }
+  },
 ];
 
 export function getResearch(slug: string) {
