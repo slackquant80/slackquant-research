@@ -44,6 +44,9 @@ export default function EquityAlphaSystemPage() {
             <span>Official + Preview</span>
           </div>
           <div className="actions">
+            <a className="btn" href="/research/global-equity-alpha/">
+              Read Investment Research →
+            </a>
             {item.links.publicDashboard ? (
               <a
                 className="btn primary"
