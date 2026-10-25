@@ -122,14 +122,18 @@
 .q-equation math{display:block;min-width:max-content;font-size:1.05em;line-height:1.9;math-style:normal}
 .q-circuit{background:#f0f4f3;border:1px solid #d5e1e1;padding:16px 20px}
 .q-circuit-svg{display:block;width:100%;max-width:660px;height:auto;margin:auto;overflow:visible;color:#2b505e}
-.q-svg-wire-label{font:14px Cambria,Georgia,serif;fill:#203f4d}
+.q-svg-wire-label{font:17px Cambria,Georgia,serif;fill:#203f4d}
 .q-svg-gate{fill:#fff;stroke:#2b6b81;stroke-width:1.7}
-.q-svg-gate-text{font:600 15px ui-sans-serif,system-ui,sans-serif;fill:#205469}
-.q-svg-caption{font:12px ui-sans-serif,system-ui,sans-serif;fill:#61767d}
+.q-svg-gate-text{font:600 18px ui-sans-serif,system-ui,sans-serif;fill:#205469}
+.q-svg-caption{font:15px ui-sans-serif,system-ui,sans-serif;fill:#61767d}
 .q-svg-control{fill:#28596b}
 .q-svg-target{stroke:#28596b;stroke-width:1.9;fill:#f3f8f9}
 @media(max-width:640px){
- .q-equation math{font-size:.85em}
+ .q-equation math{font-size:1em}
  .q-circuit{padding:9px 10px}
  .q-circuit-svg{min-width:260px}
 }
+
+.q-math-scroll-hint{font-size:11px;color:#566d78;margin:2px 0 0;line-height:1.5}
+.q-root .q-lab-row:focus-visible,.q-root .q-text-link:focus-visible{outline:3px solid #347991;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.q-lab-row,.q-button{transition:none!important}}
