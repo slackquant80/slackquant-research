@@ -55,3 +55,27 @@ Completed in the current editorial branch without invoking GitHub Actions:
 - The full SlackQuant `npm run validate:release` (TypeScript, production Next.js build and existing audits) has not run on this editorial branch.
 - Real generated page inspection (four article pages plus the landing page, desktop and mobile) remains incomplete; tests of a representative standalone fixture must not be misrepresented as whole-site QA.
 - Accordingly this branch must **not** be merged into `main` nor publicly deployed merely because the mathematics and illustrative components were inspected. Do not trigger the 2026-10 GitHub Actions budget by opening an unneeded PR for this review.
+
+## Three-pass editorial refinement — 2026-10-25
+
+**Pass 1 — scientific and code precision**
+
+- Tightened statements about single-qubit amplitudes versus probabilities, phase interference, two-qubit product states, and the distinction between coherent Bell states and separable mixtures.
+- Strengthened the independent public Bell-state example by asserting both Z/X Bell probabilities and the corresponding density-matrix control values. Corrected the Python formatting of the two Hadamard instructions.
+- Recalculated the core numerical results independently with NumPy: 70/30 Born probabilities, H–P(φ)–H for 0°, 90°, 180°, 360°, |1+> joint probabilities, Bell/mixture distributions in Z/X, and Bell-state Schmidt rank 2. All matched the advertised analytic targets (within floating-point tolerance).
+- **Not claimed:** new execution of the public Qiskit snippets. The previously verified original LAB runs remain the provenance for Qiskit cross-checks.
+
+**Pass 2 — editorial clarity and presentation**
+
+- Updated experiment tables to distinguish analytic predictions, ideal statevector computations, NumPy density-matrix calculations, and classical finite-shot sampling. Removed misleading “observed” framing.
+- Improved SVG circuit label sizes, mobile formula legibility and keyboard focus indication. Added a horizontal-scroll hint for the longer QL-002 MathML equation and adjusted the public code typography.
+- Ran a refreshed **standalone Chromium MathML + circuit fixture** at viewport widths 390 and 1280: two MathML blocks and one two-wire SVG displayed, and document width equaled viewport width at both sizes (no page-wide horizontal overflow). This still does not substitute for full Next.js page QA.
+
+**Pass 3 — site integration, safety and readiness**
+
+- Gave Quantum Lab its own card in the existing two-column home-page Methods section rather than embedding an auxiliary link under the Methods library card. Global header and all operational system routes remain unchanged.
+- Checked the intended five /quantum/ routes (landing + four generated article slugs), metadata and sitemap registrations, semantic section anchors, internal navigational links and external reference link policy.
+- Compared working-branch changes to main to confine edits to the quantum article/data/components/styles, the single homepage card, sitemap and this editorial contract. No Actions workflow or release validator changed.
+- Cross-checked Qiskit Statevector API and Next.js static-export/generateStaticParams behavior against their official documentation.
+
+**Open release constraints after all three passes:** full `npm run validate:release` in the complete repository, the generated five-route Next.js desktop/mobile visual check, and independent Qiskit execution of each shortened *public* snippet if such a claim is needed. **No PR, main merge, Actions trigger or public deployment is authorized by this review.**
