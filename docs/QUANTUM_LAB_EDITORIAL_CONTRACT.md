@@ -9,7 +9,7 @@
 
 - `/quantum/`: editorial entry point, complete Foundations I sequence, evidence boundary and research outlook.
 - `/quantum/{slug}/`: four statically rendered, individually indexable experiment articles, populated by `src/data/quantum.ts`.
-- Main navigation remains unchanged. The existing home-page Quantitative Methods section contains the sole new entry link to Quantum Lab.
+- Main navigation remains unchanged. The existing home-page Quantitative Methods section contains a dedicated Quantum Lab card alongside the Methods library; the global header navigation is unchanged.
 - Each article presents: question → intuition → mathematical relation → conceptual circuit → predicted vs observed → minimal executable public code → limitation and API references.
 - `src/app/sitemap.ts` includes the overview and all four article routes. Next.js static export must use `generateStaticParams` and `dynamicParams=false`.
 - The CSS is route-scoped under `.q-root`; no global restyling, new design system, client-side persistence or API.
