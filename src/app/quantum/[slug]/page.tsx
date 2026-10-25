@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { findQuantumLab, quantumLabs, quantumReferences } from "@/data/quantum";
+import { QuantumEquation } from "../QuantumEquation";
+import { QuantumCircuit } from "../QuantumCircuit";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -73,19 +75,16 @@ export default async function QuantumArticle({ params }: Props) {
             <h2>State and transformation</h2>
             <div className="q-equation-panel">
               <div className="q-equation-label">Core relation</div>
-              <div className="q-equation">{lab.equation}</div>
+              <div className="q-equation">
+                <QuantumEquation slug={lab.slug} ariaLabel={lab.equation} />
+              </div>
               <div className="q-equation-derive">{lab.derivation}</div>
             </div>
-            <h3 className="q-subheading">Circuit sequence</h3>
-            <div className="q-circuit" aria-label="Circuit operation sequence">
-              {lab.circuit.map((step, i) => (
-                <div className="q-circuit-segment" key={String(i) + step}>
-                  {i > 0 && <span className="q-circuit-arrow" aria-hidden="true">→</span>}
-                  <span className="q-circuit-box">{step}</span>
-                </div>
-              ))}
+            <h3 className="q-subheading">Quantum circuit</h3>
+            <div className="q-circuit">
+              <QuantumCircuit slug={lab.slug} />
             </div>
-            <p className="q-figure-caption">Conceptual sequence, not a hardware timing or connectivity diagram.</p>
+            <p className="q-figure-caption">Circuit wire labels follow the Qiskit indexing convention; Statevector results are computed with an ideal simulator, not hardware.</p>
           </section>
 
           <section className="q-article-section" id="results">
