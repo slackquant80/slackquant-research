@@ -38,3 +38,20 @@
 Add new experiments to `quantumLabs` only when (a) the experiment has a defined question and exact source evidence, (b) mathematical expectations and implementation have been checked, (c) its Qiskit/classical/hardware evidence boundaries are distinguished, and (d) the public snippet is rights-safe. The four foundations articles remain independent of future progress.
 
 **No separate QML deployment, database, Vercel project, new GitHub Actions workflow, or permanent local Git clone required.**
+
+## Bounded 2026-10-25 pre-release QA evidence
+
+Completed in the current editorial branch without invoking GitHub Actions:
+
+- All four public Python snippets passed offline Python `ast.parse` syntax checks. This is **not** a claim that these re-authored public snippets were run with Qiskit; the Qiskit results in the articles refer to the separately validated original local LABs.
+- Analytic NumPy checks independently confirmed: QL-001 Born probabilities (70/30); QL-002 H–P(φ)–H outcomes at 0°, 90°, and 180°; QL-003 `|1+>` probabilities; QL-004 Bell Z/X distributions versus separable mixture X distribution.
+- IBM Quantum official API documentation was reviewed for `QuantumCircuit.ry`, `.cx`, `Statevector.from_instruction`, and `.probabilities()`.
+- Replaced unformatted mathematics with **native MathML**, and former generic step pills with semantic SVG diagrams whose qubit order, gates and CNOT control/target match the code.
+- Tested a **representative standalone MathML/SVG rendering fixture** in Chromium at desktop (1280px) and mobile (390px). Formula rendering and the q0-controlled CNOT diagram remained visible, with no document-wide horizontal overflow. This fixture check does **not** substitute for a Next.js production-page visual test.
+- Bounded GitHub source review: only the QL/Quantum Lab route, styles, data, homepage entry, sitemap and this contract were changed. The other site content, deployed `main`, system calculation and dashboard routes were not changed.
+
+**STILL OPEN — hard publication gate:**
+
+- The full SlackQuant `npm run validate:release` (TypeScript, production Next.js build and existing audits) has not run on this editorial branch.
+- Real generated page inspection (four article pages plus the landing page, desktop and mobile) remains incomplete; tests of a representative standalone fixture must not be misrepresented as whole-site QA.
+- Accordingly this branch must **not** be merged into `main` nor publicly deployed merely because the mathematics and illustrative components were inspected. Do not trigger the 2026-10 GitHub Actions budget by opening an unneeded PR for this review.
