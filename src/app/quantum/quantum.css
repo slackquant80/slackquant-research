@@ -61,13 +61,9 @@
 .q-intuition{font-size:18px;max-width:800px;line-height:1.74}
 .q-equation-panel{background:#fff;border:1px solid var(--q-line);padding:31px 33px;margin:23px 0 32px}
 .q-equation-label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#5f747d;font-weight:700;margin-bottom:17px}
-.q-equation{font-family:Cambria,"STIX Two Math",Georgia,"Times New Roman",serif;font-size:clamp(19px,2.35vw,27px);line-height:1.6;overflow-x:auto;white-space:normal;overflow-wrap:anywhere;color:#173845}
+.q-equation{font-family:Cambria,"STIX Two Math",Georgia,"Times New Roman",serif;font-size:clamp(19px,2.35vw,27px);line-height:1.6;color:#173845}
 .q-equation-derive{border-top:1px solid var(--q-line);margin-top:23px;padding-top:17px;font-family:Cambria,Georgia,serif;font-size:16px;line-height:1.7;color:#3a4d55;overflow-wrap:anywhere}
 .q-subheading{font-size:14px;font-weight:700;margin:24px 0 15px;color:#2c4350}
-.q-circuit{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#f0f4f3;border:1px solid #d5e1e1;padding:21px;min-height:81px}
-.q-circuit-segment{display:inline-flex;align-items:center;gap:6px}
-.q-circuit-box{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;padding:9px 11px;border:1px solid #b9cad0;background:#fff;white-space:nowrap}
-.q-circuit-arrow{color:#3f7d8f;font-size:18px}
 .q-figure-caption{font-size:12px;line-height:1.65;color:#6d7a80;margin:13px 0 0}
 .q-result-table-scroll{overflow-x:auto;background:#fff;border:1px solid var(--q-line)}
 .q-result-table{width:100%;border-collapse:collapse;text-align:left;min-width:600px;font-size:13px}
