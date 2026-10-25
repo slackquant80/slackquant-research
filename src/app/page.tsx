@@ -250,6 +250,11 @@ export default function HomePage() {
               <a className="section-link strong-link" href={methodsRootHref}>
                 Explore Quantitative Methods &#8594;
               </a>
+              <div style={{ marginTop: 13 }}>
+                <Link className="section-link strong-link" href="/quantum/">
+                  Quantum Lab: From States to Entanglement &#8594;
+                </Link>
+              </div>
             </article>
             <article className="stream">
               <div className="kicker">Shared foundation</div>

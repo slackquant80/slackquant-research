@@ -3,6 +3,7 @@ import path from "node:path";
 import type { MetadataRoute } from "next";
 import { researchItems } from "@/data/research";
 import { systemItems } from "@/data/systems";
+import { quantumLabs } from "@/data/quantum";
 
 export const dynamic = "force-static";
 
@@ -39,6 +40,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/systems/pds/dashboard/",
     "/systems/adaa/dashboard/",
     "/methods/",
+    "/quantum/",
+    ...quantumLabs.map((lab) => "/quantum/" + lab.slug + "/"),
     ...researchItems.map((item) => `/research/${item.slug}/`),
     ...systemItems.map((item) => `/systems/${item.slug}/`),
     ...collectMethodArticleRoutes(),
