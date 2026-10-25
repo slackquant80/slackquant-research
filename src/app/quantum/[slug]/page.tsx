@@ -78,6 +78,7 @@ export default async function QuantumArticle({ params }: Props) {
               <div className="q-equation">
                 <QuantumEquation slug={lab.slug} ariaLabel={lab.equation} />
               </div>
+              {lab.slug === "gates-and-interference" ? <p className="q-math-scroll-hint">On narrow screens, scroll the equation horizontally to view every term.</p> : null}
               <div className="q-equation-derive">{lab.derivation}</div>
             </div>
             <h3 className="q-subheading">Quantum circuit</h3>
@@ -89,10 +90,10 @@ export default async function QuantumArticle({ params }: Props) {
 
           <section className="q-article-section" id="results">
             <span className="q-overline">03 / Observed and predicted</span>
-            <h2>What matched</h2>
+            <h2>Analytic predictions and simulator results</h2>
             <div className="q-result-table-scroll">
               <table className="q-result-table">
-                <thead><tr><th scope="col">Check</th><th scope="col">Analytic prediction</th><th scope="col">Reported result</th></tr></thead>
+                <thead><tr><th scope="col">Quantity</th><th scope="col">Analytic prediction</th><th scope="col">Computed value or classical sample</th></tr></thead>
                 <tbody>
                   {lab.results.map((row) => (
                     <tr key={row.label}>
@@ -102,7 +103,7 @@ export default async function QuantumArticle({ params }: Props) {
                 </tbody>
               </table>
             </div>
-            <p className="q-figure-caption">Results refer to the previously completed local NumPy/Qiskit experiments. Rounded percentages are shown for readability; all comparisons used numerical tolerance where appropriate.</p>
+            <p className="q-figure-caption">Values are reported from the previously completed local experiments: exact ideal statevector probabilities (Qiskit), classical NumPy sampling where stated, and the specified NumPy density-matrix calculation. These are not observations from physical quantum hardware. Rounded values are shown for readability.</p>
           </section>
 
           <section className="q-article-section" id="code">
