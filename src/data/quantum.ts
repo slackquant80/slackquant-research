@@ -8,7 +8,6 @@ export type QuantumLab = {
   intuition: string;
   equation: string;
   derivation: string;
-  circuit: string[];
   results: { label: string; prediction: string; observation: string }[];
   insight: string;
   distinction: string;
@@ -26,7 +25,6 @@ export const quantumLabs: QuantumLab[] = [
     intuition: "The state stores probability amplitudes, not the outcome of a measurement. Squaring their magnitudes gives measurement probabilities in a chosen basis.",
     equation: "|ψ⟩ = √0.7 |0⟩ + √0.3 |1⟩",
     derivation: "|√0.7|² + |√0.3|² = 1;  P(0) = 0.70, P(1) = 0.30",
-    circuit: ["|0⟩", "Ry(θ)", "|ψ⟩"],
     results: [
       { label: "Exact Z-basis P(0)", prediction: "70.00%", observation: "70.00% · Qiskit" },
       { label: "Exact Z-basis P(1)", prediction: "30.00%", observation: "30.00% · Qiskit" },
@@ -60,7 +58,6 @@ export const quantumLabs: QuantumLab[] = [
     intuition: "A phase gate changes the relative phase between amplitudes. The final Hadamard recombines them, converting a phase difference into observable probability differences.",
     equation: "H P(φ) H |0⟩ = [(1 + e^{iφ})|0⟩ + (1 − e^{iφ})|1⟩] / 2",
     derivation: "P(0) = cos²(φ/2);  P(1) = sin²(φ/2)",
-    circuit: ["|0⟩", "H", "P(φ)", "H", "Z measure"],
     results: [
       { label: "φ = 90° · final P(0)", prediction: "50%", observation: "50% · Qiskit" },
       { label: "φ = 180° · final P(0)", prediction: "0%", observation: "≈0% · Qiskit" },
@@ -96,7 +93,6 @@ export const quantumLabs: QuantumLab[] = [
     intuition: "A joint two-qubit state needs one amplitude for each of four computational-basis outcomes. A separable preparation can be written as a tensor product, but not every two-qubit state can.",
     equation: "|1⟩ ⊗ |+⟩ = (|10⟩ + |11⟩) / √2",
     derivation: "Joint statevector = [0, 0, 1/√2, 1/√2]ᵀ in the |00⟩, |01⟩, |10⟩, |11⟩ basis",
-    circuit: ["|q₁q₀⟩", "X(q₁)", "H(q₀)", "|1+⟩"],
     results: [
       { label: "P(00) and P(01)", prediction: "0% / 0%", observation: "0% / 0% · Qiskit" },
       { label: "P(10) and P(11)", prediction: "50% / 50%", observation: "50% / 50% · Qiskit" },
@@ -129,7 +125,6 @@ export const quantumLabs: QuantumLab[] = [
     intuition: "No. The Bell state and a classically correlated mixture have identical Z-basis outcome probabilities. Their X-basis distributions differ because the Bell state preserves quantum coherence.",
     equation: "|Φ⁺⟩ = (|00⟩ + |11⟩) / √2",
     derivation: "ρmix = ½|00⟩⟨00| + ½|11⟩⟨11|",
-    circuit: ["|00⟩", "H(q₀)", "CX(q₀→q₁)", "|Φ⁺⟩"],
     results: [
       { label: "Bell · same outcome in Z", prediction: "100%", observation: "100% · Qiskit" },
       { label: "Bell · same outcome in X", prediction: "100%", observation: "100% · Qiskit" },
