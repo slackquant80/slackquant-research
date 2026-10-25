@@ -119,3 +119,21 @@
  .q-article-pagination{gap:13px}
  .q-article-pagination strong{font-size:17px}
 }
+
+
+/* Precise, accessible MathML and true circuit diagrams for the foundations series. */
+.q-equation{overflow-x:auto;overflow-y:hidden;max-width:100%;white-space:nowrap;padding:4px 0 10px;scrollbar-width:thin}
+.q-equation math{display:block;min-width:max-content;font-size:1.05em;line-height:1.9;math-style:normal}
+.q-circuit{background:#f0f4f3;border:1px solid #d5e1e1;padding:16px 20px}
+.q-circuit-svg{display:block;width:100%;max-width:660px;height:auto;margin:auto;overflow:visible;color:#2b505e}
+.q-svg-wire-label{font:14px Cambria,Georgia,serif;fill:#203f4d}
+.q-svg-gate{fill:#fff;stroke:#2b6b81;stroke-width:1.7}
+.q-svg-gate-text{font:600 15px ui-sans-serif,system-ui,sans-serif;fill:#205469}
+.q-svg-caption{font:12px ui-sans-serif,system-ui,sans-serif;fill:#61767d}
+.q-svg-control{fill:#28596b}
+.q-svg-target{stroke:#28596b;stroke-width:1.9;fill:#f3f8f9}
+@media(max-width:640px){
+ .q-equation math{font-size:.85em}
+ .q-circuit{padding:9px 10px}
+ .q-circuit-svg{min-width:260px}
+}
