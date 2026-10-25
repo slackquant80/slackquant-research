@@ -89,7 +89,7 @@ export default async function QuantumArticle({ params }: Props) {
           </section>
 
           <section className="q-article-section" id="results">
-            <span className="q-overline">03 / Observed and predicted</span>
+            <span className="q-overline">03 / Prediction and simulation</span>
             <h2>Analytic predictions and simulator results</h2>
             <div className="q-result-table-scroll">
               <table className="q-result-table">
@@ -108,8 +108,8 @@ export default async function QuantumArticle({ params }: Props) {
 
           <section className="q-article-section" id="code">
             <span className="q-overline">04 / Reproduce the principle</span>
-            <h2>Minimal, runnable Qiskit example</h2>
-            <p className="q-body">This is a public-safe, independently written teaching snippet—not a copy of the private lab repository. Run it in a Python environment with NumPy and Qiskit installed.</p>
+            <h2>Minimal Qiskit example</h2>
+            <p className="q-body">This independently written teaching snippet illustrates the verified circuit principle without disclosing the private lab source. Run it with NumPy and Qiskit installed; this abbreviated public snippet has undergone source and syntax review, but not a separate Qiskit-enabled execution test.</p>
             <div className="q-code-head">
               <span>Python · NumPy + Qiskit</span>
               <span>Ideal statevector</span>
