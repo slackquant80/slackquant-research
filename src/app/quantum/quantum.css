@@ -137,3 +137,6 @@
 .q-math-scroll-hint{font-size:11px;color:#566d78;margin:2px 0 0;line-height:1.5}
 .q-root .q-lab-row:focus-visible,.q-root .q-text-link:focus-visible{outline:3px solid #347991;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.q-lab-row,.q-button{transition:none!important}}
+
+.q-table-scroll-hint{display:none;font-size:12px;line-height:1.5;color:#536f7c;margin:-7px 0 12px}
+@media(max-width:640px){.q-table-scroll-hint{display:block}}
