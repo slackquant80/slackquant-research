@@ -91,6 +91,7 @@ export default async function QuantumArticle({ params }: Props) {
           <section className="q-article-section" id="results">
             <span className="q-overline">03 / Prediction and simulation</span>
             <h2>Analytic predictions and simulator results</h2>
+            <p className="q-table-scroll-hint">Swipe the results table horizontally to see all columns.</p>
             <div className="q-result-table-scroll">
               <table className="q-result-table">
                 <thead><tr><th scope="col">Quantity</th><th scope="col">Analytic prediction</th><th scope="col">Computed value or classical sample</th></tr></thead>
