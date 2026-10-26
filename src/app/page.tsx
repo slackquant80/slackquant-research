@@ -252,13 +252,17 @@ export default function HomePage() {
               </a>
             </article>
             <article className="stream">
-              <div className="kicker">Shared foundation</div>
-              <h3>A common language for recurring quantitative work.</h3>
+              <div className="kicker">Quantum Lab · Foundations I</div>
+              <h3>From qubit states to entanglement.</h3>
               <p>
-                Quantitative Methods provides reusable explanations, implementation
-                guidance, reproducible examples, and failure-mode checks for methods
-                that recur across Investment Research, Academic Research, and Systems.
+                Four compact experiments connect statevectors, phase interference,
+                tensor products, and Bell states to reproducible NumPy and Qiskit
+                calculations. Each lesson distinguishes ideal simulation from
+                physical quantum hardware.
               </p>
+              <Link className="section-link strong-link" href="/quantum/">
+                Explore Quantum Lab &#8594;
+              </Link>
             </article>
           </div>
         </div>
