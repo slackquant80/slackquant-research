@@ -18,7 +18,7 @@ const FOUNDATION_MATHML: Readonly<Record<string, string>> = {
   ].join(""),
   "gates-and-interference": [
     '<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">',
-    '<mrow><mi>H</mi><mi>P</mi><mo>(</mo><mi>φ</mi><mo>)</mo><mi>H</mi><mtext>|0⟩</mtext><mo>=</mo>',
+    '<mrow><mi>H</mi><mi>P</mi><mo stretchy="false">(</mo><mi>φ</mi><mo stretchy="false">)</mo><mi>H</mi><mtext>|0⟩</mtext><mo>=</mo>',
     '<mfrac><mrow>',
     '<mo>(</mo><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>φ</mi></mrow></msup><mo>)</mo><mtext>|0⟩</mtext>',
     '<mo>+</mo>',
