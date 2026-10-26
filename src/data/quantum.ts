@@ -21,7 +21,7 @@ export const quantumLabs: QuantumLab[] = [
     slug: "quantum-states",
     title: "A Qubit Is a State, Not a Probability",
     subtitle: "Statevectors, normalization and the Born rule",
-    question: "How can one qubit have a 70% chance of outcome 0 and a 30% chance of outcome 1?"
+    question: "How can one qubit have a 70% chance of outcome 0 and a 30% chance of outcome 1?",
     intuition: "A pure qubit state is specified by two complex amplitudes. Their squared magnitudes—not the amplitudes themselves—give probabilities when measured in the chosen basis.",
     equation: "|ψ⟩ = √0.7 |0⟩ + √0.3 |1⟩",
     derivation: "|√0.7|² + |√0.3|² = 1;  P(0) = 0.70, P(1) = 0.30",
