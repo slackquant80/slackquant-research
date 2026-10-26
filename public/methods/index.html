@@ -70,6 +70,31 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 
 
 <link rel="canonical" href="https://research.slackquant.com/methods/">
+
+<style id="sq-quantum-entry-style">
+/* Dedicated Methods-to-Quantum-Lab entry; independent of the 26-item Methods catalog. */
+.sq-quantum-entry{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(155px,220px);
+  align-items:center;gap:23px;padding:22px 24px;margin:26px 0 32px;
+  border:1px solid #d1dedf;border-left:4px solid #28768c;
+  border-radius:5px;background:#f1f6f6;
+}
+.sq-quantum-entry .sq-quantum-eyebrow{
+  font-size:.73rem;font-weight:750;letter-spacing:.09em;text-transform:uppercase;color:#336b7c;margin:0 0 8px;
+}
+.sq-quantum-entry .sq-quantum-title{font-size:clamp(1.45rem,2.3vw,1.9rem);line-height:1.2;margin:0 0 8px;color:#1e3640}
+.sq-quantum-entry .sq-quantum-description{font-size:.94rem;line-height:1.65;color:#485e66;margin:0 0 13px}
+.sq-quantum-entry .sq-quantum-link{display:inline-block;font-size:.89rem;font-weight:740;color:#17566c;text-decoration:underline;text-underline-offset:4px}
+.sq-quantum-entry .sq-quantum-link:hover{color:#0b3949}
+.sq-quantum-entry .sq-quantum-link:focus-visible{outline:3px solid #2f7990;outline-offset:4px}
+.sq-quantum-entry .sq-quantum-trail{border-left:1px solid #bed2d5;padding-left:22px;display:grid;gap:9px;font-size:.78rem;color:#3c5a64}
+.sq-quantum-entry .sq-quantum-trail strong{font-size:.71rem;letter-spacing:.08em;color:#24667a}
+.sq-quantum-entry .sq-quantum-trail span{display:block}
+@media(max-width:720px){
+  .sq-quantum-entry{grid-template-columns:minmax(0,1fr);gap:17px;padding:19px 18px}
+  .sq-quantum-entry .sq-quantum-trail{border-left:0;border-top:1px solid #bed2d5;padding:13px 0 0}
+}
+</style>
 </head>
 
 <body class="fullcontent quarto-light">
@@ -136,6 +161,24 @@ gtag('config', 'G-6GE45R8S4F', { 'anonymize_ip': true});
 <div class="sq-index-intro">
 <p>This library explains the statistical, econometric, portfolio, data-design, machine-learning, and foundation-model methods used across SlackQuant research and investment systems. Each article connects intuition and formal definitions with reproducible implementation, common failure modes, and examples of how the method matters in research and investment practice.</p>
 </div>
+
+<!-- SLACKQUANT_QUANTUM_LAB_ENTRY_START: preserve when regenerating the Quarto Methods index. -->
+<section id="sq-quantum-entry" class="sq-quantum-entry" aria-labelledby="sq-quantum-entry-title">
+  <div>
+    <p class="sq-quantum-eyebrow">Featured learning series · Foundations I</p>
+    <h2 id="sq-quantum-entry-title" class="sq-quantum-title">Quantum Lab</h2>
+    <p class="sq-quantum-description">Four concise, reproducible experiments covering qubit states, interference, tensor products, and Bell-state entanglement. Each lesson connects the mathematics to an ideal Qiskit simulation and a minimal Python example.</p>
+    <a class="sq-quantum-link" href="https://research.slackquant.com/quantum/">Explore Quantum Lab <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="sq-quantum-trail" aria-label="Four foundations experiments">
+    <strong>QL-001 — QL-004</strong>
+    <span>01 · Quantum states</span>
+    <span>02 · Phase &amp; interference</span>
+    <span>03 · Tensor products</span>
+    <span>04 · Entanglement</span>
+  </div>
+</section>
+<!-- SLACKQUANT_QUANTUM_LAB_ENTRY_END -->
 <section id="current-articles" class="level2">
 <h2 class="anchored" data-anchor-id="current-articles">Current articles</h2>
 <div id="sq-method-discovery" class="sq-method-discovery">
