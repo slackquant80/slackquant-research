@@ -79,3 +79,17 @@ Completed in the current editorial branch without invoking GitHub Actions:
 - Cross-checked Qiskit Statevector API and Next.js static-export/generateStaticParams behavior against their official documentation.
 
 **Open release constraints after all three passes:** full `npm run validate:release` in the complete repository, the generated five-route Next.js desktop/mobile visual check, and independent Qiskit execution of each shortened *public* snippet if such a claim is needed. **No PR, main merge, Actions trigger or public deployment is authorized by this review.**
+
+## True full-page visual audit — 2026-10-26
+
+The owner-provided FullPageQA ZIP was directly inspected. It contains ten full-page PNGs, a ten-entry `CDP_VIEWPORT_REPORT.json`, and a postprocess receipt documenting the earlier PowerShell array-count bug.
+
+**Visual evidence applies to pinned source commit `8e51da43babe18287d4cef3413e31c5061a1bdce` (not automatically to newer commits).**
+
+- Captures: overview + four lab articles at desktop **1280px** and real mobile **390px**, all **10/10**. Captured page heights range to 4,528px.
+- The CDP report confirms `documentWidth=viewportWidth` for all ten pages, `horizontalOverflow=false` and `brokenImages=0`.
+- Manual full-image review: page title, body, MathML formula, quantum circuit, evidence table, code block, interpretation, pagination and footer are present. Prior apparent mobile title truncation was a capture-viewport artifact.
+- Two small usability issues observed in the screenshots: the QL-002 MathML phase argument parentheses stretched to the height of the nearby fraction; the horizontally scrollable result table lacked a mobile scrolling cue.
+- **Corrective changes after the captured commit:** changed only the QL-002 phase parentheses to MathML `stretchy="false"`, and added a mobile-only table scrolling hint / style. No math model, numerical data, circuit wiring, imported dependencies, other site routes, CI or public deployment was changed.
+
+**Current disposition:** preceding pinned commit passed canonical release validation + original five-page HTML audit, and passed the ten-page CDP/full-page review. The small post-capture UI corrections are source-reviewed but have **not yet received their own full canonical build / 390px rendering attestation**. Preserve that distinction before authorizing merge and production deployment. No need to repeat the scientific LAB experiments.
