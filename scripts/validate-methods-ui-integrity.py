@@ -85,13 +85,13 @@ def check(root:Path,label:str):
     html=idx.read_text(encoding='utf-8',errors='replace')
     # Keep the separately published Quantum Lab reachable after future Quarto re-renders.
     quantum_entry=re.search(
-        r'<section[^>]*\\bid="sq-quantum-entry"[^>]*>(.*?)</section>', html, re.S
+        r'<section[^>]*\bid="sq-quantum-entry"[^>]*>(.*?)</section>', html, re.S
     )
     if not quantum_entry: fail(f'{label}_quantum_entry_missing')
     if html.count('id="sq-quantum-entry"')!=1:
         fail(f'{label}_quantum_entry_duplicate')
     if not re.search(
-        r'<a[^>]+href="https://research\\.slackquant\\.com/quantum/"[^>]*>',
+        r'<a[^>]+href="https://research\.slackquant\.com/quantum/"[^>]*>',
         quantum_entry.group(1)
     ):
         fail(f'{label}_quantum_entry_link_missing')
