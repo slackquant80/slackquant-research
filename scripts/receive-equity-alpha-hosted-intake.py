@@ -188,7 +188,7 @@ def validate_candidate(records, manifest, previous_records, allow_same_clock=Fal
             # normalized representations so a published path cannot evade this gate.
             normalized = low.replace(b"\\\\", b"\\")
             need(not any(marker in normalized for marker in BAD_MARKERS) and
-                 re.search(rb"(?i)\\b[a-z]:\\\\", normalized) is None,
+                 re.search(rb"(?i)\b[a-z]:\\", normalized) is None,
                  "local/private/credential marker in " + rel)
     workbook_check(records["exports/Global_Equity_Alpha_Full_History.xlsx"])
 
