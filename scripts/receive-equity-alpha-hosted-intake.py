@@ -184,7 +184,11 @@ def validate_candidate(records, manifest, previous_records, allow_same_clock=Fal
              "SHA256/byte mismatch: " + rel)
         if rel.endswith((".html", ".js", ".css")):
             low = records[rel].lower()
-            need(not any(marker in low for marker in BAD_MARKERS),
+            # JSON encodes Windows backslashes as \\; inspect both raw and
+            # normalized representations so a published path cannot evade this gate.
+            normalized = low.replace(b"\\\\", b"\\")
+            need(not any(marker in normalized for marker in BAD_MARKERS) and
+                 re.search(rb"(?i)\\b[a-z]:\\\\", normalized) is None,
                  "local/private/credential marker in " + rel)
     workbook_check(records["exports/Global_Equity_Alpha_Full_History.xlsx"])
 
