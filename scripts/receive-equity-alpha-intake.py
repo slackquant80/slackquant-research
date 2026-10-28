@@ -49,9 +49,9 @@ def canonical_text(data: bytes, path: str) -> bytes:
         data.decode("utf-8-sig")
     except UnicodeError as exc:
         raise Hold("NON_UTF8_PUBLIC_TEXT_" + path) from exc
-    if b"\\r" in data.replace(b"\\r\\n", b""):
+    if b"\r" in data.replace(b"\r\n", b""):
         raise Hold("BARE_CR_IN_PUBLIC_TEXT_" + path)
-    return data.replace(b"\\r\\n", b"\\n")
+    return data.replace(b"\r\n", b"\n")
 
 
 def binding(data: bytes, name: str) -> dict:
@@ -197,7 +197,7 @@ def preflight(bundle: Path, workspace: Path, expected_sha: str, source_sha: str,
                 raise Hold("PUBLIC_CLOCK_REGRESSION_" + old_key)
         old_signal = str(old_meta.get("signalMonth"))
         new_signal = str(candidate_clock["official_signal_month"])
-        if not re.fullmatch(r"\\d{4}-\\d{2}", old_signal) or not re.fullmatch(r"\\d{4}-\\d{2}", new_signal):
+        if not re.fullmatch(r"\d{4}-\d{2}", old_signal) or not re.fullmatch(r"\d{4}-\d{2}", new_signal):
             raise Hold("INVALID_PUBLIC_OR_SOURCE_SIGNAL_MONTH")
         if new_signal < old_signal:
             raise Hold("PUBLIC_SIGNAL_MONTH_REGRESSION")
