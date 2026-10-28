@@ -131,9 +131,29 @@ def receive(bundle: Path, expected_sha: str, source_sha: str, rights_sha: str):
     return manifest, entries
 
 
+
+
+def reject_private_paths(value: object, location: str = "$") -> None:
+    """Block local OS/private-runtime references in public JSON; omit values from errors."""
+    if isinstance(value, dict):
+        for k, v in value.items():
+            reject_private_paths(v, location + "." + str(k))
+    elif isinstance(value, list):
+        for i, v in enumerate(value):
+            reject_private_paths(v, f"{location}[{i}]")
+    elif isinstance(value, str):
+        if (re.match(r"^[A-Za-z]:[\\/]", value)
+                or re.match(r"^/(?:home|Users|mnt|root)/", value, re.I)
+                or any(t in value.lower() for t in
+                       ("_local_private_data", "_local_private_archive", "_local_runtime"))):
+            raise Hold("PRIVATE_OS_PATH_IN_PUBLIC_DATA_AT_" + location)
+
 def clock(manifest: dict, files: dict[str, bytes]) -> dict:
-    hist = binding(files[PREFIX+"data/dashboard_data.js"], "EA_HISTORY_DATA").get("meta", {})
+    history_data = binding(files[PREFIX+"data/dashboard_data.js"], "EA_HISTORY_DATA")
     live = binding(files[PREFIX+"data/live_overlay.js"], "EA_LIVE_OVERLAY")
+    reject_private_paths(history_data)
+    reject_private_paths(live)
+    hist = history_data.get("meta", {})
     lm = live.get("meta", {})
     pm = live.get("preview", {}).get("meta", {})
     cost = live.get("currentCost", {})
