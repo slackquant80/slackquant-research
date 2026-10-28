@@ -99,5 +99,54 @@ class ReadOnlyReceiver(unittest.TestCase):
             with self.assertRaisesRegex(r.Hold,"BUNDLE_PATH_ALLOWLIST"):
                 r.preflight(p,root,r.digest(p.read_bytes()),"a"*40,"b"*64)
 
+    def test_text_only_crlf_is_no_material_delta(self):
+        with TemporaryDirectory() as td:
+            root=Path(td); p,sha=fixture(root)
+            file=root/r.PREFIX/"data/live_overlay.js"
+            file.write_bytes(file.read_bytes().replace(b"\n", b"\r\n"))
+            result=r.preflight(p,root,sha,"a"*40,"b"*64)
+            path=r.PREFIX+"data/live_overlay.js"
+            self.assertEqual(result["status"],"PASS_NO_MATERIAL_DELTA")
+            self.assertEqual(result["changed_paths"],[])
+            self.assertEqual(result["eol_only_equivalent_paths"],[path])
+            self.assertEqual(
+                result["proposed_text_lf_or_binary_exact_sha256"][path],
+                r.digest(file.read_bytes().replace(b"\r\n",b"\n")))
+            self.assertEqual(file.read_bytes()[-2:],b"\r\n")
+
+    def test_bare_cr_rejected_not_ignored(self):
+        with TemporaryDirectory() as td:
+            root=Path(td); p,sha=fixture(root)
+            file=root/r.PREFIX/"assets/app.js"
+            file.write_bytes(b"unrecognized\rbreak")
+            with self.assertRaisesRegex(r.Hold,"BARE_CR_IN_PUBLIC_TEXT"):
+                r.preflight(p,root,sha,"a"*40,"b"*64)
+
+    def test_xlsx_must_match_raw_bytes(self):
+        with TemporaryDirectory() as td:
+            root=Path(td); p,sha=fixture(root)
+            path=r.PREFIX+"exports/Global_Equity_Alpha_Full_History.xlsx"
+            file=root/path
+            file.write_bytes(file.read_bytes()+b"\r\n")
+            result=r.preflight(p,root,sha,"a"*40,"b"*64)
+            self.assertEqual(result["changed_paths"],[path])
+            self.assertEqual(result["eol_only_equivalent_paths"],[])
+
+    def test_completed_clock_regression_even_same_market_date(self):
+        with TemporaryDirectory() as td:
+            root=Path(td); p,sha=fixture(root)
+            file=root/r.PREFIX/"data/live_overlay.js"
+            file.write_bytes(file.read_bytes().replace(b"2026-09-30",b"2026-10-01"))
+            with self.assertRaisesRegex(r.Hold,"PUBLIC_CLOCK_REGRESSION_completedCloseCutoff"):
+                r.preflight(p,root,sha,"a"*40,"b"*64)
+
+    def test_signal_month_regression_rejected(self):
+        with TemporaryDirectory() as td:
+            root=Path(td); p,sha=fixture(root)
+            file=root/r.PREFIX/"data/live_overlay.js"
+            file.write_bytes(file.read_bytes().replace(b'"signalMonth": "2026-09"',b'"signalMonth": "2026-10"'))
+            with self.assertRaisesRegex(r.Hold,"PUBLIC_SIGNAL_MONTH_REGRESSION"):
+                r.preflight(p,root,sha,"a"*40,"b"*64)
+
 if __name__=="__main__":
     unittest.main(verbosity=2)
