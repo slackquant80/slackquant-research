@@ -13,3 +13,13 @@ Production rollout prerequisites: compare actual owner-PC installed source with 
 Tests: scripts/test-receive-equity-alpha-intake.py contains synthetic fixture negative cases and no market/private data, Git/network or deployment invocation.
 
 Source branch only. No PR, merge, Actions, live changes or operating installation.
+
+## Cross-platform identity, monotonicity and proposed future staging
+
+The existing private producer has `* -text` in its Git attributes; the hosted repo has no root Git attributes. For the six expected UTF-8 HTML/JS/CSS inputs, a difference **solely due to CRLF vs LF** is reported separately as `eol_only_equivalent_paths` and does not open a deployment change. Unknown UTF-8 or a bare CR fails closed. No trimming, JSON restructuring, CSS optimization or JavaScript rendering changes are hidden. The Excel `.xlsx` file **never** receives newline conversion or any semantic comparison. The original ZIP-member SHA256 remains byte-exact. `proposed_text_lf_or_binary_exact_sha256` records the receiving canonical-text proposal, not an applied Git blob.
+
+The receiver now rejects regressions independently in `marketDataThrough`, `completedCloseCutoff`, `executionDate` and `signalMonth` compared with the hosted baseline, in addition to the candidate's embedded Official/Preview/benchmark/accounting contract. New source tests are synthetic only; GitHub CI has **not** run, and an unchanged candidate does not authorize a deploy.
+
+Before future implementation of the write-capable staging receiver: verify the candidate source commit against the authenticated private repository; independently authorize rights and qualified compute receipts; compare original SHA plus explicit reviewed canonical effective bytes; stage ONLY the seven allowlisted files into a fresh protected **review branch** in the EXISTING hosted repository. For each changed text path choose, document and independently verify a deterministic Git clean/filter identity; require an exact reviewed staging diff and anti-symlink/traversal checks. A no-material-delta result creates no PR/no Pages build. A real change requires full Pages validation, Draft PR, review/explicit merge, live date/hash/chart/Excel/route check and rollback proof. A public `main` push or automatic approval is not authorized by this spec.
+
+Do not create a permanent Windows publish clone or turn this read-only script into the operator; until accepted, old source-owned operating code remains unchanged and possible stale published clocks are honestly reported as HOLD.
