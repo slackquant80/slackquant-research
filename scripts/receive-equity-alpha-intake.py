@@ -20,6 +20,9 @@ FILES = (
 )
 MANIFEST = "EQUITY_ALPHA_HOSTED_INTAKE_MANIFEST.json"
 PATHS = {PREFIX + f for f in FILES}
+TEXT_PATHS = {PREFIX + f for f in FILES if not f.endswith(".xlsx")}
+# SHA256 of the received ZIP and each original member remains strictly byte-exact.
+# EOL canonicalization is only for material-delta classification, never for attestation.
 MAX_ZIP = 30_000_000
 MAX_FILE = 20_000_000
 HEX64 = re.compile(r"[a-f0-9]{64}\Z")
@@ -32,6 +35,23 @@ class Hold(RuntimeError):
 
 def digest(data: bytes) -> str:
     return sha256(data).hexdigest()
+
+
+def canonical_text(data: bytes, path: str) -> bytes:
+    """Only CRLF-to-LF for the six expected UTF-8 text paths.
+
+    Never touch XLSX, remove BOM/whitespace or rewrite any source payload.
+    Fail closed on bare CR to avoid masking unrelated content changes.
+    """
+    if path not in TEXT_PATHS:
+        return data
+    try:
+        data.decode("utf-8-sig")
+    except UnicodeError as exc:
+        raise Hold("NON_UTF8_PUBLIC_TEXT_" + path) from exc
+    if b"\\r" in data.replace(b"\\r\\n", b""):
+        raise Hold("BARE_CR_IN_PUBLIC_TEXT_" + path)
+    return data.replace(b"\\r\\n", b"\\n")
 
 
 def binding(data: bytes, name: str) -> dict:
@@ -160,21 +180,51 @@ def preflight(bundle: Path, workspace: Path, expected_sha: str, source_sha: str,
     old_overlay = baseline / "data" / "live_overlay.js"
     if not baseline.is_dir() or baseline.is_symlink() or not old_overlay.is_file() or old_overlay.is_symlink():
         raise Hold("PUBLIC_MAIN_BASELINE_MISSING")
-    old_clock = binding(old_overlay.read_bytes(), "EA_LIVE_OVERLAY").get("meta", {}).get("marketDataThrough")
+    old_meta = binding(old_overlay.read_bytes(), "EA_LIVE_OVERLAY").get("meta", {})
+    old_clock = old_meta.get("marketDataThrough")
+    # A newer market date cannot justify reverting the Official signal or completed
+    # origin; preserve each independent historical decision clock.
+    comparisons = (
+        ("marketDataThrough", "market_data_through"),
+        ("completedCloseCutoff", "completed_close_cutoff"),
+        ("executionDate", "execution_date"),
+    )
     try:
-        previously = date.fromisoformat(str(old_clock))
-        now = date.fromisoformat(str(candidate_clock["market_data_through"]))
+        for old_key, new_key in comparisons:
+            previously = date.fromisoformat(str(old_meta.get(old_key)))
+            now = date.fromisoformat(str(candidate_clock[new_key]))
+            if now < previously:
+                raise Hold("PUBLIC_CLOCK_REGRESSION_" + old_key)
+        old_signal = str(old_meta.get("signalMonth"))
+        new_signal = str(candidate_clock["official_signal_month"])
+        if not re.fullmatch(r"\\d{4}-\\d{2}", old_signal) or not re.fullmatch(r"\\d{4}-\\d{2}", new_signal):
+            raise Hold("INVALID_PUBLIC_OR_SOURCE_SIGNAL_MONTH")
+        if new_signal < old_signal:
+            raise Hold("PUBLIC_SIGNAL_MONTH_REGRESSION")
     except ValueError as exc:
         raise Hold("INVALID_PUBLIC_OR_SOURCE_DATE") from exc
-    if now < previously:
-        raise Hold("PUBLIC_CLOCK_REGRESSION")
     changed = []
+    eol_only = []
+    identical = []
+    canonical_sha = {}
     for rel in FILES:
+        path = PREFIX + rel
         file = baseline / rel
         if file.is_symlink():
             raise Hold("PUBLIC_TARGET_SYMLINK")
-        if not file.is_file() or file.read_bytes() != files[PREFIX+rel]:
-            changed.append(PREFIX+rel)
+        candidate = files[path]
+        canonical = canonical_text(candidate, path)
+        canonical_sha[path] = digest(canonical)
+        if not file.is_file():
+            changed.append(path)
+            continue
+        baseline_bytes = file.read_bytes()
+        if baseline_bytes == candidate:
+            identical.append(path)
+        elif path in TEXT_PATHS and canonical_text(baseline_bytes, path) == canonical:
+            eol_only.append(path)
+        else:
+            changed.append(path)
     return {
         "status": "PASS_NO_MATERIAL_DELTA" if not changed else "PASS_REVIEW_READY_NOT_STAGED",
         "source_commit": source_sha,
@@ -182,6 +232,10 @@ def preflight(bundle: Path, workspace: Path, expected_sha: str, source_sha: str,
         "published_data_through": old_clock,
         "candidate_data_through": candidate_clock["market_data_through"],
         "changed_paths": changed,
+        "eol_only_equivalent_paths": eol_only,
+        "byte_identical_paths": identical,
+        "proposed_text_lf_or_binary_exact_sha256": canonical_sha,
+        "publication_staging_authorized": False,
         "files_checked": 7,
         "hosted_changes_written": False,
         "pr_created": False,
