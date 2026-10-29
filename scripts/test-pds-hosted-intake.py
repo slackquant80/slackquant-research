@@ -91,6 +91,22 @@ class IntakeSafetyTests(unittest.TestCase):
         with self.assertRaises((ValueError, zipfile.BadZipFile)):
             receiver.verify_archive(self.bundle, ROOT)
 
+    def test_manual_draft_staging_retry_branch_unique(self):
+        workflow = (ROOT / ".github/workflows/pds-hosted-intake-stage-pr.yml").read_text(
+            encoding="utf-8")
+        # A rerun of the same manual workflow has the same run_id, but a
+        # different run_attempt. Without both, git switch -c may collide.
+        self.assertIn(
+            "PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}-${{ github.run_attempt }}",
+            workflow,
+        )
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertNotIn("\n  push:", workflow)
+        self.assertNotIn("\n  pull_request:", workflow)
+        self.assertIn("gh pr create --draft", workflow)
+        self.assertNotIn("gh pr merge", workflow)
+        self.assertNotIn("actions/deploy-pages@", workflow)
+
     def test_platform_fixture_accepted_read_only(self):
         write_bundle(self.bundle, self.files)
         content, clock = receiver.verify_archive(self.bundle, ROOT)
