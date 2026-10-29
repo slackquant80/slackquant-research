@@ -60,3 +60,33 @@ The new repo test module adds exact hosted fixture no-delta and rollback cases,
 but **full repository fixture test execution, authenticated private Release,
 workflow integration, human approval and hosted publication remain HOLD**.
 No old Windows SlackQuant clone may be recreated to run this source.
+
+## 2026-10-29 review-only manual Draft PR workflow candidate
+
+The existing review branch now also contains
+`.github/workflows/equity-hosted-intake-stage-pr.yml`. It is deliberately
+**not installed on hosted `main`** and has **never been dispatched**.
+It uses `workflow_dispatch` only, requires explicit SHA-256 of the private
+7-file ZIP and a pinned hosted-main SHA, obtains a scoped read-only App token
+to `research-equity-alpha`, retrieves exactly 3 assets from a specific
+private prerelease, rechecks receipt/source/clock/rights-hash evidence, and
+invokes the existing exact-seven read-only receiver plus isolated reviewer.
+The review worktree is an ephemeral GitHub Actions runner checkout of the
+**existing hosted repo**, not an old or third permanent Windows clone.
+
+A changed candidate must pass exact seven-file allowlisting, Git-Blob
+clean-filter checks, canonical `npm run validate:release`, and the existing
+managed pre-push hook; only a uniquely named review branch is committed
+and pushed. It opens a **Draft PR only**, without merge or deployment.
+A no-material-delta result creates no branch push/PR. The next manual
+decision remains source/rights/compute independence and human review.
+
+Source inspection verified the manual-only invocation, fixed App scope,
+bounded paths, no main push, no deploy, and managed hook linkage (15/15
+static-source contract predicates). The existing offline suite was extended
+from 7 to **9 stored test cases** covering these workflow guards.
+**None of these tests or workflow jobs has been executed in GitHub Actions**:
+CI, GitHub App install scope, actual private prerelease, production rights,
+owner-PC installed operator parity, canonical build, Draft PR, public merge,
+site identity and rollback all remain HOLD. No Actions minutes used during
+this source review.
