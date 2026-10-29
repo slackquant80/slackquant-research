@@ -41,7 +41,8 @@ base SHA must match before writing. The upstream private Release tag is queried
 via the existing scoped-source-token attestor, source tag and exact rights/compute
 receipt bindings are rechecked, and the existing seven-file receiver/clock
 preflight reruns. CRLF→LF canonicalization is limited to six text files, XLSX
-bytes stay exact. It checks resulting Git path delta and `git diff --check`,
+bytes stay exact. It checks the actual `git hash-object --path` clean-filter blob against the
+reviewed exact effective bytes, then resulting Git path delta and `git diff --check`,
 restoring prior review file bytes if validation fails.
 
 There is **no** `git add`, commit, push, pull request, workflow dispatch,
@@ -53,7 +54,8 @@ platform QA, open a Draft PR, obtain explicit approval, and verify live
 site/clock/Excel with rollback before retiring the old publisher.
 
 Local isolated synthetic-Git smoke tests checked one-file bounded staging, denial
-on `main`, stale base and dirty worktree with inert fake attestor/receiver.
+on `main`, stale base and dirty worktree, plus Git-clean-filter drift rollback,
+with inert fake attestor/receiver.
 The new repo test module adds exact hosted fixture no-delta and rollback cases,
 but **full repository fixture test execution, authenticated private Release,
 workflow integration, human approval and hosted publication remain HOLD**.
