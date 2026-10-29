@@ -118,5 +118,22 @@ class EquityStageTests(unittest.TestCase):
         self.assertEqual(git(self.repo, "status", "--porcelain=v1"), "")
 
 
+    def test_git_clean_filter_drift_rolls_back(self):
+        rel = stage.receiver.PREFIX + "assets/app.js"
+        (self.repo / rel).write_bytes(b"OLDER_HOSTED_SYNTHETIC")
+        self.fix_git()
+        original = (self.repo / rel).read_bytes()
+        actual_git = stage.git
+        def fake_filtered_blob(workspace, *args):
+            if args and args[0] == "hash-object":
+                return "f" * 40
+            return actual_git(workspace, *args)
+        with patch.object(stage, "git", side_effect=fake_filtered_blob):
+            with self.assertRaisesRegex(stage.Hold, "REVIEW_GIT_CLEAN_FILTER_DRIFT"):
+                self.run_stage()
+        self.assertEqual((self.repo / rel).read_bytes(), original)
+        self.assertEqual(git(self.repo, "status", "--porcelain=v1"), "")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
