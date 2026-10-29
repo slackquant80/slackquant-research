@@ -1,0 +1,188 @@
+name: Stage Equity Alpha seven-file candidate as Draft PR
+
+# Manual only. Source-only REVIEW candidate until explicitly merged to hosted main.
+# No production publish, no direct main push and no auto-merge.
+on:
+  workflow_dispatch:
+    inputs:
+      source_release_tag:
+        type: string
+        required: true
+        description: "Reviewed existing private Equity Alpha source prerelease"
+      expected_bundle_sha256:
+        type: string
+        required: true
+        description: "Independently measured exact private release ZIP SHA256"
+      expected_hosted_main:
+        type: string
+        required: true
+        description: "Reviewed hosted public main commit SHA (40 hex)"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: equity-alpha-hosted-stage-review
+  cancel-in-progress: false
+
+jobs:
+  stage-exact-seven-review-only:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SOURCE_RELEASE: ${{ inputs.source_release_tag }}
+      BUNDLE_SHA256: ${{ inputs.expected_bundle_sha256 }}
+      HOSTED_BASE: ${{ inputs.expected_hosted_main }}
+      REVIEW_BRANCH: review/equity-hosted-intake-${{ github.run_id }}
+      EA_ASSETS: ${{ runner.temp }}/equity-intake
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify review head pin and exact owned source-only paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_RELEASE" =~ ^equity-intake-[A-Za-z0-9._-]{1,80}$ ]] || exit 2
+          [[ "$BUNDLE_SHA256" =~ ^[a-f0-9]{64}$ ]] || exit 2
+          [[ "$HOSTED_BASE" =~ ^[a-f0-9]{40}$ ]] || exit 2
+          test "$(git rev-parse HEAD)" = "$HOSTED_BASE"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$HOSTED_BASE"
+          test "$(git rev-parse refs/remotes/origin/main)" = "$HOSTED_BASE"
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          test -f scripts/stage-equity-alpha-intake.py
+          test -f scripts/verify_equity_intake_release.py
+          test -f scripts/receive-equity-alpha-intake.py
+          test -f scripts/pre-push-release-gate.mjs
+          echo "EQUITY_HOSTED_PINNED_MAIN_REVIEW_ONLY_PASS"
+      - name: Obtain existing private-source-only GitHub App token
+        id: private-source
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PDS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PDS_APP_PRIVATE_KEY }}
+          owner: slackquant80
+          repositories: research-equity-alpha
+          permission-contents: read
+      - name: Download three exact private prerelease assets (no fallback PAT)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.private-source.outputs.token }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          test "$(gh api repos/slackquant80/research-equity-alpha --jq .private)" = "true"
+          gh release view "$SOURCE_RELEASE" -R slackquant80/research-equity-alpha \
+            --json isPrerelease,isDraft,tagName \
+            --jq 'select(.isPrerelease==true and .isDraft==false) | .tagName' \
+            | grep -Fxq "$SOURCE_RELEASE"
+          mkdir -p "$EA_ASSETS"
+          for asset in EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip \
+                       EQUITY_ALPHA_RIGHTS_EVIDENCE.json \
+                       EQUITY_ALPHA_COMPUTE_RECEIPT.json; do
+            gh release download "$SOURCE_RELEASE" -R slackquant80/research-equity-alpha \
+              --pattern "$asset" --dir "$EA_ASSETS"
+            test -f "$EA_ASSETS/$asset" && test ! -L "$EA_ASSETS/$asset"
+          done
+          echo "$BUNDLE_SHA256  $EA_ASSETS/EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip" | sha256sum -c -
+      - name: Run authenticated exact SHA, rights/compute and historical clock checks
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.private-source.outputs.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_equity_intake_release.py \
+            --bundle "$EA_ASSETS/EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip" \
+            --expected-sha256 "$BUNDLE_SHA256" --source-release-tag "$SOURCE_RELEASE" \
+            --rights-evidence "$EA_ASSETS/EQUITY_ALPHA_RIGHTS_EVIDENCE.json" \
+            --compute-receipt "$EA_ASSETS/EQUITY_ALPHA_COMPUTE_RECEIPT.json" \
+            --workspace . > "$EA_ASSETS/readonly-preflight.json"
+          echo "EQUITY_HOSTED_PRIVATE_SOURCE_ATTESTATION_REVIEW_ONLY_PASS"
+      - name: Create isolated review branch and stage exactly permitted reviewed bytes
+        id: stage
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.private-source.outputs.token }}
+        run: |
+          set -euo pipefail
+          git switch -c "$REVIEW_BRANCH"
+          python3 scripts/stage-equity-alpha-intake.py \
+            --bundle "$EA_ASSETS/EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip" \
+            --bundle-sha256 "$BUNDLE_SHA256" --source-release-tag "$SOURCE_RELEASE" \
+            --rights-evidence "$EA_ASSETS/EQUITY_ALPHA_RIGHTS_EVIDENCE.json" \
+            --compute-receipt "$EA_ASSETS/EQUITY_ALPHA_COMPUTE_RECEIPT.json" \
+            --workspace . --expected-hosted-main "$HOSTED_BASE" \
+            > "$EA_ASSETS/staged-review.json"
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          d=json.loads((Path(os.environ["EA_ASSETS"])/"staged-review.json").read_text())
+          expected="public/dashboards/equity-alpha/"
+          paths=d.get("changed",[])
+          assert d.get("published") is False and isinstance(paths,list)
+          assert len(paths)==len(set(paths)) and len(paths)<=7
+          assert all(p.startswith(expected) and p in {
+            expected+n for n in ("index.html","assets/app.js","assets/holdings-view.js",
+                "assets/styles.css","data/dashboard_data.js","data/live_overlay.js",
+                "exports/Global_Equity_Alpha_Full_History.xlsx")} for p in paths)
+          is_changed=d["status"]=="REVIEW_WORKTREE_ONLY_NOT_COMMITTED"
+          assert is_changed==bool(paths)
+          if paths:
+              subprocess.run(["git","add","--",*paths],check=True)
+              staged=subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines()
+              assert set(staged)==set(paths) and len(staged)==len(paths)
+              assert not subprocess.check_output(["git","diff","--name-only"],text=True).strip()
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("material="+str(is_changed).lower()+"\n")
+          print("EQUITY_SEVEN_FILE_REVIEW_ONLY_CHANGE_BOUNDARY_PASS",len(paths))
+          PY
+      - name: Full canonical hosted validation and existing managed pre-push hook
+        if: steps.stage.outputs.material == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run validate:release
+          test -z "$(git status --porcelain=v1 --untracked-files=all | grep -v '^M ' || true)"
+          test -z "$(git diff --name-only)"
+          test -f "$(git rev-parse --git-path hooks/pre-push)"
+      - name: Commit and push REVIEW BRANCH only through managed release guard
+        if: steps.stage.outputs.material == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main
+          test "$(git branch --show-current)" = "$REVIEW_BRANCH"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$HOSTED_BASE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Stage reviewed Equity Alpha seven-file dashboard candidate (Draft only)"
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          SQ_GOVERNED_GIT_PUSH=1 git push origin "$REVIEW_BRANCH"
+          echo "EQUITY_DRAFT_REVIEW_BRANCH_ONLY_PUSH_PASS"
+      - name: Open Draft PR for manual decision; do not merge or deploy
+        if: steps.stage.outputs.material == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr create --draft --head "$REVIEW_BRANCH" --base main \
+            --title "Review Equity Alpha seven-file hosted candidate: $SOURCE_RELEASE" \
+            --body "Exact source prerelease: $SOURCE_RELEASE. ZIP SHA256: $BUNDLE_SHA256. Hosted base: $HOSTED_BASE. Source integrity/clock/receipt review and canonical hosted validation required. Not legal permission or public release approval. Review private source vs Windows operator parity, rights approval, 75/20/5 portfolio/ACWI/Official/Preview/Current MTD, Excel, browser rendering, deployment costs and rollback. No automatic merge or public release."
+          echo "EQUITY_DRAFT_PR_CREATED_NO_AUTO_MERGE_NO_DEPLOY"
+      - name: Explicit no-delta exit — no PR or publication
+        if: steps.stage.outputs.material == 'false'
+        run: echo "EQUITY_NO_MATERIAL_DELTA_NO_PR_NO_DEPLOYMENT"
