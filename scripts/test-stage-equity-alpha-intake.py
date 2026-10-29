@@ -144,6 +144,7 @@ class ManualDraftWorkflowContractTests(unittest.TestCase):
             "workflow_dispatch:", "source_release_tag:",
             "expected_bundle_sha256:", "expected_hosted_main:",
             "github.ref == 'refs/heads/main'",
+            "review/equity-hosted-intake-${{ github.run_id }}-${{ github.run_attempt }}",
             "actions/create-github-app-token@v3",
             "repositories: research-equity-alpha", "permission-contents: read",
             "EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip",
