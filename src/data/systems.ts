@@ -68,7 +68,7 @@ export const systemItems: SystemItem[] = [
     methodsKey: "adaa-system",
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518",
-      liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/",
+      publicDashboard: "/systems/adaa/dashboard/",
       relatedResearch: "/research/adaa/",
       researchDashboard: "https://slackquant80.github.io/adaa-slackquant/",
       replicationRepository: "https://github.com/slackquant80/adaa-decision-diversification",

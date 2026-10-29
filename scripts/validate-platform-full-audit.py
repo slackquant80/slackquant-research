@@ -97,6 +97,8 @@ def main() -> int:
     need(
         "src/app/systems/adaa/page.tsx",
         "Open Dashboard ↗",
+        "const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard",
+        'data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}',
     )
     need(
         "src/app/systems/f2r/page.tsx",
@@ -169,6 +171,7 @@ def main() -> int:
         "src/data/systems.ts",
         'slug: "pds"',
         'slug: "adaa"',
+        'publicDashboard: "/systems/adaa/dashboard/"',
         'slug: "f2r"',
         'slug: "equity-alpha"',
         'slug: "scenario-stress-lab"',
@@ -209,6 +212,7 @@ def main() -> int:
     need(
         "src/components/ExternalLinkPolicy.tsx",
         '"/systems/pds/dashboard/"',
+        '"/systems/adaa/dashboard/"',
         '"/dashboards/equity-alpha/"',
         'anchor.dataset.sqDashboardApp === "true"',
         'secureNewTabAnchor(anchor)',
@@ -609,6 +613,9 @@ def main() -> int:
             "out/systems/pds/index.html",
             "out/systems/pds/dashboard/index.html",
             "out/systems/adaa/index.html",
+            "out/systems/adaa/dashboard/index.html",
+            "out/assets/systems/adaa/snapshot.js",
+            "out/assets/systems/adaa/ADAA_Portfolio_Target_History.xlsx",
             "out/systems/f2r/index.html",
             "out/systems/equity-alpha/index.html",
             "out/dashboards/equity-alpha/index.html",

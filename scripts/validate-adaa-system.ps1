@@ -23,7 +23,7 @@ foreach ($token in @(
   'category: "Portfolio Strategy System"',
   'systemGroup: "portfolio-strategy"',
   'status: "Public live"',
-  'https://slackquant.shinyapps.io/adaa_strategy_main/',
+  'publicDashboard: "/systems/adaa/dashboard/"',
   'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7251518',
   'relatedResearch: "/research/adaa/"',
   'replicationRepository: "https://github.com/slackquant80/adaa-decision-diversification"'
@@ -33,6 +33,13 @@ foreach ($token in @(
   }
 }
 
+if ($systemsData.Contains('liveDashboard: "https://slackquant.shinyapps.io/adaa_strategy_main/"')) {
+  throw "ADAA canonical operating destination still points at retired Shiny link"
+}
+if (-not $systemPage.Contains('const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard') -or
+    ([regex]::Matches($systemPage, 'data-sq-dashboard-app=\{dashboardIsFirstPartyApp').Count -ne 3)) {
+  throw "ADAA three System-page buttons must consistently use the first-party dashboard in a new tab"
+}
 $mapping = '"adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"]'
 if ($methodsData -notmatch [regex]::Escape($mapping)) {
   throw "ADAA system Methods mapping mismatch"

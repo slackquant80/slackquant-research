@@ -1,0 +1,122 @@
+name: ADAA Hosted Intake Read-Only Contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/receive-adaa-hosted-intake.py"
+      - "scripts/test-adaa-hosted-intake.py"
+      - "scripts/governed-adaa-draft-pr-branch.mjs"
+      - ".github/workflows/adaa-hosted-intake-review.yml"
+      - ".gitignore"
+      - ".github/workflows/adaa-hosted-intake-stage-pr.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-intake-without-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Parse verifier and adversarial tests without bytecode in repository
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python3 - <<'PY'
+          import ast
+          from pathlib import Path
+          for f in ("scripts/receive-adaa-hosted-intake.py", "scripts/test-adaa-hosted-intake.py"):
+              ast.parse(Path(f).read_text(encoding="utf-8"))
+          print("ADAA_INTAKE_PYTHON_AST_PASS")
+          PY
+      - name: Synthetic positive and hostile security/clock/size tests
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 scripts/test-adaa-hosted-intake.py
+      - name: Verify manual staged PR workflow is syntactically valid and fail-closed
+        run: |
+          ruby -e 'require "yaml"; YAML.parse_file(".github/workflows/adaa-hosted-intake-stage-pr.yml"); puts "ADAA_STAGE_WORKFLOW_YAML_PARSE_PASS"'
+          python3 - <<'PY'
+          from pathlib import Path
+          y=Path(".github/workflows/adaa-hosted-intake-stage-pr.yml").read_text()
+          expected=("workflow_dispatch:", "actions/create-github-app-token@v3",
+                    "repositories: research-multiasset", "permission-contents: read",
+                    "gh release download", "receive-adaa-hosted-intake.py --assets-dir",
+                    "ADAA_CANONICAL_BROWSER_TEMPLATE_PARITY_PASS",
+                    "npm run validate:release", "gh pr create --draft",
+                    "ADAA_DRAFT_PR_CREATED_NO_AUTO_RELEASE")
+          for token in expected: assert token in y, "STAGE_CONTRACT_MISSING: "+token
+          for token in ("gh pr merge", "gh release create", "rsconnect::deployApp",
+                        "actions/deploy-pages@", "secrets.PDS_SOURCE_READ_TOKEN"):
+              assert token not in y, "STAGE_CONTRACT_FORBIDDEN: "+token
+          assert y.count("on:")>=1 and "contents: write" in y and "pull-requests: write" in y
+          assert "runner.temp" not in y and "ADAA_ASSETS=$RUNNER_TEMP/adaa-assets" in y
+          assert "client-id:" in y and "vars.PDS_APP_CLIENT_ID" in y and "app-id:" not in y
+          assert "isPrerelease == true" in y and "isDraft == false" in y
+          assert "node scripts/governed-adaa-draft-pr-branch.mjs" in y
+          assert "git push origin" not in y and "git -c" not in y
+          assert "SQ_GOVERNED_GIT_PUSH" not in y and "git config core.hooksPath" not in y
+          assert "gh pr create --draft" in y and "github.token" in y
+          assert "ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS" in y
+          assert 'verify_assets_directory(Path(os.environ["ADAA_ASSETS"]),previous)' in y
+          assert "cat > src/app/systems/adaa/dashboard/page.tsx" not in y
+          assert 'PYTHONDONTWRITEBYTECODE: "1"' in y
+          print("ADAA_STAGE_DRAFT_ONLY_SECURITY_CONTRACT_PASS")
+          PY
+      - name: Python bytecode cache is ignored without relaxing other dirty-tree guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          git check-ignore -q scripts/__pycache__/receive-adaa-hosted-intake.cpython-311.pyc
+          git check-ignore -q scripts/receive-adaa-hosted-intake.pyc
+          if git check-ignore -q scripts/unrelated_generated_file.logically_unexpected; then
+            echo "ADAA_GITIGNORE_SCOPE_TOO_BROAD"
+            exit 1
+          fi
+          echo "ADAA_PYTHON_BYTECODE_ONLY_IGNORE_PASS"
+      - name: Check governed review-only branch publisher and its fail-closed context
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/governed-adaa-draft-pr-branch.mjs
+          if node scripts/governed-adaa-draft-pr-branch.mjs > /tmp/adaa-failclosed.out 2>&1; then
+            echo "ADAA_GOVERNED_PUBLISHER_UNEXPECTEDLY_ACCEPTED_UNTRUSTED_CONTEXT"
+            exit 1
+          fi
+          grep -q 'ADAA_GOVERNED_DRAFT_HOLD:' /tmp/adaa-failclosed.out
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("scripts/governed-adaa-draft-pr-branch.mjs").read_text()
+          for must in ("GITHUB_EVENT_NAME", "workflow_dispatch", "GITHUB_REPOSITORY",
+                       "GITHUB_WORKFLOW", "GITHUB_REF", "GITHUB_RUN_ID",
+                       "SOURCE_SHA256", "SQ_GOVERNED_GIT_PUSH", "pre-push-release-gate.mjs",
+                       'git(["push","origin",branch]', "NO_MAIN_PUSH_NO_MERGE_NO_DEPLOYMENT"):
+              assert must in p, "GOVERNED_TRANSACTION_CONTRACT_MISSING: " + must
+          assert 'staged.every((p) => allow.includes(p))' in p
+          assert 'staged.includes("public/assets/systems/adaa/snapshot.js")' in p
+          assert "sorted(staged)===sorted(allow)" not in p
+          assert "ADAA_UNSTAGED_TRACKED_PATHS=" in p and "ADAA_UNTRACKED_PATHS=" in p
+          assert 'fail("unvalidated working-tree changes present")' in p
+          for bad in ("--no-verify", "GIT_CONFIG_GLOBAL", 'git(["push","origin","main"]'):
+              assert bad not in p, "UNSAFE_DRAFT_PUSH_CONTRACT: " + bad
+          print("ADAA_GOVERNED_REVIEW_PUSH_CONTRACT_PASS")
+          PY
+      - name: No network, Git mutation, or production route in receiver
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("scripts/receive-adaa-hosted-intake.py").read_text()
+          w=Path(".github/workflows/adaa-hosted-intake-review.yml").read_text()
+          for banned in ("subprocess", "urllib", "requests", "rsconnect::deployApp", "git push",
+                         "git commit", "shutil.copy", "shutil.move"):
+              assert banned not in p, banned
+          assert "contents: read" in w and not any(line.strip().startswith("uses: actions/deploy-pages@") for line in w.splitlines())
+          assert "public_deployment_authorized" in p
+          print("ADAA_REVIEW_ONLY_CI_NO_PUBLIC_MUTATION_PASS")
+          PY

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ADAA | SlackQuant</title>
+  <link rel="stylesheet" href="adaa-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="brand">ADAA <span>| SlackQuant</span></div>
+      <div class="subtitle">Autonomous Dynamic Asset Allocation</div>
+    </div>
+    <div id="snapshot-status" class="snapshot-status">CURRENT DATA</div>
+  </header>
+
+  <nav class="tabs" aria-label="Dashboard sections">
+    <button class="tab active" data-tab="monitor">Decision Monitor</button>
+    <button class="tab" data-tab="overview">Strategy Overview</button>
+    <button class="tab" data-tab="allocations">Allocation History</button>
+  </nav>
+
+  <main>
+    <section id="tab-monitor" class="tab-panel active">
+      <div id="kpi-primary" class="kpi-grid kpi-primary"></div>
+      <div id="clock-meta" class="clock-meta" aria-label="Market clock"></div>
+      <div id="kpi-secondary" class="kpi-grid kpi-secondary"></div>
+      <div class="two-col">
+        <article class="card table-card">
+          <h2>Current Portfolio (%)</h2>
+          <p class="note">Official Target is the latest completed month-end decision. Current Weight shows how that target has moved with markets since execution. Preview Target is provisional and applies to the next holding month only.</p>
+          <div id="portfolio-state"></div>
+        </article>
+        <article class="card">
+          <h2>Decision Timing &amp; Preview</h2>
+          <div id="decision-clock"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="tab-overview" class="tab-panel">
+      <div id="overview-kpis" class="kpi-grid overview-kpis"></div>
+      <div class="two-col overview-grid">
+        <article class="card framework-card">
+          <h2>Strategy Framework</h2>
+          <div class="lead-title">Autonomous Dynamic Asset Allocation</div>
+          <div class="lead-subtitle">Ensemble-Based Multi-Strategy Framework</div>
+          <div class="lead-meta">Strategy research and design by Scott Lee</div>
+          <h3>Strategy Architecture</h3>
+          <h3>Signal Ensemble</h3>
+          <ul>
+            <li>Diversified broad-market risk signals assess changing market conditions.</li>
+            <li>Medium- and long-horizon momentum signals are evaluated alongside volatility and correlation measures.</li>
+            <li>A short-horizon dual-momentum component is designed to capture accelerating trends.</li>
+          </ul>
+          <h3>Portfolio Construction &amp; Risk Management</h3>
+          <ul>
+            <li>Complementary momentum sub-strategies are combined within an ensemble allocation framework.</li>
+            <li>A slow-moving allocation overlay helps reduce sensitivity to short-lived market reversals.</li>
+            <li>The USD/KRW hedge ratio adjusts dynamically based on a standardized USD/KRW signal.</li>
+          </ul>
+          <h3>Data Sources</h3>
+          <ul>
+            <li><a href="https://finance.yahoo.com/" target="_blank" rel="noopener">Yahoo Finance</a> — market and foreign-exchange data</li>
+            <li><a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED</a> — U.S. macroeconomic series</li>
+          </ul>
+          <div class="disclaimer"><strong>Research use.</strong> Backtested results are hypothetical, include the stated transaction-cost assumption and may differ from live implementation.</div>
+        </article>
+        <article class="card performance-card">
+          <h2>Performance Analytics</h2>
+          <div class="eyebrow">PRIMARY VIEW · DYNAMIC FX</div>
+          <div id="performance-asof" class="performance-asof">Completed performance history through —</div>
+          <div id="performance-chart" class="chart"></div>
+          <div class="note"><strong>Performance period.</strong> This dashboard shows ADAA’s standalone completed performance record. A longer historical reconstruction using the current ADAA definition may be shown elsewhere for cross-system comparison; it is a separate research series.</div>
+        </article>
+      </div>
+
+      <div class="subtabs" id="performance-subtabs">
+        <button class="subtab active" data-subtab="summary">Risk &amp; Return Summary</button>
+        <button class="subtab" data-subtab="annual">Annual Returns</button>
+        <button class="subtab" data-subtab="dynamic">Monthly · Dynamic FX</button>
+        <button class="subtab" data-subtab="unhedged">Monthly · Unhedged</button>
+        <button class="subtab" data-subtab="hedged">Monthly · Fully Hedged</button>
+      </div>
+      <article class="card result-card"><div id="performance-table"></div></article>
+    </section>
+
+    <section id="tab-allocations" class="tab-panel">
+      <article class="card table-card">
+        <h2>Portfolio Target History (%)</h2>
+        <p class="note">Preview appears first when available and is excluded from realized performance. Official and historical target rows follow.</p>
+        <div class="table-actions">
+          <label>Date order <select id="allocation-date-order"><option value="desc" selected>Newest first</option><option value="asc">Oldest first</option></select></label>
+          <label>Rows <select id="allocation-page-size"><option>25</option><option>50</option><option>100</option><option value="all">All</option></select></label>
+          <button id="allocation-prev">Previous</button>
+          <span id="allocation-page-label"></span>
+          <button id="allocation-next">Next</button>
+          <button id="allocation-download">Download Excel</button>
+        </div>
+        <div id="allocation-history"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <span>ADAA research dashboard</span>
+    <span id="footer-meta"></span>
+  </footer>
+
+  <script src="snapshot.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

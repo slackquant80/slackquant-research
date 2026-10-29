@@ -83,6 +83,18 @@ def check(root:Path,label:str):
     idx=root/'index.html'
     if not idx.exists(): fail(f'{label}_index_missing')
     html=idx.read_text(encoding='utf-8',errors='replace')
+    # Keep the separately published Quantum Lab reachable after future Quarto re-renders.
+    quantum_entry=re.search(
+        r'<section[^>]*\bid="sq-quantum-entry"[^>]*>(.*?)</section>', html, re.S
+    )
+    if not quantum_entry: fail(f'{label}_quantum_entry_missing')
+    if html.count('id="sq-quantum-entry"')!=1:
+        fail(f'{label}_quantum_entry_duplicate')
+    if not re.search(
+        r'<a[^>]+href="https://research\.slackquant\.com/quantum/"[^>]*>',
+        quantum_entry.group(1)
+    ):
+        fail(f'{label}_quantum_entry_link_missing')
     ip=IndexParser(); ip.feed(html)
     if ip.result_count_attrs.get('data-canonical-count')!='26': fail(f"{label}_canonical_count={ip.result_count_attrs.get('data-canonical-count')!r}")
     if ip.result_count_text!='26 methods': fail(f"{label}_static_count_text={ip.result_count_text!r}")
