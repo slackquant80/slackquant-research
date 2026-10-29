@@ -23,3 +23,38 @@ The receiver now rejects regressions independently in `marketDataThrough`, `comp
 Before future implementation of the write-capable staging receiver: verify the candidate source commit against the authenticated private repository; independently authorize rights and qualified compute receipts; compare original SHA plus explicit reviewed canonical effective bytes; stage ONLY the seven allowlisted files into a fresh protected **review branch** in the EXISTING hosted repository. For each changed text path choose, document and independently verify a deterministic Git clean/filter identity; require an exact reviewed staging diff and anti-symlink/traversal checks. A no-material-delta result creates no PR/no Pages build. A real change requires full Pages validation, Draft PR, review/explicit merge, live date/hash/chart/Excel/route check and rollback proof. A public `main` push or automatic approval is not authorized by this spec.
 
 Do not create a permanent Windows publish clone or turn this read-only script into the operator; until accepted, old source-owned operating code remains unchanged and possible stale published clocks are honestly reported as HOLD.
+
+## 2026-10-29 source-only isolated review staging added
+
+Existing hosted review branch now includes `scripts/stage-equity-alpha-intake.py` and
+`scripts/test-stage-equity-alpha-intake.py`. This **does not** install or authorize a
+public hosted intake workflow. The new stager is a bounded *source-only candidate*
+to close the gap between authenticated preflight and eventual manual Draft PR staging.
+
+Its only permitted filesystem write is to **already tracked, existing regular files**
+within the exact seven-path `public/dashboards/equity-alpha/**` allowlist, and only in
+an **already-created clean isolated Git review branch** named
+`review/equity-hosted-intake-*`. It refuses `main`, worktree/index dirt,
+nontracked/symlink targets, unexpected changed paths and stale hosted-main commit.
+`HEAD`, `origin/main` and the independently supplied pinned expected hosted
+base SHA must match before writing. The upstream private Release tag is queried
+via the existing scoped-source-token attestor, source tag and exact rights/compute
+receipt bindings are rechecked, and the existing seven-file receiver/clock
+preflight reruns. CRLF→LF canonicalization is limited to six text files, XLSX
+bytes stay exact. It checks resulting Git path delta and `git diff --check`,
+restoring prior review file bytes if validation fails.
+
+There is **no** `git add`, commit, push, pull request, workflow dispatch,
+publication or deployment in the stager; a no-material-delta candidate does not
+write anything or request a PR. A subsequent **separately reviewed workflow**
+must still perform approved private Release retrieval, independently qualify
+publication rights, stage/validate the exact intended Git diff, run canonical
+platform QA, open a Draft PR, obtain explicit approval, and verify live
+site/clock/Excel with rollback before retiring the old publisher.
+
+Local isolated synthetic-Git smoke tests checked one-file bounded staging, denial
+on `main`, stale base and dirty worktree with inert fake attestor/receiver.
+The new repo test module adds exact hosted fixture no-delta and rollback cases,
+but **full repository fixture test execution, authenticated private Release,
+workflow integration, human approval and hosted publication remain HOLD**.
+No old Windows SlackQuant clone may be recreated to run this source.
