@@ -135,5 +135,55 @@ class EquityStageTests(unittest.TestCase):
         self.assertEqual(git(self.repo, "status", "--porcelain=v1"), "")
 
 
+
+class ManualDraftWorkflowContractTests(unittest.TestCase):
+    def test_workflow_manual_pinned_private_source_and_human_review_only(self):
+        workflow = HERE.parent / ".github" / "workflows" / "equity-hosted-intake-stage-pr.yml"
+        y = workflow.read_text(encoding="utf-8")
+        for must in (
+            "workflow_dispatch:", "source_release_tag:",
+            "expected_bundle_sha256:", "expected_hosted_main:",
+            "github.ref == 'refs/heads/main'",
+            "actions/create-github-app-token@v3",
+            "repositories: research-equity-alpha", "permission-contents: read",
+            "EQUITY_ALPHA_HOSTED_INTAKE_PROPOSAL.zip",
+            "EQUITY_ALPHA_RIGHTS_EVIDENCE.json",
+            "EQUITY_ALPHA_COMPUTE_RECEIPT.json",
+            "scripts/verify_equity_intake_release.py",
+            "scripts/stage-equity-alpha-intake.py",
+            "git switch -c \"$REVIEW_BRANCH\"",
+            "git ls-remote origin refs/heads/main",
+            "npm run validate:release",
+            "SQ_GOVERNED_GIT_PUSH=1 git push origin \"$REVIEW_BRANCH\"",
+            "gh pr create --draft", "NO_AUTO_MERGE_NO_DEPLOY",
+            "EQUITY_NO_MATERIAL_DELTA_NO_PR_NO_DEPLOYMENT",
+        ):
+            self.assertIn(must, y, must)
+        for forbidden in (
+            "gh pr merge", "git push origin main",
+            "actions/deploy-pages@", "repository_dispatch:",
+            "pull_request_target:", "schedule:", "--no-verify",
+            "permission-contents: write",
+            "PDS_SOURCE_READ_TOKEN",
+        ):
+            self.assertNotIn(forbidden, y, forbidden)
+
+    def test_seven_file_scope_is_exact_and_never_overwrites_shared_platform(self):
+        y = (HERE.parent / ".github" / "workflows" /
+             "equity-hosted-intake-stage-pr.yml").read_text()
+        self.assertIn("public/dashboards/equity-alpha/", y)
+        self.assertIn("set(staged)==set(paths)", y)
+        self.assertIn("len(paths)<=7", y)
+        self.assertIn("repo: slackquant80/research-equity-alpha", 
+                      "repo: slackquant80/research-equity-alpha")
+        for forbidden in (
+            "git add -A", "git add .", "git add --all",
+            "src/app/globals.css", "src/data/systems.ts",
+            "public/assets/systems/pds",
+            "rsconnect::deployApp",
+        ):
+            self.assertNotIn(forbidden, y, forbidden)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
