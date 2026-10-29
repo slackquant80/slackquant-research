@@ -38,7 +38,7 @@ jobs:
       PDS_SOURCE_TAG: ${{ inputs.source_release_tag }}
       PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}
       PDS_SAME_CLOCK_HTML_REVIEW: ${{ inputs.review_same_clock_html }}
-      PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}
+      PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
         with:
