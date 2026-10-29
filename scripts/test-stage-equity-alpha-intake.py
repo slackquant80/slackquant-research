@@ -174,8 +174,6 @@ class ManualDraftWorkflowContractTests(unittest.TestCase):
         self.assertIn("public/dashboards/equity-alpha/", y)
         self.assertIn("set(staged)==set(paths)", y)
         self.assertIn("len(paths)<=7", y)
-        self.assertIn("repo: slackquant80/research-equity-alpha", 
-                      "repo: slackquant80/research-equity-alpha")
         for forbidden in (
             "git add -A", "git add .", "git add --all",
             "src/app/globals.css", "src/data/systems.ts",
