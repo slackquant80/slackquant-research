@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+from hashlib import sha1
 import json
 from pathlib import Path
 import re
@@ -119,6 +120,13 @@ def stage_review(bundle: Path, workspace: Path, bundle_sha: str, release_tag: st
         for relative, data in effective.items():
             if targets[relative].read_bytes() != data:
                 raise Hold("REVIEW_POSTWRITE_BYTE_MISMATCH")
+            # Compare EXACT bytes a subsequent Git add would commit.
+            # A hidden clean/smudge or EOL filter cannot rewrite evidence.
+            header = ("blob " + str(len(data)) + "\0").encode("ascii")
+            expected_blob = sha1(header + data).hexdigest()
+            actual_blob = git(workspace, "hash-object", "--path=" + relative, "--", relative)
+            if actual_blob != expected_blob:
+                raise Hold("REVIEW_GIT_CLEAN_FILTER_DRIFT")
         status = git(workspace, "status", "--porcelain=v1", "--untracked-files=all")
         recorded = set()
         for line in status.splitlines():
