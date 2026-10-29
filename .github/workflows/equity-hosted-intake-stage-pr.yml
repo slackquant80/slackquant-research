@@ -35,7 +35,7 @@ jobs:
       SOURCE_RELEASE: ${{ inputs.source_release_tag }}
       BUNDLE_SHA256: ${{ inputs.expected_bundle_sha256 }}
       HOSTED_BASE: ${{ inputs.expected_hosted_main }}
-      REVIEW_BRANCH: review/equity-hosted-intake-${{ github.run_id }}
+      REVIEW_BRANCH: review/equity-hosted-intake-${{ github.run_id }}-${{ github.run_attempt }}
       EA_ASSETS: ${{ runner.temp }}/equity-intake
       PYTHONDONTWRITEBYTECODE: "1"
     steps:
