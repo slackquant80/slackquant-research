@@ -5,6 +5,7 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -18,6 +19,9 @@ concurrency:
 
 jobs:
   build:
+    # Avoid spending runner minutes on unapproved Draft intake proposals.
+    # Non-draft PRs retain release-validation coverage; main pushes still deploy.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
