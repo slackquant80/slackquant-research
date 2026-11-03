@@ -494,8 +494,8 @@ function renderPerformance(){
  const startYear=String(P.support.holdingStart||'').slice(0,4),startMonth=String(P.support.holdingStart||'').slice(5,7);
  const annualDisplayRows=annualRows.map(r=>{
   const y=String(r.year),isEnd=y===endYear&&endMonth!=='12',isStart=y===startYear&&startMonth&&startMonth!=='01';
-  const tableLabel=isEnd?`${r.year} YTD`:isStart?`${r.year} (partial)`:y;
-  const chartLabel=isEnd?`${r.year} YTD`:isStart?`${r.year}*`:y;
+  const tableLabel=isEnd?`${r.year} Completed YTD`:isStart?`${r.year} (partial)`:y;
+  const chartLabel=isEnd?`${r.year} Completed YTD`:isStart?`${r.year}*`:y;
   return {...r,yearLabel:tableLabel,chartLabel};
  });
  groupedReturnBars($('#monthlyReturnBars'),monthlyRows,'month');
@@ -562,7 +562,7 @@ function renderUniverse(){
  if(isStatic){
   $('#universeViewTabs').innerHTML=`<button class="active">ML Static (${S.canonicalCount??staticRows.length??0})</button>`;
  }else{
-  const views=[['latest',`Current universe (${U.latestCount??0})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
+  const views=[['latest',`Current universe (${latest.length})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
   $('#universeViewTabs').innerHTML=views.map(([k,l])=>`<button data-v="${k}" class="${universeView===k?'active':''}">${l}</button>`).join('');
   $('#universeViewTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{universeView=b.dataset.v;renderUniverse()});
  }
