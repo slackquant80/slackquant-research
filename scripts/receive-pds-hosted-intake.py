@@ -128,7 +128,9 @@ def receipt_clock(records: dict[str, bytes]) -> dict:
         require(marker.lower() not in html.lower(), "private filesystem marker in public HTML")
     official = str(receipt.get("official_signal_period") or "")
     holding = holding_after(official)
-    mark = real_day(str(receipt.get("official_mark_through") or ""))
+    mark = str(receipt.get("official_mark_through") or "")
+    if mark:
+        mark = real_day(mark)  # A present mark remains a verified calendar date.
     rel = str(disclosure.get("latest_released_signal_period") or "")
     elig = str(disclosure.get("latest_eligible_signal_period") or "")
     completed = str(disclosure.get("completed_holding_month_cutoff") or "")
@@ -293,10 +295,18 @@ def nonregression(app: Path, records: dict[str, bytes], clock: dict, *,
     if old.is_file():
         prior = json_obj(old.read_bytes(), "current deployed mirror receipt")
         last_signal = str(prior.get("official_signal_period") or "")
-        last_mark = real_day(str(prior.get("official_mark_through") or ""))
-        require(clock["official_signal"] >= last_signal and clock["mark_through"] >= last_mark,
-                "canonical Official/market clock would regress")
-        if clock["official_signal"] == last_signal and clock["mark_through"] == last_mark:
+        last_mark = str(prior.get("official_mark_through") or "")
+        if last_mark:
+            last_mark = real_day(last_mark)
+        new_signal = clock["official_signal"]
+        new_mark = clock["mark_through"]
+        require(new_signal >= last_signal, "canonical Official signal clock would regress")
+        # A new completed-month Official signal may be published before the first
+        # aligned current-month F2R/ADAA mark. It must not invent a date.
+        # For the SAME Official month, a formerly available mark cannot disappear.
+        if new_signal == last_signal:
+            require(new_mark >= last_mark, "same-signal market clock would regress")
+        if new_signal == last_signal and new_mark == last_mark:
             same_html = (digest(records[MIRROR_PREFIX + "Portfolio_Decision_System_Public.html"]) ==
                          str(prior.get("html_sha256") or ""))
             if not same_html and review_same_clock_html:
