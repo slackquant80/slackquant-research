@@ -119,6 +119,35 @@ def main() -> int:
         'data-sq-dashboard-app="true"',
         "Open PDS Dashboard ↗",
     )
+    # Home editorial contract: Equity Alpha alone is Featured Research.
+    # Academic Research remains discoverable in Research Streams, releases,
+    # the full Research catalog and the existing academic detail page.
+    if research.count("featured: true") != 1:
+        raise RuntimeError("Exactly one featured research paper is required")
+    equity_feature_block = research.split('slug: "equity-alpha"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    if "featured: true" not in equity_feature_block or 'ssrnId: "7622538"' not in equity_feature_block:
+        raise RuntimeError("Equity Alpha SSRN paper must be the current featured research")
+    for required in (
+        'item.stream === "investment" && item.featured',
+        "investmentFeatured.ssrnId",
+        "investmentFeatured.researchQuestion",
+        "Open SSRN Record",
+        'href="/systems/equity-alpha/"',
+        'Explore Academic Research',
+        'href="/research/#academic-research-heading"',
+        '{[...researchItems].reverse().map((item) => (',
+        '{researchItems.length}',
+    ):
+        if required not in home:
+            raise RuntimeError(f"Home featured/preservation contract missing: {required}")
+    if "academicFeatured" in home:
+        raise RuntimeError("Academic Research must not be a Featured Research card")
+    need(
+        "src/app/research/page.tsx",
+        'item.stream === "academic"',
+        'id="academic-research-heading"',
+    )
+
     stress = need(
         "src/app/systems/scenario-stress-lab/page.tsx",
         "Open Dashboard ↗",
