@@ -109,7 +109,11 @@ export const systemItems: SystemItem[] = [
       "A three-layer global equity strategy combining ML-based ETF selection, independent regional momentum allocation, and a selective Theme / Sector / Style path. ETF-level decisions are merged into one final portfolio and evaluated against ACWI with daily-first performance and explicit active-risk measures.",
     role: "Benchmark-Aware Global Equity ETF Portfolio",
     methodsKey: "equity-alpha-system",
+    ssrnId: "7622538",
+    evidenceLabel: "Public Working Paper",
     links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7622538",
+      relatedResearch: "/research/equity-alpha/",
       publicDashboard: "/dashboards/equity-alpha/",
     },
   },

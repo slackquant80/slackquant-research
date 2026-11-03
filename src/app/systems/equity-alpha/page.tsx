@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { LivePerformanceChart } from "@/components/LivePerformanceChart";
@@ -55,6 +56,11 @@ export default function EquityAlphaSystemPage() {
                 Open Dashboard ↗
               </a>
             ) : null}
+            {item.links.relatedResearch ? (
+              <Link className="btn soft" href={item.links.relatedResearch}>
+                Read Published Research
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>
@@ -68,6 +74,7 @@ export default function EquityAlphaSystemPage() {
           <a href="#risk">Benchmark & Risk</a>
           <a href="#empirical-evidence">Empirical Evidence</a>
           <a href="#public">Dashboard</a>
+          <a href="#paper">Published Research</a>
           <a href="#methods">Quantitative Methods</a>
         </aside>
 
@@ -238,6 +245,35 @@ export default function EquityAlphaSystemPage() {
               The public view is designed to explain portfolio construction, operating state, and portfolio-level evidence; proprietary implementation details are not published.
             </p>
 
+          </section>
+
+          <section className="prose-section" id="paper">
+            <div className="kicker">Investment Research Series</div>
+            <h2>Published Research and Model Evidence</h2>
+            <p className="body-copy">
+              The published working paper, <em>What Do Additional Models Add to a Global
+              Equity Portfolio?</em>, evaluates Primary selection, Regional allocation,
+              and Selective Alpha together under common ACWI-relative accounting.
+              Its reconstructed research window ends on 31 August 2026; the operating
+              results and portfolio states shown above follow a separately refreshed
+              production-model history.
+            </p>
+            <div className="repro-links documentation-artifacts">
+              <Link className="artifact artifact-primary" href="/research/equity-alpha/">
+                <span className="artifact-kicker">PUBLISHED WORKING PAPER</span>
+                <strong>Equity Alpha Research</strong>
+                <small>Research question, historical evidence, architecture, and citation.</small>
+                <span className="artifact-action">Read Research →</span>
+              </Link>
+              {item.links.ssrn ? (
+                <a className="artifact" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
+                  <span className="artifact-kicker">SSRN 7622538</span>
+                  <strong>Published Paper Record</strong>
+                  <small>October 2026 author record and original paper.</small>
+                  <span className="artifact-action">Open SSRN ↗</span>
+                </a>
+              ) : null}
+            </div>
           </section>
 
           <MethodsUsed researchSlug={item.methodsKey ?? item.slug} context="system" />

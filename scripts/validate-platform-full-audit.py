@@ -26,7 +26,7 @@ def main() -> int:
 
     expected_research_slugs = {
         "adaa", "protection-patience", "price-macro-decision", "beyond-average-accuracy",
-        "second-opinion-portfolio"
+        "second-opinion-portfolio", "equity-alpha"
     }
     research = need(
         "src/data/research.ts",
@@ -41,6 +41,24 @@ def main() -> int:
             "Research registry mismatch: "
             f"expected={sorted(expected_research_slugs)} found={research_slugs}"
         )
+
+    # Public paper and system must both reference the published SSRN record.
+    equity_paper = need(
+        "src/app/research/equity-alpha/page.tsx",
+        'getResearch("equity-alpha")',
+        'href: "/systems/equity-alpha/"',
+        'href="/dashboards/equity-alpha/"',
+        "Published Evidence",
+        "31 August 2026",
+    )
+    equity_research = research.split('slug: "equity-alpha"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    for required in ("7622538", "October 2026", 'status: "Public Working Paper"'):
+        if required not in equity_research:
+            raise RuntimeError(f"Equity Alpha published paper binding missing: {required}")
+    if "github:" in equity_research or "archivalRelease:" in equity_research:
+        raise RuntimeError("Equity Alpha must not invent a public replication or archive")
+    if "/systems/equity-alpha/" not in equity_paper:
+        raise RuntimeError("Equity Alpha research-to-system link missing")
 
     expected_system_slugs = {"pds", "adaa", "f2r", "equity-alpha", "scenario-stress-lab"}
     systems = need(
@@ -618,6 +636,7 @@ def main() -> int:
             "out/assets/systems/adaa/ADAA_Portfolio_Target_History.xlsx",
             "out/systems/f2r/index.html",
             "out/systems/equity-alpha/index.html",
+            "out/research/equity-alpha/index.html",
             "out/dashboards/equity-alpha/index.html",
             "out/dashboards/equity-alpha/assets/app.js",
             "out/dashboards/equity-alpha/assets/styles.css",
