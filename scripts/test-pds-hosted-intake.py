@@ -129,7 +129,7 @@ class IntakeSafetyTests(unittest.TestCase):
         records = dict(self.files)
         name = receiver.MIRROR_PREFIX + "PDS_PUBLIC_DASHBOARD_RECEIPT.json"
         receipt = json.loads(records[name])
-        receipt["official_mark_through"] = (date.fromisoformat(receipt["official_mark_through"]) + timedelta(days=1)).isoformat()
+        receipt["official_mark_through"] = (date.fromisoformat(receipt["official_mark_through"]) + timedelta(days=1)).isoformat() if receipt["official_mark_through"] else "2026-11-03"
         records[name] = json.dumps(receipt, sort_keys=True).encode()
         self.assertEqual(receiver.material_changes(records, ROOT), [name])
 
@@ -211,7 +211,7 @@ class IntakeSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(root, self.files, clock)
         receipt["official_signal_period"] = clock["official_signal"]
-        receipt["official_mark_through"] = (date.fromisoformat(clock["mark_through"]) + timedelta(days=1)).isoformat()
+        receipt["official_mark_through"] = (date.fromisoformat(clock["mark_through"]) + timedelta(days=1)).isoformat() if clock["mark_through"] else "2026-11-03"
         location.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(root, self.files, clock)
@@ -293,6 +293,11 @@ class IntakeSafetyTests(unittest.TestCase):
 
         # A clock regression cannot be approved using the new opt-in switch.
         bad_clock = dict(clock)
+        # The new Official may legitimately lack Current MTD; test an actual
+        # same-signal regression against a prior NONEMPTY deployed mark.
+        prior_receipt = json.loads((app / receipt_rel).read_bytes())
+        prior_receipt["official_mark_through"] = "2026-02-01"
+        (app / receipt_rel).write_text(json.dumps(prior_receipt))
         bad_clock["mark_through"] = "2026-01-01"
         with self.assertRaisesRegex(ValueError, "would regress"):
             receiver.nonregression(app, candidate, bad_clock, review_same_clock_html=True)

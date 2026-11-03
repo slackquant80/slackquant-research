@@ -207,8 +207,15 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     completed = str(mark.get("completed_performance_cutoff") or core_row.get("end_date") or "").strip()
     if not completed:
         raise RuntimeError("PDS canonical completed-performance cutoff is unavailable")
-    mark_through = str(mark.get("latest_price_date") or mark.get("data_through_ny_close") or completed).strip()
     mark_available = current_mark.get("available") is True and str(mark.get("status") or "") == "PASS_PROVISIONAL_MARK"
+    # A calendar-month performance cutoff is not necessarily a trading close.
+    # When no provisional mark exists, use the completed Core series end date.
+    completed_market_close = str(core_row.get("end_date") or "").strip()
+    if not completed_market_close:
+        raise RuntimeError("PDS completed Core market close date unavailable")
+    mark_through = str((mark.get("latest_price_date") or mark.get("data_through_ny_close")) if mark_available else completed_market_close).strip()
+    if not mark_through:
+        raise RuntimeError("PDS canonical market-through date unavailable")
     execution = str(mark.get("execution_date") or "").strip()
     if mark_available and not execution:
         raise RuntimeError("PDS Current MTD is marked available but execution_date is missing")
