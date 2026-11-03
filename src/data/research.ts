@@ -259,7 +259,7 @@ export const researchItems: ResearchItem[] = [
     dateLabel: "September 2026",
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
-    featured: true,
+    featured: false,
     shortSummary:
       "A forecasting model can add portfolio value without winning the average prediction-error contest. This study evaluates Chronos-2 inside a matched cross-asset Forecast-to-Rank process and asks which portfolio decisions actually change, how integration changes the result, and whether those changes earn their keep.",
     researchQuestion:
@@ -330,6 +330,7 @@ export const researchItems: ResearchItem[] = [
     investmentTrackLabel: "Empirical Research",
     status: "Public Working Paper",
     ssrnId: "7622538",
+    featured: true,
     dateLabel: "October 2026",
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",

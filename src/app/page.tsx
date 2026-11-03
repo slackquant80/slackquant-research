@@ -15,11 +15,9 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   const investmentFeatured =
-    researchItems.find(
-      (item) => item.stream === "investment" && item.featured,
-    ) ?? researchItems[0];
-  const academicFeatured =
-    researchItems.find((item) => item.stream === "academic") ?? researchItems[0];
+    researchItems.find((item) => item.stream === "investment" && item.featured) ??
+    researchItems.find((item) => item.stream === "investment") ??
+    researchItems[0];
   const featuredSystem =
     systemItems.find((item) => item.prominence === "flagship") ?? systemItems[0];
   const supportingSystems = systemItems.filter(
@@ -76,53 +74,44 @@ export default function HomePage() {
               <div className="feature-copy">
                 <div className="kicker">{investmentFeatured.streamLabel}</div>
                 <h2 className="feature-title">{investmentFeatured.title}</h2>
+                {investmentFeatured.subtitle ? (
+                  <p className="card-subtitle">{investmentFeatured.subtitle}</p>
+                ) : null}
                 <p className="feature-text">{investmentFeatured.shortSummary}</p>
                 <div className="actions">
                   <Link className="btn primary" href={`/research/${investmentFeatured.slug}/`}>
-                    View Research
+                    Read Research
+                  </Link>
+                  {investmentFeatured.links.ssrn ? (
+                    <a
+                      className="btn soft ext"
+                      href={investmentFeatured.links.ssrn}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open SSRN Record ↗
+                    </a>
+                  ) : null}
+                  <Link className="btn soft" href="/systems/equity-alpha/">
+                    Related System
                   </Link>
                 </div>
               </div>
               <aside className="feature-side">
                 <div>
                   <div className="side-label">{investmentFeatured.status}</div>
-                  <div className="side-number">{investmentFeatured.publicVersion}</div>
+                  <div className="side-number">
+                    {investmentFeatured.ssrnId ?? investmentFeatured.publicVersion}
+                  </div>
                   <div className="side-note">
-                    Latest public version &middot; {investmentFeatured.dateLabel}
+                    {investmentFeatured.ssrnId ? "SSRN working paper" : "Public research"}
+                    {" · "}{investmentFeatured.dateLabel}
                   </div>
                 </div>
                 <div>
-                  <div className="side-label">Research focus</div>
+                  <div className="side-label">Research question</div>
                   <div className="side-note">
-                    Decision diversification as a complement to performance and risk evaluation.
-                  </div>
-                </div>
-              </aside>
-            </article>
-
-            <article className="feature-card">
-              <div className="feature-copy">
-                <div className="kicker">{academicFeatured.streamLabel}</div>
-                <h2 className="feature-title">{academicFeatured.title}</h2>
-                <p className="feature-text">{academicFeatured.shortSummary}</p>
-                <div className="actions">
-                  <Link className="btn primary" href={`/research/${academicFeatured.slug}/`}>
-                    View Research
-                  </Link>
-                </div>
-              </div>
-              <aside className="feature-side">
-                <div>
-                  <div className="side-label">{academicFeatured.status}</div>
-                  <div className="side-number">{academicFeatured.publicVersion}</div>
-                  <div className="side-note">
-                    Latest public version &middot; {academicFeatured.dateLabel}
-                  </div>
-                </div>
-                <div>
-                  <div className="side-label">Research focus</div>
-                  <div className="side-note">
-                    Average forecast accuracy, statistical distinguishability, and temporal concentration.
+                    {investmentFeatured.researchQuestion}
                   </div>
                 </div>
               </aside>
