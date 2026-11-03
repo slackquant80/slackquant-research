@@ -18,9 +18,6 @@ export default function HomePage() {
     researchItems.find((item) => item.stream === "investment" && item.featured) ??
     researchItems.find((item) => item.stream === "investment") ??
     researchItems[0];
-  const publishedInvestmentResearch = researchItems.filter(
-    (item) => item.stream === "investment",
-  );
   const featuredSystem =
     systemItems.find((item) => item.prominence === "flagship") ?? systemItems[0];
   const supportingSystems = systemItems.filter(
@@ -41,10 +38,10 @@ export default function HomePage() {
           <div className="eyebrow">Research platform</div>
           <h1>Systematic investing, forecasting, and financial data science.</h1>
           <p className="hero-copy">
-            Investment research, operational portfolio systems, and quantitative
-            methods for systematic investing, asset allocation, forecasting,
-            financial data science, and AI/ML. Published studies link to their
-            evidence and relevant operating systems where available.
+            Investment and academic research, operational systems, and quantitative
+            methods across systematic investing, asset allocation, forecasting,
+            financial data science, and AI/ML. Where available, projects link directly
+            to papers, evidence, code, tools, documentation, and live interfaces.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -192,6 +189,38 @@ export default function HomePage() {
       <section className="section">
         <div className="shell">
           <div className="section-head">
+            <div className="section-title">Research Streams</div>
+          </div>
+          <div className="grid-2">
+            <article className="stream">
+              <div className="kicker">01</div>
+              <h3>Investment Research Series</h3>
+              <p>
+                Practitioner-oriented research on systematic investing, asset
+                allocation, portfolio decision design, robustness, and implementation.
+              </p>
+              <Link className="section-link" href="/research/#investment-research-heading">
+                Explore Investment Research &#8594;
+              </Link>
+            </article>
+            <article className="stream">
+              <div className="kicker">02</div>
+              <h3>Academic Research</h3>
+              <p>
+                Academic and technical research across forecasting, financial
+                data science, AI/ML, and empirical methodology.
+              </p>
+              <Link className="section-link" href="/research/#academic-research-heading">
+                Explore Academic Research &#8594;
+              </Link>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell">
+          <div className="section-head">
             <div className="section-title">Quantitative Methods</div>
             <a className="section-link" href={methodsRootHref}>
               Open methods library &#8594;
@@ -235,7 +264,7 @@ export default function HomePage() {
           </div>
           <div className="output-metrics" aria-label="Current SlackQuant public output">
             <div className="output-metric">
-              <div className="output-value">{publishedInvestmentResearch.length}</div>
+              <div className="output-value">{researchItems.length}</div>
               <div className="output-label">Research Papers</div>
             </div>
             <div className="output-metric">
@@ -264,7 +293,7 @@ export default function HomePage() {
             <div className="section-title">Public Research Releases</div>
           </div>
           <div className="release-list">
-            {[...publishedInvestmentResearch].reverse().map((item) => (
+            {[...researchItems].reverse().map((item) => (
               <Link className="release release-link" href={`/research/${item.slug}/`} key={item.slug}>
                 <div className="date">{item.dateLabel}</div>
                 <div>
