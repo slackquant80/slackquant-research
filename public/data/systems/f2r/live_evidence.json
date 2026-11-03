@@ -2,9 +2,9 @@
   "schema": "SLACKQUANT_LIVE_EVIDENCE_V1",
   "system": "F2R",
   "sourceAuthority": "F2R source-owned current-model operator state · completed history only",
-  "completedThrough": "2026-09-30",
+  "completedThrough": "2026-10-30",
   "supportStart": "2017-05-01",
-  "supportEnd": "2026-09-30",
+  "supportEnd": "2026-10-30",
   "primaryLabel": "F2R · current canonical model",
   "path": [
     {
@@ -458,13 +458,13 @@
     {
       "date": "2026-09-30",
       "primary": 4.669131421748579
+    },
+    {
+      "date": "2026-10-30",
+      "primary": 4.388518591466332
     }
   ],
   "recentMonthly": [
-    {
-      "month": "2025-10",
-      "primary": 0.03904012343175989
-    },
     {
       "month": "2025-11",
       "primary": -0.004492450514982593
@@ -508,16 +508,20 @@
     {
       "month": "2026-09",
       "primary": -0.0007589648480446076
+    },
+    {
+      "month": "2026-10",
+      "primary": -0.060099634942407776
     }
   ],
   "metrics": {
     "primary": {
-      "cumulativeReturn": 3.6691314217485793,
-      "cagr": 0.17781847260130057,
-      "annVol": 0.1768374535727934,
-      "sharpe": 1.016060175946215,
-      "mdd": -0.2197163487735896,
-      "calmar": 0.8093092461887604
+      "cumulativeReturn": 3.3885185914663323,
+      "cagr": 0.16850202446896634,
+      "annVol": 0.17695047098713945,
+      "sharpe": 0.970038669161993,
+      "mdd": -0.21971634877358892,
+      "calmar": 0.7669070845638465
     }
   },
   "boundary": "Completed current-model history only. Current MTD, Official decision, and Preview states are excluded."
