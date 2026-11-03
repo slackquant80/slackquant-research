@@ -332,16 +332,16 @@ export const researchItems: ResearchItem[] = [
     ssrnId: "7622538",
     dateLabel: "October 2026",
     authorLine: "Sungkyu Lee",
-    affiliation: "Yonsei University",
+    affiliation: "Graduate School of Computing, Yonsei University",
     shortSummary:
-      "A global equity ETF study asks whether machine-learning selection, regional allocation, and selective tilts improve the unified portfolio after overlapping holdings, active risk, and trading costs are considered. The evidence highlights the value of evaluating additional layers against ACWI at the portfolio level.",
+      "Does another model improve the portfolio already held? This study combines ML-based ETF selection, regional allocation, and selective tilts into one ACWI-benchmarked global equity portfolio, then measures what the additional layers contribute after overlapping holdings, active risk, and trading costs.",
     researchQuestion:
       "What do regional allocation and selective equity-ETF tilts add to a machine-learning primary selection portfolio when their holdings, costs, and benchmark-relative risks are evaluated together?",
     findings: [
       "Across the common reconstructed daily history from 31 January 2019 to 31 August 2026, Global Equity Alpha reports 18.9% annualized growth versus 13.8% for ACWI, with 6.15% tracking error and a 0.819 information ratio.",
       "The complete portfolio's maximum relative drawdown versus ACWI is 8.10%, but active performance varies by market regime, including underperformance in 2022.",
       "Regional allocation improves some measures of benchmark-relative stability while also reducing active return. Primary selection alone has the stronger recent active-return-to-tracking-error trade-off.",
-      "The small Selective Alpha layer and the combined architecture are evaluated on their incremental portfolio contribution, not on the number of distinct models or standalone backtests."
+      "Adding the Selective Alpha sleeve improves full-period relative drawdown but weakens recent information ratio. Its incremental role remains a decision to reassess with new observations."
     ],
     tags: [
       "Global Equity",
