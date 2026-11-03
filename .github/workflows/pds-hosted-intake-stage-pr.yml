@@ -39,10 +39,13 @@ jobs:
       PDS_EXPECTED_SHA: ${{ inputs.expected_sha256 }}
       PDS_SAME_CLOCK_HTML_REVIEW: ${{ inputs.review_same_clock_html }}
       PDS_REVIEW_BRANCH: release/pds-hosted-intake-${{ github.run_id }}
+      PDS_REVIEW_BASE: ${{ github.ref_name }}
     steps:
+      # Manual workflow_dispatch uses the explicitly selected review ref;
+      # never silently substitute main for a scoped receiver fix.
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.ref_name }}
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
@@ -180,7 +183,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh pr create --draft --base main --head "$PDS_REVIEW_BRANCH" \
+          # Base the data review on the exact receiver-code review ref.
+          # This is a draft-on-draft staging dependency, never a main push.
+          gh pr create --draft --base "$PDS_REVIEW_BASE" --head "$PDS_REVIEW_BRANCH" \
             --title "Review PDS hosted intake: $PDS_SOURCE_TAG" \
             --body "PDS source artifact SHA256 (pinned): $PDS_EXPECTED_SHA
           Intake receiver and canonical npm run validate:release passed in an isolated GitHub runner.
