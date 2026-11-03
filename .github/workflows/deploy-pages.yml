@@ -3,6 +3,10 @@ name: Deploy SlackQuant Research to GitHub Pages
 on:
   push:
     branches: ["main"]
+    # A workflow-only merge does not change hosted site content.
+    # Keep the next material main push as the single deployment trigger.
+    paths-ignore:
+      - ".github/workflows/deploy-pages.yml"
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]
