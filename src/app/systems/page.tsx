@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { SystemCard } from "@/components/SystemCard";
 import { systemGroupDefinitions, systemItems, systemLayerDefinitions } from "@/data/systems";
 import { pdsCanonicalSummary } from "@/data/pdsCanonicalSummary";
+import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
+import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
 
 export const metadata: Metadata = {
   title: "Systems",
@@ -22,6 +24,13 @@ function formatPdsPublicDate(isoDate: string) {
 }
 
 export default function SystemsPage() {
+  // Only a published-data cutoff is release-bound; descriptions and layouts remain static.
+  // Every system owns its own clock: a refresh never re-dates another system.
+  const publishedThrough: Record<string, string> = {
+    adaa: getLiveSystemEvidence("adaa").completedThrough,
+    f2r: getLiveSystemEvidence("f2r").completedThrough,
+    "equity-alpha": getEquityAlphaEvidence().supportEnd,
+  };
   return (
     <main>
       <section className="index-hero systems-index-hero">
@@ -87,6 +96,8 @@ export default function SystemsPage() {
                                         ...item,
                                         dateLabel: `Operational data through ${formatPdsPublicDate(pdsCanonicalSummary.markThrough)}`,
                                       }
+                                    : publishedThrough[item.slug]
+                                    ? { ...item, dateLabel: `Completed through ${publishedThrough[item.slug]}` }
                                     : item
                                 }
                               />
