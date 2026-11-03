@@ -81,10 +81,10 @@ export default function EquityAlphaResearchPage() {
           <section className="prose-section" id="evidence">
             <h2>Published Evidence</h2>
             <p className="body-copy">
-              The published paper reports a common daily reconstructed evaluation
-              from 31 January 2019 through 31 August 2026. Its headline results are
-              tied to that fixed research window and the paper&apos;s portfolio
-              construction and cost conventions.
+              The common daily reconstructed evaluation runs from
+              31 January 2019 to 31 August 2026. It uses one ACWI benchmark
+              and applies portfolio-level transaction costs after all three
+              components&apos; ETF targets are combined.
             </p>
             <div className="metrics">
               {paperMetrics.map(([value, label]) => (
@@ -96,19 +96,77 @@ export default function EquityAlphaResearchPage() {
             </div>
             <div className="evidence-note">
               <strong>Research history versus current operation.</strong>{" "}
-              These are the paper&apos;s historical results through August 2026.
-              The separately maintained Equity Alpha dashboard may show a later
-              completed month, current MTD/YTD, Official holdings, and an
-              unexecuted Preview. Do not combine those live operating states
-              with the paper&apos;s frozen research sample.
+              Figures above describe the published study through August 2026.
+              The separate operating dashboard shows subsequently completed periods,
+              current MTD/YTD, Official holdings, and proposed Preview weights.
+              Its operating clock is independent of this paper&apos;s historical sample.
+            </div>
+            <div className="selected-table-block">
+              <div className="selected-exhibits-head">
+                <div className="section-title">What Each Additional Layer Changes</div>
+                <p>
+                  Selected published, common-accounting comparisons. The full
+                  window ends in August 2026; the later diagnostic covers
+                  November 2024 through August 2026.
+                </p>
+              </div>
+              <div
+                className="evidence-table-wrap"
+                role="region"
+                aria-label="Published Equity Alpha component contribution comparison"
+                tabIndex={0}
+              >
+                <table className="evidence-table">
+                  <thead>
+                    <tr>
+                      <th>Configuration</th>
+                      <th>Window</th>
+                      <th>CAGR</th>
+                      <th>TE</th>
+                      <th>IR</th>
+                      <th>Relative DD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Primary only</th>
+                      <td>Full</td><td>19.6%</td><td>7.0%</td><td>0.816</td><td>−11.6%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">+ Regional</th>
+                      <td>Full</td><td>18.9%</td><td>6.1%</td><td>0.821</td><td>−9.9%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">+ Selective</th>
+                      <td>Full</td><td>18.9%</td><td>6.2%</td><td>0.819</td><td>−8.1%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Primary only</th>
+                      <td>Later</td><td>26.3%</td><td>7.2%</td><td>0.690</td><td>−8.4%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">+ Regional</th>
+                      <td>Later</td><td>25.5%</td><td>6.2%</td><td>0.682</td><td>−7.2%</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">+ Selective</th>
+                      <td>Later</td><td>24.7%</td><td>6.2%</td><td>0.582</td><td>−7.1%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="evidence-table-source">
+                Source: Published working paper, Section 6; fixed historical
+                configurations and original reported rounding
+              </div>
             </div>
             <p className="body-copy">
-              The results are not uniformly favorable. The portfolio trailed
-              ACWI during 2022, some rolling active-return periods were negative,
-              and Primary selection alone showed a better recent active-return
-              versus tracking-error trade-off than the full portfolio. These
-              observations make the incremental contribution of each layer the
-              paper&apos;s central investment question.
+              Primary selection alone compounds faster, while Regional allocation
+              reduces tracking error and relative drawdown at the cost of some
+              active return. Adding Selective Alpha further improves full-period
+              relative drawdown, but the later-period information ratio declines.
+              The paper therefore evaluates incremental contribution as a
+              return–risk trade-off, not a presumption that every layer adds alpha.
             </p>
           </section>
 
@@ -170,12 +228,12 @@ export default function EquityAlphaResearchPage() {
                 <span className="artifact-kicker">PUBLIC DASHBOARD</span>
                 <strong>Global Equity Alpha Dashboard</strong>
                 <small>Completed performance, current month, Official portfolio, and Preview.</small>
-                <span className="artifact-action">Open Dashboard →</span>
+                <span className="artifact-action">View Dashboard →</span>
               </Link>
             </div>
           </section>
 
-          <MethodsUsed researchSlug="equity-alpha-system" />
+          <MethodsUsed researchSlug={item.slug} />
 
           <section className="prose-section" id="citation">
             <h2>Citation</h2>

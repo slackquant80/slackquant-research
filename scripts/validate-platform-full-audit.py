@@ -50,6 +50,13 @@ def main() -> int:
         'href="/dashboards/equity-alpha/"',
         "Published Evidence",
         "31 August 2026",
+        "What Each Additional Layer Changes",
+        "0.816",
+        "0.821",
+        "0.819",
+        "0.582",
+        "MethodsUsed researchSlug={item.slug}",
+        'aria-label="Published Equity Alpha component contribution comparison"',
     )
     equity_research = research.split('slug: "equity-alpha"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
     for required in ("7622538", "October 2026", 'status: "Public Working Paper"'):
@@ -59,6 +66,18 @@ def main() -> int:
         raise RuntimeError("Equity Alpha must not invent a public replication or archive")
     if "/systems/equity-alpha/" not in equity_paper:
         raise RuntimeError("Equity Alpha research-to-system link missing")
+    if 'affiliation: "Graduate School of Computing, Yonsei University"' not in equity_research:
+        raise RuntimeError("Equity Alpha author affiliation must match published paper")
+    need("src/data/methods.ts", '"equity-alpha": [', '"equity-alpha-system": [')
+    equity_system = need(
+        "src/app/systems/equity-alpha/page.tsx",
+        'href="/research/equity-alpha/"',
+        "Read Published Research",
+        "SSRN 7622538",
+    )
+    if "Research and Operational System" not in equity_paper:
+        raise RuntimeError("Equity Alpha research/system separation missing")
+
 
     expected_system_slugs = {"pds", "adaa", "f2r", "equity-alpha", "scenario-stress-lab"}
     systems = need(
