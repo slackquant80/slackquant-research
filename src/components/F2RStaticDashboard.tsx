@@ -50,19 +50,46 @@ function Holdings({ title, holdings, preview, note }: { title: string; holdings:
 
 export function F2RStaticDashboard() {
   const [state, setState] = useState<State | null>(null);
+  const [dataSource, setDataSource] = useState<"source" | "backup" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState<(typeof tabs)[number]>("Current Portfolio");
   useEffect(() => {
-    const controller = new AbortController();
-    fetch("/data/systems/f2r/public_state.json", { signal: controller.signal })
-      .then(r => { if (!r.ok) throw Error("Public snapshot unavailable"); return r.json(); })
-      .then((d: State) => {
-        if (d.schema_version !== "2.0" || !d.live_state?.official?.holdings || !d.completed_performance?.growth_series) throw Error("Unexpected public snapshot schema");
-        const sum = d.live_state.official.holdings.reduce((a,h) => a + h.target_weight, 0);
-        if (d.live_state.official.holdings.length !== 4 || Math.abs(sum-1) > 1e-6) throw Error("Invalid public portfolio weights");
-        setState(d);
-      }).catch(e => { if (e.name !== "AbortError") setError(String(e.message || e)); });
-    return () => controller.abort();
+    let active = true;
+    const remoteController = new AbortController();
+    const timeout = setTimeout(() => remoteController.abort(), 6000);
+    // F2R's already-reviewed PUBLIC main is the source-owned data authority.
+    // The bundled SlackQuant file is a visible FALLBACK, not a competing source.
+    const source = "https://raw.githubusercontent.com/slackquant80/f2r-forecast-to-rank-allocation/main/src/dashboard/public_data/f2r_public_state.json";
+    const backup = "/data/systems/f2r/public_state.json";
+    const check = (d: State): State => {
+      if (d.schema_version !== "2.0" || !d.live_state?.official?.holdings || !d.completed_performance?.growth_series || !d.issued_at_display) throw Error("Unexpected public snapshot schema");
+      const holdings = d.live_state.official.holdings;
+      const sum = holdings.reduce((a, h) => a + h.target_weight, 0);
+      if (holdings.length !== 4 || new Set(holdings.map(h => h.asset)).size !== 4 || !Number.isFinite(sum) || Math.abs(sum - 1) > 1e-6) throw Error("Invalid public portfolio weights");
+      return d;
+    };
+    const load = async (url: string, signal?: AbortSignal): Promise<State> => {
+      const response = await fetch(url, { signal, cache: "no-store" });
+      if (!response.ok) throw Error("Public snapshot unavailable");
+      return check(await response.json() as State);
+    };
+    (async () => {
+      try {
+        const current = await load(source, remoteController.signal);
+        if (active) { setState(current); setDataSource("source"); }
+      } catch {
+        if (!active) return;
+        try {
+          const bundled = await load(backup);
+          if (active) { setState(bundled); setDataSource("backup"); }
+        } catch (error) {
+          if (active) setError(error instanceof Error ? error.message : "Public snapshot unavailable");
+        }
+      } finally {
+        clearTimeout(timeout);
+      }
+    })();
+    return () => { active = false; remoteController.abort(); clearTimeout(timeout); };
   }, []);
   const officialSignal = () => state?.live_state.official.signal_period || "";
   const exportCsv = () => {
@@ -84,7 +111,7 @@ export function F2RStaticDashboard() {
   const metrics = [["CAGR", percent(perf.metrics.cagr)], ["Annualized Volatility", percent(perf.metrics.ann_vol)], ["Sharpe (Rf=0)", number(perf.metrics.sharpe_rf0)], ["Maximum Drawdown", percent(perf.metrics.max_drawdown)], ["Terminal Wealth", number(perf.metrics.terminal_wealth)+"×"], ["Completed Months", String(perf.metrics.months)]];
   return <main className="f2r-static"><style>{styles}</style><div className="f2r-wrap">
     <header className="f2r-head"><a className="f2r-back" href="/systems/f2r/">← SlackQuant Research / F2R</a><span className="f2r-status">CURRENT MODEL · PUBLIC</span></header>
-    <section className="f2r-hero"><div className="f2r-kicker">PORTFOLIO STRATEGY SYSTEM</div><h1>Forecast-to-Rank Allocation</h1><p>Independent machine-learning and pretrained time-series forecasts combined through a rank-based monthly Top-4 portfolio decision.</p><div className="f2r-issued">Latest published source snapshot · {state.issued_at_display}</div></section>
+    <section className="f2r-hero"><div className="f2r-kicker">PORTFOLIO STRATEGY SYSTEM</div><h1>Forecast-to-Rank Allocation</h1><p>Independent machine-learning and pretrained time-series forecasts combined through a rank-based monthly Top-4 portfolio decision.</p><div className="f2r-issued">{dataSource === "backup" ? "Bundled backup snapshot · source feed unavailable" : "F2R public source snapshot"} · {state.issued_at_display}</div></section>
     {(!mtd.available || !preview.available) && <div className="f2r-freshness" role="status"><strong>Open-month data not fully published.</strong><span> Latest source release: {state.issued_at_display}. Official targets for holding {official.holding_month} are available. {!mtd.available ? "Current MTD is not published. " : ""}{!preview.available ? "Preview is not published. " : ""}Unavailable fields are not zero values. The viewer displays only validated source-owned data.</span></div>}
     <section className="f2r-summary">
       <div><small>OFFICIAL SIGNAL</small><strong>{official.signal_period}</strong></div>
