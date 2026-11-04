@@ -73,3 +73,26 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Check four-system public URLs after deploy (read-only)
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          base=https://research.slackquant.com
+          bad=0
+          for path in \
+            /systems/adaa/ /systems/adaa/dashboard/ /assets/systems/adaa/snapshot.js \
+            /systems/f2r/ /systems/f2r/dashboard/ /data/systems/f2r/public_state.json \
+            /systems/pds/ /systems/pds/dashboard/ /data/systems/pds/public_system_identity.json \
+            /systems/equity-alpha/ /dashboards/equity-alpha/ /dashboards/equity-alpha/data/live_overlay.js; do
+            if curl --silent --show-error --location --head --fail \
+              --connect-timeout 4 --max-time 8 --retry 1 --retry-delay 2 \
+              "$base$path" >/dev/null; then
+              printf 'HTTP_PASS %s\n' "$path"
+            else
+              printf '::warning::HTTP_HOLD %s (CDN propagation or missing file)\n' "$path"
+              bad=1
+            fi
+          done
+          echo "POSTDEPLOY_FOUR_SYSTEM_HTTP_SMOKE_DONE status=$bad scope=reachability_not_data_or_visual_parity"
+          exit "$bad"
