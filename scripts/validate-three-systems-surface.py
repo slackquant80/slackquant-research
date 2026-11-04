@@ -259,7 +259,7 @@ def audit_static(require_build: bool) -> list[Check]:
                 add(c, "Sitemap URL ↔ built route parity", not missing_routes, f"{len(urls)} sitemap routes resolve in out", ", ".join(missing_routes[:12]))
             except Exception as e: add(c, "Sitemap URL ↔ built route parity", False, str(e))
         if robots_file.is_file(): add(c, "Built robots → sitemap", f"Sitemap: {CANONICAL}/sitemap.xml" in text(robots_file), "root sitemap declared")
-        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/adaa/dashboard/", "/systems/f2r/", "/systems/scenario-stress-lab/", "/systems/pds/dashboard/"] + list(hrefs.values())
+        built_routes = ["/", "/systems/", "/systems/pds/", "/systems/adaa/", "/systems/adaa/dashboard/", "/systems/f2r/", "/systems/f2r/dashboard/", "/systems/scenario-stress-lab/", "/systems/pds/dashboard/"] + list(hrefs.values())
         bad_head=[]
         for r in built_routes:
             f=expected_out_file(r)
@@ -287,7 +287,7 @@ def live_urls() -> list[tuple[str,str]]:
         ("F2R system", f"{CANONICAL}/systems/f2r/"),
         ("Methods root", f"{CANONICAL}/methods/"),
     ]
-    for label,key in [("ADAA live", "publicDashboard"),("F2R live", "liveDashboard"),("ADAA SSRN", "ssrn"),("ADAA research dashboard","researchDashboard"),("ADAA replication repository","replicationRepository"),("ADAA DOI","archivalRelease"),("F2R deployment repository","deploymentRepository")]:
+    for label,key in [("ADAA live", "publicDashboard"),("F2R live", "publicDashboard"),("ADAA SSRN", "ssrn"),("ADAA research dashboard","researchDashboard"),("ADAA replication repository","replicationRepository"),("ADAA DOI","archivalRelease"),("F2R deployment repository","deploymentRepository")]:
         # scope sequentially by slug where duplicate keys exist
         slug = "f2r" if label.startswith("F2R") else "adaa"
         blockm=re.search(rf'slug:\s*"{slug}"([\s\S]*?)(?=\n\s*\{{\n\s*slug:|\n\];)',systems)

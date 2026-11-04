@@ -102,7 +102,7 @@ need('Completed YTD' in eq_app and 'Current YTD' in eq_app,
 eq_html = txt('public/dashboards/equity-alpha/index.html')
 need(all(t in eq_html for t in ('data/dashboard_data.js','data/live_overlay.js','assets/app.js')),
      'Equity Alpha: dashboard asset references missing')
-need('f2r-forecast-to-rank-allocation.streamlit.app' in systems and
+need('"/systems/f2r/dashboard/"' in systems and
      '"/systems/adaa/dashboard/"' in systems and
      '"/dashboards/equity-alpha/"' in systems,
      'SlackQuant: canonical dashboard links missing')
@@ -112,6 +112,27 @@ need('getLiveSystemEvidence("adaa").completedThrough' in index and
      'getEquityAlphaEvidence().supportEnd' in index and
      'pdsCanonicalSummary.markThrough' in index,
      'SlackQuant systems index: independently published clocks not bound')
+# F2R candidate static viewer remains additive until accepted; validates only the
+# source-owned public snapshot and platform-completed history (no vendor re-pricing).
+static_state = json.loads(txt('public/data/systems/f2r/public_state.json'))
+need(static_state.get('schema_version') == '2.0' and static_state.get('system',{}).get('short_name') == 'F2R',
+     'F2R static: invalid source-owned snapshot schema/system')
+p = static_state.get('completed_performance') or {}
+need(p.get('as_of_date') == p.get('support_end') == f2r_end,
+     'F2R static: completed cutoff disagrees with the existing platform evidence')
+official = (static_state.get('live_state') or {}).get('official') or {}
+selection = official.get('holdings') or []
+need(len(selection) == 4 and len({h.get('asset') for h in selection}) == 4 and
+     abs(sum(float(h.get('target_weight', 0)) for h in selection)-1) < 1e-8,
+     'F2R static: current official selection/weight invalid')
+need(official.get('signal_period','') < official.get('holding_month',''),
+     'F2R static: official signal/holding clock invalid')
+need(len(p.get('growth_series') or []) > 100 and len(p.get('drawdown_series') or []) > 100,
+     'F2R static: completed performance series missing')
+need((ROOT/'src/app/systems/f2r/dashboard/page.tsx').is_file() and
+     (ROOT/'src/components/F2RStaticDashboard.tsx').is_file(),
+     'F2R static: viewer source missing')
+
 print('SYSTEM_PLATFORM_DATA_PARITY_PASS ADAA=' + adaa_end +
       ' F2R=' + f2r_end + ' EquityAlpha=' + history[-1]['date'])
 

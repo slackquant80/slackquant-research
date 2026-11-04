@@ -23,6 +23,7 @@ function num(value: number, digits = 2) { return value.toFixed(digits); }
 export default function F2rSystemPage() {
   if (!item) notFound();
   const liveEvidence = getLiveSystemEvidence("f2r");
+  const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard;
 
   return (
     <main>
@@ -40,8 +41,8 @@ export default function F2rSystemPage() {
             <span>Conventional ML + Chronos-2 · rank-based portfolio formation</span>
           </div>
           <div className="actions">
-            {item.links.liveDashboard ? (
-              <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+            {dashboardHref ? (
+              <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
                 Open Dashboard ↗
               </a>
             ) : null}
@@ -156,8 +157,8 @@ export default function F2rSystemPage() {
             </div>
             <div className="evidence-note"><b>Performance boundary:</b> Completed history only. Current MTD and Preview are excluded.</div>
             <div className="actions">
-              {item.links.liveDashboard ? (
-                <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+              {dashboardHref ? (
+                <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
                   Open Full F2R Dashboard ↗
                 </a>
               ) : null}
@@ -178,13 +179,13 @@ export default function F2rSystemPage() {
             <div className="kicker">Live operation</div>
             <h2>Official and Preview are shown as different operating states</h2>
             <p className="body-copy">
-              The standalone F2R dashboard publishes the current official monthly target alongside a separately labeled
+              The F2R public dashboard publishes the current official monthly target alongside a separately labeled
               intramonth preview. The preview is indicative only: it may change before month-end, is not executed, and is kept
               outside completed performance. Historical research results and current operation are also shown separately.
             </p>
             <div className="repro-links documentation-artifacts">
-              {item.links.liveDashboard ? (
-                <a className="artifact artifact-primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
+              {dashboardHref ? (
+                <a className="artifact artifact-primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">LIVE SYSTEM</span>
                   <strong>F2R Public Dashboard</strong>
                   <small>Official decision, intramonth preview, historical performance, and portfolio target history.</small>
@@ -195,7 +196,7 @@ export default function F2rSystemPage() {
                 <a className="artifact" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">PUBLIC DEPLOYMENT</span>
                   <strong>GitHub Repository</strong>
-                  <small>Public deployment package for the standalone Streamlit interface.</small>
+                  <small>Previous public Streamlit interface retained as a rollback during the static viewer transition.</small>
                   <span className="artifact-action">View Repository ↗</span>
                 </a>
               ) : null}
