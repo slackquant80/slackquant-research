@@ -23,6 +23,7 @@ Next.js App Router + React + TypeScript static export.
 /systems/adaa/
 /systems/adaa/dashboard/
 /systems/f2r/
+/systems/f2r/dashboard/
 /systems/equity-alpha/
 /systems/scenario-stress-lab/
 /methods/
@@ -36,11 +37,11 @@ PDS publication has two current reader-facing outputs. The validated PDS dashboa
 
 After a governed PDS sync has updated this repository, use the canonical release gate below. Do not replace the release gate with a hand-picked subset of validators.
 
-## F2R standalone public deployment
+## F2R static public dashboard
 
-The F2R System page links the independently deployed public dashboard at `https://f2r-forecast-to-rank-allocation.streamlit.app` and its public deployment repository at `slackquant80/f2r-forecast-to-rank-allocation`.
+The F2R System page links the first-party, serverless static reader at `/systems/f2r/dashboard/`. It reads the bounded, source-owned public-safe F2R snapshot `public/data/systems/f2r/public_state.json` and performs no model forecasting, portfolio computation, vendor pricing, or operating execution. The legacy deployment `https://f2r-forecast-to-rank-allocation.streamlit.app` is retained as a rollback.
 
-The deployment repository is a public-safe artifact generated from the source-owned F2R operational system. It is not a second canonical calculation or state source. The SlackQuant platform links the live surface and related evidence; it does not recalculate F2R.
+After the source-owned public-release review, use `python scripts/sync-f2r-static-state.py --source <approved-public-state.json> --check` and then `--write` to update only the F2R static data artifact. Completed-performance evidence is updated through the existing importer separately; the release gate requires both completed cutoffs to agree before publishing. Other systems and shared platform code remain unchanged during routine F2R refreshes.
 
 ## Important boundaries
 
