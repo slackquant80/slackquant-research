@@ -89,8 +89,11 @@ export const systemItems: SystemItem[] = [
       "Forecast-to-Rank Allocation (F2R) is a live cross-asset strategy combining conventional supervised machine learning with Chronos-2. Forecasts from different models are converted into a common rank-based ordering before the monthly portfolio is formed. The public site explains the model families and decision architecture, while low-level construction parameters remain private.",
     role: "Forecast-Ranked Multi-Asset Portfolio Strategy",
     methodsKey: "f2r-system",
+    ssrnId: "7460378",
+    evidenceLabel: "Public Working Paper",
     links: {
-      liveDashboard: "https://f2r-forecast-to-rank-allocation.streamlit.app",
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7460378",
+      publicDashboard: "/systems/f2r/dashboard/",
       deploymentRepository: "https://github.com/slackquant80/f2r-forecast-to-rank-allocation",
       relatedResearch: "/research/second-opinion-portfolio/",
     },
