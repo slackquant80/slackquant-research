@@ -1,0 +1,42 @@
+name: Equity Alpha hosted intake offline PR verification
+
+# Existing synthetic-only receiver / planner / stager / release evidence tests.
+# No secrets, market data, private source access, publication or merging.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/plan-equity-alpha-intake.py"
+      - "scripts/receive-equity-alpha-intake.py"
+      - "scripts/stage-equity-alpha-intake.py"
+      - "scripts/verify_equity_intake_release.py"
+      - "scripts/test-plan-equity-alpha-intake.py"
+      - "scripts/test-receive-equity-alpha-intake.py"
+      - "scripts/test-stage-equity-alpha-intake.py"
+      - "scripts/test-verify-equity-intake-release.py"
+      - ".github/workflows/equity-hosted-intake-stage-pr.yml"
+      - ".github/workflows/equity-hosted-intake-readonly-pr.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      GIT_CONFIG_NOSYSTEM: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Execute existing isolated tests (no network or publication)
+        run: |
+          python3 scripts/test-receive-equity-alpha-intake.py
+          python3 scripts/test-plan-equity-alpha-intake.py
+          python3 scripts/test-stage-equity-alpha-intake.py
+          python3 scripts/test-verify-equity-intake-release.py
