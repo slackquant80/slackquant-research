@@ -1,0 +1,39 @@
+name: Equity Alpha hosted receiver review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/receive-equity-alpha-hosted-intake.py
+      - scripts/test-receive-equity-alpha-hosted-intake.py
+      - .github/workflows/equity-alpha-hosted-intake-stage-pr.yml
+      - .github/workflows/equity-alpha-hosted-intake-review.yml
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-receiver-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Synthetic accepted/rejected manifest and SHA contracts
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 scripts/test-receive-equity-alpha-hosted-intake.py
+      - name: Validate manual-only source intake workflow structure
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          y=Path('.github/workflows/equity-alpha-hosted-intake-stage-pr.yml').read_text()
+          for required in ('workflow_dispatch:', 'create-github-app-token@v3', 'permission-contents: read', 'repositories: research-equity-alpha', 'npm run validate:release', 'gh pr create --draft', 'EQUITY_ALPHA_HOSTED_INTAKE_CANDIDATE.zip'):
+              assert required in y, required
+          for forbidden in ('gh pr merge', 'actions/deploy-pages@', 'gh workflow run deploy-pages'):
+              assert forbidden not in y, forbidden
+          print('EQUITY_MANUAL_REVIEW_WORKFLOW_CONTRACT_PASS')
+          PY
