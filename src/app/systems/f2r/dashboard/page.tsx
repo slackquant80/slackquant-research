@@ -8,5 +8,25 @@ export const metadata: Metadata = {
 };
 
 export default function F2rDashboardPage() {
-  return <F2RStaticDashboard />;
+  // Standalone full-viewport dashboard, matching the ADAA/PDS dashboard shell.
+  // The platform's global header/footer remain mounted but are fully occluded.
+  // Keep native vertical scrolling inside this viewport instead of clipping content.
+  return (
+    <div
+      data-f2r-standalone-dashboard="true"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100dvh",
+        overflowY: "auto",
+        overflowX: "hidden",
+        overscrollBehavior: "contain",
+        zIndex: 2147483000,
+        background: "#0a1219",
+      }}
+    >
+      <F2RStaticDashboard />
+    </div>
+  );
 }
