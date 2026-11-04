@@ -80,12 +80,12 @@ export function F2RStaticDashboard() {
   if (!state) return <main className="f2r-static"><div className="f2r-wrap"><h1>F2R · Forecast-to-Rank Allocation</h1><p>Loading verified public snapshot…</p></div><style>{styles}</style></main>;
   const { official, preview, current_mtd: mtd } = state.live_state;
   const perf = state.completed_performance;
-  const hasOpenMonthData = mtd.available || preview.available;
+  // Each open-month field can be published independently by the source.
   const metrics = [["CAGR", percent(perf.metrics.cagr)], ["Annualized Volatility", percent(perf.metrics.ann_vol)], ["Sharpe (Rf=0)", number(perf.metrics.sharpe_rf0)], ["Maximum Drawdown", percent(perf.metrics.max_drawdown)], ["Terminal Wealth", number(perf.metrics.terminal_wealth)+"×"], ["Completed Months", String(perf.metrics.months)]];
   return <main className="f2r-static"><style>{styles}</style><div className="f2r-wrap">
     <header className="f2r-head"><a className="f2r-back" href="/systems/f2r/">← SlackQuant Research / F2R</a><span className="f2r-status">CURRENT MODEL · PUBLIC</span></header>
     <section className="f2r-hero"><div className="f2r-kicker">PORTFOLIO STRATEGY SYSTEM</div><h1>Forecast-to-Rank Allocation</h1><p>Independent machine-learning and pretrained time-series forecasts combined through a rank-based monthly Top-4 portfolio decision.</p><div className="f2r-issued">Latest published source snapshot · {state.issued_at_display}</div></section>
-    {!hasOpenMonthData && <div className="f2r-freshness" role="status"><strong>Open-month update not yet published.</strong><span> The current public release was issued {state.issued_at_display}. Official November targets are available; November MTD and Preview are absent from the source-owned release, not zero. A new validated F2R snapshot is required.</span></div>}
+    {(!mtd.available || !preview.available) && <div className="f2r-freshness" role="status"><strong>Open-month data not fully published.</strong><span> Latest source release: {state.issued_at_display}. Official targets for holding {official.holding_month} are available. {!mtd.available ? "Current MTD is not published. " : ""}{!preview.available ? "Preview is not published. " : ""}Unavailable fields are not zero values. The viewer displays only validated source-owned data.</span></div>}
     <section className="f2r-summary">
       <div><small>OFFICIAL SIGNAL</small><strong>{official.signal_period}</strong></div>
       <div><small>CURRENT HOLDING</small><strong>{official.holding_month}</strong></div>
