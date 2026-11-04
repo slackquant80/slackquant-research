@@ -102,7 +102,7 @@ need('Completed YTD' in eq_app and 'Current YTD' in eq_app,
 eq_html = txt('public/dashboards/equity-alpha/index.html')
 need(all(t in eq_html for t in ('data/dashboard_data.js','data/live_overlay.js','assets/app.js')),
      'Equity Alpha: dashboard asset references missing')
-need('f2r-forecast-to-rank-allocation.streamlit.app' in systems and
+need('"/systems/f2r/dashboard/"' in systems and
      '"/systems/adaa/dashboard/"' in systems and
      '"/dashboards/equity-alpha/"' in systems,
      'SlackQuant: canonical dashboard links missing')
