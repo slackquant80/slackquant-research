@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import re
+import json
+import math
 ROOT=Path(__file__).resolve().parents[1]
 
 def need(cond,msg):
@@ -29,4 +31,88 @@ for slug in ['pds','adaa','f2r','equity-alpha','scenario-stress-lab']:
 need((ROOT/'src/app/systems/pds/page.tsx').is_file(),'PDS page missing')
 need((ROOT/'src/app/systems/equity-alpha/page.tsx').is_file(),'Equity Alpha page missing')
 need((ROOT/'src/app/systems/scenario-stress-lab/page.tsx').is_file(),'Stress Lab page missing')
+
+# Fast publication consistency checks. These read local public data only;
+# never rerun a model, vendor price feed, or download live market data.
+def js_payload(rel, prefix):
+    raw = txt(rel).strip()
+    need(raw.startswith(prefix), f'{rel}: public assignment missing')
+    return json.loads(raw[len(prefix):].strip().removesuffix(';').strip())
+
+def completed(system):
+    obj = json.loads(txt(f'public/data/systems/{system}/live_evidence.json'))
+    rows = obj.get('path') or []
+    need(obj.get('schema') == 'SLACKQUANT_LIVE_EVIDENCE_V1' and obj.get('system') == system.upper(),
+         f'{system}: invalid public evidence identity')
+    need(len(rows) > 12 and all(re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(r.get('date'))) for r in rows),
+         f'{system}: missing or invalid completed dates')
+    dates = [r['date'] for r in rows]
+    need(dates == sorted(set(dates)), f'{system}: duplicate or nonmonotonic dates')
+    end = dates[-1]
+    need(end == obj.get('completedThrough') == obj.get('supportEnd'),
+         f'{system}: platform completed cutoff does not match path')
+    recent = obj.get('recentMonthly') or []
+    need(bool(recent) and recent[-1].get('month') == end[:7],
+         f'{system}: latest monthly return not aligned with completed month')
+    need(all(math.isfinite(float(r['primary'])) for r in rows),
+         f'{system}: non-finite public wealth')
+    return end
+
+adaa_end, f2r_end = completed('adaa'), completed('f2r')
+adaa = js_payload('public/assets/systems/adaa/snapshot.js', 'window.ADAA_SNAPSHOT =')
+a_meta = adaa.get('snapshot_meta') or {}
+a_clock = adaa.get('decision_clock') or {}
+need(a_meta.get('validation_status') == 'PASS_RAW_PARITY',
+     'ADAA: snapshot parity status not PASS')
+need(a_clock.get('canonical_performance_support_end') == adaa_end,
+     'ADAA: dashboard and platform completed cutoffs differ')
+need(a_meta.get('market_data_through', '') >= adaa_end,
+     'ADAA: market clock predates completed evidence')
+adaa_html = txt('public/assets/systems/adaa/index.html')
+need('snapshot.js' in adaa_html and 'dashboard.js' in adaa_html,
+     'ADAA: dashboard asset references missing')
+
+eq = js_payload('public/dashboards/equity-alpha/data/dashboard_data.js',
+                'window.EA_HISTORY_DATA =')
+live = js_payload('public/dashboards/equity-alpha/data/live_overlay.js',
+                  'window.EA_LIVE_OVERLAY =')
+history = eq.get('globalFinalDaily') or []
+e_meta = eq.get('meta') or {}
+l_meta = live.get('meta') or {}
+need(len(history) > 12 and e_meta.get('performanceThroughCompletedDate') == history[-1].get('date'),
+     'Equity Alpha: completed daily cutoff mismatch')
+need(l_meta.get('completedCloseCutoff') == history[-1].get('date'),
+     'Equity Alpha: history/current completed boundaries differ')
+need(l_meta.get('marketDataThrough','') >= history[-1]['date'],
+     'Equity Alpha: market clock predates completed history')
+need(l_meta.get('signalMonth') == e_meta.get('latestSignalMonth') and
+     l_meta.get('holdingMonth','') > l_meta.get('signalMonth',''),
+     'Equity Alpha: signal/holding month mismatch')
+holdings = live.get('currentHoldings') or []
+need(bool(holdings) and abs(sum(float(x.get('targetWeight',0)) for x in holdings)-1) < 1e-8,
+     'Equity Alpha: official target weights do not sum to 100%')
+rank = live.get('currentUniverseRanks') or []
+need(bool(rank) and len(rank) == len(set(str(x.get('ticker')) for x in rank)),
+     'Equity Alpha: current universe empty or contains duplicates')
+eq_app = txt('public/dashboards/equity-alpha/assets/app.js')
+need('Current universe (' in eq_app and 'latest.length' in eq_app,
+     'Equity Alpha: current universe displayed count is not live-bound')
+need('Completed YTD' in eq_app and 'Current YTD' in eq_app,
+     'Equity Alpha: current/completed YTD labels missing')
+eq_html = txt('public/dashboards/equity-alpha/index.html')
+need(all(t in eq_html for t in ('data/dashboard_data.js','data/live_overlay.js','assets/app.js')),
+     'Equity Alpha: dashboard asset references missing')
+need('f2r-forecast-to-rank-allocation.streamlit.app' in systems and
+     '"/systems/adaa/dashboard/"' in systems and
+     '"/dashboards/equity-alpha/"' in systems,
+     'SlackQuant: canonical dashboard links missing')
+index = txt('src/app/systems/page.tsx')
+need('getLiveSystemEvidence("adaa").completedThrough' in index and
+     'getLiveSystemEvidence("f2r").completedThrough' in index and
+     'getEquityAlphaEvidence().supportEnd' in index and
+     'pdsCanonicalSummary.markThrough' in index,
+     'SlackQuant systems index: independently published clocks not bound')
+print('SYSTEM_PLATFORM_DATA_PARITY_PASS ADAA=' + adaa_end +
+      ' F2R=' + f2r_end + ' EquityAlpha=' + history[-1]['date'])
+
 print('SYSTEM_PUBLICATION_BOUNDARY_PASS')
