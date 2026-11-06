@@ -27,3 +27,8 @@ tbody tr:hover td{background:#f8fbff}
 @media(max-width:1100px){.kpi-primary{grid-template-columns:repeat(3,1fr)}.overview-kpis{grid-template-columns:repeat(3,1fr)}.two-col,.overview-grid{grid-template-columns:1fr}.chart{height:360px}}
 @media(max-width:767px){.topbar{padding:14px 16px;align-items:flex-start}.brand{font-size:20px}.tabs{padding:7px 10px}.tab{padding:8px 9px;font-size:12px}main{padding:10px}.kpi-primary,.kpi-secondary,.overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{min-height:92px;padding:12px}.kpi-value{font-size:21px}.clock-meta{grid-template-columns:1fr;margin-bottom:10px}.clock-meta-item{padding:7px 10px}.clock-meta-item+.clock-meta-item{border-left:0;border-top:1px solid var(--line)}.clock-meta-label{font-size:9.5px}.clock-meta-value{font-size:11.5px}.card{padding:12px}.two-col,.overview-grid{display:block}.two-col>.card+.card,.overview-grid>.card+.card{margin-top:10px}.chart{height:340px}.contract-row{grid-template-columns:1fr;gap:3px}.contract-row strong{text-align:left}.subtabs{overflow:auto}.table-actions{align-items:flex-start}footer{padding:8px 12px 18px;display:block}footer span{display:block;margin-top:4px}}
 @media(max-width:430px){.kpi-primary,.kpi-secondary,.overview-kpis{grid-template-columns:1fr 1fr}.kpi-label{font-size:11px}.kpi-value{font-size:19px}th,td{padding:7px 7px;font-size:11px}.snapshot-status{display:none}}
+
+/* Dashboard spacing contract: direct standalone cards, not grid children.
+   The result card directly attached to .subtabs intentionally remains flush. */
+.tab-panel > .card + .card{margin-top:12px}
+@media(max-width:767px){.tab-panel > .card + .card{margin-top:10px}}
