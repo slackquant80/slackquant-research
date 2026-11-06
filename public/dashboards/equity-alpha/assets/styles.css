@@ -231,3 +231,14 @@ display:flex;align-items:center;justify-content:space-between;padding:15px 24px}
 .selected-spec-row{background:rgba(75,210,165,.07)}
 .selected-spec-row td:first-child{font-weight:700}
 @media(max-width:900px){.compact-tablewrap{overflow-x:auto}.risk-profile-table,.robustness-cost-table,.robustness-blend-table{min-width:660px!important}}
+
+/* Dashboard spacing contract: retain existing grid gaps and .section rhythm.
+   Standalone stacked panels need a defined vertical gap at every page. */
+.page.active > .panel + .panel,
+.page.active > .chart + .panel,
+.page.active > .panel + .chart{margin-top:15px}
+@media(max-width:700px){
+ .page.active > .panel + .panel,
+ .page.active > .chart + .panel,
+ .page.active > .panel + .chart{margin-top:12px}
+}
