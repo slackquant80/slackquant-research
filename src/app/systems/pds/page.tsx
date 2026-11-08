@@ -309,7 +309,7 @@ export default function PdsSystemPage() {
               }))}
               primaryLabel="PDS Core + Dynamic FX"
               benchmarkLabel="PDS Core"
-              subtitle={`Common comparable history from May 2017 · completed through ${state.completedThrough} · current MTD excluded`}
+              subtitle={`Common comparable history from May 2017 · completed through ${state.performance.find((row) => row.label === "PDS Core")?.supportEnd ?? state.completedThrough} · current MTD excluded`}
             />
             <RecentMonthlyReturnsChart rows={state.recentMonthlyReturns} />
             <div className="evidence-table-wrap" role="region" aria-label="PDS four-portfolio cumulative performance summary" tabIndex={0}>
