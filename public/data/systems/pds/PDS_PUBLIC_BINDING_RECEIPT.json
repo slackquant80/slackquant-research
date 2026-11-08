@@ -2,7 +2,7 @@
   "active_core_policy": "GOVERNED_STRATEGIC_ALLOCATION__RECIPE_PROTECTED",
   "active_core_public_identity": "ADAA + F2R",
   "authority": "PUBLIC_RESEARCH_NO_PORTFOLIO_AUTHORITY",
-  "bound_at": "2026-11-08T04:58:48.708300+00:00",
+  "bound_at": "2026-11-08T08:42:38.190581+00:00",
   "bound_files_sha256": {
     "public_active_core_asset_targets.csv": "17abf38aa4e7bb3475413d33319f3c52fe54f2a1c696a25aec9b8ad3ecf9c93c",
     "public_core_calendar_returns.csv": "f98e9f914ba4416f265a649504034c6ae9faaf11d7c6ddb9a32300288f368820",
@@ -11,19 +11,19 @@
     "public_core_performance_summary.csv": "4e362a3e79b20f88a15679e60f3913ae9252f0574ff8eb27d897852ffa3e3c20",
     "public_core_strategy_roster.csv": "776e141068fca5747d9bcaf973096f19bfd3c17b4faced57e335462e7a62d8c1",
     "public_disclosure_state.json": "6a191f58ddea024dbb381d4a19c2c8fe78d8fb6ce6a2a6f6aafb17eb2b9d944e",
-    "public_export_manifest.json": "f7153b8f211f79a088e4728ddf6ed2f44e9a3cd21d098b0d28abfa04e60926fb",
+    "public_export_manifest.json": "3946c607a54fa407c3a0affc984f9cc29e3ba105867c1a3aec1a40079411ea50",
     "public_fx_calendar_returns.csv": "2761a9615a34c9ca5b986dc36ea816e392f77192726eb526745b0511a0573793",
     "public_fx_hedge_history.csv": "dd5f8db8df828ef565d7f0e66f49acae61762bf2237ca363e44216985c76f6c6",
     "public_fx_performance_path.csv": "bfb73c36143570df8abddda8bd4dc736156f834a1f54a7ff09d4a294edc719b7",
     "public_fx_performance_summary.csv": "0b648f223d2a6a63c8210c6eb1f4e1d133a0f3325dba38b4423a4d13b795184f",
     "public_recent_12m_returns.csv": "70724ff63f118d1b5459cc9ec74a6ef74707f932518bcd51ed84927084f971f5",
-    "public_recent_12m_returns.xlsx": "e359dd03cffe977de12084c4b133a5204ce24e47c5387dd0741607becb25d4cf",
+    "public_recent_12m_returns.xlsx": "3634703e78199f6d63845556b66c438d6b79acf8a49e1067ea74948b479dba12",
     "public_system_identity.json": "a8b43911065fa8d92048f69f8acf88da551238c5739907cd26bdcf176230358a",
     "public_variants.json": "2b358ec660513ec677c3f6b0d876abfece1570d76f311c7a7b404f61ec9ac4c9"
   },
   "completed_holding_month_cutoff": "2026-10",
   "latest_released_signal_period": "2026-09",
   "public_as_of_date": "2026-11-08",
-  "source_export_manifest_sha256": "f7153b8f211f79a088e4728ddf6ed2f44e9a3cd21d098b0d28abfa04e60926fb",
+  "source_export_manifest_sha256": "3946c607a54fa407c3a0affc984f9cc29e3ba105867c1a3aec1a40079411ea50",
   "status": "PDS_SLACKQUANT_PUBLIC_BINDING_PASS"
 }
