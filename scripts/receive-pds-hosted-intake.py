@@ -278,7 +278,9 @@ def require_reviewed_same_clock_artifact(app: Path, records: dict[str, bytes]) -
         if label == "fx":
             # Routing limit for *review only*, NOT an identity tolerance and
             # NEVER a standing authorization for future historical corrections.
-            require(changed > 0 and max_bp <= 0.05,
+            # A same-clock dashboard-only revision may leave all historical FX returns unchanged.
+            # Keep the existing 0.05 bp cap if FX does change; this remains DRAFT-only.
+            require(max_bp <= 0.05,
                     "same-clock FX revision outside bounded review candidate")
         stats[label] = {"rows":len(old),"changed":changed,"max_abs_delta_bp":round(max_bp,10)}
     print("PDS_SAME_CLOCK_HTML_REVIEW_STAGING_ONLY", json.dumps({
