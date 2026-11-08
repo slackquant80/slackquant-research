@@ -257,6 +257,10 @@ class IntakeSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "explicit review"):
             receiver.nonregression(app, candidate, clock)
 
+        # A same-clock HTML-only Adaptive Preview fix may have NO FX delta.
+        # It is reviewable only under the explicit draft-review switch.
+        receiver.nonregression(app, candidate, clock, review_same_clock_html=True)
+
         fx_rel = receiver.EXPORT_PREFIX + "public_fx_performance_path.csv"
         baseline = candidate[fx_rel].decode("utf-8").splitlines()
         field = baseline[0].split(",").index("net_return")
