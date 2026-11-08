@@ -57,7 +57,7 @@ export type PdsCanonicalSummary = {
 // Do not hand-edit numerical values; refresh through the PDS publication workflow.
 export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
-  "generatedAt": "2026-11-08T13:50:37.516550+09:00",
+  "generatedAt": "2026-11-08T17:30:15.079082+09:00",
   "systemAsOfKst": "2026-11-08T12:39:22.004013+09:00",
   "officialSignal": "2026-10",
   "holdingMonth": "2026-11",
@@ -74,9 +74,9 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "previewSignal": "2026-11",
   "previewHolding": "2026-12",
   "previewThrough": "2026-11-06",
-  "adaptivePreviewAvailable": false,
-  "adaptivePreviewState": null,
-  "adaptivePreviewRiskBudget": null,
+  "adaptivePreviewAvailable": true,
+  "adaptivePreviewState": "NORMAL",
+  "adaptivePreviewRiskBudget": 1.0,
   "officialFxHedge": 0.5,
   "officialFxZscore": -0.1285143179328798,
   "previewFxAvailable": true,
