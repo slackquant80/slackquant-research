@@ -45,7 +45,7 @@ async function browser(){
  need(bin,'CHROMIUM_BINARY_MISSING');const dir=await mkdtemp(path.join(os.tmpdir(),'slackquant-public-qa-'));
  const child=spawn(bin,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--disable-background-networking','--remote-debugging-port=0','--user-data-dir='+dir,'about:blank'],{stdio:'ignore'});
  let port;for(let i=0;i<100;i++){try{port=+(await readFile(path.join(dir,'DevToolsActivePort'),'utf8')).split('\n')[0];if(port)break}catch{}await pause(100)}
- need(port,'CHROMIUM_START_FAILED');return {port,async cleanup(){child.kill('SIGTERM');await pause(250);await rm(dir,{recursive:true,force:true})}};
+ need(port,'CHROMIUM_START_FAILED');return {port,async cleanup(){child.kill('SIGTERM');await pause(500);try{await rm(dir,{recursive:true,force:true,maxRetries:8,retryDelay:250})}catch(e){console.warn('CHROMIUM_TEMP_CLEANUP_WARNING '+e.code)}}};
 }
 async function tab(port){
  const response=await fetch('http://127.0.0.1:'+port+'/json/new?about:blank',{method:'PUT'});need(response.ok,'CDP_TAB_NOT_CREATED');
