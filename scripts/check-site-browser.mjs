@@ -77,7 +77,7 @@ async function run(){
       for(const item of pages){const key=JSON.stringify(item.page);
         await c.eval('document.querySelector("button[data-page="+'+key+'+"]").click()');await pause(180);
         const active=await c.eval('(()=>{const a=document.querySelector("button[data-page="+'+key+'+"]");return !!a&&(a.classList.contains("active")||a.classList.contains("is-active")||a.getAttribute("aria-selected")==="true")})()');
-        result.checks.push('NAV_'+item.page+'_'+(active?'active':'clicked'));
+        need(active,'EQUITY_NAV_NOT_ACTIVATED_'+item.page);result.checks.push('NAV_'+item.page+'_active');
       }
       need(s.links.some(x=>/\.xlsx(?:$|\?)/i.test(x))||s.bodyText.includes('Excel'),'EQUITY_EXCEL_EXPORT_MISSING');
     }
