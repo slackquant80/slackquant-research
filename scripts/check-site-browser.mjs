@@ -10,7 +10,7 @@ const flag=(name,def)=>{const n=argv.indexOf(name);return n<0?def:argv[n+1]};
 const base=flag('--base','https://research.slackquant.com').replace(/\/$/,'');
 const selftest=argv.includes('--self-test'),capture=argv.includes('--capture');
 const out=flag('--out',path.resolve('browser-qa-results'));
-const routes=selftest?['/']:['/','/systems/','/research/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
+const routes=selftest?['/']:['/','/systems/','/research/','/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
 const viewports=[{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 function need(cond,message){if(!cond)throw Error(message)}
@@ -73,6 +73,36 @@ async function run(){
     if(route==='/')need(s.links.some(x=>x.includes('/systems/')),'HOME_SYSTEMS_LINK_MISSING');
     if(route==='/systems/')for(const name of ['pds','adaa','f2r','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
     if(route.startsWith('/systems/')&&route!='/systems/'&&!route.endsWith('/dashboard/'))need(s.links.some(x=>x.includes('dashboard')),'DASHBOARD_LINK_MISSING');
+    if(route==='/systems/pds/dashboard/'||route==='/systems/adaa/dashboard/'){
+      const frame=await c.eval('(()=>{const f=document.querySelector("iframe"),d=f?.contentDocument;return {found:!!f,ready:d?.readyState||"",chars:(d?.body?.innerText||"").trim().length,src:f?.src||""}})()');
+      need(frame.found&&frame.ready==='complete'&&frame.chars>=300,'DASHBOARD_IFRAME_NOT_RENDERED');
+      result.iframe={src:frame.src,contentChars:frame.chars};result.checks.push('IFRAME_CONTENT_RENDERED');
+      if(route==='/systems/adaa/dashboard/'){
+        for(const name of ['monitor','overview','allocations']){
+          const key=JSON.stringify(name);
+          const ok=await c.eval('(()=>{const d=document.querySelector("iframe").contentDocument;const b=d.querySelector("button[data-tab="+'+key+'+"]");if(!b)return false;b.click();return b.classList.contains("active")})()');
+          need(ok,'ADAA_TAB_NOT_ACTIVATED_'+name);result.checks.push('ADAA_TAB_'+name+'_active');
+        }
+      }
+      if(route==='/systems/pds/dashboard/'){
+        let clicked=0;
+        for(const name of ['Adaptive','Preview','FX','Performance','Portfolio','Core']){
+          const key=JSON.stringify(name);
+          const found=await c.eval('(()=>{const d=document.querySelector("iframe").contentDocument;const b=[...d.querySelectorAll("button,a,[role=tab]")].find(x=>x.innerText?.trim().replace(/^[^A-Za-z]+/,"").trim()==='+key+');if(!b)return false;b.click();return true})()');
+          if(found){clicked++;result.checks.push('PDS_MENU_'+name+'_clicked')}await pause(120);
+        }
+        need(clicked>=4,'PDS_MENU_CONTROLS_NOT_FOUND');
+      }
+    }
+    if(route==='/systems/f2r/dashboard/'){
+      for(const name of ['Current Portfolio','Performance','Portfolio History','System']){
+        const key=JSON.stringify(name);
+        const click=await c.eval('(()=>{const b=[...document.querySelectorAll(".f2r-tabs button")].find(x=>x.textContent.trim()==='+key+');if(!b)return false;b.click();return true})()');
+        need(click,'F2R_TAB_NOT_FOUND_'+name);await pause(180);
+        const active=await c.eval('(()=>{const b=[...document.querySelectorAll(".f2r-tabs button")].find(x=>x.textContent.trim()==='+key+');return b?.getAttribute("aria-current")==="page"})()');
+        need(active,'F2R_TAB_NOT_ACTIVATED_'+name);result.checks.push('F2R_TAB_'+name+'_active');
+      }
+    }
     if(route==='/dashboards/equity-alpha/'){
       const pages=s.buttons.filter(x=>x.page);need(pages.length>=6,'EQUITY_NAV_SECTIONS_MISSING');
       for(const item of pages){const key=JSON.stringify(item.page);
