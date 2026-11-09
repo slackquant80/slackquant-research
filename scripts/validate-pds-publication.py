@@ -170,9 +170,16 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     mark_holding = str(mark.get("holding_month") or "").strip()
     if mark_holding and mark_holding != expected_holding:
         raise RuntimeError(f"PDS canonical holding clock mismatch: Official {official_signal} implies {expected_holding}, mark has {mark_holding}")
-    completed = str(mark.get("completed_performance_cutoff") or core_row.get("end_date") or "").strip()
+    # Completed performance means the last traded daily observation. The
+    # administrative month-end cutoff may fall on a nontrading weekend.
+    completed = str(core_row.get("end_date") or "").strip()
+    calendar_cutoff = str(mark.get("completed_performance_cutoff") or "").strip()
     if not completed:
-        raise RuntimeError("PDS canonical completed-performance cutoff is unavailable")
+        raise RuntimeError("PDS canonical completed trading-close cutoff is unavailable")
+    if calendar_cutoff and (calendar_cutoff[:7] != completed[:7] or
+                             strict_calendar_day(calendar_cutoff, "calendar completed cutoff") <
+                             strict_calendar_day(completed, "completed market close")):
+        raise RuntimeError("PDS completed market-close/calendar-cutoff mismatch")
     mark_through = str(mark.get("latest_price_date") or mark.get("data_through_ny_close") or completed).strip()
     mark_available = current_mark.get("available") is True and str(mark.get("status") or "") == "PASS_PROVISIONAL_MARK"
     execution = str(mark.get("execution_date") or "").strip()
