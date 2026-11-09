@@ -508,7 +508,7 @@ function renderPerformance(){
 function renderHoldings(){
  const h=investorHoldings(),ph=previewInvestorHoldings(true),pm=L.preview?.meta||{};
  $('#holdingProfileContext').textContent=`OFFICIAL FINAL PORTFOLIO · ${profileLabel()} · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}`;
- $('#holdingsSignalContext').textContent=`Official target: Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · Current wt as-of ${L.meta?.marketDataThrough||'—'} · Per-ETF holding return: execution close ${L.meta?.executionDate||'—'} → ${L.meta?.marketDataThrough||'—'} (zero on execution day); portfolio Current MTD also includes opening-month rebalance costs`;
+ $('#holdingsSignalContext').textContent=`Official target: Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · Current wt as-of ${L.meta?.marketDataThrough||'—'} · Holding MTD ${L.meta?.mtdBaselineDate||'—'} → ${L.meta?.marketDataThrough||'—'} provisional / execution-day stitched`;
  const barRows=h.map(x=>({label:`${x.ticker} · ${x.roleFamily}`,weight:x.targetWeight,isCore:x.status==='CORE'}));
  bars($('#holdingBars'),barRows,'weight','label',v=>pct(v,2),'isCore');
  const roles={};h.forEach(x=>{const g=x.status==='CORE'?'Benchmark Core':String(x.group||'Global Equity');roles[g]=(roles[g]||0)+Number(x.targetWeight||0)});
@@ -562,7 +562,7 @@ function renderUniverse(){
  if(isStatic){
   $('#universeViewTabs').innerHTML=`<button class="active">ML Static (${S.canonicalCount??staticRows.length??0})</button>`;
  }else{
-  const views=[['latest',`Current universe (${latest.length})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
+  const views=[['latest',`Current universe (${U.latestCount??0})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
   $('#universeViewTabs').innerHTML=views.map(([k,l])=>`<button data-v="${k}" class="${universeView===k?'active':''}">${l}</button>`).join('');
   $('#universeViewTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{universeView=b.dataset.v;renderUniverse()});
  }
