@@ -86,7 +86,7 @@ async function run(){
       need(head.ok,'EQUITY_EXCEL_EXPORT_HTTP_'+head.status);result.checks.push('EQUITY_EXCEL_EXPORT_HTTP_200');
     }
     if(route==='/systems/f2r/dashboard/'&&s.loading){await pause(5000);s=await c.eval('('+collect.toString()+')()');if(s.loading)result.errors.push('F2R_RUNTIME_DATA_STILL_LOADING')}
-    const critical=c.errors.filter(e=>!/favicon\\.ico|apple-touch-icon|robots\\.txt/i.test(e));
+    const critical=c.errors.filter(e=>!/favicon\.ico|apple-touch-icon|robots\.txt/i.test(e));
     for(const message of critical){
       if(/CONSOLE UNKNOWN_URL Failed to load resource.*status of 404/.test(message)){
         (result.warnings ||= []).push('UNLOCATED_404_CONSOLE_MESSAGE_REVIEWED_SEPARATELY');
