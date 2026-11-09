@@ -204,9 +204,19 @@ def canonical_clock(data: dict[str, Any]) -> dict[str, str]:
     if mark_holding and mark_holding != expected_holding:
         raise RuntimeError(f"PDS canonical holding clock mismatch: Official {official_signal} implies {expected_holding}, mark has {mark_holding}")
 
-    completed = str(mark.get("completed_performance_cutoff") or core_row.get("end_date") or "").strip()
-    if not completed:
-        raise RuntimeError("PDS canonical completed-performance cutoff is unavailable")
+    # The provisional-mark cutoff may be an administrative month-end even
+    # when that calendar day has no US ETF trading session. Completed-through
+    # means the last actual completed Core performance close.
+    completed = str(core_row.get("end_date") or "").strip()
+    calendar_cutoff = str(mark.get("completed_performance_cutoff") or "").strip()
+    if not completed or len(completed) != 10 or completed[4] != "-" or completed[7] != "-":
+        raise RuntimeError("PDS canonical completed trading-close cutoff is unavailable")
+    if calendar_cutoff and (
+        len(calendar_cutoff) != 10
+        or calendar_cutoff[:7] != completed[:7]
+        or calendar_cutoff < completed
+    ):
+        raise RuntimeError("PDS canonical completed trading close conflicts with calendar cutoff")
     mark_available = current_mark.get("available") is True and str(mark.get("status") or "") == "PASS_PROVISIONAL_MARK"
     # A calendar-month performance cutoff is not necessarily a trading close.
     # When no provisional mark exists, use the completed Core series end date.
