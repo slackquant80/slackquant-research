@@ -7,10 +7,16 @@ on:
     # Keep the next material main push as the single deployment trigger.
     paths-ignore:
       - ".github/workflows/deploy-pages.yml"
+      - "scripts/check-site-browser.mjs"
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
+    inputs:
+      audit_only:
+        description: "Browser QA only; no build, Pages deploy, or model refresh"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -25,7 +31,7 @@ jobs:
   build:
     # Avoid spending runner minutes on unapproved Draft intake proposals.
     # Non-draft PRs retain release-validation coverage; main pushes still deploy.
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && (github.event_name != 'workflow_dispatch' || inputs.audit_only != true)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -66,7 +72,7 @@ jobs:
           path: ./out
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.audit_only != true)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -104,3 +110,37 @@ jobs:
       - name: Verify live 4-system data bytes and source evidence (read-only)
         run: python3 scripts/check-four-system-live-release.py --root . --source-sha "${GITHUB_SHA}"
 
+
+      - name: Setup Node 24 for postdeploy browser QA
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Public desktop/mobile browser QA after actual deployment
+        run: node scripts/check-site-browser.mjs --out browser-qa-results
+
+  browser_audit:
+    # Run exactly for this bounded QA PR or later explicit audit-only dispatch. No deploy.
+    if: (github.event_name == 'workflow_dispatch' && inputs.audit_only == true) || (github.event_name == 'pull_request' && github.head_ref == 'audit/browser-four-systems-no-user-screenshots-20261109')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout browser QA implementation
+        uses: actions/checkout@v6
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Chromium self-test on isolated synthetic document
+        run: node scripts/check-site-browser.mjs --self-test --out browser-qa-selftest
+      - name: Inspect currently published site in Chromium (desktop and mobile)
+        run: node scripts/check-site-browser.mjs --capture --out browser-qa-results
+      - name: Retain generated browser screenshots and findings for 1 day
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slackquant-public-browser-qa
+          path: browser-qa-results/
+          retention-days: 1
+          if-no-files-found: warn
