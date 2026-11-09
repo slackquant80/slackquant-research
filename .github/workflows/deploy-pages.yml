@@ -115,8 +115,8 @@ jobs:
         run: node scripts/check-site-browser.mjs --out browser-qa-results
 
   browser_audit:
-    # One-off owner-authorized live browser inspection. Do not deploy.
-    if: github.event_name == 'workflow_dispatch' && inputs.audit_only == true
+    # Run exactly for this bounded QA PR or later explicit audit-only dispatch. No deploy.
+    if: (github.event_name == 'workflow_dispatch' && inputs.audit_only == true) || (github.event_name == 'pull_request' && github.head_ref == 'audit/browser-four-systems-no-user-screenshots-20261109')
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
