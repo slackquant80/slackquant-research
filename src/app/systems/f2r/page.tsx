@@ -195,7 +195,7 @@ export default function F2rSystemPage() {
               {item.links.deploymentRepository ? (
                 <a className="artifact" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
                   <span className="artifact-kicker">PUBLIC DATA SOURCE</span>
-                  <strong>F2R Source Repository</strong>
+                  <strong>GitHub Repository</strong>
                   <small>Source-owned public operating snapshot and validation evidence. The official dashboard runs on SlackQuant GitHub Pages.</small>
                   <span className="artifact-action">View Repository ↗</span>
                 </a>
