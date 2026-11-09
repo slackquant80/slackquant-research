@@ -63,7 +63,7 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "holdingMonth": "2026-11",
   "executionClose": "2026-11-02",
   "markThrough": "2026-11-06",
-  "completedThrough": "2026-10-31",
+  "completedThrough": "2026-10-30",
   "coreProviders": [
     "ADAA",
     "F2R"

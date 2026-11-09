@@ -58,6 +58,22 @@ def completed(system):
          f'{system}: non-finite public wealth')
     return end
 
+# The generated PDS platform clock is a completed TRADING close, not the
+# administrative calendar month-end. Enforce parity against PDS Core's own
+# support end; independent systems may refresh on different days.
+pds_summary = txt('src/data/pdsCanonicalSummary.ts')
+pds_completed = re.search(r'"completedThrough":\s*"(\d{4}-\d{2}-\d{2})"', pds_summary)
+pds_core_end = re.search(r'"label":\s*"PDS Core",\s*"supportStart":\s*"[^"]+",\s*"supportEnd":\s*"(\d{4}-\d{2}-\d{2})"', pds_summary)
+need(pds_completed is not None and pds_core_end is not None
+     and pds_completed.group(1) == pds_core_end.group(1),
+     'PDS: platform completed-through differs from actual Core trading-close support')
+# F2R's official operating viewer is first-party GitHub Pages; avoid
+# accidentally reintroducing legacy Streamlit deployment claims in the UI.
+f2r_system_page = txt('src/app/systems/f2r/page.tsx')
+need('Streamlit' not in f2r_system_page and
+     '/systems/f2r/dashboard/' in systems,
+     'F2R: obsolete Streamlit description or missing official static dashboard link')
+
 adaa_end, f2r_end = completed('adaa'), completed('f2r')
 adaa = js_payload('public/assets/systems/adaa/snapshot.js', 'window.ADAA_SNAPSHOT =')
 a_meta = adaa.get('snapshot_meta') or {}
