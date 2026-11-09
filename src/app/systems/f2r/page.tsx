@@ -194,9 +194,9 @@ export default function F2rSystemPage() {
               ) : null}
               {item.links.deploymentRepository ? (
                 <a className="artifact" href={item.links.deploymentRepository} target="_blank" rel="noopener noreferrer">
-                  <span className="artifact-kicker">PUBLIC DEPLOYMENT</span>
-                  <strong>GitHub Repository</strong>
-                  <small>Previous public Streamlit interface retained as a rollback during the static viewer transition.</small>
+                  <span className="artifact-kicker">PUBLIC DATA SOURCE</span>
+                  <strong>F2R Source Repository</strong>
+                  <small>Source-owned public operating snapshot and validation evidence. The official dashboard runs on SlackQuant GitHub Pages.</small>
                   <span className="artifact-action">View Repository ↗</span>
                 </a>
               ) : null}
