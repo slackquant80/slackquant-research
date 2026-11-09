@@ -52,6 +52,9 @@ jobs:
       - name: Canonical release validation
         run: npm run validate:release
 
+      - name: Offline four-system publication audit regression
+        run: python3 scripts/check-four-system-live-release.py --self-test
+
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'
         run: touch out/.nojekyll
@@ -96,3 +99,8 @@ jobs:
           done
           echo "POSTDEPLOY_FOUR_SYSTEM_HTTP_SMOKE_DONE status=$bad scope=reachability_not_data_or_visual_parity"
           exit "$bad"
+      - name: Checkout verified Pages release for data-byte parity
+        uses: actions/checkout@v6
+      - name: Verify live 4-system data bytes and source evidence (read-only)
+        run: python3 scripts/check-four-system-live-release.py --root . --source-sha "${GITHUB_SHA}"
+
