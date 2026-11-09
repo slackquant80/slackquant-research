@@ -19,7 +19,8 @@ class CDP{
   this.ws.addEventListener('message',e=>{let v;try{v=JSON.parse(e.data)}catch{return}
    if(v.id){const p=this.waiting.get(v.id);if(p){this.waiting.delete(v.id);v.error?p.reject(Error(v.error.message)):p.resolve(v.result||{})}}
    else if(v.method==='Runtime.exceptionThrown')this.errors.push('JS_EXCEPTION '+(v.params.exceptionDetails?.text||'unknown'));
-   else if(v.method==='Log.entryAdded'&&v.params.entry?.level==='error')this.errors.push('CONSOLE '+v.params.entry.text);
+   else if(v.method==='Log.entryAdded'&&v.params.entry?.level==='error')this.errors.push('CONSOLE '+(v.params.entry.url||'UNKNOWN_URL')+' '+v.params.entry.text);
+   else if(v.method==='Network.responseReceived'&&v.params.response?.status>=400)this.errors.push('HTTP_RESOURCE_'+v.params.response.status+' '+v.params.response.url);
   });
  }
  async ready(){if(this.ws.readyState===1)return;await new Promise((yes,no)=>{this.ws.addEventListener('open',yes,{once:true});this.ws.addEventListener('error',no,{once:true});setTimeout(()=>no(Error('CDP_OPEN_TIMEOUT')),12000)})}
@@ -49,7 +50,7 @@ async function browser(){
 async function tab(port){
  const response=await fetch('http://127.0.0.1:'+port+'/json/new?about:blank',{method:'PUT'});need(response.ok,'CDP_TAB_NOT_CREATED');
  const info=await response.json(),c=new CDP(info.webSocketDebuggerUrl);await c.ready();
- for(const n of ['Page.enable','Runtime.enable','Log.enable'])await c.send(n);return c;
+ for(const n of ['Page.enable','Runtime.enable','Log.enable','Network.enable'])await c.send(n);return c;
 }
 async function run(){
  await mkdir(out,{recursive:true});const chrom=await browser(),results=[];let failed=0;
@@ -79,10 +80,18 @@ async function run(){
         const active=await c.eval('(()=>{const a=document.querySelector("button[data-page="+'+key+'+"]");return !!a&&(a.classList.contains("active")||a.classList.contains("is-active")||a.getAttribute("aria-selected")==="true")})()');
         need(active,'EQUITY_NAV_NOT_ACTIVATED_'+item.page);result.checks.push('NAV_'+item.page+'_active');
       }
-      need(s.links.some(x=>/\.xlsx(?:$|\?)/i.test(x))||s.bodyText.includes('Excel'),'EQUITY_EXCEL_EXPORT_MISSING');
+      const excel=await c.eval('(()=>{const a=[...document.querySelectorAll("a[href]")].find(x=>/\\.xlsx(?:$|\\?)/i.test(x.href));return a?.href||null})()');
+      need(excel,'EQUITY_EXCEL_EXPORT_LINK_MISSING');
+      const head=await fetch(excel,{method:'HEAD',signal:AbortSignal.timeout(20000)});
+      need(head.ok,'EQUITY_EXCEL_EXPORT_HTTP_'+head.status);result.checks.push('EQUITY_EXCEL_EXPORT_HTTP_200');
     }
     if(route==='/systems/f2r/dashboard/'&&s.loading){await pause(5000);s=await c.eval('('+collect.toString()+')()');if(s.loading)result.errors.push('F2R_RUNTIME_DATA_STILL_LOADING')}
-    if(c.errors.length)result.errors.push(...c.errors.slice(0,5));
+    const critical=c.errors.filter(e=>!/favicon\\.ico|apple-touch-icon|robots\\.txt/i.test(e));
+    for(const message of critical){
+      if(/CONSOLE UNKNOWN_URL Failed to load resource.*status of 404/.test(message)){
+        (result.warnings ||= []).push('UNLOCATED_404_CONSOLE_MESSAGE_REVIEWED_SEPARATELY');
+      }else{result.errors.push(message)}
+    }
     if(capture||result.errors.length){const img=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
       const file=mode.name+'_'+(route==='/'?'home':route.replace(/^\/|\/$/g,'').replace(/\//g,'_'))+'.png';
       await writeFile(path.join(out,file),Buffer.from(img.data,'base64'));result.screenshot=file;
