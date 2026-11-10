@@ -1,0 +1,144 @@
+name: Independently verify staged PDS/ADAA public candidate (NO deployment)
+
+# Run from a trusted main workflow after the source-owned intake stages its Draft PR.
+# workflow_dispatch, not pull_request: bot-created Draft PRs otherwise require
+# repetitive owner clicks or get misleading SKIPPED Pages checks.
+on:
+  workflow_dispatch:
+    inputs:
+      system:
+        description: PDS or ADAA
+        required: true
+        type: choice
+        options: [PDS, ADAA]
+      candidate_pr:
+        description: Exact existing Draft PR number
+        required: true
+        type: string
+      expected_head:
+        description: Pinned 40-digit candidate commit
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: public-intake-verify-${{ inputs.candidate_pr }}-${{ inputs.expected_head }}
+  cancel-in-progress: false
+
+jobs:
+  check-pinned-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CANDIDATE_PR: ${{ inputs.candidate_pr }}
+      CANDIDATE_SYSTEM: ${{ inputs.system }}
+      CANDIDATE_SHA: ${{ inputs.expected_head }}
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout trusted source-only auditor from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Authenticate pinned Draft PR, exact file scope and platform main
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$CANDIDATE_PR" =~ ^[1-9][0-9]{0,5}$ ]]
+          [[ "$CANDIDATE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$CANDIDATE_SYSTEM" =~ ^(PDS|ADAA)$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$CANDIDATE_PR" > "$RUNNER_TEMP/pr.json"
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$CANDIDATE_PR/files?per_page=100" > "$RUNNER_TEMP/files.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          pr=json.loads((Path(os.environ["RUNNER_TEMP"])/"pr.json").read_text())
+          files=json.loads((Path(os.environ["RUNNER_TEMP"])/"files.json").read_text())
+          system=os.environ["CANDIDATE_SYSTEM"]
+          sha=os.environ["CANDIDATE_SHA"]
+          assert pr["state"]=="open" and pr["draft"] is True
+          assert pr["base"]["ref"]=="main"
+          assert pr["head"]["sha"]==sha, "CANDIDATE_HEAD_DRIFT_HOLD"
+          assert pr["head"]["repo"]["full_name"]==os.environ["GITHUB_REPOSITORY"]
+          names=[f["filename"] for f in files]
+          assert 1<=len(names)<80
+          if system=="ADAA":
+              assert pr["head"]["ref"].startswith("review/adaa-hosted-")
+              allowed={
+                "public/assets/systems/adaa/snapshot.js",
+                "public/assets/systems/adaa/ADAA_Portfolio_Target_History.xlsx",
+                "public/assets/systems/adaa/index.html",
+                "public/assets/systems/adaa/dashboard.js",
+                "public/assets/systems/adaa/adaa-theme.css"}
+              assert set(names)<=allowed and "public/assets/systems/adaa/snapshot.js" in names
+          else:
+              assert pr["head"]["ref"].startswith("release/pds-hosted-intake-")
+              fixed={"src/data/pdsPublicSnapshot.ts",
+                     "src/data/pdsCanonicalSummary.ts",
+                     "src/app/systems/pds/dashboard/page.tsx"}
+              allowed=lambda n: n in fixed or n.startswith("public/data/systems/pds/") or n.startswith("public/assets/systems/pds/")
+              assert all(map(allowed,names)), "PDS_UNEXPECTED_SOURCE_PATH_HOLD"
+              assert "public/assets/systems/pds/Portfolio_Decision_System_Public.html" in names
+          print("PINNED_DRAFT_HEAD_AND_EXACT_SCOPE_PASS",system,len(names))
+          PY
+      - name: Fetch only the pinned reviewed PR, never execute untrusted workflow code
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "+refs/pull/$CANDIDATE_PR/head:refs/remotes/origin/reviewed-candidate"
+          test "$(git rev-parse refs/remotes/origin/reviewed-candidate)" = "$CANDIDATE_SHA"
+          git checkout --detach "$CANDIDATE_SHA"
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+          echo "CANDIDATE_PINNED_CHECKOUT_PASS"
+      - name: Verify PDS full canonical HTML does not alter the UI shell
+        if: inputs.system == 'PDS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Trusted auditor comes from main; candidate is data/HTML only.
+          git show "origin/main:scripts/audit-pds-same-clock-html.py" > "$RUNNER_TEMP/pds_html_audit.py"
+          git show "origin/main:public/assets/systems/pds/Portfolio_Decision_System_Public.html" > "$RUNNER_TEMP/pds_base.html"
+          python3 "$RUNNER_TEMP/pds_html_audit.py" "$RUNNER_TEMP/pds_base.html" \
+            public/assets/systems/pds/Portfolio_Decision_System_Public.html > "$RUNNER_TEMP/pds_review.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          x=json.loads((Path(os.environ["RUNNER_TEMP"])/"pds_review.json").read_text())
+          assert x["shell_exact_without_PDL_DATA"], "PDS_HTML_SHELL_CHANGE_HUMAN_REVIEW_HOLD"
+          assert x["tag_and_attribute_identity"] and x["style_block_identity"] and x["script_shell_identity"]
+          assert not x["payload"]["schema"], "PDS_DATA_SCHEMA_DRIFT_HOLD"
+          assert x["static_review"]!="STATIC_UI_OR_PAYLOAD_NONNUMERIC_CHANGE__MANUAL_REVIEW_HOLD", "PDS_NONNUMERIC_CHANGE_HOLD"
+          print("PDS_CANONICAL_HTML_UI_SHELL_UNCHANGED_PASS",x["static_review"])
+          print("PDS_DATA_PAYLOAD_CHANGE_COUNTS",x["payload"]["numeric_changed_total"],x["payload"]["non_numeric_total"])
+          print("PDS_BROWSER_VISUAL_E2E_NOT_RUN_HUMAN_MERGE_REQUIRED")
+          PY
+      - name: Verify ADAA source-bound snapshot shape and monotone clock
+        if: inputs.system == 'ADAA'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,re,subprocess
+          from pathlib import Path
+          p=Path("public/assets/systems/adaa/snapshot.js")
+          raw=p.read_text(encoding="utf-8-sig")
+          m=re.fullmatch(r"\s*window\.ADAA_SNAPSHOT\s*=\s*(\{.*\})\s*;\s*",raw,re.S)
+          assert m, "ADAA_SNAPSHOT_FORMAT_HOLD"
+          new=json.loads(m.group(1))
+          base=subprocess.check_output(["git","show","origin/main:public/assets/systems/adaa/snapshot.js"]).decode("utf-8-sig")
+          old=json.loads(re.fullmatch(r"\s*window\.ADAA_SNAPSHOT\s*=\s*(\{.*\})\s*;\s*",base,re.S).group(1))
+          prev=old["snapshot_meta"]["market_data_through"]
+          current=new["snapshot_meta"]["market_data_through"]
+          assert new["snapshot_meta"]["validation_status"]=="PASS_RAW_PARITY"
+          assert new["decision_clock"]["market_data_through"]==current
+          assert re.fullmatch(r"20\d{2}-\d{2}-\d{2}",current) and current>=prev
+          print("ADAA_APPROVED_SOURCE_RAW_PARITY_AND_MONOTONE_CLOCK_PASS",prev,current)
+          print("ADAA_BROWSER_VISUAL_E2E_NOT_RUN_HUMAN_MERGE_REQUIRED")
+          PY
+      - name: Report review-only status, never publish
+        run: |
+          echo "PUBLIC_CANDIDATE_REVIEW_PASS (no merge, no Pages deploy)"
