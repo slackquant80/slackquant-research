@@ -16,6 +16,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   stage-private-intake:
@@ -135,3 +136,16 @@ jobs:
             --title "ADAA 7-file Thin source candidate — review only" \
             --body "Private source Release: $SOURCE_RELEASE. Pinned manifest SHA256: $SOURCE_SHA256. Public candidate only, NOT approved for production. Keep existing Shiny live. Independently review clock, source/host parity, disclosure, browser functions and release consent before merge or URL change."
           echo "ADAA_DRAFT_PR_CREATED_NO_AUTO_RELEASE"
+      - name: Automatically verify this exact Draft candidate (no deploy, no manual CI click)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pr="$(gh pr view "$REVIEW_BRANCH" --json number --jq .number)"
+          head="$(git rev-parse HEAD)"
+          [[ "$pr" =~ ^[1-9][0-9]*$ ]]
+          [[ "$head" =~ ^[a-f0-9]{40}$ ]]
+          gh workflow run public-intake-candidate-verify.yml --ref main \
+            -f system=ADAA -f candidate_pr="$pr" -f expected_head="$head"
+          echo "PINNED_DRAFT_INDEPENDENT_CI_DISPATCHED_NO_PUBLICATION pr=$pr head=$head"
