@@ -22,6 +22,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 concurrency:
   group: pds-hosted-intake-stage-review
@@ -195,3 +196,17 @@ jobs:
           Same-clock canonical HTML changes, if present, are REVIEW STAGING ONLY. They were not proven to be financial-number-only diffs; require independent exact HTML/UI review before any merge.
           Same-clock review override explicitly requested: $PDS_SAME_CLOCK_HTML_REVIEW
           NO PUBLICATION AUTHORITY IS CONFERRED BY THIS PR."
+      - name: Automatically verify this exact Draft candidate (no deploy, no manual CI click)
+        if: steps.material.outputs.changed == 'true' && steps.stage.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pr="$(gh pr view "$PDS_REVIEW_BRANCH" --json number --jq .number)"
+          head="$(git rev-parse HEAD)"
+          [[ "$pr" =~ ^[1-9][0-9]*$ ]]
+          [[ "$head" =~ ^[a-f0-9]{40}$ ]]
+          gh workflow run public-intake-candidate-verify.yml --ref main \
+            -f system=PDS -f candidate_pr="$pr" -f expected_head="$head"
+          echo "PINNED_DRAFT_INDEPENDENT_CI_DISPATCHED_NO_PUBLICATION pr=$pr head=$head"
