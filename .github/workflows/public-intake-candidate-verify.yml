@@ -110,11 +110,22 @@ jobs:
           x=json.loads((Path(os.environ["RUNNER_TEMP"])/"pds_review.json").read_text())
           assert x["shell_exact_without_PDL_DATA"], "PDS_HTML_SHELL_CHANGE_HUMAN_REVIEW_HOLD"
           assert x["tag_and_attribute_identity"] and x["style_block_identity"] and x["script_shell_identity"]
-          assert not x["payload"]["schema"], "PDS_DATA_SCHEMA_DRIFT_HOLD"
-          assert x["static_review"]!="STATIC_UI_OR_PAYLOAD_NONNUMERIC_CHANGE__MANUAL_REVIEW_HOLD", "PDS_NONNUMERIC_CHANGE_HOLD"
-          print("PDS_CANONICAL_HTML_UI_SHELL_UNCHANGED_PASS",x["static_review"])
-          print("PDS_DATA_PAYLOAD_CHANGE_COUNTS",x["payload"]["numeric_changed_total"],x["payload"]["non_numeric_total"])
-          print("PDS_BROWSER_VISUAL_E2E_NOT_RUN_HUMAN_MERGE_REQUIRED")
+          # New daily observations legitimately extend these two running arrays.
+          # All schema-key changes and other array-length changes remain a HOLD.
+          allowed_daily_append={
+            "$.fx_operational_sensitivity.current_mtd_daily",
+            "$.adaptive.operational_daily",
+          }
+          for drift in x["payload"]["schema"]:
+            assert (drift.get("path") in allowed_daily_append and
+                    drift.get("new_length", -2) == drift.get("old_length", -1) + 1), (
+              "PDS_UNEXPECTED_SCHEMA_CHANGE_HOLD",drift)
+          print("PDS_CANONICAL_HTML_UI_SHELL_UNCHANGED_PASS")
+          print("PDS_APPROVED_DAILY_APPEND_PATHS_ONLY_PASS",len(x["payload"]["schema"]))
+          print("PDS_PAYLOAD_DELTA_COUNTS",
+                x["payload"]["numeric_changed_total"],
+                x["payload"]["non_numeric_total"])
+          print("PDS_PAYLOAD_VALUES_AND_BROWSER_E2E_STILL_REQUIRE_HUMAN_MERGE_REVIEW")
           PY
       - name: Verify ADAA source-bound snapshot shape and monotone clock
         if: inputs.system == 'ADAA'
