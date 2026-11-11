@@ -5,6 +5,9 @@ promote via the existing Pages workflow. No financial compute or rights issuance
 import argparse
 import base64
 import hashlib
+import os
+from pathlib import Path
+import tempfile
 import json
 import re
 import subprocess
@@ -67,6 +70,8 @@ SOURCE_ONLY_MAIN_CHANGES={
     "scripts/four-system-release-readiness.py",
     "scripts/one-click-four-system-release.py",
     "scripts/test-one-click-four-system-release.py",
+    "scripts/test-four-system-release-readiness.py",
+    "scripts/sync-f2r-static-state.py",
 }
 def source_base_compatible(source_base,current_main,source_paths):
     if source_base==current_main: return True
@@ -81,6 +86,50 @@ def source_base_compatible(source_base,current_main,source_paths):
        changed.intersection(source_paths):
         raise Hold("MATERIAL_MAIN_CHANGE_SINCE_SOURCE_REVIEW")
     return True
+
+
+def pinned_public_file(repo, path, commit):
+    """Require exact Git blob identity, never a mutable working-tree file."""
+    item=gh(f"repos/{repo}/contents/{path}?ref={commit}")
+    if item.get("encoding")!="base64" or not HEX40.fullmatch(item.get("sha","")):
+        raise Hold("SOURCE_OWNED_PUBLIC_FILE_PIN_UNAVAILABLE: "+path)
+    data=base64.b64decode(item["content"])
+    actual=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\x00"+data).hexdigest()
+    if actual!=item["sha"]:
+        raise Hold("SOURCE_OWNED_PUBLIC_GIT_BLOB_MISMATCH: "+path)
+    return data
+
+
+def validated_f2r_bytes(raw, platform_main):
+    """Run the canonical sync-f2r-static-state.py --check and --write offline.
+    Temp directory only. Retain source exact bytes for Pages postdeploy parity.
+    """
+    script="scripts/sync-f2r-static-state.py"
+    state=F2R_TARGET
+    evidence="public/data/systems/f2r/live_evidence.json"
+    with tempfile.TemporaryDirectory(prefix="sq_f2r_release_") as work:
+        root=Path(work)
+        for name in (script,state,evidence):
+            target=root/name
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_bytes(pinned_public_file(HOST,name,platform_main))
+        approved=root/"source-approved-f2r-public-state.json"
+        approved.write_bytes(raw)
+        for action in ("--check","--write"):
+            try:
+                result=subprocess.run([sys.executable,str(root/script),"--source",
+                     str(approved),action],capture_output=True,text=True,
+                     cwd=root,timeout=35,check=False)
+            except (OSError,subprocess.TimeoutExpired) as exc:
+                raise Hold("F2R_OFFICIAL_SOURCE_SYNC_UNAVAILABLE") from exc
+            if result.returncode:
+                raise Hold("F2R_OFFICIAL_"+action[2:].upper()+"_HOLD: "+
+                           (result.stderr or result.stdout)[-220:])
+        output=(root/state).read_bytes()
+        if output!=raw:
+            raise Hold("F2R_OFFICIAL_OUTPUT_DIFFERS_FROM_APPROVED_SOURCE_BYTES")
+        return output
+
 
 def source_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
@@ -101,10 +150,7 @@ def source_inputs(args):
     proposed_f2r=tree(F2R,f2r_pr["head"]["sha"])
     if f2r_tree.get(F2R_SOURCE)!=proposed_f2r.get(F2R_SOURCE):
         raise Hold("F2R_MERGED_PUBLIC_SOURCE_CHANGED")
-    f2r_file=gh(f"repos/{F2R}/contents/{F2R_SOURCE}?ref={f2r_main}")
-    if f2r_file["encoding"]!="base64":
-        raise Hold("F2R_CANONICAL_BYTES_UNAVAILABLE")
-    f2r_bytes=base64.b64decode(f2r_file["content"])
+    f2r_bytes=pinned_public_file(F2R,F2R_SOURCE,f2r_main)
     doc=json.loads(f2r_bytes)
     if (doc.get("schema_version")!="2.0" or
         doc.get("completed_performance",{}).get("as_of_date")!=
@@ -137,6 +183,8 @@ def source_inputs(args):
         raise Hold("PDS_ADAA_DELETED_SOURCE_FILE_REFUSED")
     if any(path not in eq_tree for path in eq_files):
         raise Hold("EQUITY_DELETED_SOURCE_FILE_REFUSED")
+    # The source-owned PUBLIC_SAFE sync is mandatory, not an ad-hoc JSON copy.
+    f2r_bytes=validated_f2r_bytes(f2r_bytes,main)
     return main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity
 
 def stage(args):
