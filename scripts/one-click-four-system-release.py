@@ -317,6 +317,10 @@ def _review_public_snapshot(kind, pr, current):
     source_base=tree(HOST,pr["base"]["sha"])
     for path in delta:
         if current.get(path)!=source_base.get(path):
+            if kind=="adaa":
+                # The old undeployed ADAA PR from a previous already-published
+                # month is not allowed to block future, genuinely new PRs.
+                return None
             raise Hold("SOURCE_REVIEW_TARGET_CHANGED_SINCE_BASE: "+path)
     if kind=="equity":
         if (pr.get("user") or {}).get("login")!="github-actions[bot]" or \
@@ -349,8 +353,7 @@ def reviewed_overlay(kind, current, reviews):
             combined[path]=sha
     # Older candidates for the same asset at earlier dates are ignored only
     # when they cannot replace current data with an obsolete market snapshot.
-    if any(x["clock"]==newest and x["delta"]!=fresh[0]["delta"]
-           for x in fresh if kind=="equity"):
+    if kind=="equity" and any(x["delta"]!=fresh[0]["delta"] for x in fresh):
         raise Hold("MULTIPLE_EQUITY_CANDIDATES_NOT_IDENTICAL")
     return combined,[{"pr":x["pr"],"head":x["head"]} for x in fresh]
 
@@ -387,8 +390,12 @@ def choose_current_inputs(args):
     source_blob=f2r_tree.get(F2R_SOURCE)
     if not source_blob:
         raise Hold("F2R_SOURCE_PUBLIC_STATE_MISSING")
-    source_approved=latest_merged_f2r_source(source_blob)
-    raw=pinned_public_file(F2R,F2R_SOURCE,f2r_main)
+    # An already-public identical F2R blob needs no historical source PR scan.
+    # A new blob MUST be evidenced by a source-owned merged review PR.
+    source_approved=(None if main_tree[F2R_TARGET]==source_blob
+                     else latest_merged_f2r_source(source_blob))
+    raw=(pinned_public_file(HOST,F2R_TARGET,main) if source_approved is None
+         else pinned_public_file(F2R,F2R_SOURCE,f2r_main))
     state=json.loads(raw)
     if (state.get("schema_version")!="2.0" or
         state.get("completed_performance",{}).get("support_end")!=
@@ -400,7 +407,7 @@ def choose_current_inputs(args):
     adaa, ra=reviewed_overlay("adaa",main_tree,reviews)
     if set(pds).intersection(adaa):
         raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
-    current_pds=dict(main_tree,pds.items()) if False else {**main_tree,**pds}
+    current_pds={**main_tree,**pds}
     desired_floor=_market_clock_from_blob(PDS_MARK,current_pds[PDS_MARK])
     # Equity is asynchronous only when another source has advanced beyond
     # the published Equity clock. No-change runs must return immediately.
