@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Offline negative fixtures for the one-Pages release coordinator."""
 import importlib.util
+import json
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
@@ -105,6 +106,101 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"MATERIAL_MAIN_CHANGE"):
                 mod.source_base_compatible("a"*40,"b"*40,
                            {"public/assets/systems/adaa/snapshot.js"})
+
+    def test_source_only_main_advance_includes_latest_readiness_test(self):
+        delta={"status":"ahead","behind_by":0,"files":[
+           {"filename":".github/workflows/deploy-pages.yml"},
+           {"filename":"scripts/four-system-release-readiness.py"},
+           {"filename":"scripts/one-click-four-system-release.py"},
+           {"filename":"scripts/test-one-click-four-system-release.py"},
+           {"filename":"scripts/test-four-system-release-readiness.py"}]}
+        with patch.object(mod,"gh",return_value=delta):
+            self.assertTrue(mod.source_base_compatible("a"*40,"b"*40,
+                            {"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"}))
+
+    @staticmethod
+    def f2r_fixture(weights=(.25,.25,.25,.25)):
+        holdings=[{"asset":x,"target_weight":w} for x,w in
+                  zip(("EWY","QQQ","SPY","DBC"),weights)]
+        state={"schema_version":"2.0","system":{"short_name":"F2R"},
+               "completed_performance":{"support_end":"2026-10-30",
+                 "as_of_date":"2026-10-30",
+                 "growth_series":[{}]*100,"drawdown_series":[{}]*100},
+               "live_state":{"official":{"signal_period":"2026-10",
+                 "holding_month":"2026-11","holdings":holdings},
+                 "current_mtd":{"available":True,"as_of_date":"2026-11-10"},
+                 "preview":{"available":True,"market_cutoff_date":"2026-11-10"}},
+               "issued_at_utc":"2026-11-11T01:03:39Z"}
+        return json.dumps(state, separators=(",",":")).encode()
+
+    def test_canonical_f2r_sync_preserves_approved_exact_bytes(self):
+        raw=self.f2r_fixture()
+        legacy=self.f2r_fixture()
+        canon=SOURCE.with_name("sync-f2r-static-state.py").read_bytes()
+        payloads={
+          "scripts/sync-f2r-static-state.py":canon,
+          mod.F2R_TARGET:legacy,
+          "public/data/systems/f2r/live_evidence.json":
+             b'{"completedThrough":"2026-10-30"}',
+        }
+        with patch.object(mod,"pinned_public_file",
+             side_effect=lambda repo,path,commit:payloads[path]) as get:
+            self.assertEqual(mod.validated_f2r_bytes(raw,"a"*40),raw)
+        self.assertEqual(get.call_count,3)
+
+    def test_invalid_f2r_weights_hold_before_public_staging(self):
+        raw=self.f2r_fixture((.8,.25,.25,.25))
+        canon=SOURCE.with_name("sync-f2r-static-state.py").read_bytes()
+        payloads={
+          "scripts/sync-f2r-static-state.py":canon,
+          mod.F2R_TARGET:self.f2r_fixture(),
+          "public/data/systems/f2r/live_evidence.json":
+             b'{"completedThrough":"2026-10-30"}',
+        }
+        with patch.object(mod,"pinned_public_file",
+             side_effect=lambda repo,path,commit:payloads[path]):
+            with self.assertRaisesRegex(mod.Hold,"F2R_OFFICIAL_CHECK_HOLD"):
+                mod.validated_f2r_bytes(raw,"a"*40)
+
+    def test_source_clocks_pass_at_exact_market_close(self):
+        pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
+        eq_path="public/dashboards/equity-alpha/data/live_overlay.js"
+        pds={pds_path:"a"*40}
+        eq={eq_path:"b"*40}
+        payloads={
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
+        }
+        with patch.object(mod,"pinned_git_blob_bytes",
+                          side_effect=lambda repo,blob:payloads[blob]):
+            clocks=mod.assert_common_market_clock(pds,eq,self.f2r_fixture())
+        self.assertEqual(set(clocks),{"PDS","F2R_MTD","F2R_PREVIEW","EQUITY"})
+
+    def test_stale_equity_holds_before_any_pr(self):
+        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40}
+        eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
+        payloads={
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-06","benchmark":"ACWI"}};',
+        }
+        with patch.object(mod,"pinned_git_blob_bytes",
+                          side_effect=lambda repo,blob:payloads[blob]):
+            with self.assertRaisesRegex(mod.Hold,"PUBLIC_SOURCE_STALE_EQUITY"):
+                mod.assert_common_market_clock(pds,eq,self.f2r_fixture())
+
+    def test_stale_f2r_mtd_holds_before_any_pr(self):
+        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40}
+        eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
+        payloads={
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
+        }
+        d=json.loads(self.f2r_fixture())
+        d["live_state"]["current_mtd"]["as_of_date"]="2026-11-09"
+        with patch.object(mod,"pinned_git_blob_bytes",
+                          side_effect=lambda repo,blob:payloads[blob]):
+            with self.assertRaisesRegex(mod.Hold,"PUBLIC_SOURCE_STALE_F2R_MTD"):
+                mod.assert_common_market_clock(pds,eq,json.dumps(d).encode())
 
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")

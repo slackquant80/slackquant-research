@@ -14,6 +14,7 @@ on:
       - "scripts/one-click-four-system-release.py"
       - "scripts/test-one-click-four-system-release.py"
       - "scripts/test-four-system-release-readiness.py"
+      - "scripts/sync-f2r-static-state.py"
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]

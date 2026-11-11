@@ -5,6 +5,9 @@ promote via the existing Pages workflow. No financial compute or rights issuance
 import argparse
 import base64
 import hashlib
+import os
+from pathlib import Path
+import tempfile
 import json
 import re
 import subprocess
@@ -67,6 +70,8 @@ SOURCE_ONLY_MAIN_CHANGES={
     "scripts/four-system-release-readiness.py",
     "scripts/one-click-four-system-release.py",
     "scripts/test-one-click-four-system-release.py",
+    "scripts/test-four-system-release-readiness.py",
+    "scripts/sync-f2r-static-state.py",
 }
 def source_base_compatible(source_base,current_main,source_paths):
     if source_base==current_main: return True
@@ -81,6 +86,101 @@ def source_base_compatible(source_base,current_main,source_paths):
        changed.intersection(source_paths):
         raise Hold("MATERIAL_MAIN_CHANGE_SINCE_SOURCE_REVIEW")
     return True
+
+
+def pinned_public_file(repo, path, commit):
+    """Require exact Git blob identity, never a mutable working-tree file."""
+    item=gh(f"repos/{repo}/contents/{path}?ref={commit}")
+    if item.get("encoding")!="base64" or not HEX40.fullmatch(item.get("sha","")):
+        raise Hold("SOURCE_OWNED_PUBLIC_FILE_PIN_UNAVAILABLE: "+path)
+    data=base64.b64decode(item["content"])
+    actual=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\x00"+data).hexdigest()
+    if actual!=item["sha"]:
+        raise Hold("SOURCE_OWNED_PUBLIC_GIT_BLOB_MISMATCH: "+path)
+    return data
+
+
+def validated_f2r_bytes(raw, platform_main):
+    """Run the canonical sync-f2r-static-state.py --check and --write offline.
+    Temp directory only. Retain source exact bytes for Pages postdeploy parity.
+    """
+    script="scripts/sync-f2r-static-state.py"
+    state=F2R_TARGET
+    evidence="public/data/systems/f2r/live_evidence.json"
+    with tempfile.TemporaryDirectory(prefix="sq_f2r_release_") as work:
+        root=Path(work)
+        for name in (script,state,evidence):
+            target=root/name
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_bytes(pinned_public_file(HOST,name,platform_main))
+        approved=root/"source-approved-f2r-public-state.json"
+        approved.write_bytes(raw)
+        for action in ("--check","--write"):
+            try:
+                result=subprocess.run([sys.executable,str(root/script),"--source",
+                     str(approved),action],capture_output=True,text=True,
+                     cwd=root,timeout=35,check=False)
+            except (OSError,subprocess.TimeoutExpired) as exc:
+                raise Hold("F2R_OFFICIAL_SOURCE_SYNC_UNAVAILABLE") from exc
+            if result.returncode:
+                raise Hold("F2R_OFFICIAL_"+action[2:].upper()+"_HOLD: "+
+                           (result.stderr or result.stdout)[-220:])
+        output=(root/state).read_bytes()
+        if output!=raw:
+            raise Hold("F2R_OFFICIAL_OUTPUT_DIFFERS_FROM_APPROVED_SOURCE_BYTES")
+        return output
+
+
+
+def pinned_git_blob_bytes(repo, sha):
+    if not HEX40.fullmatch(sha):
+        raise Hold("PUBLIC_CANDIDATE_BLOB_SHA_INVALID")
+    item=gh(f"repos/{repo}/git/blobs/{sha}")
+    if item.get("encoding")!="base64" or item.get("sha")!=sha:
+        raise Hold("PUBLIC_CANDIDATE_GIT_BLOB_UNAVAILABLE")
+    raw=base64.b64decode(item["content"])
+    if hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()!=sha:
+        raise Hold("PUBLIC_CANDIDATE_GIT_BLOB_CHANGED")
+    return raw
+
+
+def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
+    """Fail before PR creation when source-owned approved snapshots have stale clocks."""
+    pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
+    equity_path=EQUITY+"data/live_overlay.js"
+    if pds_path not in pds_tree or equity_path not in eq_tree:
+        raise Hold("REQUIRED_DATED_PUBLIC_RECEIPT_MISSING")
+    try:
+        pds=json.loads(pinned_git_blob_bytes(HOST,pds_tree[pds_path]))
+        f2r=json.loads(f2r_bytes)
+        ea=pinned_git_blob_bytes(HOST,eq_tree[equity_path]).decode("utf-8-sig").strip()
+        match=re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;",ea,re.S)
+        if not match: raise Hold("EQUITY_PUBLIC_OVERLAY_INVALID")
+        equity=json.loads(match.group(1))
+        if pds.get("status")!="PDS_SLACKQUANT_PUBLIC_BINDING_PASS":
+            raise Hold("PDS_SOURCE_RECEIPT_NOT_PASS")
+        if equity.get("meta",{}).get("benchmark")!="ACWI":
+            raise Hold("EQUITY_PUBLIC_BENCHMARK_INVALID")
+        mtd=f2r["live_state"]["current_mtd"]
+        preview=f2r["live_state"]["preview"]
+        if not mtd.get("available") or not preview.get("available"):
+            raise Hold("F2R_CURRENT_OR_PREVIEW_NOT_AVAILABLE")
+        clocks={"PDS":pds["public_as_of_date"],
+                "F2R_MTD":mtd["as_of_date"],
+                "F2R_PREVIEW":preview["market_cutoff_date"],
+                "EQUITY":equity["meta"]["marketDataThrough"]}
+        for name, value in clocks.items():
+            if not isinstance(value,str) or not re.fullmatch(
+                    r"20\d{2}-\d{2}-\d{2}",value):
+                raise Hold("PUBLIC_SOURCE_CLOCK_INVALID_"+name)
+        floor=clocks["PDS"]
+        for name in ("F2R_MTD","F2R_PREVIEW","EQUITY"):
+            if clocks[name]<floor:
+                raise Hold("PUBLIC_SOURCE_STALE_"+name+"_BELOW_PDS_"+floor)
+    except (KeyError,ValueError,UnicodeError,TypeError) as exc:
+        raise Hold("PUBLIC_SOURCE_CLOCK_PARSE_HOLD") from exc
+    return clocks
+
 
 def source_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
@@ -101,10 +201,7 @@ def source_inputs(args):
     proposed_f2r=tree(F2R,f2r_pr["head"]["sha"])
     if f2r_tree.get(F2R_SOURCE)!=proposed_f2r.get(F2R_SOURCE):
         raise Hold("F2R_MERGED_PUBLIC_SOURCE_CHANGED")
-    f2r_file=gh(f"repos/{F2R}/contents/{F2R_SOURCE}?ref={f2r_main}")
-    if f2r_file["encoding"]!="base64":
-        raise Hold("F2R_CANONICAL_BYTES_UNAVAILABLE")
-    f2r_bytes=base64.b64decode(f2r_file["content"])
+    f2r_bytes=pinned_public_file(F2R,F2R_SOURCE,f2r_main)
     doc=json.loads(f2r_bytes)
     if (doc.get("schema_version")!="2.0" or
         doc.get("completed_performance",{}).get("as_of_date")!=
@@ -137,6 +234,9 @@ def source_inputs(args):
         raise Hold("PDS_ADAA_DELETED_SOURCE_FILE_REFUSED")
     if any(path not in eq_tree for path in eq_files):
         raise Hold("EQUITY_DELETED_SOURCE_FILE_REFUSED")
+    # The source-owned PUBLIC_SAFE sync is mandatory, not an ad-hoc JSON copy.
+    f2r_bytes=validated_f2r_bytes(f2r_bytes,main)
+    assert_common_market_clock(pds_tree,eq_tree,f2r_bytes)
     return main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity
 
 def stage(args):
