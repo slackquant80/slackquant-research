@@ -90,6 +90,22 @@ class ReleaseSafety(unittest.TestCase):
         self.assertEqual(blobs[mod.F2R_TARGET],"e"*40)
         self.assertEqual(len(blobs),3)
 
+    def test_source_only_main_advancement_accepted(self):
+        delta={"status":"ahead","behind_by":0,
+               "files":[{"filename":".github/workflows/deploy-pages.yml"},
+                        {"filename":"scripts/one-click-four-system-release.py"}]}
+        with patch.object(mod,"gh",return_value=delta):
+            self.assertTrue(mod.source_base_compatible("a"*40,"b"*40,
+                            {"public/assets/systems/adaa/snapshot.js"}))
+
+    def test_material_market_change_since_review_refused(self):
+        delta={"status":"ahead","behind_by":0,
+               "files":[{"filename":"public/assets/systems/adaa/snapshot.js"}]}
+        with patch.object(mod,"gh",return_value=delta):
+            with self.assertRaisesRegex(mod.Hold,"MATERIAL_MAIN_CHANGE"):
+                mod.source_base_compatible("a"*40,"b"*40,
+                           {"public/assets/systems/adaa/snapshot.js"})
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
