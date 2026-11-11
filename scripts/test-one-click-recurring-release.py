@@ -80,7 +80,8 @@ class SequentialMarketRelease(unittest.TestCase):
         self.source_tree={k:{m.F2R_SOURCE:self.blobs[i][m.F2R_TARGET]}
                           for i,k in enumerate(self.source_main)}
 
-    def run_at(self, i, pr_eras):
+    def run_at(self, i, pr_eras, source_epoch=None):
+        source_epoch=i if source_epoch is None else source_epoch
         now=self.shas[i]
         pr_list=[self.prs[n] for e in pr_eras for n in
                  (e*100+1,e*100+2,e*100+3)]
@@ -89,7 +90,7 @@ class SequentialMarketRelease(unittest.TestCase):
             if path==f"repos/{m.HOST}/git/ref/heads/main":
                 return {"object":{"sha":now}}
             if path==f"repos/{m.F2R}/git/ref/heads/main":
-                return {"object":{"sha":self.source_main[i]}}
+                return {"object":{"sha":self.source_main[source_epoch]}}
             for n,pr in self.prs.items():
                 if path.startswith(f"repos/{m.HOST}/pulls/{n}/files?"):
                     return [{"filename":path,"status":"modified"}
@@ -118,14 +119,14 @@ class SequentialMarketRelease(unittest.TestCase):
              patch.object(m,"pinned_public_file",side_effect=fake_public),\
              patch.object(m,"pinned_git_blob_bytes",
                           side_effect=lambda repo,sha:self.contents[sha]),\
-             patch.object(m,"latest_merged_f2r_source",return_value=15+i),\
+             patch.object(m,"latest_merged_f2r_source",return_value=15+source_epoch),\
              patch.object(m,"validated_f2r_bytes",side_effect=lambda raw,main:raw):
             return m.choose_current_inputs(SimpleNamespace(stage=True,wait_seconds=60))
 
     def test_nov10_published_then_nov11_then_nochange_then_nov12(self):
         # Start at Nov 10 published; incoming reviewed Nov 11 candidates
         # must be overlaid, WITHOUT loading hard-coded PR #75 / #85.
-        main0,current0,changes1,identity1=self.run_at(0,(1,))
+        main0,current0,changes1,identity1=self.run_at(0,(1,),source_epoch=1)
         self.assertEqual(main0,self.shas[0])
         self.assertEqual(changes1,{
             path:self.blobs[1][path] for path in self.asset.values()})
@@ -140,7 +141,7 @@ class SequentialMarketRelease(unittest.TestCase):
         self.assertIsNone(identityNoop["f2r"]["review"])
         # Next market date / next source-owned PRs, while previous reviews
         # are still OPEN. Only the newest two-clock-dated candidates count.
-        main2,current2,changes2,identity2=self.run_at(1,(1,2))
+        main2,current2,changes2,identity2=self.run_at(1,(1,2),source_epoch=2)
         self.assertEqual(changes2,{
             path:self.blobs[2][path] for path in self.asset.values()})
         self.assertEqual(identity2["equity"][0]["pr"],203)
