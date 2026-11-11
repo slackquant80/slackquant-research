@@ -15,6 +15,9 @@ on:
       - "scripts/test-one-click-four-system-release.py"
       - "scripts/test-four-system-release-readiness.py"
       - "scripts/sync-f2r-static-state.py"
+      - "scripts/equity-standing-publication-policy.json"
+      - "scripts/test-equity-standing-policy.py"
+      - "scripts/verify_equity_intake_release.py"
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]
@@ -72,6 +75,8 @@ jobs:
         run: python3 scripts/test-one-click-four-system-release.py
       - name: Full-snapshot no-change and stale-data release-gate regression
         run: python3 scripts/test-four-system-release-readiness.py
+      - name: Validate Equity standing permission and independent hosted provenance
+        run: python3 scripts/test-equity-standing-policy.py
 
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'

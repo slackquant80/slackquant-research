@@ -1,0 +1,22 @@
+{
+  "schema": "SLACKQUANT_EQUITY_STANDING_PUBLICATION_V1",
+  "status": "ACTIVE",
+  "scope": "public/dashboards/equity-alpha/**",
+  "allowed_source_repo": "slackquant80/research-equity-alpha",
+  "effective_market_data_from": "2026-11-10",
+  "benchmark": "ACWI",
+  "production_authority": "v1.5.0.93",
+  "max_public_files": 7,
+  "receipt_basis": "STANDING_OWNER_POLICY_V1",
+  "eligibility": {
+    "require_current_source_main": true,
+    "require_existing_full_production_gate": true,
+    "require_existing_public_artifact_sanity": true,
+    "require_same_source_and_market_clock": true,
+    "require_clean_completed_history_and_current_nav_overlap": true,
+    "block_unreviewed_source_changes": true
+  },
+  "publication": "ONLY_EXISTING_SOURCE_OWNED_REVIEW_AND_COMBINED_PAGES_QA",
+  "revocation": "Change status to REVOKED on host main; no new automatic receipts afterward",
+  "record": "research-governance Issue #33: owner repeated standing one-click automation requirement; published release still subject to all preexisting scientific/data/CI gates"
+}

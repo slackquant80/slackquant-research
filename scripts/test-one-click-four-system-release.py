@@ -202,6 +202,21 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"PUBLIC_SOURCE_STALE_F2R_MTD"):
                 mod.assert_common_market_clock(pds,eq,json.dumps(d).encode())
 
+    def test_standing_operator_one_confirmation_keeps_policy_bound(self):
+        raw=SOURCE.with_name("equity-standing-publication-policy.json").read_bytes()
+        with patch.object(mod,"gh",return_value={"object":{"sha":"a"*40}}),\
+             patch.object(mod,"pinned_public_file",return_value=raw):
+            self.assertTrue(mod.assert_standing_operator_authority())
+
+    def test_revoked_standing_requires_manual_authorization(self):
+        policy=json.loads(SOURCE.with_name("equity-standing-publication-policy.json").read_bytes())
+        policy["status"]="REVOKED"
+        with patch.object(mod,"gh",return_value={"object":{"sha":"a"*40}}),\
+             patch.object(mod,"pinned_public_file",
+                          return_value=json.dumps(policy).encode()):
+            with self.assertRaisesRegex(mod.Hold,"NOT_ACTIVE"):
+                mod.assert_standing_operator_authority()
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
