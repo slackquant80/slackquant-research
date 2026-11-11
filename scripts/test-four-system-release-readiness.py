@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Synthetic no-network acceptance for the four-system full-snapshot release gate."""
 import importlib.util
+import json
+from types import SimpleNamespace
+from unittest.mock import patch
 from pathlib import Path
 import unittest
 
@@ -45,6 +48,38 @@ class FullSnapshotNoChangeTests(unittest.TestCase):
     def test_missing_file_in_full_tree_holds(self):
         self.tree.remove(gate.REQUIRED["F2R"])
         self.assertIn("F2R_RELEASE_ARTIFACT_ABSENT", self.assess()["hold_reasons"])
+
+    def test_candidate_clocks_read_market_receipt_not_kst_publication_date(self):
+        mark="public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        paths={gate.REQUIRED["PDS"]:"a"*40,
+               gate.REQUIRED["F2R"]:"b"*40,
+               gate.REQUIRED["EquityAlpha"]:"c"*40,
+               mark:"d"*40}
+        raw={
+            "a"*40:json.dumps({"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
+                                "public_as_of_date":"2026-11-11"}).encode(),
+            "d"*40:json.dumps({"status":"PASS","official_mark_through":"2026-11-10"}).encode(),
+            "b"*40:json.dumps({"schema_version":"2.0",
+                 "live_state":{"official":{"holdings":[
+                     {"asset":x,"target_weight":.25} for x in ("EWY","QQQ","SPY","DBC")]},
+                     "current_mtd":{"available":True,"as_of_date":"2026-11-10"},
+                     "preview":{"available":True,"market_cutoff_date":"2026-11-10"}}}).encode(),
+            "c"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"benchmark":"ACWI","marketDataThrough":"2026-11-10"}};',
+        }
+        with patch.object(gate,"published_blob",side_effect=lambda sha:raw[sha]):
+            clocks=gate.candidate_clocks(paths)
+        self.assertEqual(clocks["PDS"],"2026-11-10")
+        self.assertEqual(clocks["PDS_PUBLIC_AS_OF"],"2026-11-11")
+        self.assertEqual(clocks["F2R"],"2026-11-10")
+        self.assertEqual(clocks["EquityAlpha"],"2026-11-10")
+
+    def test_readonly_gh_json_uses_utf8_bytes_under_windows_cp949(self):
+        payload=json.dumps({"title":"금융 리서치","number":123},ensure_ascii=False).encode("utf-8")
+        with patch.object(gate.subprocess,"run",return_value=SimpleNamespace(
+             stdout=payload,stderr=b"",returncode=0)) as run:
+            got=gate.gh_json("repos/sample/pulls/123")
+        self.assertEqual(got["title"],"금융 리서치")
+        self.assertFalse(run.call_args.kwargs["text"])
 
     def test_skipped_draft_ci_never_counts_as_success(self):
         self.pr["draft"] = True

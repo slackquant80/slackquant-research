@@ -26,13 +26,18 @@ SHA = re.compile(r"^[a-f0-9]{40}$")
 
 
 def gh_json(path: str) -> Any:
+    # GitHub JSON is UTF-8. Windows implicit CP949 can crash reader threads
+    # and return None stdout before the preflight has a chance to HOLD.
     proc = subprocess.run(
-        ["gh", "api", path], capture_output=True, text=True, check=False,
+        ["gh", "api", path], capture_output=True, text=False, check=False,
         timeout=30,
     )
-    if proc.returncode:
+    if proc.returncode or not isinstance(proc.stdout, bytes):
         raise RuntimeError("GITHUB_READ_ONLY_QUERY_FAILED: " + path)
-    return json.loads(proc.stdout)
+    try:
+        return json.loads(proc.stdout.decode("utf-8-sig", errors="strict"))
+    except (ValueError, UnicodeError) as exc:
+        raise RuntimeError("GITHUB_READ_ONLY_UTF8_JSON_HOLD: " + path) from exc
 
 
 def assess(pr: dict, changed: set[str], tree_paths: set[str],
@@ -124,18 +129,21 @@ def published_blob(blob_sha: str) -> bytes:
 
 def candidate_clocks(tree: dict[str, str]) -> dict[str, str]:
     # These are small public artifacts, never private compute or rights receipts.
-    keys = [REQUIRED[x] for x in ("PDS", "F2R", "EquityAlpha")]
+    pds_mark_path = "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+    keys = [REQUIRED[x] for x in ("PDS", "F2R", "EquityAlpha")] + [pds_mark_path]
     if not all(key in tree for key in keys):
         return {}
     pds = json.loads(published_blob(tree[REQUIRED["PDS"]]))
+    pds_mark = json.loads(published_blob(tree[pds_mark_path]))
     f2r = json.loads(published_blob(tree[REQUIRED["F2R"]]))
     raw = published_blob(tree[REQUIRED["EquityAlpha"]]).decode("utf-8-sig").strip()
     match = re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;", raw, re.S)
     if not match:
         raise RuntimeError("EQUITY_PUBLIC_DATA_BINDING_UNREADABLE")
     equity = json.loads(match.group(1))
-    if pds.get("status") != "PDS_SLACKQUANT_PUBLIC_BINDING_PASS":
-        raise RuntimeError("PDS_PUBLIC_BINDING_STATUS_HOLD")
+    if (pds.get("status") != "PDS_SLACKQUANT_PUBLIC_BINDING_PASS"
+        or pds_mark.get("status") != "PASS"):
+        raise RuntimeError("PDS_PUBLIC_RECEIPTS_STATUS_HOLD")
     official = (f2r.get("live_state") or {}).get("official") or {}
     holdings = official.get("holdings") or []
     if f2r.get("schema_version") != "2.0" or len(holdings) != 4 or len({
@@ -150,7 +158,13 @@ def candidate_clocks(tree: dict[str, str]) -> dict[str, str]:
     if not (mtd.get("available") and preview.get("available")):
         raise RuntimeError("F2R_MTD_OR_PREVIEW_UNAVAILABLE")
     dates = [mtd.get("as_of_date") or "", preview.get("market_cutoff_date") or ""]
-    return {"PDS": pds.get("public_as_of_date") or "",
+    # public_as_of_date tracks public KST issuance, not the US market close.
+    market_close = pds_mark.get("official_mark_through") or ""
+    publication_date = pds.get("public_as_of_date") or ""
+    if publication_date < market_close:
+        raise RuntimeError("PDS_PUBLICATION_PRECEDES_MARK_HOLD")
+    return {"PDS": market_close,
+            "PDS_PUBLIC_AS_OF": publication_date,
             "F2R": min(dates),
             "EquityAlpha": equity.get("meta", {}).get("marketDataThrough") or ""}
 
