@@ -287,6 +287,10 @@ def _review_public_snapshot(kind, pr, current):
     """
     if pr.get("state")!="open" or pr["base"].get("ref")!="main":
         raise Hold("SOURCE_REVIEW_NOT_OPEN_ON_MAIN")
+    if kind in ("pds","adaa") and (pr.get("user") or {}).get("login")!="github-actions[bot]":
+        # Existing source-owned receivers create these reviews, not arbitrary
+        # manually titled PRs. Never promote unknown HTML or portfolio data.
+        return None
     modified=gh(f"repos/{HOST}/pulls/{pr['number']}/files?per_page=100")
     if len(modified)>=100:
         raise Hold("SOURCE_REVIEW_FILE_LIST_TRUNCATED")
