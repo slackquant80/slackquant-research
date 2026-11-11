@@ -108,10 +108,14 @@ def source_inputs(args):
               "pds_adaa":{"pr":pds["number"],"head":pds["head"]["sha"]},
               "f2r":{"pr":args.f2r_pr,"main":f2r_main,"blob":f2r_tree[F2R_SOURCE]},
               "equity":{"pr":eq["number"],"head":eq["head"]["sha"]}}
-    return main,pds,eq_files,eq_tree,f2r_bytes,identity
+    if any(path not in pds_tree for path in pds_files):
+        raise Hold("PDS_ADAA_DELETED_SOURCE_FILE_REFUSED")
+    if any(path not in eq_tree for path in eq_files):
+        raise Hold("EQUITY_DELETED_SOURCE_FILE_REFUSED")
+    return main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity
 
 def stage(args):
-    main,pds,eq_files,eq_tree,f2r_bytes,identity=source_inputs(args)
+    main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity=source_inputs(args)
     ident=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()[:16]
     branch="review/four-system-one-pages-"+ident
     matches=[x for x in open_pulls() if x["head"]["ref"]==branch]
@@ -127,12 +131,17 @@ def stage(args):
         raise Hold("SOURCE_READY_NO_NEW_PR_REQUESTED")
     b=gh(f"repos/{HOST}/git/blobs","POST",
          {"content":base64.b64encode(f2r_bytes).decode(),"encoding":"base64"})["sha"]
-    updates=[{"path":x,"mode":"100644","type":"blob","sha":eq_tree[x]}
-             for x in sorted(eq_files)]
+    updates=[{"path":x,"mode":"100644","type":"blob","sha":pds_tree[x]}
+             for x in sorted(pds_files)]
+    updates += [{"path":x,"mode":"100644","type":"blob","sha":eq_tree[x]}
+                for x in sorted(eq_files)]
     updates.append({"path":F2R_TARGET,"mode":"100644","type":"blob","sha":b})
-    pds_commit=gh(f"repos/{HOST}/git/commits/{pds['head']['sha']}")
+    # NEVER use the historical source PR tree as the full base: source-only
+    # Governance/Pages commits can have advanced main in the meantime.
+    # Overlay only the independently reviewed changed blobs onto CURRENT main.
+    base_commit=gh(f"repos/{HOST}/git/commits/{main}")
     tr=gh(f"repos/{HOST}/git/trees","POST",
-          {"base_tree":pds_commit["tree"]["sha"],"tree":updates})["sha"]
+          {"base_tree":base_commit["tree"]["sha"],"tree":updates})["sha"]
     commit=gh(f"repos/{HOST}/git/commits","POST",
               {"message":"Stage four reviewed systems; no publication",
                "tree":tr,"parents":[main]})["sha"]
