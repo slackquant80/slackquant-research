@@ -131,6 +131,57 @@ def validated_f2r_bytes(raw, platform_main):
         return output
 
 
+
+def pinned_git_blob_bytes(repo, sha):
+    if not HEX40.fullmatch(sha):
+        raise Hold("PUBLIC_CANDIDATE_BLOB_SHA_INVALID")
+    item=gh(f"repos/{repo}/git/blobs/{sha}")
+    if item.get("encoding")!="base64" or item.get("sha")!=sha:
+        raise Hold("PUBLIC_CANDIDATE_GIT_BLOB_UNAVAILABLE")
+    raw=base64.b64decode(item["content"])
+    if hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()!=sha:
+        raise Hold("PUBLIC_CANDIDATE_GIT_BLOB_CHANGED")
+    return raw
+
+
+def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
+    """Fail before PR creation when source-owned approved snapshots have stale clocks."""
+    pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
+    equity_path=EQUITY+"data/live_overlay.js"
+    if pds_path not in pds_tree or equity_path not in eq_tree:
+        raise Hold("REQUIRED_DATED_PUBLIC_RECEIPT_MISSING")
+    try:
+        pds=json.loads(pinned_git_blob_bytes(HOST,pds_tree[pds_path]))
+        f2r=json.loads(f2r_bytes)
+        ea=pinned_git_blob_bytes(HOST,eq_tree[equity_path]).decode("utf-8-sig").strip()
+        match=re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;",ea,re.S)
+        if not match: raise Hold("EQUITY_PUBLIC_OVERLAY_INVALID")
+        equity=json.loads(match.group(1))
+        if pds.get("status")!="PDS_SLACKQUANT_PUBLIC_BINDING_PASS":
+            raise Hold("PDS_SOURCE_RECEIPT_NOT_PASS")
+        if equity.get("meta",{}).get("benchmark")!="ACWI":
+            raise Hold("EQUITY_PUBLIC_BENCHMARK_INVALID")
+        mtd=f2r["live_state"]["current_mtd"]
+        preview=f2r["live_state"]["preview"]
+        if not mtd.get("available") or not preview.get("available"):
+            raise Hold("F2R_CURRENT_OR_PREVIEW_NOT_AVAILABLE")
+        clocks={"PDS":pds["public_as_of_date"],
+                "F2R_MTD":mtd["as_of_date"],
+                "F2R_PREVIEW":preview["market_cutoff_date"],
+                "EQUITY":equity["meta"]["marketDataThrough"]}
+        for name, value in clocks.items():
+            if not isinstance(value,str) or not re.fullmatch(
+                    r"20\d{2}-\d{2}-\d{2}",value):
+                raise Hold("PUBLIC_SOURCE_CLOCK_INVALID_"+name)
+        floor=clocks["PDS"]
+        for name in ("F2R_MTD","F2R_PREVIEW","EQUITY"):
+            if clocks[name]<floor:
+                raise Hold("PUBLIC_SOURCE_STALE_"+name+"_BELOW_PDS_"+floor)
+    except (KeyError,ValueError,UnicodeError,TypeError) as exc:
+        raise Hold("PUBLIC_SOURCE_CLOCK_PARSE_HOLD") from exc
+    return clocks
+
+
 def source_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
     pds=pull(HOST,args.pds_adaa_pr)
@@ -185,6 +236,7 @@ def source_inputs(args):
         raise Hold("EQUITY_DELETED_SOURCE_FILE_REFUSED")
     # The source-owned PUBLIC_SAFE sync is mandatory, not an ad-hoc JSON copy.
     f2r_bytes=validated_f2r_bytes(f2r_bytes,main)
+    assert_common_market_clock(pds_tree,eq_tree,f2r_bytes)
     return main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity
 
 def stage(args):
