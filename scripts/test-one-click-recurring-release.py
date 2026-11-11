@@ -130,7 +130,7 @@ class SequentialMarketRelease(unittest.TestCase):
         self.assertEqual(main0,self.shas[0])
         self.assertEqual(changes1,{
             path:self.blobs[1][path] for path in self.asset.values()})
-        self.assertEqual(identity1["f2r"]["review"],15)
+        self.assertEqual(identity1["f2r"]["review"],16)
         self.assertEqual(len(identity1["equity"]),1)
         # After that SAME reviewed bytes have been published to main,
         # source PRs stay OPEN but must be ignored, including old bot drafts.
@@ -147,7 +147,7 @@ class SequentialMarketRelease(unittest.TestCase):
         self.assertEqual(identity2["equity"][0]["pr"],203)
         self.assertEqual(identity2["pds"][0]["pr"],201)
         self.assertEqual(identity2["adaa"][0]["pr"],202)
-        self.assertEqual(identity2["f2r"]["review"],16)
+        self.assertEqual(identity2["f2r"]["review"],17)
         main3,current3,none2,identityNoop2=self.run_at(2,(1,2))
         self.assertEqual(none2,{})
         self.assertIsNone(identityNoop2["f2r"]["review"])
