@@ -13,6 +13,7 @@ on:
       - "scripts/four-system-release-readiness.py"
       - "scripts/one-click-four-system-release.py"
       - "scripts/test-one-click-four-system-release.py"
+      - "scripts/test-one-click-recurring-release.py"
       - "scripts/test-four-system-release-readiness.py"
       - "scripts/sync-f2r-static-state.py"
       - "scripts/equity-standing-publication-policy.json"
@@ -73,6 +74,8 @@ jobs:
 
       - name: One-Pages coordinator offline fail-closed regression
         run: python3 scripts/test-one-click-four-system-release.py
+      - name: Two-market-cycle reviewed-source one-click idempotence regression
+        run: python3 scripts/test-one-click-recurring-release.py
       - name: Full-snapshot no-change and stale-data release-gate regression
         run: python3 scripts/test-four-system-release-readiness.py
       - name: Validate Equity standing permission and independent hosted provenance

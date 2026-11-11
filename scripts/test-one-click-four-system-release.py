@@ -13,25 +13,12 @@ mod=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 class ReleaseSafety(unittest.TestCase):
-    def test_unmerged_f2r_cannot_stage(self):
-        args=SimpleNamespace(pds_adaa_pr=75,f2r_pr=15)
-        def api(path,method="GET",data=None):
-            if path=="repos/slackquant80/slackquant-research/git/ref/heads/main":
-                return {"object":{"sha":"a"*40}}
-            raise AssertionError("unexpected request "+path)
-        def pull(repo,num):
-            if repo==mod.HOST:
-                return {"state":"open","base":{"sha":"a"*40,"ref":"main"},
-                        "head":{"sha":"b"*40},"number":75}
-            return {"state":"open","merged":False}
-        with patch.object(mod,"gh",side_effect=api),\
-             patch.object(mod,"pull",side_effect=pull),\
-             patch.object(mod,"files",return_value=[
-                "public/assets/systems/adaa/snapshot.js",
-                "public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"]),\
-             patch.object(mod,"tree",return_value={}):
-            with self.assertRaisesRegex(mod.Hold,"F2R_SOURCE_REVIEW_NOT_APPROVED"):
-                mod.source_inputs(args)
+    def test_unmerged_f2r_does_not_authorize_new_source_blob(self):
+        with patch.object(mod,"gh",return_value=[
+                {"number":15,"merged_at":None},
+                {"number":16,"merged_at":None}]):
+            with self.assertRaisesRegex(mod.Hold,"F2R_LATEST_SOURCE_PUBLIC_STATE_NOT_APPROVED"):
+                mod.latest_merged_f2r_source("a"*40)
 
     def test_absent_equity_never_stages(self):
         args=SimpleNamespace(pds_adaa_pr=75,f2r_pr=15,stage=True)
@@ -52,19 +39,16 @@ class ReleaseSafety(unittest.TestCase):
         self.assertIn("public/dashboards/equity-alpha/data/live_overlay.js",mod.EQUITY_PATHS)
         self.assertNotIn("private/rights.json",mod.EQUITY_PATHS)
 
-    def test_assemble_preserves_advanced_main_and_overlays_only_reviewed_paths(self):
-        args=SimpleNamespace(pds_adaa_pr=75,f2r_pr=15,stage=True)
+    def test_assemble_preserves_current_main_and_overlays_only_changed_files(self):
+        args=SimpleNamespace(stage=True)
         pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
-        equity_path="public/dashboards/equity-alpha/data/live_overlay.js"
+        eq_path="public/dashboards/equity-alpha/data/live_overlay.js"
         main="a"*40
-        source=(main,{"head":{"sha":"b"*40},"number":75},
-                {pds_path},{pds_path:"c"*40},
-                {equity_path},{equity_path:"d"*40},b'{"ok":true}',
-                {"platform_main":main})
+        updates={pds_path:"c"*40,eq_path:"d"*40,mod.F2R_TARGET:"e"*40}
+        source=(main,{pds_path:"f"*40,eq_path:"f"*40},updates,
+                {"platform_main":main,"source_review":"approved"})
         staged={}
         def fake_gh(path,method="GET",data=None):
-            if path.endswith("/git/blobs") and method=="POST":
-                return {"sha":"e"*40}
             if path.endswith("/git/commits/"+main) and method=="GET":
                 return {"tree":{"sha":"f"*40}}
             if path.endswith("/git/trees") and method=="POST":
@@ -86,10 +70,17 @@ class ReleaseSafety(unittest.TestCase):
         self.assertEqual(result["number"],80)
         self.assertEqual(staged["base_tree"],"f"*40)
         blobs={x["path"]:x["sha"] for x in staged["tree"]}
-        self.assertEqual(blobs[pds_path],"c"*40)
-        self.assertEqual(blobs[equity_path],"d"*40)
-        self.assertEqual(blobs[mod.F2R_TARGET],"e"*40)
+        self.assertEqual(blobs,updates)
         self.assertEqual(len(blobs),3)
+
+    def test_no_delta_has_no_pr_no_actions_no_deploy(self):
+        source=("a"*40,{"a":"c"*40},{},{"platform_main":"a"*40})
+        with patch.object(mod,"source_inputs",return_value=source),\
+             patch.object(mod,"gh",side_effect=AssertionError("no actions")),\
+             patch.object(mod,"open_pulls",side_effect=AssertionError("no PR census")):
+            result,identity,created=mod.stage(SimpleNamespace(stage=True))
+        self.assertIsNone(result)
+        self.assertFalse(created)
 
     def test_source_only_main_advancement_accepted(self):
         delta={"status":"ahead","behind_by":0,
@@ -267,31 +258,62 @@ class ReleaseSafety(unittest.TestCase):
             self.assertTrue(mod.source_base_compatible("a"*40,"b"*40,
                             {"public/assets/systems/adaa/snapshot.js"}))
 
-    def test_existing_equity_review_does_not_dispatch_or_wait(self):
-        p={"title":"Review Equity Alpha seven-file hosted candidate: pinned", "number":82}
-        with patch.object(mod,"open_pulls",return_value=[p]),\
-             patch.object(mod.time,"sleep",side_effect=AssertionError("never wait")):
-            self.assertEqual(mod.await_equity_draft_review(60)["number"],82)
+    def test_old_published_equity_pr_is_inert(self):
+        overlay=mod.EQUITY_OVERLAY
+        item={"number":85,"title":"Review Equity Alpha seven-file hosted candidate: old"}
+        pr={"state":"open","number":85,"base":{"ref":"main","sha":"a"*40},
+            "head":{"sha":"b"*40},"user":{"login":"github-actions[bot]"},
+            "body":"Exact source prerelease: x. ZIP SHA256: "+"c"*64}
+        current={overlay:"d"*40}
+        with patch.object(mod,"pull",return_value=pr),\
+             patch.object(mod,"gh",return_value=[
+                {"filename":overlay,"status":"modified"}]),\
+             patch.object(mod,"tree",return_value={overlay:"d"*40}):
+            diff,reviews=mod.reviewed_overlay("equity",current,[item])
+        self.assertEqual(diff,{})
+        self.assertEqual(reviews,[])
 
-    def test_one_dispatched_equity_review_appears_in_same_run(self):
-        p={"title":"Review Equity Alpha seven-file hosted candidate: pinned", "number":83}
-        with patch.object(mod,"open_pulls",side_effect=[[],[p]]) as r,\
-             patch.object(mod.time,"sleep",return_value=None):
-            self.assertEqual(mod.await_equity_draft_review(60)["number"],83)
-            self.assertEqual(r.call_count,2)
+    def test_superseded_equity_review_does_not_block_new_clock(self):
+        overlay=mod.EQUITY_OVERLAY
+        item={"number":85,"title":"Review Equity Alpha seven-file hosted candidate: old"}
+        pr={"state":"open","number":85,"base":{"ref":"main","sha":"a"*40},
+            "head":{"sha":"b"*40},"user":{"login":"github-actions[bot]"},
+            "body":"Exact source prerelease: x. ZIP SHA256: "+"c"*64}
+        current={overlay:"d"*40}
+        with patch.object(mod,"pull",return_value=pr),\
+             patch.object(mod,"gh",return_value=[
+                {"filename":overlay,"status":"modified"}]),\
+             patch.object(mod,"tree",return_value={overlay:"e"*40}),\
+             patch.object(mod,"_market_clock_from_blob",side_effect=[
+                "2026-11-10","2026-11-11"]):
+            diff,reviews=mod.reviewed_overlay("equity",current,[item])
+        self.assertEqual(diff,{})
+        self.assertEqual(reviews,[])
 
-    def test_absent_equity_review_fails_closed_without_any_publication(self):
-        with patch.object(mod,"open_pulls",return_value=[]),\
-             patch.object(mod.time,"sleep",side_effect=AssertionError("should not wait")):
-            with self.assertRaisesRegex(mod.Hold,"DRAFT_NOT_YET_STAGED"):
-                mod.await_equity_draft_review(0)
-
-    def test_multiple_equity_reviews_never_choose_newest_arbitrarily(self):
-        prs=[{"title":"Review Equity Alpha seven-file hosted candidate: "+str(i),
-              "number":i} for i in (92,93)]
-        with patch.object(mod,"open_pulls",return_value=prs):
-            with self.assertRaisesRegex(mod.Hold,"MULTIPLE_SOURCE_OWNED"):
-                mod.await_equity_draft_review(60)
+    def test_two_different_current_equity_reviews_hold(self):
+        overlay=mod.EQUITY_OVERLAY
+        items=[{"number":n,"title":"Review Equity Alpha seven-file hosted candidate: "+str(n)}
+               for n in (92,93)]
+        pr={"state":"open","base":{"ref":"main","sha":"a"*40},
+            "head":{"sha":"b"*40},"user":{"login":"github-actions[bot]"},
+            "body":"Exact source prerelease: x. ZIP SHA256: "+"c"*64}
+        def fake_pull(repo,n):
+            return dict(pr,number=n)
+        def fake_tree(repo,sha):
+            if sha=="a"*40:
+                return {overlay:"f"*40}
+            return {overlay:("c"*40 if fake_tree.n==0 else "d"*40)}
+        fake_tree.n=0
+        with patch.object(mod,"pull",side_effect=fake_pull),\
+             patch.object(mod,"gh",return_value=[
+                {"filename":overlay,"status":"modified"}]),\
+             patch.object(mod,"tree",side_effect=[
+                {overlay:"c"*40},{overlay:"e"*40},
+                {overlay:"d"*40},{overlay:"e"*40}]),\
+             patch.object(mod,"_market_clock_from_blob",
+                          side_effect=["2026-11-11","2026-11-10"]*2):
+            with self.assertRaisesRegex(mod.Hold,"CONFLICTING_CURRENT_REVIEW_CANDIDATES"):
+                mod.reviewed_overlay("equity",{overlay:"e"*40},items)
 
     def test_gh_utf8_bytes_survive_windows_cp949_for_non_ascii_fields(self):
         # This is the exact failure path from the Windows operator traceback:

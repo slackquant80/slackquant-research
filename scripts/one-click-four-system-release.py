@@ -222,86 +222,252 @@ def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
     return clocks
 
 
-def await_equity_draft_review(wait_seconds):
-    """Wait for the already-dispatched source-owned Equity workflow to stage ONE PR.
 
-    No model computation, workflow dispatch, review creation or source mutation.
-    Duplicate drafts are ambiguous and must never be arbitrarily selected.
+# These are the ONLY public paths the multi-system release may overlay.
+PDS_MARK="public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+PDS_BINDING="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
+ADAA_SNAPSHOT="public/assets/systems/adaa/snapshot.js"
+EQUITY_OVERLAY=EQUITY+"data/live_overlay.js"
+
+
+def _review_kind(title):
+    """Categorize source-owned staged artifacts, never historical PR numbers."""
+    if title.startswith("Review PDS hosted intake:"):
+        return ("pds",)
+    if title.startswith("ADAA ") and "Thin source candidate" in title:
+        return ("adaa",)
+    if title.startswith("Combined PDS + ADAA "):
+        return ("pds","adaa")
+    if title.startswith("Review Equity Alpha seven-file hosted candidate:"):
+        return ("equity",)
+    return ()
+
+
+def _market_clock_from_blob(path, blob):
+    if path == PDS_MARK:
+        data=json.loads(pinned_git_blob_bytes(HOST,blob))
+        if data.get("status")!="PASS":
+            raise Hold("PDS_REVIEW_RECEIPT_NOT_PASS")
+        return data.get("official_mark_through","")
+    if path == EQUITY_OVERLAY:
+        data=pinned_git_blob_bytes(HOST,blob).decode("utf-8-sig").strip()
+        matched=re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;",data,re.S)
+        if not matched:
+            raise Hold("EQUITY_REVIEW_OVERLAY_UNREADABLE")
+        obj=json.loads(matched.group(1))
+        if obj.get("meta",{}).get("benchmark")!="ACWI":
+            raise Hold("EQUITY_REVIEW_BENCHMARK_HOLD")
+        return obj["meta"].get("marketDataThrough","")
+    raise Hold("UNRECOGNIZED_MARKET_CLOCK_FILE")
+
+
+def _accepted_review_paths(kind, changed):
+    if not changed:
+        return False
+    if kind=="pds":
+        return (PDS_MARK in changed and PDS_BINDING in changed and
+                all(x.startswith(("public/data/systems/pds/",
+                                  "public/assets/systems/pds/",
+                                  "src/app/systems/pds/",
+                                  "src/data/pds")) for x in changed))
+    if kind=="adaa":
+        return ADAA_SNAPSHOT in changed and all(
+            x.startswith("public/assets/systems/adaa/") for x in changed)
+    if kind=="equity":
+        return EQUITY_OVERLAY in changed and set(changed).issubset(EQUITY_PATHS)
+    return False
+
+
+def _review_public_snapshot(kind, pr, current):
+    """Source PR is an exact allowlisted overlay, not its full historical tree.
+
+    An old open PR whose file blobs are ALREADY on main is inert, regardless
+    of how many new releases occurred since its original PR base.
+    A materially conflicting source-base target is never silently overwritten.
     """
-    if wait_seconds < 0:
-        raise Hold("EQUITY_NEGATIVE_REVIEW_WAIT")
-    deadline = time.monotonic() + wait_seconds
+    if pr.get("state")!="open" or pr["base"].get("ref")!="main":
+        raise Hold("SOURCE_REVIEW_NOT_OPEN_ON_MAIN")
+    if kind in ("pds","adaa") and (pr.get("user") or {}).get("login")!="github-actions[bot]":
+        # Existing source-owned receivers create these reviews, not arbitrary
+        # manually titled PRs. Never promote unknown HTML or portfolio data.
+        return None
+    modified=gh(f"repos/{HOST}/pulls/{pr['number']}/files?per_page=100")
+    if len(modified)>=100:
+        raise Hold("SOURCE_REVIEW_FILE_LIST_TRUNCATED")
+    paths={f["filename"] for f in modified
+           if f.get("status") in ("modified","added")}
+    if len(paths)!=len(modified) or not _accepted_review_paths(kind,paths):
+        return None
+    proposed=tree(HOST,pr["head"]["sha"])
+    if any(x not in proposed for x in paths):
+        raise Hold("SOURCE_REVIEW_DELETED_BLOB_HOLD")
+    desired={x:proposed[x] for x in paths}
+    delta={x:v for x,v in desired.items() if current.get(x)!=v}
+    if not delta:
+        return None
+    stamp_path={"pds":PDS_MARK,"equity":EQUITY_OVERLAY}.get(kind)
+    if stamp_path:
+        incoming=_market_clock_from_blob(stamp_path,desired[stamp_path])
+        existing=_market_clock_from_blob(stamp_path,current[stamp_path])
+        if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}",incoming):
+            raise Hold("SOURCE_REVIEW_MARKET_CLOCK_INVALID")
+        if incoming<existing:
+            # Old unmerged draft from a previous period is not a new candidate.
+            return None
+    else:
+        incoming=""
+    # A PR based on an earlier publication is acceptable only if none of
+    # the files it proposes to CHANGE were modified since its own base.
+    source_base=tree(HOST,pr["base"]["sha"])
+    for path in delta:
+        if current.get(path)!=source_base.get(path):
+            if kind=="adaa":
+                # The old undeployed ADAA PR from a previous already-published
+                # month is not allowed to block future, genuinely new PRs.
+                return None
+            raise Hold("SOURCE_REVIEW_TARGET_CHANGED_SINCE_BASE: "+path)
+    if kind=="equity":
+        if (pr.get("user") or {}).get("login")!="github-actions[bot]" or \
+           "Exact source prerelease:" not in (pr.get("body") or "") or \
+           "ZIP SHA256:" not in (pr.get("body") or ""):
+            raise Hold("EQUITY_REVIEW_INTAKE_PROVENANCE_HOLD")
+    return {"pr":pr["number"],"head":pr["head"]["sha"],
+            "clock":incoming,"delta":delta}
+
+
+def reviewed_overlay(kind, current, reviews):
+    """Filter out old published drafts; reject two different active candidates."""
+    choices=[]
+    for item in reviews:
+        if kind not in _review_kind(item.get("title","")):
+            continue
+        pr=pull(HOST,item["number"])
+        review=_review_public_snapshot(kind,pr,current)
+        if review:
+            choices.append(review)
+    if not choices:
+        return {},[]
+    newest=max(x["clock"] for x in choices)
+    fresh=[x for x in choices if x["clock"]==newest]
+    combined={}
+    for x in fresh:
+        for path,sha in x["delta"].items():
+            if path in combined and combined[path]!=sha:
+                raise Hold("CONFLICTING_CURRENT_REVIEW_CANDIDATES: "+path)
+            combined[path]=sha
+    # Older candidates for the same asset at earlier dates are ignored only
+    # when they cannot replace current data with an obsolete market snapshot.
+    if kind=="equity" and any(x["delta"]!=fresh[0]["delta"] for x in fresh):
+        raise Hold("MULTIPLE_EQUITY_CANDIDATES_NOT_IDENTICAL")
+    return combined,[{"pr":x["pr"],"head":x["head"]} for x in fresh]
+
+
+def latest_merged_f2r_source(main_blob):
+    """Source main must be linked to a merged, reviewed F2R public-state PR.
+
+    Existing approved bytes can be reused without a new PR. For new bytes,
+    require source-owner PR history; never accept arbitrary unreviewed main.
+    """
+    recent=gh(f"repos/{F2R}/pulls?state=closed&per_page=100")
+    if len(recent)>=100:
+        raise Hold("F2R_MERGED_REVIEW_CENSUS_TRUNCATED")
+    for item in recent:
+        if not item.get("merged_at"):
+            continue
+        number=item["number"]
+        if F2R_SOURCE not in files(F2R,number):
+            continue
+        proposed=tree(F2R,item["head"]["sha"])
+        if proposed.get(F2R_SOURCE)==main_blob:
+            return number
+    raise Hold("F2R_LATEST_SOURCE_PUBLIC_STATE_NOT_APPROVED")
+
+
+def choose_current_inputs(args):
+    main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
+    main_tree=tree(HOST,main)
+    for path in (PDS_MARK,PDS_BINDING,ADAA_SNAPSHOT,EQUITY_OVERLAY,F2R_TARGET):
+        if path not in main_tree:
+            raise Hold("CURRENT_PUBLIC_SNAPSHOT_INCOMPLETE: "+path)
+    f2r_main=gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]
+    f2r_tree=tree(F2R,f2r_main)
+    source_blob=f2r_tree.get(F2R_SOURCE)
+    if not source_blob:
+        raise Hold("F2R_SOURCE_PUBLIC_STATE_MISSING")
+    # An already-public identical F2R blob needs no historical source PR scan.
+    # A new blob MUST be evidenced by a source-owned merged review PR.
+    source_approved=(None if main_tree[F2R_TARGET]==source_blob
+                     else latest_merged_f2r_source(source_blob))
+    raw=(pinned_public_file(HOST,F2R_TARGET,main) if source_approved is None
+         else pinned_public_file(F2R,F2R_SOURCE,f2r_main))
+    state=json.loads(raw)
+    if (state.get("schema_version")!="2.0" or
+        state.get("completed_performance",{}).get("support_end")!=
+        state.get("completed_performance",{}).get("as_of_date") or
+        len(state.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
+        raise Hold("F2R_SOURCE_PUBLIC_CONTRACT_HOLD")
+    expected=getattr(args,"expected_market_close","") or ""
+    if expected and not re.fullmatch(r"20\d{2}-\d{2}-\d{2}",expected):
+        raise Hold("OPERATOR_REQUIRED_MARKET_CLOCK_INVALID")
+    # The source-owned PDS/ADAA/Equity review workflows run asynchronously.
+    # If owner Windows has validated a NEW common US close, do not quietly
+    # report NO_CHANGE while the public bot review is still being staged.
+    deadline=time.monotonic()+(args.wait_seconds if args.stage else 0)
+    published_eq_clock=_market_clock_from_blob(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY])
     while True:
-        matches = [x for x in open_pulls() if x["title"].startswith(
-            "Review Equity Alpha seven-file hosted candidate:")]
-        if len(matches) > 1:
-            raise Hold("EQUITY_MULTIPLE_SOURCE_OWNED_REVIEW_DRAFTS")
-        if len(matches) == 1:
-            return matches[0]
-        if time.monotonic() >= deadline:
-            raise Hold("EQUITY_SOURCE_OWNED_DRAFT_NOT_YET_STAGED_NO_MODEL_RERUN")
-        time.sleep(min(15.0, max(0.0, deadline - time.monotonic())))
+        reviews=open_pulls()
+        pds, rp=reviewed_overlay("pds",main_tree,reviews)
+        adaa, ra=reviewed_overlay("adaa",main_tree,reviews)
+        if set(pds).intersection(adaa):
+            raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
+        desired_floor=_market_clock_from_blob(
+            PDS_MARK,pds.get(PDS_MARK,main_tree[PDS_MARK]))
+        eq, equity_reviews=reviewed_overlay("equity",main_tree,reviews)
+        desired_eq=_market_clock_from_blob(
+            EQUITY_OVERLAY,eq.get(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY]))
+        needed=(expected and (desired_floor<expected or desired_eq<expected))
+        waiting=(needed or desired_floor>desired_eq)
+        if not waiting:
+            break
+        if time.monotonic()>=deadline:
+            raise Hold("CURRENT_SOURCE_OWNED_REVIEW_NOT_READY_FOR_MARKET_CLOSE: "+
+                       (expected or desired_floor))
+        time.sleep(min(15.0,max(0,deadline-time.monotonic())))
+    merged_pds={**main_tree,**pds,**adaa}
+    merged_eq={**main_tree,**eq}
+    # This audited source-owned sync is invoked only for a new F2R blob,
+    # otherwise reuse existing Pages bytes without cost or unnecessary writes.
+    if main_tree[F2R_TARGET]!=source_blob:
+        raw=validated_f2r_bytes(raw,main)
+    else:
+        raw=pinned_public_file(HOST,F2R_TARGET,main)
+    clocks=assert_common_market_clock(merged_pds,merged_eq,raw)
+    if expected:
+        for key in ("PDS","F2R_MTD","F2R_PREVIEW","EQUITY"):
+            if clocks[key]<expected:
+                raise Hold("CANDIDATE_BELOW_OPERATOR_REQUIRED_CLOSE_"+key+
+                           ": required="+expected+" observed="+clocks[key])
+    identity={"platform_main":main,
+       "pds":rp,"adaa":ra,
+       "f2r":{"review":source_approved,"source_main":f2r_main,"blob":source_blob},
+       "equity":equity_reviews,
+    }
+    changed={**pds,**adaa,**eq}
+    if source_blob!=main_tree[F2R_TARGET]:
+        changed[F2R_TARGET]=source_blob
+    return main,main_tree,changed,identity
 
 
 def source_inputs(args):
-    main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
-    pds=pull(HOST,args.pds_adaa_pr)
-    if pds["state"]!="open" or pds["base"]["ref"]!="main":
-        raise Hold("PDS_ADAA_REVIEW_NOT_OPEN_ON_MAIN")
-    pds_files=set(files(HOST,args.pds_adaa_pr))
-    source_base_compatible(pds["base"]["sha"],main,pds_files)
-    if ("public/assets/systems/adaa/snapshot.js" not in pds_files or
-        not any(x.startswith("public/data/systems/pds/") for x in pds_files)):
-        raise Hold("PDS_ADAA_COMBINED_REVIEW_MISSING")
-    pds_tree=tree(HOST,pds["head"]["sha"])
-    f2r_pr=pull(F2R,args.f2r_pr)
-    if f2r_pr["state"]!="closed" or not f2r_pr.get("merged"):
-        raise Hold("F2R_SOURCE_REVIEW_NOT_APPROVED_OR_MERGED")
-    f2r_main=gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]
-    f2r_tree=tree(F2R,f2r_main)
-    proposed_f2r=tree(F2R,f2r_pr["head"]["sha"])
-    if f2r_tree.get(F2R_SOURCE)!=proposed_f2r.get(F2R_SOURCE):
-        raise Hold("F2R_MERGED_PUBLIC_SOURCE_CHANGED")
-    f2r_bytes=pinned_public_file(F2R,F2R_SOURCE,f2r_main)
-    doc=json.loads(f2r_bytes)
-    if (doc.get("schema_version")!="2.0" or
-        doc.get("completed_performance",{}).get("as_of_date")!=
-        doc.get("completed_performance",{}).get("support_end") or
-        len(doc.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
-        raise Hold("F2R_RELEASE_DATA_CONTRACT_HOLD")
-    # Sender 125 dispatches the existing hosted Equity review workflow
-    # asynchronously. Without this wait the very same single-button run
-    # races its own approved candidate and always reports a false HOLD.
-    equity_review=await_equity_draft_review(args.wait_seconds if args.stage else 0)
-    eq=pull(HOST,equity_review["number"])
-    if (eq["state"]!="open" or eq["base"]["ref"]!="main" or
-        eq.get("user",{}).get("login")!="github-actions[bot]"):
-        raise Hold("EQUITY_SOURCE_OWNED_INTAKE_PROVENANCE_HOLD")
-    if ("Exact source prerelease:" not in (eq.get("body") or "") or
-        "ZIP SHA256:" not in (eq.get("body") or "")):
-        raise Hold("EQUITY_PRIVATE_RECEIPT_REVIEW_REFERENCE_MISSING")
-    eq_files=set(files(HOST,eq["number"]))
-    source_base_compatible(eq["base"]["sha"],main,eq_files)
-    if (not eq_files or not eq_files.issubset(EQUITY_PATHS) or
-        EQUITY+"data/live_overlay.js" not in eq_files or
-        eq_files.intersection(pds_files) or F2R_TARGET in pds_files):
-        raise Hold("SOURCE_FILE_SET_CONFLICT_OR_EQUITY_INCOMPLETE")
-    eq_tree=tree(HOST,eq["head"]["sha"])
-    identity={"platform_main":main,
-              "pds_adaa":{"pr":pds["number"],"head":pds["head"]["sha"]},
-              "f2r":{"pr":args.f2r_pr,"main":f2r_main,"blob":f2r_tree[F2R_SOURCE]},
-              "equity":{"pr":eq["number"],"head":eq["head"]["sha"]}}
-    if any(path not in pds_tree for path in pds_files):
-        raise Hold("PDS_ADAA_DELETED_SOURCE_FILE_REFUSED")
-    if any(path not in eq_tree for path in eq_files):
-        raise Hold("EQUITY_DELETED_SOURCE_FILE_REFUSED")
-    # The source-owned PUBLIC_SAFE sync is mandatory, not an ad-hoc JSON copy.
-    f2r_bytes=validated_f2r_bytes(f2r_bytes,main)
-    assert_common_market_clock(pds_tree,eq_tree,f2r_bytes)
-    return main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity
+    """Compatibility accessor for offline source tests and reporting."""
+    return choose_current_inputs(args)
+
 
 def stage(args):
-    main,pds,pds_files,pds_tree,eq_files,eq_tree,f2r_bytes,identity=source_inputs(args)
+    main,main_tree,updates,identity=source_inputs(args)
+    if not updates:
+        # Explicit no-op: no PR, no new Actions and no Pages deployment.
+        return None,identity,False
     ident=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()[:16]
     branch="review/four-system-one-pages-"+ident
     matches=[x for x in open_pulls() if x["head"]["ref"]==branch]
@@ -315,30 +481,23 @@ def stage(args):
         return combined,identity,False
     if not args.stage:
         raise Hold("SOURCE_READY_NO_NEW_PR_REQUESTED")
-    b=gh(f"repos/{HOST}/git/blobs","POST",
-         {"content":base64.b64encode(f2r_bytes).decode(),"encoding":"base64"})["sha"]
-    updates=[{"path":x,"mode":"100644","type":"blob","sha":pds_tree[x]}
-             for x in sorted(pds_files)]
-    updates += [{"path":x,"mode":"100644","type":"blob","sha":eq_tree[x]}
-                for x in sorted(eq_files)]
-    updates.append({"path":F2R_TARGET,"mode":"100644","type":"blob","sha":b})
-    # NEVER use the historical source PR tree as the full base: source-only
-    # Governance/Pages commits can have advanced main in the meantime.
-    # Overlay only the independently reviewed changed blobs onto CURRENT main.
     base_commit=gh(f"repos/{HOST}/git/commits/{main}")
-    tr=gh(f"repos/{HOST}/git/trees","POST",
-          {"base_tree":base_commit["tree"]["sha"],"tree":updates})["sha"]
+    elements=[{"path":x,"mode":"100644","type":"blob","sha":sha}
+              for x,sha in sorted(updates.items())]
+    candidate_tree=gh(f"repos/{HOST}/git/trees","POST",
+        {"base_tree":base_commit["tree"]["sha"],"tree":elements})["sha"]
     commit=gh(f"repos/{HOST}/git/commits","POST",
-              {"message":"Stage four reviewed systems; no publication",
-               "tree":tr,"parents":[main]})["sha"]
+        {"message":"Stage source-owned current four-system data only",
+         "tree":candidate_tree,"parents":[main]})["sha"]
     gh(f"repos/{HOST}/git/refs","POST",{"ref":"refs/heads/"+branch,"sha":commit})
-    body=(MARKER+"\nPinned sources: "+json.dumps(identity,sort_keys=True)+
-          "\nDRAFT ONLY: requires exact final owner authorization, combined CI and "
-          "automatic postdeploy Pages data/browser QA. No model execution.")
+    body=(MARKER+"\nPinned, current source evidence: "+json.dumps(identity,sort_keys=True)+
+       "\nDRAFT: original source reviews, exact current clocks and one Pages CI "
+       "MUST PASS prior to one public release. No model compute.")
     combined=gh(f"repos/{HOST}/pulls","POST",
-                {"title":"Combined reviewed four-system Pages release "+ident,
-                 "head":branch,"base":"main","body":body,"draft":True})
+         {"title":"Reviewed current four-system one-Pages release "+ident,
+          "head":branch,"base":"main","body":body,"draft":True})
     return combined,identity,True
+
 
 def publish(args,combined):
     head=combined["head"]["sha"]
@@ -417,6 +576,8 @@ def main():
                    help="Existing one-button Y authorizes routine release under ACTIVE owner policy")
     p.add_argument("--approved-head",default="")
     p.add_argument("--wait-seconds",type=int,default=900)
+    p.add_argument("--expected-market-close",default="",
+                   help="Source-owned PDS validated completed US market close")
     a=p.parse_args()
     if a.publish and not a.stage:
         p.error("publishing requires --stage")
@@ -425,6 +586,11 @@ def main():
     if not 60<=a.wait_seconds<=3600: p.error("bad wait")
     try:
         combined,identity,created=stage(a)
+        if combined is None:
+            print(json.dumps({"status":"NO_CHANGE_ALREADY_PUBLISHED",
+                  "provenance":identity,"model_refreshed":False,
+                  "actions_dispatched":False,"public_deployment":False},sort_keys=True))
+            return 0
         report={"status":"DRAFT_REVIEW_ONLY","pr":combined["number"],
                 "head":combined["head"]["sha"],"created":created,
                 "provenance":identity,"public_deployment":False}
