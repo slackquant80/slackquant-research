@@ -72,6 +72,10 @@ SOURCE_ONLY_MAIN_CHANGES={
     "scripts/test-one-click-four-system-release.py",
     "scripts/test-four-system-release-readiness.py",
     "scripts/sync-f2r-static-state.py",
+    # Reviewed source-only standing policy + receiver verification updates.
+    "scripts/equity-standing-publication-policy.json",
+    "scripts/test-equity-standing-policy.py",
+    "scripts/verify_equity_intake_release.py",
 }
 def source_base_compatible(source_base,current_main,source_paths):
     if source_base==current_main: return True
@@ -182,6 +186,27 @@ def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
     return clocks
 
 
+def await_equity_draft_review(wait_seconds):
+    """Wait for the already-dispatched source-owned Equity workflow to stage ONE PR.
+
+    No model computation, workflow dispatch, review creation or source mutation.
+    Duplicate drafts are ambiguous and must never be arbitrarily selected.
+    """
+    if wait_seconds < 0:
+        raise Hold("EQUITY_NEGATIVE_REVIEW_WAIT")
+    deadline = time.monotonic() + wait_seconds
+    while True:
+        matches = [x for x in open_pulls() if x["title"].startswith(
+            "Review Equity Alpha seven-file hosted candidate:")]
+        if len(matches) > 1:
+            raise Hold("EQUITY_MULTIPLE_SOURCE_OWNED_REVIEW_DRAFTS")
+        if len(matches) == 1:
+            return matches[0]
+        if time.monotonic() >= deadline:
+            raise Hold("EQUITY_SOURCE_OWNED_DRAFT_NOT_YET_STAGED_NO_MODEL_RERUN")
+        time.sleep(min(15.0, max(0.0, deadline - time.monotonic())))
+
+
 def source_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
     pds=pull(HOST,args.pds_adaa_pr)
@@ -208,11 +233,11 @@ def source_inputs(args):
         doc.get("completed_performance",{}).get("support_end") or
         len(doc.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
         raise Hold("F2R_RELEASE_DATA_CONTRACT_HOLD")
-    candidates=[x for x in open_pulls() if x["title"].startswith(
-        "Review Equity Alpha seven-file hosted candidate:")]
-    if len(candidates)!=1:
-        raise Hold("EQUITY_APPROVED_SOURCE_CLOCK_RIGHTS_REVIEW_MISSING_OR_AMBIGUOUS")
-    eq=pull(HOST,candidates[0]["number"])
+    # Sender 125 dispatches the existing hosted Equity review workflow
+    # asynchronously. Without this wait the very same single-button run
+    # races its own approved candidate and always reports a false HOLD.
+    equity_review=await_equity_draft_review(args.wait_seconds if args.stage else 0)
+    eq=pull(HOST,equity_review["number"])
     if (eq["state"]!="open" or eq["base"]["ref"]!="main" or
         eq.get("user",{}).get("login")!="github-actions[bot]"):
         raise Hold("EQUITY_SOURCE_OWNED_INTAKE_PROVENANCE_HOLD")
