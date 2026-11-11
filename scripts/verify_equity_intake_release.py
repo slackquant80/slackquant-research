@@ -97,6 +97,33 @@ def verify_evidence(manifest: dict, source_commit: str,
         raise Hold("RIGHTS_SCOPE_OR_SOURCE_BINDING_HOLD")
     if rights.get("market_data_through") != clock.get("market_data_through"):
         raise Hold("RIGHTS_MARKET_DATE_BINDING_HOLD")
+    # A standing rule is not a self-asserted right: the receiver independently
+    # verifies the EXACT policy bytes committed to this hosted source.
+    if rights.get("approval_basis") == "STANDING_OWNER_POLICY_V1":
+        policy_file = Path(__file__).with_name("equity-standing-publication-policy.json")
+        if not policy_file.is_file() or policy_file.is_symlink():
+            raise Hold("STANDING_POLICY_SOURCE_NOT_AVAILABLE")
+        raw_policy = policy_file.read_bytes()
+        if sha(raw_policy) != rights.get("standing_policy_sha256"):
+            raise Hold("STANDING_POLICY_HASH_NOT_CURRENT")
+        policy = parse_json_bytes(raw_policy, "STANDING_POLICY")
+        if (policy.get("schema") != "SLACKQUANT_EQUITY_STANDING_PUBLICATION_V1"
+            or policy.get("status") != "ACTIVE"
+            or policy.get("scope") != PREFIX + "**"
+            or policy.get("allowed_source_repo") != SOURCE_REPO
+            or policy.get("receipt_basis") != "STANDING_OWNER_POLICY_V1"
+            or policy.get("max_public_files") != 7
+            or clock.get("benchmark") != policy.get("benchmark")
+            or clock.get("production_authority") != policy.get("production_authority")
+            or str(clock.get("market_data_through","")) <
+               str(policy.get("effective_market_data_from",""))):
+            raise Hold("STANDING_POLICY_CONTRACT_NOT_AUTHORIZED")
+        if (compute.get("attestation_basis") != "CURRENT_SOURCE_FULL_114_124"
+            or compute.get("standing_policy_sha256") != sha(raw_policy)
+            or compute.get("candidate_files") != 7):
+            raise Hold("STANDING_COMPUTE_INDEPENDENT_GATES_NOT_ATTESTED")
+    elif rights.get("approval_basis") is not None:
+        raise Hold("UNKNOWN_RIGHTS_APPROVAL_BASIS")
     if compute.get("status") != "GLOBAL_EQUITY_ALPHA_PRODUCTION_GATE_PASS" or \
        compute.get("source_commit") != source_commit or \
        compute.get("production_authority") != clock.get("production_authority"):
