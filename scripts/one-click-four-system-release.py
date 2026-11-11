@@ -422,7 +422,7 @@ def choose_current_inputs(args):
             raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
         desired_floor=_market_clock_from_blob(
             PDS_MARK,pds.get(PDS_MARK,main_tree[PDS_MARK]))
-        eq, re=reviewed_overlay("equity",main_tree,reviews)
+        eq, equity_reviews=reviewed_overlay("equity",main_tree,reviews)
         desired_eq=_market_clock_from_blob(
             EQUITY_OVERLAY,eq.get(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY]))
         needed=(expected and (desired_floor<expected or desired_eq<expected))
@@ -450,7 +450,7 @@ def choose_current_inputs(args):
     identity={"platform_main":main,
        "pds":rp,"adaa":ra,
        "f2r":{"review":source_approved,"source_main":f2r_main,"blob":source_blob},
-       "equity":re,
+       "equity":equity_reviews,
     }
     changed={**pds,**adaa,**eq}
     if source_blob!=main_tree[F2R_TARGET]:
