@@ -188,17 +188,24 @@ def main() -> int:
     page_required = (
         'getLiveStressEvidence',
         'id="live-evidence"',
-        'Live operational evidence',
-        'Current Conditional Stress Snapshot',
-        'Stress-family structure · current B1 vs historical B0',
-        'Open Full Stress Lab Dashboard ↗',
+        'Dated public snapshot · see hosted dashboard for latest run',
+        'Published Stress Scenario Snapshot',
+        'Dated stress-family structure · B1 vs historical B0',
+        'Open Current Stress Lab Dashboard ↗',
         'id="frozen-evidence"',
         'Frozen research snapshot',
         'Published Stage-D evidence remains citable and unchanged',
     )
     for token in page_required:
         if token not in page:
-            fail(f"Stress System page missing live/frozen contract token: {token}")
+            fail(f"Stress System page missing dated/frozen contract token: {token}")
+
+    # A dated payload is not proof that it is the current hosted Streamlit run.
+    # Never revert to presenting an unsynchronized historical snapshot as live.
+    if "Current Conditional Stress Snapshot" in page:
+        fail("Stress page incorrectly labels dated evidence as current live data")
+    if "not an automatically synchronized live feed" not in page:
+        fail("Stress page must distinguish dated publication from live hosted results")
 
     broken_visible_tokens = (
         "Current dominant-family share ? ",
