@@ -217,6 +217,46 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"NOT_ACTIVE"):
                 mod.assert_standing_operator_authority()
 
+    def test_last_reviewed_pds_adaa_accepts_only_source_only_main_changes(self):
+        paths={
+            ".github/workflows/deploy-pages.yml",
+            "scripts/one-click-four-system-release.py",
+            "scripts/equity-standing-publication-policy.json",
+            "scripts/test-equity-standing-policy.py",
+            "scripts/verify_equity_intake_release.py",
+        }
+        self.assertTrue(paths.issubset(mod.SOURCE_ONLY_MAIN_CHANGES))
+        delta={"status":"ahead","behind_by":0,"files":[{"filename":p} for p in paths]}
+        with patch.object(mod,"gh",return_value=delta):
+            self.assertTrue(mod.source_base_compatible("a"*40,"b"*40,
+                            {"public/assets/systems/adaa/snapshot.js"}))
+
+    def test_existing_equity_review_does_not_dispatch_or_wait(self):
+        p={"title":"Review Equity Alpha seven-file hosted candidate: pinned", "number":82}
+        with patch.object(mod,"open_pulls",return_value=[p]),\
+             patch.object(mod.time,"sleep",side_effect=AssertionError("never wait")):
+            self.assertEqual(mod.await_equity_draft_review(60)["number"],82)
+
+    def test_one_dispatched_equity_review_appears_in_same_run(self):
+        p={"title":"Review Equity Alpha seven-file hosted candidate: pinned", "number":83}
+        with patch.object(mod,"open_pulls",side_effect=[[],[p]]) as r,\
+             patch.object(mod.time,"sleep",return_value=None):
+            self.assertEqual(mod.await_equity_draft_review(60)["number"],83)
+            self.assertEqual(r.call_count,2)
+
+    def test_absent_equity_review_fails_closed_without_any_publication(self):
+        with patch.object(mod,"open_pulls",return_value=[]),\
+             patch.object(mod.time,"sleep",side_effect=AssertionError("should not wait")):
+            with self.assertRaisesRegex(mod.Hold,"DRAFT_NOT_YET_STAGED"):
+                mod.await_equity_draft_review(0)
+
+    def test_multiple_equity_reviews_never_choose_newest_arbitrarily(self):
+        prs=[{"title":"Review Equity Alpha seven-file hosted candidate: "+str(i),
+              "number":i} for i in (92,93)]
+        with patch.object(mod,"open_pulls",return_value=prs):
+            with self.assertRaisesRegex(mod.Hold,"MULTIPLE_SOURCE_OWNED"):
+                mod.await_equity_draft_review(60)
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
