@@ -165,22 +165,28 @@ class ReleaseSafety(unittest.TestCase):
     def test_source_clocks_pass_at_exact_market_close(self):
         pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
         eq_path="public/dashboards/equity-alpha/data/live_overlay.js"
-        pds={pds_path:"a"*40}
+        mark_path="public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
+        pds={pds_path:"a"*40,mark_path:"c"*40}
         eq={eq_path:"b"*40}
         payloads={
-          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-11"}',
+          "c"*40:b'{"status":"PASS","official_mark_through":"2026-11-10"}',
           "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
         }
         with patch.object(mod,"pinned_git_blob_bytes",
                           side_effect=lambda repo,blob:payloads[blob]):
             clocks=mod.assert_common_market_clock(pds,eq,self.f2r_fixture())
-        self.assertEqual(set(clocks),{"PDS","F2R_MTD","F2R_PREVIEW","EQUITY"})
+        self.assertEqual(set(clocks),{"PDS","PDS_PUBLIC_AS_OF","F2R_MTD","F2R_PREVIEW","EQUITY"})
+        self.assertEqual(clocks["PDS"],"2026-11-10")
+        self.assertEqual(clocks["PDS_PUBLIC_AS_OF"],"2026-11-11")
 
     def test_stale_equity_holds_before_any_pr(self):
-        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40}
+        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40,
+             "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json":"c"*40}
         eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
         payloads={
-          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-11"}',
+          "c"*40:b'{"status":"PASS","official_mark_through":"2026-11-10"}',
           "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-06","benchmark":"ACWI"}};',
         }
         with patch.object(mod,"pinned_git_blob_bytes",
@@ -189,10 +195,12 @@ class ReleaseSafety(unittest.TestCase):
                 mod.assert_common_market_clock(pds,eq,self.f2r_fixture())
 
     def test_stale_f2r_mtd_holds_before_any_pr(self):
-        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40}
+        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40,
+             "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json":"c"*40}
         eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
         payloads={
-          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-10"}',
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-11"}',
+          "c"*40:b'{"status":"PASS","official_mark_through":"2026-11-10"}',
           "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
         }
         d=json.loads(self.f2r_fixture())
@@ -201,6 +209,34 @@ class ReleaseSafety(unittest.TestCase):
                           side_effect=lambda repo,blob:payloads[blob]):
             with self.assertRaisesRegex(mod.Hold,"PUBLIC_SOURCE_STALE_F2R_MTD"):
                 mod.assert_common_market_clock(pds,eq,json.dumps(d).encode())
+
+    def test_future_pds_publication_date_does_not_advance_market_floor(self):
+        paths={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40,
+               "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json":"c"*40}
+        eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
+        payloads={
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-12"}',
+          "c"*40:b'{"status":"PASS","official_mark_through":"2026-11-10"}',
+          "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
+        }
+        with patch.object(mod,"pinned_git_blob_bytes",
+                          side_effect=lambda repo,blob:payloads[blob]):
+            clocks=mod.assert_common_market_clock(paths,eq,self.f2r_fixture())
+        self.assertEqual(clocks["PDS"],"2026-11-10")
+
+    def test_pds_publication_preceding_market_mark_holds(self):
+        pds={"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json":"a"*40,
+             "public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json":"c"*40}
+        eq={"public/dashboards/equity-alpha/data/live_overlay.js":"b"*40}
+        payloads={
+          "a"*40:b'{"status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS","public_as_of_date":"2026-11-09"}',
+          "c"*40:b'{"status":"PASS","official_mark_through":"2026-11-10"}',
+          "b"*40:b'window.EA_LIVE_OVERLAY = {"meta":{"marketDataThrough":"2026-11-10","benchmark":"ACWI"}};',
+        }
+        with patch.object(mod,"pinned_git_blob_bytes",
+                          side_effect=lambda repo,blob:payloads[blob]):
+            with self.assertRaisesRegex(mod.Hold,"PDS_PUBLICATION_DATE_PRECEDES"):
+                mod.assert_common_market_clock(pds,eq,self.f2r_fixture())
 
     def test_standing_operator_one_confirmation_keeps_policy_bound(self):
         raw=SOURCE.with_name("equity-standing-publication-policy.json").read_bytes()
