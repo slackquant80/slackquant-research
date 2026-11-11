@@ -63,6 +63,9 @@ jobs:
       - name: Offline four-system publication audit regression
         run: python3 scripts/check-four-system-live-release.py --self-test
 
+      - name: One-Pages coordinator offline fail-closed regression
+        run: python3 scripts/test-one-click-four-system-release.py
+
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'
         run: touch out/.nojekyll
