@@ -257,6 +257,52 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"MULTIPLE_SOURCE_OWNED"):
                 mod.await_equity_draft_review(60)
 
+    def test_gh_utf8_bytes_survive_windows_cp949_for_non_ascii_fields(self):
+        # This is the exact failure path from the Windows operator traceback:
+        # a github PR JSON payload contains UTF-8, not console CP949.
+        payload={"number":75,"title":"ADAA · 금융 시장", "draft":True}
+        response=SimpleNamespace(returncode=0,
+                stdout=json.dumps(payload,ensure_ascii=False).encode("utf-8"),
+                stderr=b"")
+        with patch.object(mod.subprocess,"run",return_value=response) as run:
+            got=mod.gh("repos/slackquant80/slackquant-research/pulls/75")
+        self.assertEqual(got,payload)
+        self.assertFalse(run.call_args.kwargs["text"])
+        self.assertEqual(run.call_args.kwargs["capture_output"],True)
+
+    def test_gh_post_utf8_stdin_is_bytes_not_locale_text(self):
+        response=SimpleNamespace(returncode=0,stdout=b'{"sha":"done"}',stderr=b"")
+        with patch.object(mod.subprocess,"run",return_value=response) as run:
+            self.assertEqual(mod.gh("repos/example/release","POST",
+                       {"title":"서울"}),{"sha":"done"})
+        self.assertIsInstance(run.call_args.kwargs["input"],bytes)
+        self.assertIn("서울".encode("utf-8"),run.call_args.kwargs["input"])
+
+    def test_gh_reader_thread_stdout_none_holds_without_attribute_error(self):
+        response=SimpleNamespace(returncode=0,stdout=None,stderr=None)
+        with patch.object(mod.subprocess,"run",return_value=response):
+            with self.assertRaisesRegex(mod.Hold,"GITHUB_API_OUTPUT_NOT_BYTES"):
+                mod.gh("repos/sample/pulls/75")
+
+    def test_gh_invalid_utf8_fails_closed(self):
+        response=SimpleNamespace(returncode=0,stdout=b"\x82\xff",stderr=b"")
+        with patch.object(mod.subprocess,"run",return_value=response):
+            with self.assertRaisesRegex(mod.Hold,"GITHUB_API_UTF8_DECODE_HOLD"):
+                mod.gh("repos/sample/pulls/75")
+
+    def test_gh_invalid_json_holds(self):
+        response=SimpleNamespace(returncode=0,stdout=b"not-json",stderr=b"")
+        with patch.object(mod.subprocess,"run",return_value=response):
+            with self.assertRaisesRegex(mod.Hold,"GITHUB_API_INVALID_JSON_HOLD"):
+                mod.gh("repos/sample/pulls/75")
+
+    def test_gh_cli_nonzero_stderr_is_best_effort_utf8(self):
+        response=SimpleNamespace(returncode=1,stdout=b"",
+                                 stderr=b"API \x82 invalid console encoding")
+        with patch.object(mod.subprocess,"run",return_value=response):
+            with self.assertRaisesRegex(mod.Hold,"GITHUB_API_HOLD"):
+                mod.gh("repos/sample/pulls/75")
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
