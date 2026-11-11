@@ -56,12 +56,12 @@ def assess(pr: dict, changed: set[str], tree_paths: set[str],
         if file not in tree_paths:
             findings.append(system.upper() + "_RELEASE_ARTIFACT_ABSENT")
     floor = clocks.get("PDS", "")
-    if not re.fullmatch(r"20\\d{2}-\\d{2}-\\d{2}", floor):
+    if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", floor):
         findings.append("PDS_RELEASE_CLOCK_UNVERIFIED")
     else:
         for name in ("F2R", "EquityAlpha"):
             clock = clocks.get(name, "")
-            if not re.fullmatch(r"20\\d{2}-\\d{2}-\\d{2}", clock):
+            if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", clock):
                 findings.append(name.upper() + "_CLOCK_UNVERIFIED")
             elif clock < floor:
                 findings.append(name.upper() + "_STALE_BELOW_PDS_CLOCK")
@@ -126,7 +126,7 @@ def candidate_clocks(tree: dict[str, str]) -> dict[str, str]:
     pds = json.loads(published_blob(tree[REQUIRED["PDS"]]))
     f2r = json.loads(published_blob(tree[REQUIRED["F2R"]]))
     raw = published_blob(tree[REQUIRED["EquityAlpha"]]).decode("utf-8-sig").strip()
-    match = re.fullmatch(r"window\\.EA_LIVE_OVERLAY\\s*=\\s*(\\{.*\\})\\s*;", raw, re.S)
+    match = re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;", raw, re.S)
     if not match:
         raise RuntimeError("EQUITY_PUBLIC_DATA_BINDING_UNREADABLE")
     equity = json.loads(match.group(1))
