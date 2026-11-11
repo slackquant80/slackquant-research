@@ -58,13 +58,37 @@ def open_pulls():
     if len(result)==100: raise Hold("OPEN_PR_CENSUS_TRUNCATED")
     return result
 
+
+# A historic reviewed financial PR may be based on a slightly older main.
+# Only approved SOURCE-ONLY coordinator updates may advance the shared base;
+# all financial/site changes force a fresh review rather than a guessed rebase.
+SOURCE_ONLY_MAIN_CHANGES={
+    ".github/workflows/deploy-pages.yml",
+    "scripts/four-system-release-readiness.py",
+    "scripts/one-click-four-system-release.py",
+    "scripts/test-one-click-four-system-release.py",
+}
+def source_base_compatible(source_base,current_main,source_paths):
+    if source_base==current_main: return True
+    if not HEX40.fullmatch(source_base) or not HEX40.fullmatch(current_main):
+        raise Hold("SOURCE_BASE_SHA_INVALID")
+    delta=gh(f"repos/{HOST}/compare/{source_base}...{current_main}")
+    if (delta.get("behind_by")!=0 or delta.get("status")!="ahead" or
+        delta.get("too_large") is True):
+        raise Hold("SOURCE_PR_BASE_NOT_ANCESTOR_OF_MAIN")
+    changed={x["filename"] for x in delta.get("files",[])}
+    if not changed or not changed.issubset(SOURCE_ONLY_MAIN_CHANGES) or \
+       changed.intersection(source_paths):
+        raise Hold("MATERIAL_MAIN_CHANGE_SINCE_SOURCE_REVIEW")
+    return True
+
 def source_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
     pds=pull(HOST,args.pds_adaa_pr)
-    if (pds["state"]!="open" or pds["base"]["sha"]!=main or
-        pds["base"]["ref"]!="main"):
-        raise Hold("PDS_ADAA_REVIEW_BASE_DRIFT")
+    if pds["state"]!="open" or pds["base"]["ref"]!="main":
+        raise Hold("PDS_ADAA_REVIEW_NOT_OPEN_ON_MAIN")
     pds_files=set(files(HOST,args.pds_adaa_pr))
+    source_base_compatible(pds["base"]["sha"],main,pds_files)
     if ("public/assets/systems/adaa/snapshot.js" not in pds_files or
         not any(x.startswith("public/data/systems/pds/") for x in pds_files)):
         raise Hold("PDS_ADAA_COMBINED_REVIEW_MISSING")
@@ -92,13 +116,14 @@ def source_inputs(args):
     if len(candidates)!=1:
         raise Hold("EQUITY_APPROVED_SOURCE_CLOCK_RIGHTS_REVIEW_MISSING_OR_AMBIGUOUS")
     eq=pull(HOST,candidates[0]["number"])
-    if (eq["base"]["sha"]!=main or eq["state"]!="open" or
+    if (eq["state"]!="open" or eq["base"]["ref"]!="main" or
         eq.get("user",{}).get("login")!="github-actions[bot]"):
         raise Hold("EQUITY_SOURCE_OWNED_INTAKE_PROVENANCE_HOLD")
     if ("Exact source prerelease:" not in (eq.get("body") or "") or
         "ZIP SHA256:" not in (eq.get("body") or "")):
         raise Hold("EQUITY_PRIVATE_RECEIPT_REVIEW_REFERENCE_MISSING")
     eq_files=set(files(HOST,eq["number"]))
+    source_base_compatible(eq["base"]["sha"],main,eq_files)
     if (not eq_files or not eq_files.issubset(EQUITY_PATHS) or
         EQUITY+"data/live_overlay.js" not in eq_files or
         eq_files.intersection(pds_files) or F2R_TARGET in pds_files):
