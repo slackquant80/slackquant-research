@@ -102,7 +102,11 @@ def assess(pr: dict, changed: set[str], tree_paths: set[str],
 
 def candidate_tree(head: str) -> dict[str, str]:
     # Compare complete candidate snapshot, not only changed paths.
-    data = gh_json(f"repos/{REPO}/git/trees/{head}?recursive=1")
+    commit = gh_json(f"repos/{REPO}/git/commits/{head}")
+    tree_sha = (commit.get("tree") or {}).get("sha", "")
+    if not SHA.fullmatch(tree_sha):
+        raise RuntimeError("CANDIDATE_COMMIT_TREE_UNVERIFIED")
+    data = gh_json(f"repos/{REPO}/git/trees/{tree_sha}?recursive=1")
     if data.get("truncated"):
         raise RuntimeError("FULL_CANDIDATE_TREE_TRUNCATED")
     return {entry["path"]: entry["sha"] for entry in data["tree"]
