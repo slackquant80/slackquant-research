@@ -177,25 +177,33 @@ def pinned_git_blob_bytes(repo, sha):
 def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
     """Fail before PR creation when source-owned approved snapshots have stale clocks."""
     pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
+    pds_mark_path="public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json"
     equity_path=EQUITY+"data/live_overlay.js"
-    if pds_path not in pds_tree or equity_path not in eq_tree:
+    if (pds_path not in pds_tree or pds_mark_path not in pds_tree
+        or equity_path not in eq_tree):
         raise Hold("REQUIRED_DATED_PUBLIC_RECEIPT_MISSING")
     try:
         pds=json.loads(pinned_git_blob_bytes(HOST,pds_tree[pds_path]))
+        pds_mark=json.loads(pinned_git_blob_bytes(HOST,pds_tree[pds_mark_path]))
         f2r=json.loads(f2r_bytes)
         ea=pinned_git_blob_bytes(HOST,eq_tree[equity_path]).decode("utf-8-sig").strip()
         match=re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;",ea,re.S)
         if not match: raise Hold("EQUITY_PUBLIC_OVERLAY_INVALID")
         equity=json.loads(match.group(1))
-        if pds.get("status")!="PDS_SLACKQUANT_PUBLIC_BINDING_PASS":
-            raise Hold("PDS_SOURCE_RECEIPT_NOT_PASS")
+        if (pds.get("status")!="PDS_SLACKQUANT_PUBLIC_BINDING_PASS"
+            or pds_mark.get("status")!="PASS"):
+            raise Hold("PDS_SOURCE_RECEIPTS_NOT_PASS")
         if equity.get("meta",{}).get("benchmark")!="ACWI":
             raise Hold("EQUITY_PUBLIC_BENCHMARK_INVALID")
         mtd=f2r["live_state"]["current_mtd"]
         preview=f2r["live_state"]["preview"]
         if not mtd.get("available") or not preview.get("available"):
             raise Hold("F2R_CURRENT_OR_PREVIEW_NOT_AVAILABLE")
-        clocks={"PDS":pds["public_as_of_date"],
+        # PDS public_as_of_date is the KST PUBLICATION DATE (2026-11-11),
+        # NOT the last completed NYSE close. Its immutable source-owned
+        # dashboard receipt official_mark_through is the MARKET CLOCK (11-10).
+        clocks={"PDS":pds_mark["official_mark_through"],
+                "PDS_PUBLIC_AS_OF":pds["public_as_of_date"],
                 "F2R_MTD":mtd["as_of_date"],
                 "F2R_PREVIEW":preview["market_cutoff_date"],
                 "EQUITY":equity["meta"]["marketDataThrough"]}
@@ -204,6 +212,8 @@ def assert_common_market_clock(pds_tree, eq_tree, f2r_bytes):
                     r"20\d{2}-\d{2}-\d{2}",value):
                 raise Hold("PUBLIC_SOURCE_CLOCK_INVALID_"+name)
         floor=clocks["PDS"]
+        if clocks["PDS_PUBLIC_AS_OF"] < floor:
+            raise Hold("PDS_PUBLICATION_DATE_PRECEDES_SOURCE_MARK")
         for name in ("F2R_MTD","F2R_PREVIEW","EQUITY"):
             if clocks[name]<floor:
                 raise Hold("PUBLIC_SOURCE_STALE_"+name+"_BELOW_PDS_"+floor)
