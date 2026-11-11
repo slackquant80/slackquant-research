@@ -47,7 +47,9 @@ def files(repo,number):
     raise Hold("PR_CHANGED_FILE_LIST_TRUNCATED")
 
 def tree(repo,commit):
-    obj=gh(f"repos/{repo}/git/trees/{commit}?recursive=1")
+    if not HEX40.fullmatch(commit): raise Hold("INVALID_SOURCE_COMMIT_SHA")
+    c=gh(f"repos/{repo}/git/commits/{commit}")
+    obj=gh(f"repos/{repo}/git/trees/{c['tree']['sha']}?recursive=1")
     if obj.get("truncated"): raise Hold("SOURCE_TREE_TRUNCATED")
     return {x["path"]:x["sha"] for x in obj["tree"] if x["type"]=="blob"}
 
@@ -117,7 +119,8 @@ def stage(args):
     if matches:
         combined=pull(HOST,matches[0]["number"])
         if (combined["base"]["sha"]!=main or
-            MARKER not in (combined.get("body") or "")):
+            MARKER not in (combined.get("body") or "") or
+            json.dumps(identity,sort_keys=True) not in (combined.get("body") or "")):
             raise Hold("EXISTING_COMBINED_REVIEW_BASE_OR_PROVENANCE_HOLD")
         return combined,identity,False
     if not args.stage:
@@ -199,15 +202,24 @@ def main():
     p.add_argument("--approved-head",default="")
     p.add_argument("--wait-seconds",type=int,default=900)
     a=p.parse_args()
-    if a.publish and (not a.stage or not HEX40.fullmatch(a.approved_head)):
-        p.error("publishing requires --stage and exact approved-head SHA")
+    if a.publish and not a.stage:
+        p.error("publishing requires --stage")
+    if a.approved_head and not HEX40.fullmatch(a.approved_head):
+        p.error("bad approved head SHA")
     if not 60<=a.wait_seconds<=3600: p.error("bad wait")
     try:
         combined,identity,created=stage(a)
         report={"status":"DRAFT_REVIEW_ONLY","pr":combined["number"],
                 "head":combined["head"]["sha"],"created":created,
                 "provenance":identity,"public_deployment":False}
-        if a.publish: report=publish(a,combined)
+        if a.publish:
+            if not a.approved_head:
+                print("PUBLIC_RELEASE_REQUEST pr="+str(combined["number"])+
+                      " pinned_head="+combined["head"]["sha"],flush=True)
+                response=input("Type PUBLISH to authorize public Pages merge after CI: ").strip()
+                if response!="PUBLISH": raise Hold("PUBLIC_RELEASE_NOT_AUTHORIZED")
+                a.approved_head=combined["head"]["sha"]
+            report=publish(a,combined)
         print(json.dumps(report,sort_keys=True))
         return 0 if a.publish else 3
     except Hold as e:
