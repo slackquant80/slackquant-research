@@ -27,17 +27,41 @@ MARKER="SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1"
 
 class Hold(Exception): pass
 
+def _utf8_output(raw, operation):
+    """Never let Windows cp949/locale decode GitHub's UTF-8 CLI output.
+
+    subprocess's implicit Windows text decoder can fail inside its reader
+    thread and return stdout=None, even when gh itself succeeded.
+    """
+    if not isinstance(raw, bytes):
+        raise Hold(operation + "_OUTPUT_NOT_BYTES")
+    try:
+        return raw.decode("utf-8-sig", errors="strict")
+    except UnicodeError as exc:
+        raise Hold(operation + "_UTF8_DECODE_HOLD") from exc
+
+
 def gh(path, method="GET", data=None):
     cmd=["gh","api","--method",method,path]
     if data is not None: cmd+=["--input","-"]
+    stdin = (json.dumps(data, ensure_ascii=False).encode("utf-8")
+             if data is not None else None)
     try:
-        p=subprocess.run(cmd, input=json.dumps(data) if data is not None else None,
-                         capture_output=True,text=True,timeout=60,check=False)
-    except (OSError,subprocess.TimeoutExpired) as e:
-        raise Hold("GITHUB_CLI_UNAVAILABLE") from e
+        # Bytes mode is mandatory. Avoid implicit cp949 in all IO threads.
+        p=subprocess.run(cmd, input=stdin, capture_output=True,
+                         text=False,timeout=60,check=False)
+    except (OSError,subprocess.TimeoutExpired) as exc:
+        raise Hold("GITHUB_CLI_UNAVAILABLE") from exc
     if p.returncode:
-        raise Hold("GITHUB_API_HOLD "+path+" "+p.stderr[-160:])
-    return json.loads(p.stdout) if p.stdout.strip() else {}
+        err = p.stderr.decode("utf-8", errors="replace") if isinstance(p.stderr,bytes) else ""
+        raise Hold("GITHUB_API_HOLD "+path+" "+err[-160:])
+    output=_utf8_output(p.stdout,"GITHUB_API")
+    if not output.strip():
+        return {}
+    try:
+        return json.loads(output)
+    except ValueError as exc:
+        raise Hold("GITHUB_API_INVALID_JSON_HOLD "+path) from exc
 
 def pull(repo,number): return gh(f"repos/{repo}/pulls/{number}")
 
@@ -122,13 +146,15 @@ def validated_f2r_bytes(raw, platform_main):
         for action in ("--check","--write"):
             try:
                 result=subprocess.run([sys.executable,str(root/script),"--source",
-                     str(approved),action],capture_output=True,text=True,
+                     str(approved),action],capture_output=True,text=False,
                      cwd=root,timeout=35,check=False)
             except (OSError,subprocess.TimeoutExpired) as exc:
                 raise Hold("F2R_OFFICIAL_SOURCE_SYNC_UNAVAILABLE") from exc
             if result.returncode:
-                raise Hold("F2R_OFFICIAL_"+action[2:].upper()+"_HOLD: "+
-                           (result.stderr or result.stdout)[-220:])
+                # Failure diagnostics are best effort; never skip failing validation.
+                details=(result.stderr or result.stdout or b"")
+                reason=details.decode("utf-8",errors="replace") if isinstance(details,bytes) else ""
+                raise Hold("F2R_OFFICIAL_"+action[2:].upper()+"_HOLD: "+reason[-220:])
         output=(root/state).read_bytes()
         if output!=raw:
             raise Hold("F2R_OFFICIAL_OUTPUT_DIFFERS_FROM_APPROVED_SOURCE_BYTES")
@@ -311,8 +337,11 @@ def publish(args,combined):
     if combined["state"]!="open":
         raise Hold("RELEASE_PR_NOT_OPEN")
     if combined["draft"]:
-        p=subprocess.run(["gh","pr","ready",str(combined["number"]),"--repo",HOST],
-                         capture_output=True,text=True,timeout=40,check=False)
+        try:
+            p=subprocess.run(["gh","pr","ready",str(combined["number"]),"--repo",HOST],
+                             capture_output=True,text=False,timeout=40,check=False)
+        except (OSError,subprocess.TimeoutExpired) as exc:
+            raise Hold("PR_READY_CLI_UNAVAILABLE") from exc
         if p.returncode: raise Hold("PR_READY_OR_PERMISSION_HOLD")
     end=time.monotonic()+args.wait_seconds
     while time.monotonic()<end:
