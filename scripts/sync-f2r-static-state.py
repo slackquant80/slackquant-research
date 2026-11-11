@@ -55,9 +55,12 @@ def main():
     current = json.loads(TARGET.read_text(encoding="utf-8-sig")) if TARGET.exists() else None
     if current and current.get("issued_at_utc", "") > data["issued_at_utc"]:
         raise ValueError("refusing to roll back to an older source issue timestamp")
-    if args.write:
-        TARGET.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"F2R_STATIC_PUBLIC_STATE_PASS mode={'WRITE' if args.write else 'CHECK'} completed={cutoff} issued={data['issued_at_utc']}")
+    changed = not TARGET.exists() or TARGET.read_bytes() != raw
+    if args.write and changed:
+        # Preserve EXACT reviewed source bytes: the live four-system parity gate
+        # compares hosted JSON to source-owned public state byte-for-byte.
+        TARGET.write_bytes(raw)
+    print(f"F2R_STATIC_PUBLIC_STATE_PASS mode={'WRITE' if args.write else 'CHECK'} delta={'CHANGED' if changed else 'NO_CHANGE'} completed={cutoff} issued={data['issued_at_utc']}")
 
 if __name__ == "__main__":
     try:
