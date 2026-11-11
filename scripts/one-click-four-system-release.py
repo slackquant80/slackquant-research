@@ -406,24 +406,33 @@ def choose_current_inputs(args):
         state.get("completed_performance",{}).get("as_of_date") or
         len(state.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
         raise Hold("F2R_SOURCE_PUBLIC_CONTRACT_HOLD")
-    reviews=open_pulls()
-    pds, rp=reviewed_overlay("pds",main_tree,reviews)
-    adaa, ra=reviewed_overlay("adaa",main_tree,reviews)
-    if set(pds).intersection(adaa):
-        raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
-    current_pds={**main_tree,**pds}
-    desired_floor=_market_clock_from_blob(PDS_MARK,current_pds[PDS_MARK])
-    # Equity is asynchronous only when another source has advanced beyond
-    # the published Equity clock. No-change runs must return immediately.
-    live_equity_date=_market_clock_from_blob(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY])
-    timeout=(args.wait_seconds if args.stage and desired_floor>live_equity_date else 0)
-    deadline=time.monotonic()+timeout
+    expected=getattr(args,"expected_market_close","") or ""
+    if expected and not re.fullmatch(r"20\d{2}-\d{2}-\d{2}",expected):
+        raise Hold("OPERATOR_REQUIRED_MARKET_CLOCK_INVALID")
+    # The source-owned PDS/ADAA/Equity review workflows run asynchronously.
+    # If owner Windows has validated a NEW common US close, do not quietly
+    # report NO_CHANGE while the public bot review is still being staged.
+    deadline=time.monotonic()+(args.wait_seconds if args.stage else 0)
+    published_eq_clock=_market_clock_from_blob(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY])
     while True:
-        eq, re=reviewed_overlay("equity",main_tree,reviews)
-        if eq or time.monotonic()>=deadline:
-            break
-        time.sleep(min(15.0,max(0,deadline-time.monotonic())))
         reviews=open_pulls()
+        pds, rp=reviewed_overlay("pds",main_tree,reviews)
+        adaa, ra=reviewed_overlay("adaa",main_tree,reviews)
+        if set(pds).intersection(adaa):
+            raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
+        desired_floor=_market_clock_from_blob(
+            PDS_MARK,pds.get(PDS_MARK,main_tree[PDS_MARK]))
+        eq, re=reviewed_overlay("equity",main_tree,reviews)
+        desired_eq=_market_clock_from_blob(
+            EQUITY_OVERLAY,eq.get(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY]))
+        needed=(expected and (desired_floor<expected or desired_eq<expected))
+        waiting=(needed or desired_floor>desired_eq)
+        if not waiting:
+            break
+        if time.monotonic()>=deadline:
+            raise Hold("CURRENT_SOURCE_OWNED_REVIEW_NOT_READY_FOR_MARKET_CLOSE: "+
+                       (expected or desired_floor))
+        time.sleep(min(15.0,max(0,deadline-time.monotonic())))
     merged_pds={**main_tree,**pds,**adaa}
     merged_eq={**main_tree,**eq}
     # This audited source-owned sync is invoked only for a new F2R blob,
@@ -432,7 +441,12 @@ def choose_current_inputs(args):
         raw=validated_f2r_bytes(raw,main)
     else:
         raw=pinned_public_file(HOST,F2R_TARGET,main)
-    assert_common_market_clock(merged_pds,merged_eq,raw)
+    clocks=assert_common_market_clock(merged_pds,merged_eq,raw)
+    if expected:
+        for key in ("PDS","F2R_MTD","F2R_PREVIEW","EQUITY"):
+            if clocks[key]<expected:
+                raise Hold("CANDIDATE_BELOW_OPERATOR_REQUIRED_CLOSE_"+key+
+                           ": required="+expected+" observed="+clocks[key])
     identity={"platform_main":main,
        "pds":rp,"adaa":ra,
        "f2r":{"review":source_approved,"source_main":f2r_main,"blob":source_blob},
@@ -562,6 +576,8 @@ def main():
                    help="Existing one-button Y authorizes routine release under ACTIVE owner policy")
     p.add_argument("--approved-head",default="")
     p.add_argument("--wait-seconds",type=int,default=900)
+    p.add_argument("--expected-market-close",default="",
+                   help="Source-owned PDS validated completed US market close")
     a=p.parse_args()
     if a.publish and not a.stage:
         p.error("publishing requires --stage")
