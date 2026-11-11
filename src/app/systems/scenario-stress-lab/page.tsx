@@ -86,7 +86,7 @@ export default function ScenarioStressLabPage() {
           <a href="#current-scope">Current Scope</a>
           <a href="#evidence-position">What the Evidence Supports</a>
           <a href="#contract">How the System Works</a>
-          <a href="#live-evidence">Live Operational Evidence</a>
+          <a href="#live-evidence">Archived Scenario Illustration</a>
           <a href="#frozen-evidence">Frozen Research Snapshot</a>
           <a href="#operation">Operating Model</a>
           <a href="#boundaries">Interpretation Boundaries</a>
@@ -188,18 +188,19 @@ export default function ScenarioStressLabPage() {
           </section>
 
           <section className="prose-section" id="live-evidence">
-            <div className="kicker">Live operational evidence</div>
-            <h2>Current Conditional Stress Snapshot</h2>
+            <div className="kicker">Dated reference illustration · not current market data</div>
+            <h2>Archived Conditional Stress Snapshot</h2>
             <p className="body-copy">
-              This is the current reviewed Stress Lab snapshot, not a frozen paper exhibit.
-              The conditional B1 scenario structure is shown directly against the B0 historical
-              resampling comparator using the same public operating authority as the dashboard.
+              This archived reference example is fixed at {liveEvidence.dataAsOf}
+              (Stress Lab v{liveEvidence.canonicalVersion}). It illustrates how conditional
+              B1 scenarios compare with historical B0 resampling. These figures are not
+              the latest reviewed run. For current operating results, open the hosted Stress Lab dashboard.
             </p>
 
             <div className="metrics system-evidence-metrics">
               <div className="metric">
                 <div className="value">{pct(liveEvidence.dominantFamily.currentShare)}</div>
-                <div className="label">Current dominant-family share · {liveEvidence.dominantFamily.label}</div>
+                <div className="label">Archived B1 dominant-family share · {liveEvidence.dominantFamily.label}</div>
               </div>
               <div className="metric">
                 <div className="value">{pct(liveEvidence.dominantFamily.historicalShare)}</div>
@@ -207,7 +208,7 @@ export default function ScenarioStressLabPage() {
               </div>
               <div className="metric">
                 <div className="value">{pct(liveEvidence.distributionMetrics.current.es05, 2)}</div>
-                <div className="label">Current portfolio ES 5%</div>
+                <div className="label">Archived B1 portfolio ES 5%</div>
               </div>
               <div className="metric">
                 <div className="value">{pct(liveEvidence.distributionMetrics.historical.es05, 2)}</div>
@@ -216,13 +217,13 @@ export default function ScenarioStressLabPage() {
             </div>
 
             <div className="selected-table-block">
-              <div className="section-title">Stress-family structure · current B1 vs historical B0</div>
+              <div className="section-title">Reference stress-family structure · archived B1 vs historical B0</div>
               <div className="evidence-table-wrap">
                 <table className="evidence-table system-evidence-table">
                   <thead>
                     <tr>
                       <th>Stress family</th>
-                      <th>Current B1</th>
+                      <th>Archived B1</th>
                       <th>Historical B0</th>
                       <th>Gap</th>
                     </tr>
@@ -240,16 +241,16 @@ export default function ScenarioStressLabPage() {
                 </table>
               </div>
               <div className="evidence-table-source">
-                Canonical Stress Lab v{liveEvidence.canonicalVersion} · data through {liveEvidence.dataAsOf} ·
+                Archived reference only · Stress Lab v{liveEvidence.canonicalVersion} · snapshot through {liveEvidence.dataAsOf} ·
                 {" "}{liveEvidence.horizonTradingDays}-trading-day horizon · {liveEvidence.scenarioCount.toLocaleString("en-US")} scenarios per model
               </div>
             </div>
 
             <div className="system-role-grid">
               <div className="system-role-card">
-                <div className="kicker">Current B1</div>
+                <div className="kicker">Archived B1</div>
                 <h3>{pct(liveEvidence.distributionMetrics.current.share_le_minus5, 2)}</h3>
-                <p>Generated scenarios with equal-weight portfolio return at or below −5%.</p>
+                <p>In the dated reference snapshot, generated scenarios with equal-weight portfolio return at or below −5%.</p>
               </div>
               <div className="system-role-card">
                 <div className="kicker">Historical B0</div>
@@ -264,6 +265,7 @@ export default function ScenarioStressLabPage() {
             </div>
 
             <div className="evidence-note">
+              <strong>Reference data, not live.</strong> These dated figures must not be interpreted as the current operating snapshot.{" "}
               <strong>Interpretation boundary.</strong>{" "}
               {liveEvidence.boundary}
             </div>
@@ -271,7 +273,7 @@ export default function ScenarioStressLabPage() {
             {item.links.liveDashboard ? (
               <div className="actions">
                 <a className="btn primary" href={item.links.liveDashboard} target="_blank" rel="noopener noreferrer">
-                  Open Full Stress Lab Dashboard ↗
+                  Open Current Stress Lab Dashboard ↗
                 </a>
               </div>
             ) : null}
