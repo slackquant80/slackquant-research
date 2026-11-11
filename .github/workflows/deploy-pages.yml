@@ -10,6 +10,9 @@ on:
       # Do not spend npm/Pages runner minutes to republish an identical site.
       - ".github/workflows/**"
       - "scripts/check-site-browser.mjs"
+      - "scripts/four-system-release-readiness.py"
+      - "scripts/one-click-four-system-release.py"
+      - "scripts/test-one-click-four-system-release.py"
   pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, ready_for_review]
@@ -62,6 +65,9 @@ jobs:
 
       - name: Offline four-system publication audit regression
         run: python3 scripts/check-four-system-live-release.py --self-test
+
+      - name: One-Pages coordinator offline fail-closed regression
+        run: python3 scripts/test-one-click-four-system-release.py
 
       - name: Disable Jekyll processing
         if: github.event_name != 'pull_request'
