@@ -80,7 +80,7 @@ class SequentialMarketRelease(unittest.TestCase):
         self.source_tree={k:{m.F2R_SOURCE:self.blobs[i][m.F2R_TARGET]}
                           for i,k in enumerate(self.source_main)}
 
-    def run_at(self, i, pr_eras, source_epoch=None):
+    def run_at(self, i, pr_eras, source_epoch=None, expected=None, stage=True):
         source_epoch=i if source_epoch is None else source_epoch
         now=self.shas[i]
         pr_list=[self.prs[n] for e in pr_eras for n in
@@ -121,7 +121,8 @@ class SequentialMarketRelease(unittest.TestCase):
                           side_effect=lambda repo,sha:self.contents[sha]),\
              patch.object(m,"latest_merged_f2r_source",return_value=15+source_epoch),\
              patch.object(m,"validated_f2r_bytes",side_effect=lambda raw,main:raw):
-            return m.choose_current_inputs(SimpleNamespace(stage=True,wait_seconds=60))
+            return m.choose_current_inputs(SimpleNamespace(
+                stage=stage,wait_seconds=60,expected_market_close=expected or ""))
 
     def test_nov10_published_then_nov11_then_nochange_then_nov12(self):
         # Start at Nov 10 published; incoming reviewed Nov 11 candidates
@@ -151,6 +152,19 @@ class SequentialMarketRelease(unittest.TestCase):
         main3,current3,none2,identityNoop2=self.run_at(2,(1,2))
         self.assertEqual(none2,{})
         self.assertIsNone(identityNoop2["f2r"]["review"])
+
+    def test_explicit_new_close_never_returns_false_no_change(self):
+        # Source-owned Windows PDS already approved Nov 11, but current
+        # hosted PRs still show Nov 10. The release must HOLD, not claim PASS.
+        with self.assertRaisesRegex(m.Hold,
+                "CURRENT_SOURCE_OWNED_REVIEW_NOT_READY_FOR_MARKET_CLOSE"):
+            self.run_at(0,(),source_epoch=0,
+                        expected="2026-11-11",stage=False)
+
+    def test_explicit_current_close_allows_genuine_no_change(self):
+        _,_,updates,_=self.run_at(1,(1,),
+                   expected="2026-11-11",stage=False)
+        self.assertEqual(updates,{})
 
     def test_old_untrusted_pds_title_is_not_a_source_receipt(self):
         review={"number":700,"title":"Review PDS hosted intake: forged"}
