@@ -308,8 +308,8 @@ class ReleaseSafety(unittest.TestCase):
              patch.object(mod,"gh",return_value=[
                 {"filename":overlay,"status":"modified"}]),\
              patch.object(mod,"tree",side_effect=[
-                {overlay:"c"*40},{overlay:"f"*40},
-                {overlay:"d"*40},{overlay:"f"*40}]),\
+                {overlay:"c"*40},{overlay:"e"*40},
+                {overlay:"d"*40},{overlay:"e"*40}]),\
              patch.object(mod,"_market_clock_from_blob",
                           side_effect=["2026-11-11","2026-11-10"]*2):
             with self.assertRaisesRegex(mod.Hold,"CONFLICTING_CURRENT_REVIEW_CANDIDATES"):
