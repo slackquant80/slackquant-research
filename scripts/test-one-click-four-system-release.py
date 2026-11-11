@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Offline negative fixtures for the one-Pages release coordinator."""
 import importlib.util
+import json
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
@@ -105,6 +106,59 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"MATERIAL_MAIN_CHANGE"):
                 mod.source_base_compatible("a"*40,"b"*40,
                            {"public/assets/systems/adaa/snapshot.js"})
+
+    def test_source_only_main_advance_includes_latest_readiness_test(self):
+        delta={"status":"ahead","behind_by":0,"files":[
+           {"filename":".github/workflows/deploy-pages.yml"},
+           {"filename":"scripts/four-system-release-readiness.py"},
+           {"filename":"scripts/one-click-four-system-release.py"},
+           {"filename":"scripts/test-one-click-four-system-release.py"},
+           {"filename":"scripts/test-four-system-release-readiness.py"}]}
+        with patch.object(mod,"gh",return_value=delta):
+            self.assertTrue(mod.source_base_compatible("a"*40,"b"*40,
+                            {"public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"}))
+
+    @staticmethod
+    def f2r_fixture(weights=(.25,.25,.25,.25)):
+        holdings=[{"asset":x,"target_weight":w} for x,w in
+                  zip(("EWY","QQQ","SPY","DBC"),weights)]
+        state={"schema_version":"2.0","system":{"short_name":"F2R"},
+               "completed_performance":{"support_end":"2026-10-30",
+                 "as_of_date":"2026-10-30",
+                 "growth_series":[{}]*100,"drawdown_series":[{}]*100},
+               "live_state":{"official":{"signal_period":"2026-10",
+                 "holding_month":"2026-11","holdings":holdings}},
+               "issued_at_utc":"2026-11-11T01:03:39Z"}
+        return json.dumps(state, separators=(",",":")).encode()
+
+    def test_canonical_f2r_sync_preserves_approved_exact_bytes(self):
+        raw=self.f2r_fixture()
+        legacy=self.f2r_fixture()
+        canon=SOURCE.with_name("sync-f2r-static-state.py").read_bytes()
+        payloads={
+          "scripts/sync-f2r-static-state.py":canon,
+          mod.F2R_TARGET:legacy,
+          "public/data/systems/f2r/live_evidence.json":
+             b'{"completedThrough":"2026-10-30"}',
+        }
+        with patch.object(mod,"pinned_public_file",
+             side_effect=lambda repo,path,commit:payloads[path]) as get:
+            self.assertEqual(mod.validated_f2r_bytes(raw,"a"*40),raw)
+        self.assertEqual(get.call_count,3)
+
+    def test_invalid_f2r_weights_hold_before_public_staging(self):
+        raw=self.f2r_fixture((.8,.25,.25,.25))
+        canon=SOURCE.with_name("sync-f2r-static-state.py").read_bytes()
+        payloads={
+          "scripts/sync-f2r-static-state.py":canon,
+          mod.F2R_TARGET:self.f2r_fixture(),
+          "public/data/systems/f2r/live_evidence.json":
+             b'{"completedThrough":"2026-10-30"}',
+        }
+        with patch.object(mod,"pinned_public_file",
+             side_effect=lambda repo,path,commit:payloads[path]):
+            with self.assertRaisesRegex(mod.Hold,"F2R_OFFICIAL_CHECK_HOLD"):
+                mod.validated_f2r_bytes(raw,"a"*40)
 
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
