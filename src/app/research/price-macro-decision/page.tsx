@@ -238,7 +238,7 @@ export default function PriceMacroDecisionPage() {
 
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Earlier Zenodo Archive (v1.1)</h3>
+                <h3>Zenodo Archive (Earlier Version)</h3>
                 <p>Prior archived replication version. No verified v1.2 Zenodo DOI is claimed here.</p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   10.5281/zenodo.22069742 &#8599;
