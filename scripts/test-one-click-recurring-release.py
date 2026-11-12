@@ -175,21 +175,21 @@ class SequentialMarketRelease(unittest.TestCase):
         # Three bot-reviewed and source-pinned snapshots may exist for one XNYS
         # date after normal Yahoo adjusted-close vintage updates. Never splice
         # returns/receipts of one revision with the other's portfolio history.
-        newer_pds={m.PDS_MARK:"d"*40,m.PDS_BINDING:"e"*40}
-        newer_adaa={m.ADAA_SNAPSHOT:"f"*40}
+        newer_pds={m.PDS_MARK:"a1"*20,m.PDS_BINDING:"b2"*20}
+        newer_adaa={m.ADAA_SNAPSHOT:"c3"*20}
         self._new_source_review(101,111,newer_pds,"2026-11-12T04:32:39Z")
         self._new_source_review(102,112,newer_adaa,"2026-11-12T04:42:32Z")
-        self.contents["d"*40]=json.dumps({"status":"PASS",
+        self.contents["a1"*20]=json.dumps({"status":"PASS",
                               "official_mark_through":"2026-11-11"}).encode()
-        self.contents["e"*40]=json.dumps({
+        self.contents["b2"*20]=json.dumps({
            "status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
            "public_as_of_date":"2026-11-12"}).encode()
-        self.contents["f"*40]=self.contents[self.blobs[1][m.ADAA_SNAPSHOT]]
+        self.contents["c3"*20]=self.contents[self.blobs[1][m.ADAA_SNAPSHOT]]
         _,_,changes,identity=self.run_at(0,(1,),source_epoch=1,
                                       expected="2026-11-11",extra_prs=(111,112))
-        self.assertEqual(changes[m.PDS_MARK],"d"*40)
-        self.assertEqual(changes[m.PDS_BINDING],"e"*40)
-        self.assertEqual(changes[m.ADAA_SNAPSHOT],"f"*40)
+        self.assertEqual(changes[m.PDS_MARK],"a1"*20)
+        self.assertEqual(changes[m.PDS_BINDING],"b2"*20)
+        self.assertEqual(changes[m.ADAA_SNAPSHOT],"c3"*20)
         self.assertEqual(identity["pds"][0]["pr"],111)
         self.assertEqual(identity["pds"][0]["superseded_prs"],[101])
         self.assertEqual(identity["adaa"][0]["pr"],112)
@@ -197,11 +197,11 @@ class SequentialMarketRelease(unittest.TestCase):
 
     def test_same_close_changed_public_path_set_must_still_hold(self):
         extra="public/data/systems/pds/public_core_monthly_returns.csv"
-        self._new_source_review(101,111,{m.PDS_MARK:"d"*40,
-              m.PDS_BINDING:"e"*40,extra:"f"*40},"2026-11-12T04:32:39Z")
-        self.contents["d"*40]=json.dumps({
+        self._new_source_review(101,111,{m.PDS_MARK:"a1"*20,
+              m.PDS_BINDING:"b2"*20,extra:"c3"*20},"2026-11-12T04:32:39Z")
+        self.contents["a1"*20]=json.dumps({
             "status":"PASS","official_mark_through":"2026-11-11"}).encode()
-        self.contents["e"*40]=json.dumps({
+        self.contents["b2"*20]=json.dumps({
             "status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
             "public_as_of_date":"2026-11-12"}).encode()
         with self.assertRaisesRegex(m.Hold,
