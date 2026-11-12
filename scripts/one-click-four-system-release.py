@@ -529,7 +529,7 @@ def stage(args):
             raise Hold("F2R_REVIEWED_BLOB_IDENTITY_HOLD")
         approved=pinned_public_file(F2R,F2R_SOURCE,f2r["source_main"])
         expected=hashlib.sha1(b"blob "+str(len(approved)).encode()+
-                              b"\\x00"+approved).hexdigest()
+                              b"\x00"+approved).hexdigest()
         if expected!=updates[F2R_TARGET]:
             raise Hold("F2R_SOURCE_BYTES_VS_GIT_BLOB_HOLD")
         imported=gh(f"repos/{HOST}/git/blobs","POST",{
