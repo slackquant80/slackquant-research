@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Offline negative fixtures for the one-Pages release coordinator."""
+import base64
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -44,7 +46,7 @@ class ReleaseSafety(unittest.TestCase):
         pds_path="public/data/systems/pds/PDS_PUBLIC_BINDING_RECEIPT.json"
         eq_path="public/dashboards/equity-alpha/data/live_overlay.js"
         main="a"*40
-        updates={pds_path:"c"*40,eq_path:"d"*40,mod.F2R_TARGET:"e"*40}
+        updates={pds_path:"c"*40,eq_path:"d"*40}
         source=(main,{pds_path:"f"*40,eq_path:"f"*40},updates,
                 {"platform_main":main,"source_review":"approved"})
         staged={}
@@ -71,7 +73,59 @@ class ReleaseSafety(unittest.TestCase):
         self.assertEqual(staged["base_tree"],"f"*40)
         blobs={x["path"]:x["sha"] for x in staged["tree"]}
         self.assertEqual(blobs,updates)
-        self.assertEqual(len(blobs),3)
+        self.assertEqual(len(blobs),2)
+
+    def test_imports_approved_f2r_blob_into_platform_before_tree(self):
+        # A Git blob SHA may be valid in F2R but absent from platform storage.
+        raw=b'{"schema_version":"2.0","approved":true}\n'
+        expected=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()
+        main="a"*40
+        source=(main,{mod.F2R_TARGET:"f"*40},
+                {mod.F2R_TARGET:expected},{"f2r":{"review":19,
+                "source_main":"b"*40,"blob":expected}})
+        calls=[]
+        def fake_gh(path,method="GET",data=None):
+            if path==f"repos/{mod.HOST}/git/blobs" and method=="POST":
+                self.assertEqual(data["encoding"],"base64")
+                self.assertEqual(base64.b64decode(data["content"]),raw)
+                calls.append("import")
+                return {"sha":expected}
+            if path==f"repos/{mod.HOST}/git/commits/{main}":
+                return {"tree":{"sha":"e"*40}}
+            if path==f"repos/{mod.HOST}/git/trees" and method=="POST":
+                self.assertEqual(calls,["import"])
+                self.assertEqual(data["tree"][0]["sha"],expected)
+                calls.append("tree")
+                return {"sha":"1"*40}
+            if path==f"repos/{mod.HOST}/git/commits" and method=="POST":
+                return {"sha":"2"*40}
+            if path==f"repos/{mod.HOST}/git/refs" and method=="POST":
+                return {"ref":data["ref"]}
+            if path==f"repos/{mod.HOST}/pulls" and method=="POST":
+                return {"number":100,"head":{"sha":"2"*40},"base":{"sha":main}}
+            raise AssertionError("Unexpected request "+path)
+        with patch.object(mod,"source_inputs",return_value=source),\
+             patch.object(mod,"pinned_public_file",return_value=raw),\
+             patch.object(mod,"open_pulls",return_value=[]),\
+             patch.object(mod,"gh",side_effect=fake_gh):
+            candidate,_,created=mod.stage(SimpleNamespace(stage=True))
+        self.assertTrue(created)
+        self.assertEqual(candidate["number"],100)
+        self.assertEqual(calls,["import","tree"])
+
+    def test_rejects_wrong_platform_f2r_blob_import(self):
+        raw=b'approved F2R source data'
+        expected=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()
+        source=("a"*40,{mod.F2R_TARGET:"f"*40},
+                {mod.F2R_TARGET:expected},{"f2r":{"review":19,
+                "source_main":"b"*40,"blob":expected}})
+        with patch.object(mod,"source_inputs",return_value=source),\
+             patch.object(mod,"pinned_public_file",return_value=raw),\
+             patch.object(mod,"open_pulls",return_value=[]),\
+             patch.object(mod,"gh",return_value={"sha":"0"*40}):
+            with self.assertRaisesRegex(mod.Hold,
+                    "F2R_PLATFORM_GIT_BLOB_IMPORT_PARITY_HOLD"):
+                mod.stage(SimpleNamespace(stage=True))
 
     def test_no_delta_has_no_pr_no_actions_no_deploy(self):
         source=("a"*40,{"a":"c"*40},{},{"platform_main":"a"*40})

@@ -517,6 +517,26 @@ def stage(args):
         return combined,identity,False
     if not args.stage:
         raise Hold("SOURCE_READY_NO_NEW_PR_REQUESTED")
+    # Git blob IDs are content-addressed but GitHub repositories have distinct
+    # object stores. An approved F2R source SHA cannot be used in the platform
+    # tree until its exact source-owned public bytes are imported here.
+    # Import only after all source gates and no-change/PR reuse checks; never
+    # recompute, reserialize, or substitute F2R portfolio data.
+    if F2R_TARGET in updates:
+        f2r=identity["f2r"]
+        if (not f2r.get("review") or
+            updates[F2R_TARGET]!=f2r.get("blob")):
+            raise Hold("F2R_REVIEWED_BLOB_IDENTITY_HOLD")
+        approved=pinned_public_file(F2R,F2R_SOURCE,f2r["source_main"])
+        expected=hashlib.sha1(b"blob "+str(len(approved)).encode()+
+                              b"\x00"+approved).hexdigest()
+        if expected!=updates[F2R_TARGET]:
+            raise Hold("F2R_SOURCE_BYTES_VS_GIT_BLOB_HOLD")
+        imported=gh(f"repos/{HOST}/git/blobs","POST",{
+            "content":base64.b64encode(approved).decode("ascii"),
+            "encoding":"base64"})
+        if imported.get("sha")!=expected:
+            raise Hold("F2R_PLATFORM_GIT_BLOB_IMPORT_PARITY_HOLD")
     base_commit=gh(f"repos/{HOST}/git/commits/{main}")
     elements=[{"path":x,"mode":"100644","type":"blob","sha":sha}
               for x,sha in sorted(updates.items())]
