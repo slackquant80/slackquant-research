@@ -239,7 +239,7 @@ export const researchItems: ResearchItem[] = [
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7340100",
       github: "https://github.com/slackquant80/price-macro-decision-replication",
       replication:
-        "https://github.com/slackquant80/price-macro-decision-replication/releases/tag/v1.1",
+        "https://github.com/slackquant80/price-macro-decision-replication/releases/tag/v1.2",
       archivalRelease: "https://doi.org/10.5281/zenodo.22069742",
       doi: "https://doi.org/10.5281/zenodo.22069742"
     }
