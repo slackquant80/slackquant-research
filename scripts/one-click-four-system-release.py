@@ -321,9 +321,11 @@ def _review_public_snapshot(kind, pr, current):
     source_base=tree(HOST,pr["base"]["sha"])
     for path in delta:
         if current.get(path)!=source_base.get(path):
-            if kind=="adaa":
-                # The old undeployed ADAA PR from a previous already-published
-                # month is not allowed to block future, genuinely new PRs.
+            if kind=="adaa" or (kind in ("pds","equity") and incoming<=existing):
+                # A superseded open review with the same/older MARKET clock
+                # cannot override newly published blobs. Historical PRs #69,
+                # #73, #83 must not block validated current PDS PR #91.
+                # A genuinely later-clock review with changed target stays HOLD.
                 return None
             raise Hold("SOURCE_REVIEW_TARGET_CHANGED_SINCE_BASE: "+path)
     if kind=="equity":
