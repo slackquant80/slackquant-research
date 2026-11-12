@@ -10,7 +10,7 @@ const designFacts = [
   ["112", "Monthly out-of-sample allocation decisions"],
   ["11", "U.S.-listed ETFs in the multi-asset universe"],
   ["2017–2026", "Primary out-of-sample decision period"],
-  ["v1.1", "Public replication release"],
+  ["v1.2", "Public replication release"],
 ] as const;
 
 const evidenceMetrics = [
@@ -213,9 +213,9 @@ export default function PriceMacroDecisionPage() {
           <section className="prose-section" id="repro">
             <h2>Reproducibility</h2>
             <p>
-              Public code, the tagged replication release, and the archived
-              Zenodo record provide the reproducibility trail for the published
-              analysis.
+              Public code and the v1.2 GitHub release provide the latest tagged
+              replication materials. The Zenodo DOI below refers to an earlier
+              archived version; it is not identified as the v1.2 archive.
             </p>
             <div className="repro-links">
               <div className="artifact">
@@ -229,8 +229,8 @@ export default function PriceMacroDecisionPage() {
 
               <div className="artifact">
                 <div className="type">Replication</div>
-                <h3>GitHub Release v1.1</h3>
-                <p>Versioned public replication release for the paper.</p>
+                <h3>GitHub Release v1.2</h3>
+                <p>Latest tagged public replication package for the paper.</p>
                 <a href={item.links.replication} target="_blank" rel="noopener noreferrer">
                   Open release &#8599;
                 </a>
@@ -238,8 +238,8 @@ export default function PriceMacroDecisionPage() {
 
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Zenodo DOI</h3>
-                <p>Persistent archive for the public replication release.</p>
+                <h3>Zenodo Archive (Earlier Version)</h3>
+                <p>Prior archived replication version. No verified v1.2 Zenodo DOI is claimed here.</p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   10.5281/zenodo.22069742 &#8599;
                 </a>
