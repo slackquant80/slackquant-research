@@ -361,6 +361,37 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"GITHUB_API_HOLD"):
                 mod.gh("repos/sample/pulls/75")
 
+    def test_old_open_pds_draft_at_already_published_clock_is_inert(self):
+        paths=[mod.PDS_MARK, mod.PDS_BINDING]
+        pr={"number":83,"state":"open","base":{"ref":"main","sha":"a"*40},
+            "head":{"sha":"b"*40},"user":{"login":"github-actions[bot]"}}
+        current={paths[0]:"c"*40,paths[1]:"d"*40}
+        proposed={paths[0]:"e"*40,paths[1]:"f"*40}
+        historic={paths[0]:"g"*40,paths[1]:"h"*40}
+        with patch.object(mod,"gh",return_value=[
+                 {"filename":p,"status":"modified"} for p in paths]),\
+             patch.object(mod,"tree",side_effect=[proposed,historic]),\
+             patch.object(mod,"_market_clock_from_blob",
+                          side_effect=["2026-11-10","2026-11-10"]):
+            # Previously this would stop EVERY future one-click release by
+            # SOURCE_REVIEW_TARGET_CHANGED_SINCE_BASE on PR #83.
+            self.assertIsNone(mod._review_public_snapshot("pds",pr,current))
+
+    def test_newer_pds_clock_keeps_real_source_base_drift_hold(self):
+        paths=[mod.PDS_MARK, mod.PDS_BINDING]
+        pr={"number":91,"state":"open","base":{"ref":"main","sha":"a"*40},
+            "head":{"sha":"b"*40},"user":{"login":"github-actions[bot]"}}
+        current={paths[0]:"c"*40,paths[1]:"d"*40}
+        proposed={paths[0]:"e"*40,paths[1]:"f"*40}
+        old_base={paths[0]:"g"*40,paths[1]:"h"*40}
+        with patch.object(mod,"gh",return_value=[
+                 {"filename":p,"status":"modified"} for p in paths]),\
+             patch.object(mod,"tree",side_effect=[proposed,old_base]),\
+             patch.object(mod,"_market_clock_from_blob",
+                          side_effect=["2026-11-11","2026-11-10"]):
+            with self.assertRaisesRegex(mod.Hold,"SOURCE_REVIEW_TARGET_CHANGED"):
+                mod._review_public_snapshot("pds",pr,current)
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
