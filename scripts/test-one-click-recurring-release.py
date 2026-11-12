@@ -69,6 +69,12 @@ class SequentialMarketRelease(unittest.TestCase):
             self.contents[self.blobs[i][m.F2R_TARGET]]=json.dumps(f2r_json).encode()
             self.contents[self.blobs[i][m.PDS_MARK]]=json.dumps({
                 "status":"PASS","official_mark_through":self.clocks[i]}).encode()
+            self.contents[self.blobs[i][m.ADAA_SNAPSHOT]]=(
+                "window.ADAA_SNAPSHOT = "+json.dumps({"snapshot_meta":{
+                "validation_status":"PASS_RAW_PARITY",
+                "canonical_calculation_source":"CANONICAL_ADAA_CALCULATION_AUTHORITY",
+                "final_decision_asset_count":18,
+                "market_data_through":self.clocks[i]}})+";").encode()
             self.contents[self.blobs[i][m.PDS_BINDING]]=json.dumps({
                 "status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
                 "public_as_of_date":self.clocks[i]}).encode()
@@ -80,11 +86,13 @@ class SequentialMarketRelease(unittest.TestCase):
         self.source_tree={k:{m.F2R_SOURCE:self.blobs[i][m.F2R_TARGET]}
                           for i,k in enumerate(self.source_main)}
 
-    def run_at(self, i, pr_eras, source_epoch=None, expected=None, stage=True):
+    def run_at(self, i, pr_eras, source_epoch=None, expected=None, stage=True,
+               extra_prs=()):
         source_epoch=i if source_epoch is None else source_epoch
         now=self.shas[i]
         pr_list=[self.prs[n] for e in pr_eras for n in
                  (e*100+1,e*100+2,e*100+3)]
+        pr_list.extend(self.prs[n] for n in extra_prs)
         current=self.blobs[i]
         def fake_gh(path,method="GET",data=None):
             if path==f"repos/{m.HOST}/git/ref/heads/main":
@@ -152,6 +160,64 @@ class SequentialMarketRelease(unittest.TestCase):
         main3,current3,none2,identityNoop2=self.run_at(2,(1,2))
         self.assertEqual(none2,{})
         self.assertIsNone(identityNoop2["f2r"]["review"])
+
+    def _new_source_review(self, old_number, new_number, paths, created):
+        previous=self.prs[old_number]
+        head="b"*36+f"{new_number:04x}"
+        proposed=dict(previous["changed"])
+        proposed.update(paths)
+        pr={**previous,"number":new_number,"head":{"sha":head},
+            "changed":proposed,"created_at":created}
+        self.prs[new_number]=pr
+        self.heads[head]=proposed
+
+    def test_multiple_same_close_native_reviews_take_one_newest_source_revision(self):
+        # Three bot-reviewed and source-pinned snapshots may exist for one XNYS
+        # date after normal Yahoo adjusted-close vintage updates. Never splice
+        # returns/receipts of one revision with the other's portfolio history.
+        newer_pds={m.PDS_MARK:"a1"*20,m.PDS_BINDING:"b2"*20}
+        newer_adaa={m.ADAA_SNAPSHOT:"c3"*20}
+        self._new_source_review(101,111,newer_pds,"2026-11-12T04:32:39Z")
+        self._new_source_review(102,112,newer_adaa,"2026-11-12T04:42:32Z")
+        self.contents["a1"*20]=json.dumps({"status":"PASS",
+                              "official_mark_through":"2026-11-11"}).encode()
+        self.contents["b2"*20]=json.dumps({
+           "status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
+           "public_as_of_date":"2026-11-12"}).encode()
+        self.contents["c3"*20]=self.contents[self.blobs[1][m.ADAA_SNAPSHOT]]
+        _,_,changes,identity=self.run_at(0,(1,),source_epoch=1,
+                                      expected="2026-11-11",extra_prs=(111,112))
+        self.assertEqual(changes[m.PDS_MARK],"a1"*20)
+        self.assertEqual(changes[m.PDS_BINDING],"b2"*20)
+        self.assertEqual(changes[m.ADAA_SNAPSHOT],"c3"*20)
+        self.assertEqual(identity["pds"][0]["pr"],111)
+        self.assertEqual(identity["pds"][0]["superseded_prs"],[101])
+        self.assertEqual(identity["adaa"][0]["pr"],112)
+        self.assertEqual(identity["adaa"][0]["superseded_prs"],[102])
+
+    def test_same_close_changed_public_path_set_must_still_hold(self):
+        extra="public/data/systems/pds/public_core_monthly_returns.csv"
+        self._new_source_review(101,111,{m.PDS_MARK:"a1"*20,
+              m.PDS_BINDING:"b2"*20,extra:"c3"*20},"2026-11-12T04:32:39Z")
+        self.contents["a1"*20]=json.dumps({
+            "status":"PASS","official_mark_through":"2026-11-11"}).encode()
+        self.contents["b2"*20]=json.dumps({
+            "status":"PDS_SLACKQUANT_PUBLIC_BINDING_PASS",
+            "public_as_of_date":"2026-11-12"}).encode()
+        with self.assertRaisesRegex(m.Hold,
+                    "SOURCE_REVIEW_SUPERSESSION_PATH_SET_CHANGED_PDS"):
+            self.run_at(0,(1,),source_epoch=1,extra_prs=(111,))
+
+    def test_unverified_adaa_snapshot_clock_is_not_authorized(self):
+        invalid_blob=self.blobs[1][m.ADAA_SNAPSHOT]
+        self.contents[invalid_blob]=(
+           'window.ADAA_SNAPSHOT = '+json.dumps({"snapshot_meta":{
+             "validation_status":"PASS_RAW_PARITY",
+             "canonical_calculation_source":"UNTRUSTED",
+             "final_decision_asset_count":18,
+             "market_data_through":"2026-11-11"}})+';').encode()
+        with self.assertRaisesRegex(m.Hold,"ADAA_REVIEW_SOURCE_PARITY_HOLD"):
+            self.run_at(0,(1,),source_epoch=1)
 
     def test_explicit_new_close_never_returns_false_no_change(self):
         # Source-owned Windows PDS already approved Nov 11, but current

@@ -249,6 +249,18 @@ def _market_clock_from_blob(path, blob):
         if data.get("status")!="PASS":
             raise Hold("PDS_REVIEW_RECEIPT_NOT_PASS")
         return data.get("official_mark_through","")
+    if path == ADAA_SNAPSHOT:
+        raw=pinned_git_blob_bytes(HOST,blob).decode("utf-8-sig").strip()
+        matched=re.fullmatch(r"window\.ADAA_SNAPSHOT\s*=\s*(\{.*\})\s*;",raw,re.S)
+        if not matched:
+            raise Hold("ADAA_REVIEW_SNAPSHOT_UNREADABLE")
+        obj=json.loads(matched.group(1))
+        meta=obj.get("snapshot_meta",{})
+        if (meta.get("validation_status")!="PASS_RAW_PARITY" or
+            meta.get("canonical_calculation_source")!="CANONICAL_ADAA_CALCULATION_AUTHORITY" or
+            meta.get("final_decision_asset_count")!=18):
+            raise Hold("ADAA_REVIEW_SOURCE_PARITY_HOLD")
+        return meta.get("market_data_through","")
     if path == EQUITY_OVERLAY:
         data=pinned_git_blob_bytes(HOST,blob).decode("utf-8-sig").strip()
         matched=re.fullmatch(r"window\.EA_LIVE_OVERLAY\s*=\s*(\{.*\})\s*;",data,re.S)
@@ -305,7 +317,8 @@ def _review_public_snapshot(kind, pr, current):
     delta={x:v for x,v in desired.items() if current.get(x)!=v}
     if not delta:
         return None
-    stamp_path={"pds":PDS_MARK,"equity":EQUITY_OVERLAY}.get(kind)
+    stamp_path={"pds":PDS_MARK,"adaa":ADAA_SNAPSHOT,
+                "equity":EQUITY_OVERLAY}.get(kind)
     if stamp_path:
         incoming=_market_clock_from_blob(stamp_path,desired[stamp_path])
         existing=_market_clock_from_blob(stamp_path,current[stamp_path])
@@ -334,11 +347,19 @@ def _review_public_snapshot(kind, pr, current):
            "ZIP SHA256:" not in (pr.get("body") or ""):
             raise Hold("EQUITY_REVIEW_INTAKE_PROVENANCE_HOLD")
     return {"pr":pr["number"],"head":pr["head"]["sha"],
-            "clock":incoming,"delta":delta}
+            "clock":incoming,"delta":delta,"paths":sorted(paths),
+            "created_at":pr.get("created_at") or ""}
 
 
 def reviewed_overlay(kind, current, reviews):
-    """Filter out old published drafts; reject two different active candidates."""
+    """Use current source-owned vintage, never combine distinct same-close data.
+
+    PDS/ADAA bot reviews are full snapshots. Repeated owner refreshes can
+    legitimately re-vintage Yahoo adjusted closes during the same session.
+    Supersede earlier bot-created source reviews ONLY at the same dated
+    market close, with the same reviewed path set and source provenance;
+    retain old PRs as unmerged evidence. Equity rights remain stricter.
+    """
     choices=[]
     for item in reviews:
         if kind not in _review_kind(item.get("title","")):
@@ -351,6 +372,15 @@ def reviewed_overlay(kind, current, reviews):
         return {},[]
     newest=max(x["clock"] for x in choices)
     fresh=[x for x in choices if x["clock"]==newest]
+    if len(fresh)>1 and kind in ("pds","adaa"):
+        paths={tuple(x["paths"]) for x in fresh}
+        if len(paths)!=1:
+            raise Hold("SOURCE_REVIEW_SUPERSESSION_PATH_SET_CHANGED_"+kind.upper())
+        # GitHub PR timestamps are server-owned; PR number is a stable tie-breaker.
+        # Never mix rows/receipts from different immutable source revisions.
+        chosen=max(fresh,key=lambda x:(x["created_at"],x["pr"]))
+        return dict(chosen["delta"]),[{"pr":chosen["pr"],"head":chosen["head"],
+            "superseded_prs":sorted(x["pr"] for x in fresh if x is not chosen)}]
     combined={}
     for x in fresh:
         for path,sha in x["delta"].items():
@@ -424,6 +454,10 @@ def choose_current_inputs(args):
             raise Hold("PDS_ADAA_CANDIDATE_PATH_CONFLICT")
         desired_floor=_market_clock_from_blob(
             PDS_MARK,pds.get(PDS_MARK,main_tree[PDS_MARK]))
+        adaa_close=_market_clock_from_blob(
+            ADAA_SNAPSHOT,adaa.get(ADAA_SNAPSHOT,main_tree[ADAA_SNAPSHOT]))
+        if adaa_close<desired_floor:
+            raise Hold("ADAA_SOURCE_STALE_BELOW_PDS_MARK_"+desired_floor)
         eq, equity_reviews=reviewed_overlay("equity",main_tree,reviews)
         desired_eq=_market_clock_from_blob(
             EQUITY_OVERLAY,eq.get(EQUITY_OVERLAY,main_tree[EQUITY_OVERLAY]))
