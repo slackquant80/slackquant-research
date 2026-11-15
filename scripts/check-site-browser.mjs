@@ -10,7 +10,13 @@ const flag=(name,def)=>{const n=argv.indexOf(name);return n<0?def:argv[n+1]};
 const base=flag('--base','https://research.slackquant.com').replace(/\/$/,'');
 const selftest=argv.includes('--self-test'),capture=argv.includes('--capture');
 const out=flag('--out',path.resolve('browser-qa-results'));
-const routes=selftest?['/']:['/','/systems/','/research/','/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
+const researchDetailRoutes=[
+ '/research/adaa/','/research/protection-patience/',
+ '/research/price-macro-decision/','/research/second-opinion-portfolio/',
+ '/research/equity-alpha/','/research/beyond-average-accuracy/',
+ '/research/momentum-market-regularity/',
+];
+const routes=selftest?['/']:['/','/systems/','/research/',...researchDetailRoutes,'/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
 const viewports=[{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 function need(cond,message){if(!cond)throw Error(message)}
@@ -65,13 +71,30 @@ async function run(){
       await c.send('Page.setDocumentContent',{frameId:tree.frameTree.frame.id,html:'<!doctype html><html><head><title>Browser fixture</title><style>body{font-family:sans-serif}</style></head><body><h1>Browser QA selftest</h1><p>A deterministic fixture for desktop and mobile. No external network.</p><a href="https://research.slackquant.com/systems/">Systems</a></body></html>'});
     }
     for(let i=0;i<70;i++){await pause(140);if(await c.eval('document.readyState')==='complete')break}
-    await pause(route.includes('dashboard')?2400:650);
+    await pause(route.includes('dashboard')?2400:route.startsWith('/research/')?1200:650);
     let s=await c.eval('('+collect.toString()+')()');
     Object.assign(result,{title:s.title,h1:s.h1,bodyChars:s.bodyChars,font:s.font,fontsReady:s.fontsReady,charts:s.chartCount,tableHeaders:s.tableHeaders,buttons:s.buttons.length,overflow:s.width>s.viewport+16});
     need(s.bodyChars>=35,'RENDERED_CONTENT_MISSING');need(s.css>0,'CSS_MISSING');need(!s.brokenImages.length,'BROKEN_IMAGES '+s.brokenImages.join(','));
     result.checks.push('DOM','CSS','IMAGES');if(result.overflow)result.errors.push('HORIZONTAL_VIEWPORT_OVERFLOW_'+s.width+'_'+s.viewport);
     if(route==='/')need(s.links.some(x=>x.includes('/systems/')),'HOME_SYSTEMS_LINK_MISSING');
     if(route==='/systems/')for(const name of ['pds','adaa','f2r','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
+    if(route==='/research/'){
+      need(s.links.some(x=>x.includes('/research/momentum-market-regularity/')),'MOMENTUM_FOUNDATION_INDEX_LINK_MISSING');
+    }
+    if(researchDetailRoutes.includes(route)){
+      const publication=await c.eval('(()=>{const d=document.querySelector(".detail-layout"),f=[...document.querySelectorAll("figure.evidence-figure")];const boxes=f.map(e=>({r:e.getBoundingClientRect().width,w:e.querySelector("img")?.naturalWidth||0,alt:!!e.querySelector("img")?.alt,link:!!e.querySelector("a[data-sq-fullsize-asset]")}));return {hasDetail:!!d,overview:!!document.querySelector("#overview"),question:!!document.querySelector("#question"),findings:!!document.querySelector("#findings"),citation:!!document.querySelector("#citation"),methods:!!document.querySelector("#methods"),figures:boxes}})()');
+      need(publication.hasDetail&&publication.overview&&publication.question&&publication.findings&&publication.citation,'PAPER_HOUSE_STRUCTURE_MISSING');
+      need(publication.methods,'PAPER_METHODS_USED_BLOCK_MISSING');
+      result.paperFigures=publication.figures.length;
+      if(route==='/research/momentum-market-regularity/'){
+        need(publication.figures.length===3,'MOMENTUM_SELECTED_EXHIBITS_NOT_THREE');
+        need(publication.figures.every(f=>f.w>0&&f.alt&&f.link&&f.r>=250),'MOMENTUM_FIGURE_IMAGE_SIZE_ALT_OR_LINK_MISSING');
+        need(s.links.some(x=>x.includes('zenodo.24047812')),'MOMENTUM_SOFTWARE_ARCHIVE_LINK_MISSING');
+        result.checks.push('MOMENTUM_EXHIBIT_PARITY_3','MOMENTUM_FIGURE_RENDER_AND_FULLSIZE','SSRN_SOFTWARE_ARCHIVE_SEPARATION');
+      }
+      result.checks.push('PAPER_SHARED_HOUSE_STRUCTURE','PAPER_METHODS_LINK');
+    }
+
     if(route.startsWith('/systems/')&&route!='/systems/'&&!route.endsWith('/dashboard/'))need(s.links.some(x=>x.includes('dashboard')),'DASHBOARD_LINK_MISSING');
     if(route==='/systems/pds/dashboard/'||route==='/systems/adaa/dashboard/'){
       const frame=await c.eval('(()=>{const f=document.querySelector("iframe"),d=f?.contentDocument;return {found:!!f,ready:d?.readyState||"",chars:(d?.body?.innerText||"").trim().length,src:f?.src||""}})()');
