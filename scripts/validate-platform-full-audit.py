@@ -26,7 +26,7 @@ def main() -> int:
 
     expected_research_slugs = {
         "adaa", "protection-patience", "price-macro-decision", "beyond-average-accuracy",
-        "second-opinion-portfolio", "equity-alpha"
+        "second-opinion-portfolio", "equity-alpha", "momentum-market-regularity"
     }
     research = need(
         "src/data/research.ts",
@@ -41,6 +41,23 @@ def main() -> int:
             "Research registry mismatch: "
             f"expected={sorted(expected_research_slugs)} found={research_slugs}"
         )
+
+    # Submitted Momentum Foundation remains explicitly under SSRN review.
+    momentum_page = need(
+        "src/app/research/momentum-market-regularity/page.tsx",
+        'getResearch("momentum-market-regularity")',
+        "MethodsUsed researchSlug={item.slug}",
+        "SSRN Submission",
+        "Historical",
+        "risk",
+    )
+    momentum_record = research.split('slug: "momentum-market-regularity"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    for required in ('ssrnId: "7707479"', 'status: "SSRN Submission Under Review"', 'investmentTrack: "foundation"', "momentum-market-regularity-replication"):
+        if required not in momentum_record:
+            raise RuntimeError(f"Momentum submitted record missing: {required}")
+    if "under review" not in momentum_page.lower():
+        raise RuntimeError("Momentum page must not present pending SSRN screening as accepted publication")
+    need("src/data/methods.ts", '"momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"]')
 
     # Public paper and system must both reference the published SSRN record.
     equity_paper = need(
@@ -58,7 +75,7 @@ def main() -> int:
         "MethodsUsed researchSlug={item.slug}",
         'aria-label="Published Equity Alpha component contribution comparison"',
     )
-    equity_research = research.split('slug: "equity-alpha"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    equity_research = research.split('slug: "equity-alpha"', 1)[1].split('slug: "momentum-market-regularity"', 1)[0]
     for required in ("7622538", "October 2026", 'status: "Public Working Paper"'):
         if required not in equity_research:
             raise RuntimeError(f"Equity Alpha published paper binding missing: {required}")
@@ -124,7 +141,7 @@ def main() -> int:
     # the full Research catalog and the existing academic detail page.
     if research.count("featured: true") != 1:
         raise RuntimeError("Exactly one featured research paper is required")
-    equity_feature_block = research.split('slug: "equity-alpha"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    equity_feature_block = research.split('slug: "equity-alpha"', 1)[1].split('slug: "momentum-market-regularity"', 1)[0]
     if "featured: true" not in equity_feature_block or 'ssrnId: "7622538"' not in equity_feature_block:
         raise RuntimeError("Equity Alpha SSRN paper must be the current featured research")
     for required in (
@@ -685,6 +702,7 @@ def main() -> int:
             "out/systems/f2r/index.html",
             "out/systems/equity-alpha/index.html",
             "out/research/equity-alpha/index.html",
+            "out/research/momentum-market-regularity/index.html",
             "out/dashboards/equity-alpha/index.html",
             "out/dashboards/equity-alpha/assets/app.js",
             "out/dashboards/equity-alpha/assets/styles.css",
@@ -708,7 +726,7 @@ def main() -> int:
                 raise RuntimeError(f"built PDS recent-month chart missing token: {token}")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=5 Systems=5 Methods=26 / exact registry sets=PASS")
+    print("Research=7 Systems=5 Methods=26 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
 
     for stale in [
