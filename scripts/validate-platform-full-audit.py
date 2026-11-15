@@ -48,8 +48,8 @@ def main() -> int:
         'getResearch("momentum-market-regularity")',
         "MethodsUsed researchSlug={item.slug}",
         "SSRN Submission",
-        "Historical",
-        "risk",
+        "Evidence and Provenance",
+        "Long-Term Risk Discipline",
     )
     momentum_record = research.split('slug: "momentum-market-regularity"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
     for required in ('ssrnId: "7707479"', 'status: "SSRN Submission Under Review"', 'investmentTrack: "foundation"', "momentum-market-regularity-replication"):
