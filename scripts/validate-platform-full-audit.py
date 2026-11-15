@@ -42,21 +42,21 @@ def main() -> int:
             f"expected={sorted(expected_research_slugs)} found={research_slugs}"
         )
 
-    # Submitted Momentum Foundation remains explicitly under SSRN review.
+    # Momentum Foundation is public working-paper research, not peer-reviewed journal publication.
     momentum_page = need(
         "src/app/research/momentum-market-regularity/page.tsx",
         'getResearch("momentum-market-regularity")',
         "MethodsUsed researchSlug={item.slug}",
-        "SSRN Submission",
+        "Research status",
         "Evidence and Provenance",
         "Long-Term Risk Discipline",
     )
     momentum_record = research.split('slug: "momentum-market-regularity"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
-    for required in ('ssrnId: "7707479"', 'status: "SSRN Submission Under Review"', 'investmentTrack: "foundation"', "momentum-market-regularity-replication"):
+    for required in ('ssrnId: "7707479"', 'status: "Public Working Paper"', 'investmentTrack: "foundation"', "momentum-market-regularity-replication"):
         if required not in momentum_record:
             raise RuntimeError(f"Momentum submitted record missing: {required}")
-    if "under review" not in momentum_page.lower():
-        raise RuntimeError("Momentum page must not present pending SSRN screening as accepted publication")
+    if "peer-reviewed journal publication" not in momentum_page or "SSRN 7707479" not in momentum_page:
+        raise RuntimeError("Momentum must remain explicitly a public working paper, not a peer-reviewed journal article")
     need("src/data/methods.ts", '"momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"]')
 
     # Public paper and system must both reference the published SSRN record.
