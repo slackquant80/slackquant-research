@@ -357,6 +357,41 @@ export const researchItems: ResearchItem[] = [
     }
   },
   {
+    slug: "momentum-market-regularity",
+    title: "Momentum as a Market Regularity",
+    subtitle: "Historical Evidence, Distinct Signals, and Portfolio Value",
+    stream: "investment",
+    streamLabel: "Investment Research Series",
+    investmentTrack: "foundation",
+    investmentTrackLabel: "Foundation Research",
+    status: "SSRN Submission Under Review",
+    ssrnId: "7707479",
+    dateLabel: "November 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation: "Graduate School of Computing, Yonsei University",
+    shortSummary:
+      "Momentum has appeared across long historical samples and asset classes, but its payoffs depend on the signal and the portfolio position it creates. This Foundation paper connects evidence on return continuation, sharp reversals, and trend following to disciplined risk-off and re-entry decisions under an uncertain future market path.",
+    researchQuestion:
+      "What does the historical recurrence of momentum reveal across markets, and when can relative selection, own-trend exposure changes, or a funded trend sleeve improve a real investor's portfolio without assuming that future crises can be forecast?",
+    findings: [
+      "U.S. stock momentum averages +0.618% per month over January 1927–September 2026, but the mean falls to +0.208% per month in January 2000–September 2026. Recurrence does not imply a uniform premium.",
+      "Author-constructed momentum rankings across twelve U.S. industries produce a +0.427 percentage-point gross average monthly winner–loser spread over 1,191 months; an illustrative turnover charge reduces it to +0.343 points, before financing and short-borrow costs.",
+      "An independent analysis of AQR time-series momentum factors finds a +2.59% monthly average for the aggregate factor in 49 severe U.S. equity-market months, while the equity-index trend component averages −0.80%. Defensive payoffs are conditional and differ by market.",
+      "Precommitted own-trend rules may reduce risk exposure during a sustained decline and facilitate systematic re-entry, but they cannot foresee turning points or guarantee protection. Whether they add value depends on the mandate, funded alternative, costs, and full return path."
+    ],
+    tags: [
+      "Momentum",
+      "Trend Following",
+      "Absolute Momentum",
+      "Multi-Asset Allocation",
+      "Downside Risk"
+    ],
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7707479",
+      github: "https://github.com/slackquant80/momentum-market-regularity-replication"
+    }
+  },
+  {
     slug: "beyond-average-accuracy",
     title: "Beyond Average Accuracy",
     subtitle:
