@@ -82,13 +82,18 @@ async function run(){
       need(s.links.some(x=>x.includes('/research/momentum-market-regularity/')),'MOMENTUM_FOUNDATION_INDEX_LINK_MISSING');
     }
     if(researchDetailRoutes.includes(route)){
+      if(route==='/research/momentum-market-regularity/'){
+        // Publication exhibits are below the fold and intentionally loading="lazy".
+        // Scroll each into view and decode before asserting a real image load.
+        await c.eval('(async()=>{for(const img of document.querySelectorAll("figure.evidence-figure img")){img.scrollIntoView({block:"center"});try{await img.decode()}catch{} }window.scrollTo(0,0);return true})()');
+      }
       const publication=await c.eval('(()=>{const d=document.querySelector(".detail-layout"),f=[...document.querySelectorAll("figure.evidence-figure")];const boxes=f.map(e=>({r:e.getBoundingClientRect().width,w:e.querySelector("img")?.naturalWidth||0,alt:!!e.querySelector("img")?.alt,link:!!e.querySelector("a[data-sq-fullsize-asset]")}));return {hasDetail:!!d,overview:!!document.querySelector("#overview"),question:!!document.querySelector("#question"),findings:!!document.querySelector("#findings"),citation:!!document.querySelector("#citation"),methods:!!document.querySelector("#methods"),figures:boxes}})()');
       need(publication.hasDetail&&publication.overview&&publication.question&&publication.findings&&publication.citation,'PAPER_HOUSE_STRUCTURE_MISSING');
       need(publication.methods,'PAPER_METHODS_USED_BLOCK_MISSING');
       result.paperFigures=publication.figures.length;
       if(route==='/research/momentum-market-regularity/'){
         need(publication.figures.length===3,'MOMENTUM_SELECTED_EXHIBITS_NOT_THREE');
-        need(publication.figures.every(f=>f.w>0&&f.alt&&f.link&&f.r>=250),'MOMENTUM_FIGURE_IMAGE_SIZE_ALT_OR_LINK_MISSING');
+        need(publication.figures.every(f=>f.w>0&&f.alt&&f.link&&f.r>=250),'MOMENTUM_FIGURE_IMAGE_SIZE_ALT_OR_LINK_MISSING '+JSON.stringify(publication.figures));
         need(s.links.some(x=>x.includes('zenodo.24047812')),'MOMENTUM_SOFTWARE_ARCHIVE_LINK_MISSING');
         result.checks.push('MOMENTUM_EXHIBIT_PARITY_3','MOMENTUM_FIGURE_RENDER_AND_FULLSIZE','SSRN_SOFTWARE_ARCHIVE_SEPARATION');
       }
