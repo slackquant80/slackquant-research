@@ -409,10 +409,10 @@ export const researchItems: ResearchItem[] = [
         id: "industry-ranking",
         title: "Independent Industry-Ranking Evidence",
         description:
-          "Figure 6 implements monthly relative-momentum rankings across twelve provider-constructed U.S. industry portfolios, displaying subperiod variation rather than presenting a funded net-return strategy.",
+          "Figure 6 reports gross monthly winner-minus-loser returns from a 12–2 ranking of twelve U.S. industry portfolios. All five non-overlapping periods have positive averages, including +0.769 percentage points per month in January 2020–September 2026 (81 months). The shorter January 2024–September 2026 interval within that last period averaged −0.079 points per month (33 months). Financing, short-borrowing and execution costs are excluded.",
         imageUrl: "/research/momentum/figure-6-industry-momentum.svg",
-        alt: "Figure 6: monthly winner-minus-loser industry momentum spread across historical subperiods from 1927 to 2026.",
-        sourceLabel: "Paper Figure 6 · Author-constructed rankings on official French industry returns"
+        alt: "Figure 6: five non-overlapping U.S. industry momentum periods spanning July 1927 through September 2026; the last bar is +0.769 percentage points per month for 2020–September 2026 (81 months).",
+        sourceLabel: "Paper Figure 6 · Author calculations from Kenneth French 12 Industry Portfolios, September 2026 vintage"
       }
     ],
     links: {
