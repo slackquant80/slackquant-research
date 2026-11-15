@@ -59,10 +59,10 @@ export default function MomentumMarketRegularityPage() {
               U.S. industry-ranking exercise.
             </p>
             <div className="evidence-note">
-              <strong>Publication status.</strong>{" "}
-              Submitted to SSRN as preprint 7707479; the SSRN page was marked
-              under review on November 15, 2026. This is a submitted research
-              record, not an assertion of completed SSRN screening or peer review.
+              <strong>Research status.</strong>{" "}
+              SSRN 7707479 is the paper&apos;s official preprint record.
+              The study is presented as a public working paper, not
+              as a peer-reviewed journal publication.
             </div>
           </section>
 
