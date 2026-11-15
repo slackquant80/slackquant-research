@@ -417,7 +417,8 @@ export const researchItems: ResearchItem[] = [
     ],
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7707479",
-      github: "https://github.com/slackquant80/momentum-market-regularity-replication"
+      github: "https://github.com/slackquant80/momentum-market-regularity-replication",
+      archivalRelease: "https://doi.org/10.5281/zenodo.24047812"
     }
   },
   {
