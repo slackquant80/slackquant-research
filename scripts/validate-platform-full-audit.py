@@ -58,6 +58,18 @@ def main() -> int:
     if "peer-reviewed journal publication" not in momentum_page or "SSRN 7707479" not in momentum_page:
         raise RuntimeError("Momentum must remain explicitly a public working paper, not a peer-reviewed journal article")
     need("src/data/methods.ts", '"momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"]')
+    # Investment paper figure-parity contract: use actual author-exhibit assets
+    # and the same shared Selected Exhibits component as established paper pages.
+    for label in ("Selected Evidence", "Research Design", "EvidenceFigure", "evidence-figure-list", 'className="repro-links"'):
+        if label not in momentum_page:
+            raise RuntimeError(f"Momentum must use shared paper presentation contract: {label}")
+    for asset in ("figure-4-us-momentum.svg", "figure-5-rolling-stability.svg", "figure-6-industry-momentum.svg"):
+        asset_path = ROOT / "public" / "research" / "momentum" / asset
+        if not asset_path.is_file() or b"<svg" not in asset_path.read_bytes()[:500]:
+            raise RuntimeError(f"Missing public source-verified Momentum SVG: {asset}")
+    if "selectedEvidence:" not in momentum_record or "zenodo.24047812" not in momentum_record:
+        raise RuntimeError("Momentum exhibit metadata or separate software archive link missing")
+
 
     # Public paper and system must both reference the published SSRN record.
     equity_paper = need(
