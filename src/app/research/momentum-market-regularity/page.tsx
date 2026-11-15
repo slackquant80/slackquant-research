@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CitationBox } from "@/components/CitationBox";
+import { EvidenceFigure } from "@/components/EvidenceFigure";
 import { MethodsUsed } from "@/components/MethodsUsed";
 import { ResearchPaperHero } from "@/components/ResearchPaperHero";
 import { getResearch } from "@/data/research";
@@ -32,7 +33,8 @@ export default function MomentumMarketRegularityPage() {
           <a href="#overview">Overview</a>
           <a href="#question">Research Question</a>
           <a href="#findings">Key Findings</a>
-          <a href="#evidence">Evidence &amp; Provenance</a>
+          <a href="#evidence">Selected Evidence</a>
+          <a href="#design">Research Design</a>
           <a href="#risk">Long-Term Risk Discipline</a>
           <a href="#boundary">Interpretation Boundary</a>
           <a href="#methods">Quantitative Methods</a>
@@ -58,12 +60,6 @@ export default function MomentumMarketRegularityPage() {
               research, independent factor reanalysis, and an author-constructed
               U.S. industry-ranking exercise.
             </p>
-            <div className="evidence-note">
-              <strong>Research status.</strong>{" "}
-              SSRN 7707479 is the paper&apos;s official preprint record.
-              The study is presented as a public working paper, not
-              as a peer-reviewed journal publication.
-            </div>
           </section>
 
           <section className="prose-section" id="question">
@@ -81,7 +77,7 @@ export default function MomentumMarketRegularityPage() {
           </section>
 
           <section className="prose-section" id="evidence">
-            <h2>Evidence and Provenance</h2>
+            <h2>Selected Evidence</h2>
             <div className="metrics">
               {evidence.map(([value, label]) => (
                 <div className="metric" key={label}>
@@ -90,6 +86,28 @@ export default function MomentumMarketRegularityPage() {
                 </div>
               ))}
             </div>
+            {item.selectedEvidence?.length ? (
+              <div className="selected-exhibits">
+                <div className="selected-exhibits-head">
+                  <div className="section-title">Selected Exhibits</div>
+                  <p>
+                    Three author-generated figures from the submitted working paper
+                    show historical momentum behavior, rolling persistence, and
+                    independently constructed industry rankings. View each original
+                    image at full resolution.
+                  </p>
+                </div>
+                <div className="evidence-figure-list">
+                  {item.selectedEvidence.map((figure) => (
+                    <EvidenceFigure key={figure.id} figure={figure} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </section>
+
+          <section className="prose-section" id="design">
+            <h2>Research Design</h2>
             <div className="method-grid">
               <div className="method-card">
                 <div className="num">01 · PUBLISHED RECONSTRUCTIONS</div>
@@ -124,7 +142,7 @@ export default function MomentumMarketRegularityPage() {
               </div>
             </div>
             <p className="body-copy">
-              Table 4 then organizes investment uses and their relevant tests:
+              Table 4 organizes investment uses and their relevant tests:
               relative active return, absolute-return growth and drawdowns,
               and incremental improvement to the funded portfolio. The
               full source notes, periods, cost limitations, and sample
@@ -171,19 +189,26 @@ export default function MomentumMarketRegularityPage() {
               redistributed; their identified historical vintages are needed
               to reproduce the frozen calculations.
             </p>
-            <div className="repro-links documentation-artifacts">
-              <a className="artifact artifact-primary" href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
-                <span className="artifact-kicker">SUBMITTED PREPRINT</span>
-                <strong>SSRN Submission 7707479</strong>
-                <small>Official record; SSRN screening status may change.</small>
-                <span className="artifact-action">Open SSRN Record ↗</span>
-              </a>
-              <a className="artifact" href={item.links.github} target="_blank" rel="noopener noreferrer">
-                <span className="artifact-kicker">PUBLIC REPLICATION</span>
-                <strong>Research Code and Verification Records</strong>
-                <small>Author-created scripts and source-vintage documentation.</small>
-                <span className="artifact-action">View GitHub ↗</span>
-              </a>
+            <div className="repro-links">
+              <div className="artifact">
+                <div className="type">Public code</div>
+                <h3>Replication Repository</h3>
+                <p>Author calculations, source-vintage manifests, and verification scripts.</p>
+                <a href={item.links.github} target="_blank" rel="noopener noreferrer">
+                  Open GitHub &#8599;
+                </a>
+              </div>
+              <div className="artifact">
+                <div className="type">Archival record</div>
+                <h3>Software Archive v1.0.0</h3>
+                <p>
+                  The Zenodo DOI identifies the source-code archive, not the SSRN
+                  manuscript or an independently rebuilt complete raw-data backtest.
+                </p>
+                <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
+                  Open Zenodo Archive &#8599;
+                </a>
+              </div>
             </div>
           </section>
 
