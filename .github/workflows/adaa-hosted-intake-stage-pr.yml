@@ -18,8 +18,50 @@ permissions:
   pull-requests: write
   actions: write
 
+concurrency:
+  group: adaa-hosted-intake-stage-review
+  cancel-in-progress: false
+
 jobs:
+
+  # Cheap GitHub-only gate: skip an already-open, exact same reviewed source
+  # candidate BEFORE minting private-source tokens or downloading any assets.
+  candidate-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      duplicate: ${{ steps.check.outputs.duplicate }}
+    steps:
+      - id: check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_TITLE: "ADAA 7-file Thin source candidate — review only"
+          CANDIDATE_TAG: "${{ inputs.source_release_tag }}"
+          CANDIDATE_SHA: "${{ inputs.manifest_sha256 }}"
+        run: |
+          set -euo pipefail
+          [[ "$CANDIDATE_TAG" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{1,100}$ ]] || exit 2
+          [[ "$CANDIDATE_SHA" =~ ^[a-f0-9]{64}$ ]] || exit 2
+          matches="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 200 \
+            --json title,body,isDraft |
+            jq -r --arg title "$CANDIDATE_TITLE" --arg tag "$CANDIDATE_TAG" \
+              --arg sha "$CANDIDATE_SHA" \
+              '[.[] | select(.isDraft == true and .title == $title and
+                ((.body // "") | contains($tag)) and
+                ((.body // "") | contains($sha)))] | length')"
+          [[ "$matches" =~ ^[0-9]+$ ]] || exit 2
+          if (( matches > 0 )); then
+            echo 'duplicate=true' >> "$GITHUB_OUTPUT"
+            echo "REVIEW_INTAKE_ALREADY_OPEN_SKIP_NO_NEW_PR_NO_CI"
+          else
+            echo 'duplicate=false' >> "$GITHUB_OUTPUT"
+            echo "REVIEW_INTAKE_NEW_OR_MATERIAL_CANDIDATE_CONTINUE"
+          fi
+
   stage-private-intake:
+    needs: candidate-preflight
+    if: needs.candidate-preflight.outputs.duplicate == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
@@ -105,6 +147,7 @@ jobs:
           print("ADAA_MONOTONE_PUBLIC_MARKET_CLOCK_PASS",result["market_data_through"])
           PY
       - name: Stage only changed, source-validated ADAA static assets; preserve preview UI route
+        id: material
         shell: bash
         run: |
           set -euo pipefail
@@ -114,12 +157,24 @@ jobs:
           for f in index.html adaa-theme.css dashboard.js snapshot.js ADAA_Portfolio_Target_History.xlsx; do
             install -m 644 "$ADAA_ASSETS/$f" "public/assets/systems/adaa/$f"
           done
+          if git diff --quiet -- public/assets/systems/adaa/; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'ADAA_NO_MATERIAL_DELTA_NO_PR_NO_CI'
+          elif git diff --quiet -- public/assets/systems/adaa/snapshot.js; then
+            echo 'ADAA_NON_SNAPSHOT_CHANGE_HOLD; reviewed snapshot identity required' >&2
+            exit 2
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            echo 'ADAA_REVIEW_SNAPSHOT_MATERIAL_DELTA_READY'
+          fi
       - name: Run canonical platform build and review safety gates, no publication
+        if: steps.material.outputs.changed == 'true'
         shell: bash
         run: |
           npm ci --no-audit --no-fund
           npm run validate:release
       - name: Governed six-file review-branch transaction (preserve pre-push hook)
+        if: steps.material.outputs.changed == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -127,6 +182,7 @@ jobs:
           git config user.name "github-actions[bot]"
           node scripts/governed-adaa-draft-pr-branch.mjs
       - name: Open Draft PR without merging or deploying
+        if: steps.material.outputs.changed == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -137,6 +193,7 @@ jobs:
             --body "Private source Release: $SOURCE_RELEASE. Pinned manifest SHA256: $SOURCE_SHA256. Public candidate only, NOT approved for production. Keep existing Shiny live. Independently review clock, source/host parity, disclosure, browser functions and release consent before merge or URL change."
           echo "ADAA_DRAFT_PR_CREATED_NO_AUTO_RELEASE"
       - name: Automatically verify this exact Draft candidate (no deploy, no manual CI click)
+        if: steps.material.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
