@@ -57,8 +57,8 @@ export default function MomentumMarketRegularityPage() {
               market&apos;s own history and can govern directional participation.
               A funded trend allocation can also change the risk of a broader
               portfolio. The paper examines these distinctions using historical
-              research, independent factor reanalysis, and an author-constructed
-              U.S. industry-ranking exercise.
+              studies, an analysis of published trend factors, and an
+              independently constructed U.S. industry-ranking strategy.
             </p>
           </section>
 
@@ -124,14 +124,14 @@ export default function MomentumMarketRegularityPage() {
                 <h3>U.S. Equity and Industry Momentum</h3>
                 <p>
                   Figures 4–5 recompute statistics from the official French
-                  stock-momentum factor. Figure 6 constructs monthly top-three
-                  minus bottom-three industry ranks from twelve official
-                  industry portfolio returns, with a stated illustrative
-                  trading-cost assumption.
+                  stock-momentum factor. Figure 6 ranks twelve industry portfolios using trailing returns,
+                  then compares the subsequent returns of the top three and
+                  bottom three. An illustrative trading-cost assumption is
+                  reported separately from other financing costs.
                 </p>
               </div>
               <div className="method-card">
-                <div className="num">03 · SOURCE-FACTOR REANALYSIS</div>
+                <div className="num">03 · MULTI-ASSET FACTOR ANALYSIS</div>
                 <h3>Multi-Asset Trend Factors</h3>
                 <p>
                   Table 3 analyzes the monthly AQR-constructed time-series
@@ -169,8 +169,8 @@ export default function MomentumMarketRegularityPage() {
           <section className="prose-section" id="boundary">
             <h2>Scope and Interpretation</h2>
             <div className="evidence-note">
-              Historic research factors are not fully financed, cost-complete
-              investment returns. Overlapping rolling windows are not independent
+              Historical research factors are not funded portfolio returns
+              after all trading and financing costs. Overlapping rolling windows are not independent
               forward success probabilities. AQR factor reanalysis is distinct
               from constructing raw futures returns, and improved investor
               adherence is a plausible implication rather than an outcome
@@ -184,10 +184,10 @@ export default function MomentumMarketRegularityPage() {
             <h2>Reproducibility</h2>
             <p className="body-copy">
               The public replication repository contains author calculations,
-              source-vintage manifests, selected figures, and checks. Original
+              data-release information, selected figures, and supporting checks. Original
               third-party Kenneth French and AQR data files are not
               redistributed; their identified historical vintages are needed
-              to reproduce the frozen calculations.
+              to reproduce the reported calculations.
             </p>
             <div className="repro-links">
               <div className="artifact">
