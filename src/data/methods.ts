@@ -303,6 +303,7 @@ export const quantitativeMethods: QuantitativeMethod[] = [
 ];
 
 const artifactMethodIds: Record<string, string[]> = {
+  "momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"],
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
