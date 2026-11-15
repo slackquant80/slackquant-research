@@ -192,18 +192,19 @@ export default function MomentumMarketRegularityPage() {
             <div className="repro-links">
               <div className="artifact">
                 <div className="type">Public code</div>
-                <h3>Replication Repository</h3>
-                <p>Author calculations, source-vintage manifests, and verification scripts.</p>
-                <a href={item.links.github} target="_blank" rel="noopener noreferrer">
-                  Open GitHub &#8599;
+                <h3>Replication Code v1.0.1</h3>
+                <p>Released analysis code, source-vintage records, and corrected historical Figure 6.</p>
+                <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.1" target="_blank" rel="noopener noreferrer">
+                  Open GitHub Release &#8599;
                 </a>
               </div>
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Software Archive v1.0.0</h3>
+                <h3>Previous Software Archive v1.0.0</h3>
                 <p>
-                  The Zenodo DOI identifies the source-code archive, not the SSRN
-                  manuscript or an independently rebuilt complete raw-data backtest.
+                  Zenodo v1.0.0 is preserved under its original DOI. The newly
+                  released GitHub v1.0.1 is awaiting a separately verified
+                  Zenodo version DOI; these are software archives, not papers.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   Open Zenodo Archive &#8599;
