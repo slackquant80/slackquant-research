@@ -386,6 +386,35 @@ export const researchItems: ResearchItem[] = [
       "Multi-Asset Allocation",
       "Downside Risk"
     ],
+    selectedEvidence: [
+      {
+        id: "us-momentum-state",
+        title: "U.S. Momentum Across Periods and Market Conditions",
+        description:
+          "Figure 4 separates calendar subperiods from contemporaneous market-state averages. These are author-calculated diagnostics of the provider-constructed French Mom factor, not net portfolio returns.",
+        imageUrl: "/research/momentum/figure-4-us-momentum.svg",
+        alt: "Figure 4: U.S. momentum factor monthly mean returns by historical subperiod and same-month stock-market conditions.",
+        sourceLabel: "Paper Figure 4 · Author reanalysis of Kenneth French research factors"
+      },
+      {
+        id: "mom-rolling",
+        title: "Long-Window Momentum Persistence",
+        description:
+          "Figure 5 shows overlapping 10-year and 20-year rolling means of the U.S. momentum factor. Positive-window frequencies are historical descriptions, not independent forward success probabilities.",
+        imageUrl: "/research/momentum/figure-5-rolling-stability.svg",
+        alt: "Figure 5: U.S. momentum factor rolling 10-year and 20-year mean returns, 1927–2026.",
+        sourceLabel: "Paper Figure 5 · Author-calculated French Mom rolling diagnostics"
+      },
+      {
+        id: "industry-ranking",
+        title: "Independent Industry-Ranking Evidence",
+        description:
+          "Figure 6 implements monthly relative-momentum rankings across twelve provider-constructed U.S. industry portfolios, displaying subperiod variation rather than presenting a funded net-return strategy.",
+        imageUrl: "/research/momentum/figure-6-industry-momentum.svg",
+        alt: "Figure 6: monthly winner-minus-loser industry momentum spread across historical subperiods from 1927 to 2026.",
+        sourceLabel: "Paper Figure 6 · Author-constructed rankings on official French industry returns"
+      }
+    ],
     links: {
       ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7707479",
       github: "https://github.com/slackquant80/momentum-market-regularity-replication"
