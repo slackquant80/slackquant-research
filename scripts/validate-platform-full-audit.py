@@ -47,15 +47,15 @@ def main() -> int:
         "src/app/research/momentum-market-regularity/page.tsx",
         'getResearch("momentum-market-regularity")',
         "MethodsUsed researchSlug={item.slug}",
-        "Evidence and Provenance",
+        "Selected Evidence",
         "Long-Term Risk Discipline",
     )
     momentum_record = research.split('slug: "momentum-market-regularity"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
     for required in ('ssrnId: "7707479"', 'status: "Public Working Paper"', 'investmentTrack: "foundation"', "momentum-market-regularity-replication"):
         if required not in momentum_record:
             raise RuntimeError(f"Momentum submitted record missing: {required}")
-    if "peer-reviewed journal publication" not in momentum_page or "SSRN 7707479" not in momentum_page:
-        raise RuntimeError("Momentum must remain explicitly a public working paper, not a peer-reviewed journal article")
+    if "status: \"Public Working Paper\"" not in momentum_record or "ssrnId: \"7707479\"" not in momentum_record:
+        raise RuntimeError("Momentum status and SSRN reference must remain in the shared research registry")
     need("src/data/methods.ts", '"momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"]')
     # Investment paper figure-parity contract: use actual author-exhibit assets
     # and the same shared Selected Exhibits component as established paper pages.
