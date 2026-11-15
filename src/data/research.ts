@@ -364,7 +364,7 @@ export const researchItems: ResearchItem[] = [
     streamLabel: "Investment Research Series",
     investmentTrack: "foundation",
     investmentTrackLabel: "Foundation Research",
-    status: "SSRN Submission Under Review",
+    status: "Public Working Paper",
     ssrnId: "7707479",
     dateLabel: "November 2026",
     authorLine: "Sungkyu Lee",
