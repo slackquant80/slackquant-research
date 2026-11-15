@@ -47,7 +47,6 @@ def main() -> int:
         "src/app/research/momentum-market-regularity/page.tsx",
         'getResearch("momentum-market-regularity")',
         "MethodsUsed researchSlug={item.slug}",
-        "Research status",
         "Evidence and Provenance",
         "Long-Term Risk Discipline",
     )
