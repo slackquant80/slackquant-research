@@ -57,8 +57,9 @@ export default function MomentumMarketRegularityPage() {
               market&apos;s own history and can govern directional participation.
               A funded trend allocation can also change the risk of a broader
               portfolio. The paper examines these distinctions using historical
-              studies, an analysis of published trend factors, and an
-              independently constructed U.S. industry-ranking strategy, and an original 1927–2026 long-only market-to-Treasury-bills experiment.
+              studies, an analysis of published trend factors, an independently
+              constructed U.S. industry-ranking strategy, and a century-scale
+              long-only market-to-Treasury-bills experiment.
             </p>
           </section>
 
@@ -156,9 +157,10 @@ export default function MomentumMarketRegularityPage() {
             <p className="body-copy">
               Table 4 organizes investment uses and their relevant tests:
               relative active return, absolute-return growth and drawdowns,
-              and incremental improvement to the funded portfolio. Table 5 and Figure 7 additionally test the dynamic risk-off mechanism against
-              passive and exposure-matched cash allocations. The full source notes,
-              sample clocks, cost limitations, and adverse regimes appear in the paper.
+              and incremental improvement to the funded portfolio. Table 5 and
+              Figure 7 directly examine the long-only risk-off mechanism against
+              passive and exposure-matched allocations. Source notes, trading
+              assumptions, and adverse regimes are explained in the paper.
             </p>
           </section>
 
@@ -226,10 +228,10 @@ export default function MomentumMarketRegularityPage() {
                 <div className="type">Archival record</div>
                 <h3>Previous Software Archive v1.0.0</h3>
                 <p>
-                  Zenodo v1.0.0 is preserved under its original DOI. The newly
-                  released GitHub versions v1.0.1 and v1.0.2 have separately
-                  unverified Zenodo version DOIs; the archival link here remains
-                  the preserved v1.0.0 deposit, not a claim about newer software.
+                  Zenodo v1.0.0 is preserved under its original DOI. GitHub v1.0.2
+                  is independently published, but its separate Zenodo New Version
+                  DOI has not been verified. This link points only to the preserved
+                  v1.0.0 deposit, not to a newer software archive.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   Open Zenodo Archive &#8599;
