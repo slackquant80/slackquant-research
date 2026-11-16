@@ -29,6 +29,27 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"EQUITY_MISSING"):
                 mod.stage(args)
 
+    def test_release_ci_accepts_one_success_and_a_superseded_skipped_build(self):
+        checks=[{"name":"build","status":"completed","conclusion":"success"},
+                {"name":"build","status":"completed","conclusion":"skipped"}]
+        self.assertTrue(mod._release_build_checks_satisfied(checks))
+
+    def test_release_ci_requires_real_success_not_only_skipped(self):
+        checks=[{"name":"build","status":"completed","conclusion":"skipped"}]
+        self.assertFalse(mod._release_build_checks_satisfied(checks))
+
+    def test_release_ci_rejects_pending_duplicate(self):
+        checks=[{"name":"build","status":"completed","conclusion":"success"},
+                {"name":"build","status":"in_progress","conclusion":None}]
+        self.assertFalse(mod._release_build_checks_satisfied(checks))
+
+    def test_release_ci_rejects_cancelled_or_failed_build_even_with_success(self):
+        passed={"name":"build","status":"completed","conclusion":"success"}
+        for bad in ("cancelled","failure","timed_out","action_required"):
+            with self.subTest(bad=bad):
+                self.assertFalse(mod._release_build_checks_satisfied(
+                    [passed,{"name":"build","status":"completed","conclusion":bad}]))
+
     def test_publish_requires_exact_approved_head(self):
         args=SimpleNamespace(approved_head="c"*40,wait_seconds=60)
         candidate={"head":{"sha":"d"*40},"number":99,"state":"open","draft":True}
