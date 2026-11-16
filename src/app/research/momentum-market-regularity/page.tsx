@@ -10,7 +10,7 @@ const evidence = [
   ["1,197 months", "U.S. stock-momentum factor, January 1927–September 2026"],
   ["+0.618%", "Gross monthly average of the U.S. Mom research factor"],
   ["1,191 months", "Independently constructed U.S. industry-ranking history"],
-  ["49 months", "Severe U.S. equity-market months in the AQR factor reanalysis"],
+  ["−44.50%", "Historical MDD of the 1927–2026 absolute-momentum long-only market/bills rule, versus −83.65% for buy and hold"],
 ] as const;
 
 export const metadata: Metadata = {
@@ -46,10 +46,11 @@ export default function MomentumMarketRegularityPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              The future market path is difficult to know. A positive long-run
-              equity premium does not prevent prolonged losses or extended
-              stagnation. Momentum offers both a recurring pattern to study and
-              a possible discipline for adjusting risk exposure as conditions change.
+              Momentum has repeatedly appeared across markets and long historical
+              periods. Its investment value is not limited to identifying
+              relative winners: a precommitted trend rule can also change
+              market exposure during prolonged losses. Whether that response
+              improves a portfolio depends on the rule, its costs, and the path ahead.
             </p>
             <p className="body-copy">
               Momentum is not one trade. Relative momentum ranks securities or
@@ -57,8 +58,9 @@ export default function MomentumMarketRegularityPage() {
               market&apos;s own history and can govern directional participation.
               A funded trend allocation can also change the risk of a broader
               portfolio. The paper examines these distinctions using historical
-              research, independent factor reanalysis, and an author-constructed
-              U.S. industry-ranking exercise.
+              studies, an analysis of published trend factors, an independently
+              constructed U.S. industry-ranking strategy, and a century-scale
+              long-only market-to-Treasury-bills experiment.
             </p>
           </section>
 
@@ -91,10 +93,10 @@ export default function MomentumMarketRegularityPage() {
                 <div className="selected-exhibits-head">
                   <div className="section-title">Selected Exhibits</div>
                   <p>
-                    Three author-generated figures from the submitted working paper
-                    show historical momentum behavior, rolling persistence, and
-                    independently constructed industry rankings. View each original
-                    image at full resolution.
+                    Four author-generated figures from the paper
+                    show stock momentum, rolling persistence, independent industry
+                    rankings, and century-scale absolute-momentum wealth and
+                    underwater drawdown paths. View the scientific charts at full resolution.
                   </p>
                 </div>
                 <div className="evidence-figure-list">
@@ -124,14 +126,14 @@ export default function MomentumMarketRegularityPage() {
                 <h3>U.S. Equity and Industry Momentum</h3>
                 <p>
                   Figures 4–5 recompute statistics from the official French
-                  stock-momentum factor. Figure 6 constructs monthly top-three
-                  minus bottom-three industry ranks from twelve official
-                  industry portfolio returns, with a stated illustrative
-                  trading-cost assumption.
+                  stock-momentum factor. Figure 6 ranks twelve industry portfolios using trailing returns,
+                  then compares the subsequent returns of the top three and
+                  bottom three. An illustrative trading-cost assumption is
+                  reported separately from other financing costs.
                 </p>
               </div>
               <div className="method-card">
-                <div className="num">03 · SOURCE-FACTOR REANALYSIS</div>
+                <div className="num">03 · MULTI-ASSET FACTOR ANALYSIS</div>
                 <h3>Multi-Asset Trend Factors</h3>
                 <p>
                   Table 3 analyzes the monthly AQR-constructed time-series
@@ -140,13 +142,26 @@ export default function MomentumMarketRegularityPage() {
                   return streams were not independently reconstructed.
                 </p>
               </div>
+              <div className="method-card">
+                <div className="num">04 · LONG-HORIZON PORTFOLIO TEST</div>
+                <h3>Absolute Momentum and Risk-Off</h3>
+                <p>
+                  Table 5 and Figure 7 directly test a fixed twelve-month
+                  market-return sign on the historical U.S. research market,
+                  switching to one-month Treasury bills after negative trends.
+                  The 1927–2026 results include actual monthly cash rates,
+                  an illustrative turnover charge, static exposure controls,
+                  and adverse rebound periods. This is not an ETF execution record.
+                </p>
+              </div>
             </div>
             <p className="body-copy">
               Table 4 organizes investment uses and their relevant tests:
               relative active return, absolute-return growth and drawdowns,
-              and incremental improvement to the funded portfolio. The
-              full source notes, periods, cost limitations, and sample
-              definitions appear in the working paper.
+              and incremental improvement to the funded portfolio. Table 5 and
+              Figure 7 directly examine the long-only risk-off mechanism against
+              passive and exposure-matched allocations. Source notes, trading
+              assumptions, and adverse regimes are explained in the paper.
             </p>
           </section>
 
@@ -158,23 +173,35 @@ export default function MomentumMarketRegularityPage() {
               beginning or duration.
             </p>
             <p className="body-copy">
-              Such a rule also needs a systematic way back into the market.
-              Sudden crashes can occur before signals respond; sideways markets
-              can produce false exits and transaction costs; recoveries can be
-              missed. The practical case rests on the full path an investor can
-              sustain, rather than a guarantee of downside protection.
+              In the July 1927–September 2026 historical market/bills
+              simulation, the twelve-month own-trend rule compounded at 10.22%
+              annually, close to the market&apos;s 10.26%, while reducing the
+              historical maximum drawdown from −83.65% to −44.50%. The longest
+              underwater spell fell from 184 to 95 months. The outcome is
+              economically substantial, including compared with a static
+              portfolio with the same 75.6% average equity weight.
+            </p>
+            <p className="body-copy">
+              This protection is conditional. Since 2010, the exposure-matched
+              static mix had a better CAGR and smaller MDD; the timing rule
+              lagged the fast 2020 rebound. Signals cannot prevent losses
+              before they change, and the historical dataset cannot measure
+              investor adherence or prove execution at a real ETF market close.
             </p>
           </section>
 
           <section className="prose-section" id="boundary">
             <h2>Scope and Interpretation</h2>
             <div className="evidence-note">
-              Historic research factors are not fully financed, cost-complete
-              investment returns. Overlapping rolling windows are not independent
-              forward success probabilities. AQR factor reanalysis is distinct
-              from constructing raw futures returns, and improved investor
-              adherence is a plausible implication rather than an outcome
-              directly measured in this study.
+              Historical research factors are not funded portfolio returns
+              after all trading and financing costs. The new absolute-momentum
+              test uses the CRSP-based research market and monthly Treasury-bill
+              returns, not actual historical ETF trades. Its 10bp one-way
+              turnover cost is illustrative, and a month-end signal does not
+              prove executable next-session pricing. Overlapping rolling windows
+              are not independent success probabilities. AQR futures-factor
+              reanalysis is a different strategy; investor adherence remains
+              an interpretation, not a measured outcome.
             </div>
           </section>
 
@@ -184,26 +211,28 @@ export default function MomentumMarketRegularityPage() {
             <h2>Reproducibility</h2>
             <p className="body-copy">
               The public replication repository contains author calculations,
-              source-vintage manifests, selected figures, and checks. Original
+              data-release information, selected figures, and supporting checks. Original
               third-party Kenneth French and AQR data files are not
               redistributed; their identified historical vintages are needed
-              to reproduce the frozen calculations.
+              to reproduce the reported calculations.
             </p>
             <div className="repro-links">
               <div className="artifact">
                 <div className="type">Public code</div>
-                <h3>Replication Repository</h3>
-                <p>Author calculations, source-vintage manifests, and verification scripts.</p>
-                <a href={item.links.github} target="_blank" rel="noopener noreferrer">
-                  Open GitHub &#8599;
+                <h3>Replication Code v1.0.3</h3>
+                <p>Code for the century-long market/bills experiment and Figure 7, together with the U.S. equity and industry calculations.</p>
+                <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3" target="_blank" rel="noopener noreferrer">
+                  Open GitHub Release &#8599;
                 </a>
               </div>
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Software Archive v1.0.0</h3>
+                <h3>Previous Software Archive v1.0.0</h3>
                 <p>
-                  The Zenodo DOI identifies the source-code archive, not the SSRN
-                  manuscript or an independently rebuilt complete raw-data backtest.
+                  The Zenodo link identifies the earlier v1.0.0 software archive.
+                  The current replication code is available separately as
+                  GitHub release v1.0.3; this older archive does not represent
+                  that release.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   Open Zenodo Archive &#8599;

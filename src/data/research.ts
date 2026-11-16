@@ -370,14 +370,14 @@ export const researchItems: ResearchItem[] = [
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
     shortSummary:
-      "Momentum has appeared across long historical samples and asset classes, but its payoffs depend on the signal and the portfolio position it creates. This Foundation paper connects evidence on return continuation, sharp reversals, and trend following to disciplined risk-off and re-entry decisions under an uncertain future market path.",
+      "Momentum has appeared across long historical samples and asset classes, but its payoffs depend on the signal and the portfolio position it creates. This Foundation paper distinguishes relative selection, directional risk management, and funded portfolio allocations. In a 1927–2026 long-only market-to-bills experiment, a fixed response to prolonged weakness preserved near-market compound growth while substantially reducing the worst historical drawdown.",
     researchQuestion:
       "What does the historical recurrence of momentum reveal across markets, and when can relative selection, own-trend exposure changes, or a funded trend sleeve improve a real investor's portfolio without assuming that future crises can be forecast?",
     findings: [
       "U.S. stock momentum averages +0.618% per month over January 1927–September 2026, but the mean falls to +0.208% per month in January 2000–September 2026. Recurrence does not imply a uniform premium.",
       "Author-constructed momentum rankings across twelve U.S. industries produce a +0.427 percentage-point gross average monthly winner–loser spread over 1,191 months; an illustrative turnover charge reduces it to +0.343 points, before financing and short-borrow costs.",
       "An independent analysis of AQR time-series momentum factors finds a +2.59% monthly average for the aggregate factor in 49 severe U.S. equity-market months, while the equity-index trend component averages −0.80%. Defensive payoffs are conditional and differ by market.",
-      "Precommitted own-trend rules may reduce risk exposure during a sustained decline and facilitate systematic re-entry, but they cannot foresee turning points or guarantee protection. Whether they add value depends on the mandate, funded alternative, costs, and full return path."
+      "A fixed 1927–September 2026 U.S. market-to-Treasury-bills absolute-momentum test nearly matches buy-and-hold CAGR (10.22% versus 10.26%) while reducing MDD (−44.50% versus −83.65%). Compared with the same 75.6% average equity weight held statically, the rule has higher full-sample CAGR and a smaller MDD; since 2010 the static allocation does better on both, and quick rebounds expose the rule’s opportunity cost."
     ],
     tags: [
       "Momentum",
@@ -409,10 +409,19 @@ export const researchItems: ResearchItem[] = [
         id: "industry-ranking",
         title: "Independent Industry-Ranking Evidence",
         description:
-          "Figure 6 implements monthly relative-momentum rankings across twelve provider-constructed U.S. industry portfolios, displaying subperiod variation rather than presenting a funded net-return strategy.",
+          "Figure 6 compares five non-overlapping periods of gross U.S. industry momentum. The 2020–September 2026 mean is +0.769 pp/month (81 months), although the nested 2024–September 2026 mean is −0.079 pp/month (33 months). Trading and financing costs are excluded.",
         imageUrl: "/research/momentum/figure-6-industry-momentum.svg",
-        alt: "Figure 6: monthly winner-minus-loser industry momentum spread across historical subperiods from 1927 to 2026.",
-        sourceLabel: "Paper Figure 6 · Author-constructed rankings on official French industry returns"
+        alt: "Figure 6: five non-overlapping U.S. industry momentum periods spanning July 1927 through September 2026; the last bar is +0.769 percentage points per month for 2020–September 2026 (81 months).",
+        sourceLabel: "Paper Figure 6 · Author calculations from Kenneth French 12 Industry Portfolios, September 2026 vintage"
+      },
+      {
+        id: "absolute-riskoff-century",
+        title: "Nearly a Century of Absolute Momentum and Drawdown Control",
+        description:
+          "Figure 7 compares cumulative wealth and underwater drawdowns for a fixed 12-month long-only U.S. market-to-Treasury-bills rule against buy and hold and an ex-post 75.6% market-exposure-matched static allocation. The risk-off rule nearly matches market CAGR while reducing the historical MDD, but can miss swift rebounds. Source: September 2026 French 3-factor vintage; one-way 10bp illustrative trading charge, not a historical ETF simulation.",
+        imageUrl: "/research/momentum/figure-7-absolute-riskoff.svg",
+        alt: "Figure 7: 1927–2026 historical log-wealth and own-peak drawdowns for a 12-month market-to-bills absolute-momentum rule, buy and hold, and average-exposure-matched static market/bills allocation.",
+        sourceLabel: "Paper Figure 7 · Original 1927–2026 author calculation from Kenneth French research market and one-month bill returns"
       }
     ],
     links: {
