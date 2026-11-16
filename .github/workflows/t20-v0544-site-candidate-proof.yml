@@ -1,0 +1,70 @@
+name: T20 v0.5.44 static-site author proof (no deploy)
+on:
+  push:
+    branches:
+      - review/t20-figure6-v101-site-20261115
+    paths:
+      - .github/workflows/t20-v0544-site-candidate-proof.yml
+permissions:
+  contents: read
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Scoped immutable source claims and figure checks
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          site=Path('src/app/research/momentum-market-regularity/page.tsx').read_text()
+          data=Path('src/data/research.ts').read_text()
+          b=data.split('slug: "momentum-market-regularity"',1)[1].split('slug: "beyond-average-accuracy"',1)[0]
+          for token in ['10.22%', '10.26%', '−44.50%', '−83.65%', '75.6%', '2020', '2010', 'v1.0.3']:
+              assert token in site+b, token
+          assert 'source-replayed' not in site.lower() and 'source-replayed' not in b.lower()
+          assert 'source-verified' not in site.lower() and 'source-verified' not in b.lower()
+          for n in (4,5,6,7):
+              assert f'Paper Figure {n}' in b
+          assert '7707479' in b
+          assert 'https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3' in site
+          assert 'https://doi.org/10.5281/zenodo.24047812' in b
+          assert 'v0.5.44' not in site+b, 'Do not present SSRN-under-review binary as already live'
+          fig6=Path('public/research/momentum/figure-6-industry-momentum.svg').read_text()
+          fig7=Path('public/research/momentum/figure-7-absolute-riskoff.svg').read_text()
+          assert '2020–Sep 2026' in fig6 and '+0.769 pp' in fig6
+          assert all(t in fig7 for t in ('0%', '-100%', '12m absolute momentum', 'Exposure-matched static'))
+          assert fig7.index('0%') >= 0
+          print('T20_V0544_AUTHOR_SOURCE_AND_SCIENCE_LOCK_PASS')
+          PY
+      - name: Install cached frontend dependencies
+        run: npm ci --no-audit --no-fund
+      - name: TypeScript and Next static export (no Pages deployment)
+        run: |
+          npm run typecheck
+          NEXT_PUBLIC_SITE_URL=https://research.slackquant.com NEXT_PUBLIC_BASE_PATH= npm run build
+      - name: Check exported momentum and six-paper output
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import html
+          root=Path('out')
+          page=root/'research/momentum-market-regularity/index.html'
+          assert page.exists(), 'Missing current paper static HTML'
+          s=html.unescape(page.read_text())
+          for token in ['Momentum as a Market Regularity', '10.22%', '−44.50%', '1,191 months', 'Selected Exhibits','Nearly a Century of Absolute Momentum']:
+              assert token in s, token
+          for name in ['figure-4-us-momentum.svg','figure-5-rolling-stability.svg','figure-6-industry-momentum.svg','figure-7-absolute-riskoff.svg']:
+              assert (root/'research/momentum'/name).is_file(),name
+          assert len(list((root/'research').glob('*/index.html'))) >= 6
+          print('T20_V0544_SIX_PAPER_STATIC_EXPORT_AND_EXHIBITS_PASS')
+          PY
