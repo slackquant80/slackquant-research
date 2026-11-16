@@ -66,7 +66,7 @@ def main() -> int:
         asset_path = ROOT / "public" / "research" / "momentum" / asset
         if not asset_path.is_file() or b"<svg" not in asset_path.read_bytes()[:500]:
             raise RuntimeError(f"Missing public source-verified Momentum SVG: {asset}")
-    if "selectedEvidence:" not in momentum_record or "zenodo.24047812" not in momentum_record:
+    if "selectedEvidence:" not in momentum_record or "zenodo.24268624" not in momentum_record:
         raise RuntimeError("Momentum exhibit metadata or separate software archive link missing")
 
 
