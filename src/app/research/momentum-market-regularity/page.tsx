@@ -236,7 +236,7 @@ export default function MomentumMarketRegularityPage() {
                   publication on SSRN.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
-                  Open Zenodo Archive &#8599;
+                  Open Zenodo v1.0.3 &#8599;
                 </a>
               </div>
             </div>
