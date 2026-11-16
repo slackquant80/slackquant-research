@@ -57,12 +57,12 @@ export type PdsCanonicalSummary = {
 // Do not hand-edit numerical values; refresh through the PDS publication workflow.
 export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "contract": "PDS_CANONICAL_PLATFORM_SUMMARY_V1",
-  "generatedAt": "2026-11-13T11:24:52.012023+09:00",
-  "systemAsOfKst": "2026-11-13T11:22:04.905716+09:00",
+  "generatedAt": "2026-11-16T11:23:31.342701+09:00",
+  "systemAsOfKst": "2026-11-16T11:20:52.003447+09:00",
   "officialSignal": "2026-10",
   "holdingMonth": "2026-11",
   "executionClose": "2026-11-02",
-  "markThrough": "2026-11-12",
+  "markThrough": "2026-11-13",
   "completedThrough": "2026-10-30",
   "coreProviders": [
     "ADAA",
@@ -73,7 +73,7 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "previewAvailable": true,
   "previewSignal": "2026-11",
   "previewHolding": "2026-12",
-  "previewThrough": "2026-11-12",
+  "previewThrough": "2026-11-13",
   "adaptivePreviewAvailable": true,
   "adaptivePreviewState": "NORMAL",
   "adaptivePreviewRiskBudget": 1.0,
@@ -81,639 +81,639 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
   "officialFxZscore": -0.1285143179328798,
   "previewFxAvailable": true,
   "previewFxHedge": 0.5,
-  "previewFxZscore": -0.1639798179170576,
+  "previewFxZscore": -0.1942805916807969,
   "recentMonthlyReturns": [
     {
       "holdingMonth": "2025-11",
-      "coreDynamicFx": 0.012334693858955914,
-      "adaptiveDynamicFx": 0.012334693858956136
+      "coreDynamicFx": 0.012334711755473071,
+      "adaptiveDynamicFx": 0.01233471175547285
     },
     {
       "holdingMonth": "2025-12",
-      "coreDynamicFx": 0.010897627332583149,
-      "adaptiveDynamicFx": 0.010897627332582926
+      "coreDynamicFx": 0.010897599791211743,
+      "adaptiveDynamicFx": 0.01089759979121152
     },
     {
       "holdingMonth": "2026-01",
-      "coreDynamicFx": 0.07233919299945213,
-      "adaptiveDynamicFx": 0.07233919299945213
+      "coreDynamicFx": 0.07233920276423622,
+      "adaptiveDynamicFx": 0.07233920276423622
     },
     {
       "holdingMonth": "2026-02",
-      "coreDynamicFx": 0.0583012473070601,
-      "adaptiveDynamicFx": 0.05830124730706032
+      "coreDynamicFx": 0.05830125884398596,
+      "adaptiveDynamicFx": 0.05830125884398596
     },
     {
       "holdingMonth": "2026-03",
-      "coreDynamicFx": -0.050207563025996826,
-      "adaptiveDynamicFx": -0.05020756302599694
+      "coreDynamicFx": -0.0502075720622468,
+      "adaptiveDynamicFx": -0.05020757206224691
     },
     {
       "holdingMonth": "2026-04",
-      "coreDynamicFx": 0.0740896129313331,
-      "adaptiveDynamicFx": 0.0740896129313331
+      "coreDynamicFx": 0.07408961112525758,
+      "adaptiveDynamicFx": 0.07408961112525758
     },
     {
       "holdingMonth": "2026-05",
-      "coreDynamicFx": 0.0726241573274935,
-      "adaptiveDynamicFx": 0.0726241573274935
+      "coreDynamicFx": 0.07262417229727847,
+      "adaptiveDynamicFx": 0.07262417229727891
     },
     {
       "holdingMonth": "2026-06",
-      "coreDynamicFx": -0.004646291427456761,
-      "adaptiveDynamicFx": 0.010507316062938532
+      "coreDynamicFx": -0.004646296495616653,
+      "adaptiveDynamicFx": 0.010507355207624247
     },
     {
       "holdingMonth": "2026-07",
-      "coreDynamicFx": -0.05362582557096773,
-      "adaptiveDynamicFx": -0.03212555883012147
+      "coreDynamicFx": -0.05362582621617029,
+      "adaptiveDynamicFx": -0.032125596740693485
     },
     {
       "holdingMonth": "2026-08",
-      "coreDynamicFx": 0.027129886098854028,
-      "adaptiveDynamicFx": 0.022686623492479185
+      "coreDynamicFx": 0.027129890881292695,
+      "adaptiveDynamicFx": 0.02268662611219585
     },
     {
       "holdingMonth": "2026-09",
-      "coreDynamicFx": -0.008810628834075573,
-      "adaptiveDynamicFx": -0.008810628834075351
+      "coreDynamicFx": -0.008810633301604476,
+      "adaptiveDynamicFx": -0.008810633301604698
     },
     {
       "holdingMonth": "2026-10",
-      "coreDynamicFx": -0.029889700590709944,
-      "adaptiveDynamicFx": -0.022109105359480075
+      "coreDynamicFx": -0.029889700590711055,
+      "adaptiveDynamicFx": -0.022109105359480297
     }
   ],
   "cumulativePath": [
     {
       "holdingMonth": "2017-05",
-      "coreDynamicFxWealth": 1.0216020578166491,
-      "coreWealth": 1.029668886406853
+      "coreDynamicFxWealth": 1.021601858021279,
+      "coreWealth": 1.029668685033848
     },
     {
       "holdingMonth": "2017-06",
-      "coreDynamicFxWealth": 1.0287683683898152,
-      "coreWealth": 1.0247509071234289
+      "coreDynamicFxWealth": 1.0287681138086504,
+      "coreWealth": 1.0247506535364337
     },
     {
       "holdingMonth": "2017-07",
-      "coreDynamicFxWealth": 1.0372532330651727,
-      "coreWealth": 1.0459295444607026
+      "coreDynamicFxWealth": 1.0372531462492036,
+      "coreWealth": 1.045929456918546
     },
     {
       "holdingMonth": "2017-08",
-      "coreDynamicFxWealth": 1.0497068101714742,
-      "coreWealth": 1.0564923906112773
+      "coreDynamicFxWealth": 1.049706729029713,
+      "coreWealth": 1.056492308944997
     },
     {
       "holdingMonth": "2017-09",
-      "coreDynamicFxWealth": 1.0623825641050126,
-      "coreWealth": 1.0589612623590943
+      "coreDynamicFxWealth": 1.0623823319377341,
+      "coreWealth": 1.05896103093949
     },
     {
       "holdingMonth": "2017-10",
-      "coreDynamicFxWealth": 1.0725892988204988,
-      "coreWealth": 1.080031664372271
+      "coreDynamicFxWealth": 1.0725890270868994,
+      "coreWealth": 1.0800313907531982
     },
     {
       "holdingMonth": "2017-11",
-      "coreDynamicFxWealth": 1.0613393367485513,
-      "coreWealth": 1.089747317369487
+      "coreDynamicFxWealth": 1.061339032887352,
+      "coreWealth": 1.0897470053750926
     },
     {
       "holdingMonth": "2017-12",
-      "coreDynamicFxWealth": 1.0619231811664198,
-      "coreWealth": 1.103355114944098
+      "coreDynamicFxWealth": 1.0619229266112133,
+      "coreWealth": 1.1033548504571842
     },
     {
       "holdingMonth": "2018-01",
-      "coreDynamicFxWealth": 1.1218666091031526,
-      "coreWealth": 1.1627014561055398
+      "coreDynamicFxWealth": 1.121866314670927,
+      "coreWealth": 1.1627011509562717
     },
     {
       "holdingMonth": "2018-02",
-      "coreDynamicFxWealth": 1.085146162059208,
-      "coreWealth": 1.118271881759209
+      "coreDynamicFxWealth": 1.0851458558223896,
+      "coreWealth": 1.1182715661740534
     },
     {
       "holdingMonth": "2018-03",
-      "coreDynamicFxWealth": 1.0629242313561689,
-      "coreWealth": 1.111526256483124
+      "coreDynamicFxWealth": 1.0629241881837346,
+      "coreWealth": 1.111526211336639
     },
     {
       "holdingMonth": "2018-04",
-      "coreDynamicFxWealth": 1.076521279217524,
-      "coreWealth": 1.1187190133183296
+      "coreDynamicFxWealth": 1.0765208618173512,
+      "coreWealth": 1.1187185795568069
     },
     {
       "holdingMonth": "2018-05",
-      "coreDynamicFxWealth": 1.0967342618660545,
-      "coreWealth": 1.1297964252363213
+      "coreDynamicFxWealth": 1.0967340106649746,
+      "coreWealth": 1.1297961664625311
     },
     {
       "holdingMonth": "2018-06",
-      "coreDynamicFxWealth": 1.1307195632705662,
-      "coreWealth": 1.1267503130113197
+      "coreDynamicFxWealth": 1.1307189684638255,
+      "coreWealth": 1.1267497202925738
     },
     {
       "holdingMonth": "2018-07",
-      "coreDynamicFxWealth": 1.13496777812232,
-      "coreWealth": 1.136465699220105
+      "coreDynamicFxWealth": 1.1349673456370986,
+      "coreWealth": 1.1364652661640926
     },
     {
       "holdingMonth": "2018-08",
-      "coreDynamicFxWealth": 1.164245172352574,
-      "coreWealth": 1.1643762563951356
+      "coreDynamicFxWealth": 1.1642445966929325,
+      "coreWealth": 1.164375680670679
     },
     {
       "holdingMonth": "2018-09",
-      "coreDynamicFxWealth": 1.158623602201058,
-      "coreWealth": 1.1606694782539535
+      "coreDynamicFxWealth": 1.1586230887797595,
+      "coreWealth": 1.1606689639260637
     },
     {
       "holdingMonth": "2018-10",
-      "coreDynamicFxWealth": 1.1289964497717622,
-      "coreWealth": 1.1185066912544042
+      "coreDynamicFxWealth": 1.128995827300966,
+      "coreWealth": 1.1185060745671216
     },
     {
       "holdingMonth": "2018-11",
-      "coreDynamicFxWealth": 1.1226012886709813,
-      "coreWealth": 1.1226169554975327
+      "coreDynamicFxWealth": 1.1226010407322125,
+      "coreWealth": 1.1226167075553029
     },
     {
       "holdingMonth": "2018-12",
-      "coreDynamicFxWealth": 1.105566668063293,
-      "coreWealth": 1.1062157232645227
+      "coreDynamicFxWealth": 1.1055663614508169,
+      "coreWealth": 1.1062154164720408
     },
     {
       "holdingMonth": "2019-01",
-      "coreDynamicFxWealth": 1.1236937111806373,
-      "coreWealth": 1.1283261565688445
+      "coreDynamicFxWealth": 1.1236937020923403,
+      "coreWealth": 1.128326147443079
     },
     {
       "holdingMonth": "2019-02",
-      "coreDynamicFxWealth": 1.1295023869760477,
-      "coreWealth": 1.131335863429969
+      "coreDynamicFxWealth": 1.1295020965075289,
+      "coreWealth": 1.131335572489942
     },
     {
       "holdingMonth": "2019-03",
-      "coreDynamicFxWealth": 1.1586811134831898,
-      "coreWealth": 1.150946856728275
+      "coreDynamicFxWealth": 1.1586809300513616,
+      "coreWealth": 1.150946674520862
     },
     {
       "holdingMonth": "2019-04",
-      "coreDynamicFxWealth": 1.1932133543018133,
-      "coreWealth": 1.1706044442862238
+      "coreDynamicFxWealth": 1.1932131281764975,
+      "coreWealth": 1.1706042224455107
     },
     {
       "holdingMonth": "2019-05",
-      "coreDynamicFxWealth": 1.161818810934012,
-      "coreWealth": 1.1279092354475926
+      "coreDynamicFxWealth": 1.1618184533745188,
+      "coreWealth": 1.1279088883240553
     },
     {
       "holdingMonth": "2019-06",
-      "coreDynamicFxWealth": 1.1845176799235748,
-      "coreWealth": 1.166461860888286
+      "coreDynamicFxWealth": 1.1845175084661022,
+      "coreWealth": 1.1664616920443693
     },
     {
       "holdingMonth": "2019-07",
-      "coreDynamicFxWealth": 1.2064615487177188,
-      "coreWealth": 1.1727840208586648
+      "coreDynamicFxWealth": 1.2064613492776608,
+      "coreWealth": 1.1727838269858346
     },
     {
       "holdingMonth": "2019-08",
-      "coreDynamicFxWealth": 1.254239668986844,
-      "coreWealth": 1.2088833724594725
+      "coreDynamicFxWealth": 1.2542393968171954,
+      "coreWealth": 1.2088831101321267
     },
     {
       "holdingMonth": "2019-09",
-      "coreDynamicFxWealth": 1.240809456497782,
-      "coreWealth": 1.2007766871632082
+      "coreDynamicFxWealth": 1.2408093152761637,
+      "coreWealth": 1.2007765504978831
     },
     {
       "holdingMonth": "2019-10",
-      "coreDynamicFxWealth": 1.2425564929322845,
-      "coreWealth": 1.2202159879788046
+      "coreDynamicFxWealth": 1.2425562487302129,
+      "coreWealth": 1.2202157481673557
     },
     {
       "holdingMonth": "2019-11",
-      "coreDynamicFxWealth": 1.2606142007723737,
-      "coreWealth": 1.231267799369367
+      "coreDynamicFxWealth": 1.2606137340361125,
+      "coreWealth": 1.2312673434984684
     },
     {
       "holdingMonth": "2019-12",
-      "coreDynamicFxWealth": 1.2833087580678135,
-      "coreWealth": 1.2648140792272693
+      "coreDynamicFxWealth": 1.2833085843075092,
+      "coreWealth": 1.2648139079711496
     },
     {
       "holdingMonth": "2020-01",
-      "coreDynamicFxWealth": 1.3028721698052848,
-      "coreWealth": 1.267519599949106
+      "coreDynamicFxWealth": 1.3028720320459397,
+      "coreWealth": 1.267519465927769
     },
     {
       "holdingMonth": "2020-02",
-      "coreDynamicFxWealth": 1.3017565891134175,
-      "coreWealth": 1.2539448975726228
+      "coreDynamicFxWealth": 1.301756436149802,
+      "coreWealth": 1.2539447502271461
     },
     {
       "holdingMonth": "2020-03",
-      "coreDynamicFxWealth": 1.2752573525662843,
-      "coreWealth": 1.2260185403779476
+      "coreDynamicFxWealth": 1.2752570773918321,
+      "coreWealth": 1.226018275828225
     },
     {
       "holdingMonth": "2020-04",
-      "coreDynamicFxWealth": 1.3503371529697128,
-      "coreWealth": 1.3003506569256262
+      "coreDynamicFxWealth": 1.3503370134454271,
+      "coreWealth": 1.3003505225662222
     },
     {
       "holdingMonth": "2020-05",
-      "coreDynamicFxWealth": 1.3934421553243355,
-      "coreWealth": 1.3284939724646891
+      "coreDynamicFxWealth": 1.393441826288012,
+      "coreWealth": 1.3284936587647134
     },
     {
       "holdingMonth": "2020-06",
-      "coreDynamicFxWealth": 1.4164161788669516,
-      "coreWealth": 1.3620584766571469
+      "coreDynamicFxWealth": 1.4164156978149338,
+      "coreWealth": 1.362058014066428
     },
     {
       "holdingMonth": "2020-07",
-      "coreDynamicFxWealth": 1.4926048849079547,
-      "coreWealth": 1.4421003358813407
+      "coreDynamicFxWealth": 1.4926043789420564,
+      "coreWealth": 1.4420998470355664
     },
     {
       "holdingMonth": "2020-08",
-      "coreDynamicFxWealth": 1.5558639526392672,
-      "coreWealth": 1.5051928889656714
+      "coreDynamicFxWealth": 1.555863581183842,
+      "coreWealth": 1.5051925296077322
     },
     {
       "holdingMonth": "2020-09",
-      "coreDynamicFxWealth": 1.492268535059206,
-      "coreWealth": 1.4583266280203664
+      "coreDynamicFxWealth": 1.4922681580679893,
+      "coreWealth": 1.4583262596038813
     },
     {
       "holdingMonth": "2020-10",
-      "coreDynamicFxWealth": 1.4446086250255428,
-      "coreWealth": 1.4332051704932403
+      "coreDynamicFxWealth": 1.4446080479537697,
+      "coreWealth": 1.4332045979767594
     },
     {
       "holdingMonth": "2020-11",
-      "coreDynamicFxWealth": 1.534975744288754,
-      "coreWealth": 1.54041744091976
+      "coreDynamicFxWealth": 1.5349751911054457,
+      "coreWealth": 1.5404168857753437
     },
     {
       "holdingMonth": "2020-12",
-      "coreDynamicFxWealth": 1.5903080467786792,
-      "coreWealth": 1.6221457907605041
+      "coreDynamicFxWealth": 1.5903076204038868,
+      "coreWealth": 1.622145355849749
     },
     {
       "holdingMonth": "2021-01",
-      "coreDynamicFxWealth": 1.6324538998248788,
-      "coreWealth": 1.6302699162237522
+      "coreDynamicFxWealth": 1.6324535372282882,
+      "coreWealth": 1.630269554112263
     },
     {
       "holdingMonth": "2021-02",
-      "coreDynamicFxWealth": 1.6640318573105115,
-      "coreWealth": 1.6527256598481916
+      "coreDynamicFxWealth": 1.6640312909846329,
+      "coreWealth": 1.6527250973701926
     },
     {
       "holdingMonth": "2021-03",
-      "coreDynamicFxWealth": 1.6950229302774915,
-      "coreWealth": 1.6727356676859457
+      "coreDynamicFxWealth": 1.6950222908716752,
+      "coreWealth": 1.6727350366874525
     },
     {
       "holdingMonth": "2021-04",
-      "coreDynamicFxWealth": 1.7447508985777862,
-      "coreWealth": 1.73756247994552
+      "coreDynamicFxWealth": 1.7447502681148357,
+      "coreWealth": 1.7375618520800935
     },
     {
       "holdingMonth": "2021-05",
-      "coreDynamicFxWealth": 1.7801368072704025,
-      "coreWealth": 1.7664324051483293
+      "coreDynamicFxWealth": 1.7801361540977496,
+      "coreWealth": 1.7664317570041324
     },
     {
       "holdingMonth": "2021-06",
-      "coreDynamicFxWealth": 1.8153826497435734,
-      "coreWealth": 1.7837902145501794
+      "coreDynamicFxWealth": 1.8153820860748866,
+      "coreWealth": 1.783789660690809
     },
     {
       "holdingMonth": "2021-07",
-      "coreDynamicFxWealth": 1.8460754592838433,
-      "coreWealth": 1.802612939283392
+      "coreDynamicFxWealth": 1.8460748420761786,
+      "coreWealth": 1.802612336606767
     },
     {
       "holdingMonth": "2021-08",
-      "coreDynamicFxWealth": 1.8800005956419241,
-      "coreWealth": 1.823193737642997
+      "coreDynamicFxWealth": 1.8799999381018777,
+      "coreWealth": 1.8231930999714447
     },
     {
       "holdingMonth": "2021-09",
-      "coreDynamicFxWealth": 1.8241753171264241,
-      "coreWealth": 1.7503561042503388
+      "coreDynamicFxWealth": 1.8241748566097122,
+      "coreWealth": 1.7503556623694347
     },
     {
       "holdingMonth": "2021-10",
-      "coreDynamicFxWealth": 1.8912167860024276,
-      "coreWealth": 1.82776123438872
+      "coreDynamicFxWealth": 1.89121624340517,
+      "coreWealth": 1.8277607099971003
     },
     {
       "holdingMonth": "2021-11",
-      "coreDynamicFxWealth": 1.878669414913866,
-      "coreWealth": 1.7981652424634063
+      "coreDynamicFxWealth": 1.8786687199329783,
+      "coreWealth": 1.7981645772636283
     },
     {
       "holdingMonth": "2021-12",
-      "coreDynamicFxWealth": 1.9264938447293887,
-      "coreWealth": 1.8450841585958773
+      "coreDynamicFxWealth": 1.9264931598985275,
+      "coreWealth": 1.8450835027045658
     },
     {
       "holdingMonth": "2022-01",
-      "coreDynamicFxWealth": 1.8720054985636276,
-      "coreWealth": 1.7800093648606758
+      "coreDynamicFxWealth": 1.8720049175263935,
+      "coreWealth": 1.7800088123774056
     },
     {
       "holdingMonth": "2022-02",
-      "coreDynamicFxWealth": 1.870006530399624,
-      "coreWealth": 1.7860582671654024
+      "coreDynamicFxWealth": 1.8700061469466762,
+      "coreWealth": 1.786057900926409
     },
     {
       "holdingMonth": "2022-03",
-      "coreDynamicFxWealth": 1.9217603925963949,
-      "coreWealth": 1.8230990321652478
+      "coreDynamicFxWealth": 1.9217598538642169,
+      "coreWealth": 1.8230985210910688
     },
     {
       "holdingMonth": "2022-04",
-      "coreDynamicFxWealth": 1.9227541648071929,
-      "coreWealth": 1.7820987508519106
+      "coreDynamicFxWealth": 1.9227536959079676,
+      "coreWealth": 1.7820983162541126
     },
     {
       "holdingMonth": "2022-05",
-      "coreDynamicFxWealth": 1.9114084286664947,
-      "coreWealth": 1.7798519053766182
+      "coreDynamicFxWealth": 1.911408611776213,
+      "coreWealth": 1.7798520758834397
     },
     {
       "holdingMonth": "2022-06",
-      "coreDynamicFxWealth": 1.893109543661654,
-      "coreWealth": 1.734183659219371
+      "coreDynamicFxWealth": 1.893109261900055,
+      "coreWealth": 1.7341834011115551
     },
     {
       "holdingMonth": "2022-07",
-      "coreDynamicFxWealth": 1.9239352888461367,
-      "coreWealth": 1.762196887708802
+      "coreDynamicFxWealth": 1.9239355545506003,
+      "coreWealth": 1.7621971310764317
     },
     {
       "holdingMonth": "2022-08",
-      "coreDynamicFxWealth": 1.894551842907194,
-      "coreWealth": 1.7298026395275503
+      "coreDynamicFxWealth": 1.8945518289623873,
+      "coreWealth": 1.7298026267953712
     },
     {
       "holdingMonth": "2022-09",
-      "coreDynamicFxWealth": 1.8459037842322592,
-      "coreWealth": 1.675212704690996
+      "coreDynamicFxWealth": 1.8459036398083415,
+      "coreWealth": 1.6752125736219818
     },
     {
       "holdingMonth": "2022-10",
-      "coreDynamicFxWealth": 1.8673615022271262,
-      "coreWealth": 1.6964384140470492
+      "coreDynamicFxWealth": 1.8673614790977002,
+      "coreWealth": 1.6964383930347011
     },
     {
       "holdingMonth": "2022-11",
-      "coreDynamicFxWealth": 1.892413086422527,
-      "coreWealth": 1.731678216600502
+      "coreDynamicFxWealth": 1.8924126891240698,
+      "coreWealth": 1.7316778530471686
     },
     {
       "holdingMonth": "2022-12",
-      "coreDynamicFxWealth": 1.843746714474788,
-      "coreWealth": 1.6959487833849203
+      "coreDynamicFxWealth": 1.8437466834317635,
+      "coreWealth": 1.6959487548303562
     },
     {
       "holdingMonth": "2023-01",
-      "coreDynamicFxWealth": 1.897319825885308,
-      "coreWealth": 1.771235662779129
+      "coreDynamicFxWealth": 1.8973196915730108,
+      "coreWealth": 1.771235537392397
     },
     {
       "holdingMonth": "2023-02",
-      "coreDynamicFxWealth": 1.9025981885072039,
-      "coreWealth": 1.716116997972485
+      "coreDynamicFxWealth": 1.9025977763022253,
+      "coreWealth": 1.71611662616935
     },
     {
       "holdingMonth": "2023-03",
-      "coreDynamicFxWealth": 1.9347559085202908,
-      "coreWealth": 1.7600512828132828
+      "coreDynamicFxWealth": 1.9347559075570424,
+      "coreWealth": 1.7600512819370129
     },
     {
       "holdingMonth": "2023-04",
-      "coreDynamicFxWealth": 1.9832384359683297,
-      "coreWealth": 1.7754120059998706
+      "coreDynamicFxWealth": 1.9832385174388945,
+      "coreWealth": 1.7754120789330152
     },
     {
       "holdingMonth": "2023-05",
-      "coreDynamicFxWealth": 1.9834641134545312,
-      "coreWealth": 1.787793075190575
+      "coreDynamicFxWealth": 1.9834642645741671,
+      "coreWealth": 1.787793211402083
     },
     {
       "holdingMonth": "2023-06",
-      "coreDynamicFxWealth": 2.0278400270853223,
-      "coreWealth": 1.8272563542841425
+      "coreDynamicFxWealth": 2.027840151683578,
+      "coreWealth": 1.8272564665577669
     },
     {
       "holdingMonth": "2023-07",
-      "coreDynamicFxWealth": 2.0344571123874116,
-      "coreWealth": 1.8656784276959593
+      "coreDynamicFxWealth": 2.03445750829819,
+      "coreWealth": 1.865678790761955
     },
     {
       "holdingMonth": "2023-08",
-      "coreDynamicFxWealth": 2.0355301413654026,
-      "coreWealth": 1.8338134396397587
+      "coreDynamicFxWealth": 2.035530440775317,
+      "coreWealth": 1.8338137093787867
     },
     {
       "holdingMonth": "2023-09",
-      "coreDynamicFxWealth": 2.0044440973023665,
-      "coreWealth": 1.790572572683942
+      "coreDynamicFxWealth": 2.00444394808643,
+      "coreWealth": 1.7905724393891473
     },
     {
       "holdingMonth": "2023-10",
-      "coreDynamicFxWealth": 1.9929092909893402,
-      "coreWealth": 1.7805226531846616
+      "coreDynamicFxWealth": 1.9929092743548364,
+      "coreWealth": 1.7805226383229176
     },
     {
       "holdingMonth": "2023-11",
-      "coreDynamicFxWealth": 2.018853779923236,
-      "coreWealth": 1.8449835369179037
+      "coreDynamicFxWealth": 2.018854017908407,
+      "coreWealth": 1.8449837544070211
     },
     {
       "holdingMonth": "2023-12",
-      "coreDynamicFxWealth": 2.0994948597420446,
-      "coreWealth": 1.9271265393777994
+      "coreDynamicFxWealth": 2.0994949869515662,
+      "coreWealth": 1.927126656143435
     },
     {
       "holdingMonth": "2024-01",
-      "coreDynamicFxWealth": 2.114451232714285,
-      "coreWealth": 1.9052120317982275
+      "coreDynamicFxWealth": 2.114451246189534,
+      "coreWealth": 1.9052120439400133
     },
     {
       "holdingMonth": "2024-02",
-      "coreDynamicFxWealth": 2.1685593233552165,
-      "coreWealth": 1.9494189099892183
+      "coreDynamicFxWealth": 2.1685595892340994,
+      "coreWealth": 1.9494191490001238
     },
     {
       "holdingMonth": "2024-03",
-      "coreDynamicFxWealth": 2.240728218245303,
-      "coreWealth": 2.002476482740745
+      "coreDynamicFxWealth": 2.240728326258695,
+      "coreWealth": 2.0024765792693118
     },
     {
       "holdingMonth": "2024-04",
-      "coreDynamicFxWealth": 2.1933302747689924,
-      "coreWealth": 1.9350701912388544
+      "coreDynamicFxWealth": 2.193330378703578,
+      "coreWealth": 1.9350702829353608
     },
     {
       "holdingMonth": "2024-05",
-      "coreDynamicFxWealth": 2.2327254887930064,
-      "coreWealth": 1.9774212537072804
+      "coreDynamicFxWealth": 2.232725730783471,
+      "coreWealth": 1.9774214680269977
     },
     {
       "holdingMonth": "2024-06",
-      "coreDynamicFxWealth": 2.298255869610803,
-      "coreWealth": 2.027597381795239
+      "coreDynamicFxWealth": 2.2982560707825677,
+      "coreWealth": 2.0275975592756303
     },
     {
       "holdingMonth": "2024-07",
-      "coreDynamicFxWealth": 2.301154163234751,
-      "coreWealth": 2.0447192332941175
+      "coreDynamicFxWealth": 2.3011544118114586,
+      "coreWealth": 2.0447194541700555
     },
     {
       "holdingMonth": "2024-08",
-      "coreDynamicFxWealth": 2.3087396083321265,
-      "coreWealth": 2.0785883918209067
+      "coreDynamicFxWealth": 2.3087396243551632,
+      "coreWealth": 2.078588406246658
     },
     {
       "holdingMonth": "2024-09",
-      "coreDynamicFxWealth": 2.3531859901177787,
-      "coreWealth": 2.1332011392562023
+      "coreDynamicFxWealth": 2.3531861527933393,
+      "coreWealth": 2.1332012867242285
     },
     {
       "holdingMonth": "2024-10",
-      "coreDynamicFxWealth": 2.3840902732993237,
-      "coreWealth": 2.1112319607182797
+      "coreDynamicFxWealth": 2.3840904176457998,
+      "coreWealth": 2.111232088544351
     },
     {
       "holdingMonth": "2024-11",
-      "coreDynamicFxWealth": 2.4582072729377913,
-      "coreWealth": 2.1658951293423923
+      "coreDynamicFxWealth": 2.4582072570872864,
+      "coreWealth": 2.165895115376714
     },
     {
       "holdingMonth": "2024-12",
-      "coreDynamicFxWealth": 2.4669639359442943,
-      "coreWealth": 2.1179254295720575
+      "coreDynamicFxWealth": 2.46696395033293,
+      "coreWealth": 2.1179254419249154
     },
     {
       "holdingMonth": "2025-01",
-      "coreDynamicFxWealth": 2.5126211137751953,
-      "coreWealth": 2.1581562095537743
+      "coreDynamicFxWealth": 2.512620949250406,
+      "coreWealth": 2.158156068239111
     },
     {
       "holdingMonth": "2025-02",
-      "coreDynamicFxWealth": 2.501225220477239,
-      "coreWealth": 2.1518084698224516
+      "coreDynamicFxWealth": 2.501225093123682,
+      "coreWealth": 2.1518083602599574
     },
     {
       "holdingMonth": "2025-03",
-      "coreDynamicFxWealth": 2.475132632358354,
-      "coreWealth": 2.113830561540604
+      "coreDynamicFxWealth": 2.4751325644499063,
+      "coreWealth": 2.113830503544938
     },
     {
       "holdingMonth": "2025-04",
-      "coreDynamicFxWealth": 2.4715475628622534,
-      "coreWealth": 2.1198187366000933
+      "coreDynamicFxWealth": 2.4715474321576516,
+      "coreWealth": 2.119818624496211
     },
     {
       "holdingMonth": "2025-05",
-      "coreDynamicFxWealth": 2.4571697435609337,
-      "coreWealth": 2.1549518662995446
+      "coreDynamicFxWealth": 2.4571695673692693,
+      "coreWealth": 2.154951711778447
     },
     {
       "holdingMonth": "2025-06",
-      "coreDynamicFxWealth": 2.5317389156096763,
-      "coreWealth": 2.2388612948809476
+      "coreDynamicFxWealth": 2.5317387088394656,
+      "coreWealth": 2.2388611120304067
     },
     {
       "holdingMonth": "2025-07",
-      "coreDynamicFxWealth": 2.5768669641010895,
-      "coreWealth": 2.2436962636210236
+      "coreDynamicFxWealth": 2.5768668017526375,
+      "coreWealth": 2.2436961222630747
     },
     {
       "holdingMonth": "2025-08",
-      "coreDynamicFxWealth": 2.6304945904333086,
-      "coreWealth": 2.2968225573203926
+      "coreDynamicFxWealth": 2.6304942495234775,
+      "coreWealth": 2.296822259654162
     },
     {
       "holdingMonth": "2025-09",
-      "coreDynamicFxWealth": 2.8175728161156104,
-      "coreWealth": 2.444292633401767
+      "coreDynamicFxWealth": 2.8175725914955496,
+      "coreWealth": 2.4442924385400127
     },
     {
       "holdingMonth": "2025-10",
-      "coreDynamicFxWealth": 2.9623244234943966,
-      "coreWealth": 2.5515286180205443
+      "coreDynamicFxWealth": 2.9623242519021695,
+      "coreWealth": 2.5515284702235967
     },
     {
       "holdingMonth": "2025-11",
-      "coreDynamicFxWealth": 2.9988637883691083,
-      "coreWealth": 2.5501875099007405
+      "coreDynamicFxWealth": 2.9988636676756304,
+      "coreWealth": 2.5501874072648576
     },
     {
       "holdingMonth": "2025-12",
-      "coreDynamicFxWealth": 3.031544288355933,
-      "coreWealth": 2.599434790256413
+      "coreDynamicFxWealth": 3.031544083754365,
+      "coreWealth": 2.5994346148182785
     },
     {
       "holdingMonth": "2026-01",
-      "coreDynamicFxWealth": 3.2508437557176997,
-      "coreWealth": 2.7970965889764545
+      "coreDynamicFxWealth": 3.2508435659177928,
+      "coreWealth": 2.797096425668478
     },
     {
       "holdingMonth": "2026-02",
-      "coreDynamicFxWealth": 3.440372001476409,
-      "coreWealth": 2.957215768709752
+      "coreDynamicFxWealth": 3.4403718381156723,
+      "coreWealth": 2.9572156282909257
     },
     {
       "holdingMonth": "2026-03",
-      "coreDynamicFxWealth": 3.2676393073794077,
-      "coreWealth": 2.741650125928125
+      "coreDynamicFxWealth": 3.267639121132555,
+      "coreWealth": 2.741649969661259
     },
     {
       "holdingMonth": "2026-04",
-      "coreDynamicFxWealth": 3.5097374388623575,
-      "coreWealth": 2.9742202325830704
+      "coreDynamicFxWealth": 3.5097372329149445,
+      "coreWealth": 2.9742200580591844
     },
     {
       "holdingMonth": "2026-05",
-      "coreDynamicFxWealth": 3.7646291628004915,
-      "coreWealth": 3.1681492122699892
+      "coreDynamicFxWealth": 3.764628994436333,
+      "coreWealth": 3.1681490705819706
     },
     {
       "holdingMonth": "2026-06",
-      "coreDynamicFxWealth": 3.747137598593818,
-      "coreWealth": 3.0990481963009184
+      "coreDynamicFxWealth": 3.7471374119321865,
+      "coreWealth": 3.0990480419234934
     },
     {
       "holdingMonth": "2026-07",
-      "coreDynamicFxWealth": 3.546194251341211,
-      "coreWealth": 2.956108917542253
+      "coreDynamicFxWealth": 3.546194072271801,
+      "coreWealth": 2.9561087682699063
     },
     {
       "holdingMonth": "2026-08",
-      "coreDynamicFxWealth": 3.6424020974645086,
-      "coreWealth": 3.1027104427119974
+      "coreDynamicFxWealth": 3.6424019304964217,
+      "coreWealth": 3.1027103004834116
     },
     {
       "holdingMonth": "2026-09",
-      "coreDynamicFxWealth": 3.6103102445192903,
-      "coreWealth": 3.0873035871235794
+      "coreDynamicFxWealth": 3.6103100627497615,
+      "coreWealth": 3.087303431686028
     },
     {
       "holdingMonth": "2026-10",
-      "coreDynamicFxWealth": 3.502399152271036,
-      "coreWealth": 3.0167297467055048
+      "coreDynamicFxWealth": 3.5023989759345397,
+      "coreWealth": 3.0167295948211583
     }
   ],
   "performance": [
@@ -721,45 +721,45 @@ export const pdsCanonicalSummary: PdsCanonicalSummary = {
       "label": "PDS Core + Dynamic FX",
       "supportStart": "2017-05-01",
       "supportEnd": "2026-10-30",
-      "cumulativeReturn": 2.5023991522710163,
-      "cagr": 0.14108001629907574,
-      "annVol": 0.11149362016156196,
-      "sharpe": 1.2415415982605449,
-      "mdd": -0.1233171633681458,
-      "calmar": 1.144042016908072
+      "cumulativeReturn": 2.5023989759345318,
+      "cagr": 0.1410800102501455,
+      "annVol": 0.1114936444028801,
+      "sharpe": 1.2415413050197788,
+      "mdd": -0.12331721621545166,
+      "calmar": 1.1440414775797392
     },
     {
       "label": "PDS Core",
       "supportStart": "2017-05-01",
       "supportEnd": "2026-10-30",
-      "cumulativeReturn": 2.0167297467054666,
-      "cagr": 0.12328574762017497,
-      "annVol": 0.10945797045607261,
-      "sharpe": 1.1187174026850546,
-      "mdd": -0.13555293636582466,
-      "calmar": 0.9095025967379746
+      "cumulativeReturn": 2.0167295948211543,
+      "cagr": 0.12328574166557349,
+      "annVol": 0.10945797232794088,
+      "sharpe": 1.1187173370629384,
+      "mdd": -0.13555286535830968,
+      "calmar": 0.9095030292402138
     },
     {
       "label": "PDS Adaptive + Dynamic FX",
       "supportStart": "2021-05-03",
       "supportEnd": "2026-10-30",
-      "cumulativeReturn": 1.0955183196862648,
-      "cagr": 0.14419580766719542,
-      "annVol": 0.10819055664530199,
-      "sharpe": 1.3012993394138235,
-      "mdd": -0.10212253806506066,
-      "calmar": 1.4119880919462708
+      "cumulativeReturn": 1.0955191250284835,
+      "cagr": 0.14419588773327874,
+      "annVol": 0.10819058421313803,
+      "sharpe": 1.3012996833990575,
+      "mdd": -0.1021225888943923,
+      "calmar": 1.4119881731787622
     },
     {
       "label": "PDS Adaptive",
       "supportStart": "2021-05-03",
       "supportEnd": "2026-10-30",
-      "cumulativeReturn": 0.8124049061023211,
-      "cagr": 0.11435301603876957,
-      "annVol": 0.10724478890762829,
-      "sharpe": 1.0649238450457548,
-      "mdd": -0.11135947916489042,
-      "calmar": 1.0268817427697072
+      "cumulativeReturn": 0.8124056026393789,
+      "cagr": 0.11435309401657667,
+      "annVol": 0.10724480647429106,
+      "sharpe": 1.0649243417009624,
+      "mdd": -0.11135949956924551,
+      "calmar": 1.0268822548494814
     }
   ]
 } as PdsCanonicalSummary;
