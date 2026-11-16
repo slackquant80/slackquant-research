@@ -218,9 +218,9 @@ export default function MomentumMarketRegularityPage() {
             <div className="repro-links">
               <div className="artifact">
                 <div className="type">Public code</div>
-                <h3>Replication Code v1.0.2</h3>
+                <h3>Replication Code v1.0.3</h3>
                 <p>Original source-verified century market/bills code and Figure 7, alongside previously released factor analyses and corrected Figure 6.</p>
-                <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.2" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3" target="_blank" rel="noopener noreferrer">
                   Open GitHub Release &#8599;
                 </a>
               </div>
@@ -228,7 +228,7 @@ export default function MomentumMarketRegularityPage() {
                 <div className="type">Archival record</div>
                 <h3>Previous Software Archive v1.0.0</h3>
                 <p>
-                  Zenodo v1.0.0 is preserved under its original DOI. GitHub v1.0.2
+                  Zenodo v1.0.0 is preserved under its original DOI. GitHub v1.0.3
                   is independently published, but its separate Zenodo New Version
                   DOI has not been verified. This link points only to the preserved
                   v1.0.0 deposit, not to a newer software archive.
