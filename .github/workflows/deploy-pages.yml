@@ -135,7 +135,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Provision Chrome for postdeploy browser QA
+        id: postdeploy_chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-dependencies: true
       - name: Public desktop/mobile browser QA after actual deployment
+        timeout-minutes: 5
+        env:
+          CHROME_BIN: ${{ steps.postdeploy_chrome.outputs.chrome-path }}
         run: node scripts/check-site-browser.mjs --out browser-qa-results
 
   browser_audit:
