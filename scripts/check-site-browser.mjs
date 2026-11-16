@@ -94,7 +94,7 @@ async function run(){
       if(route==='/research/momentum-market-regularity/'){
         need(publication.figures.length===4,'MOMENTUM_SELECTED_EXHIBITS_NOT_FOUR');
         need(publication.figures.every(f=>f.w>0&&f.alt&&f.link&&f.r>=250),'MOMENTUM_FIGURE_IMAGE_SIZE_ALT_OR_LINK_MISSING '+JSON.stringify(publication.figures));
-        need(s.links.some(x=>x.includes('zenodo.24047812')),'MOMENTUM_SOFTWARE_ARCHIVE_LINK_MISSING');
+        need(s.links.some(x=>x.includes('zenodo.24268624')),'MOMENTUM_CURRENT_V103_SOFTWARE_ARCHIVE_LINK_MISSING');
         result.checks.push('MOMENTUM_EXHIBIT_PARITY_4','MOMENTUM_FIGURE_RENDER_AND_FULLSIZE','SSRN_SOFTWARE_ARCHIVE_SEPARATION');
       }
       result.checks.push('PAPER_SHARED_HOUSE_STRUCTURE','PAPER_METHODS_LINK');
