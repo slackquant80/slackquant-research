@@ -46,10 +46,11 @@ export default function MomentumMarketRegularityPage() {
           <section className="prose-section" id="overview">
             <h2>Overview</h2>
             <p className="lede">
-              The future market path is difficult to know. A positive long-run
-              equity premium does not prevent prolonged losses or extended
-              stagnation. Momentum offers both a recurring pattern to study and
-              a possible discipline for adjusting risk exposure as conditions change.
+              Momentum has repeatedly appeared across markets and long historical
+              periods. Its investment value is not limited to identifying
+              relative winners: a precommitted trend rule can also change
+              market exposure during prolonged losses. Whether that response
+              improves a portfolio depends on the rule, its costs, and the path ahead.
             </p>
             <p className="body-copy">
               Momentum is not one trade. Relative momentum ranks securities or
@@ -92,7 +93,7 @@ export default function MomentumMarketRegularityPage() {
                 <div className="selected-exhibits-head">
                   <div className="section-title">Selected Exhibits</div>
                   <p>
-                    Four author-generated figures from the latest author-reviewed working paper
+                    Four author-generated figures from the paper
                     show stock momentum, rolling persistence, independent industry
                     rankings, and century-scale absolute-momentum wealth and
                     underwater drawdown paths. View the scientific charts at full resolution.
@@ -142,7 +143,7 @@ export default function MomentumMarketRegularityPage() {
                 </p>
               </div>
               <div className="method-card">
-                <div className="num">04 · SOURCE-REPLAYED LONG-ONLY TEST</div>
+                <div className="num">04 · LONG-HORIZON PORTFOLIO TEST</div>
                 <h3>Absolute Momentum and Risk-Off</h3>
                 <p>
                   Table 5 and Figure 7 directly test a fixed twelve-month
@@ -172,7 +173,7 @@ export default function MomentumMarketRegularityPage() {
               beginning or duration.
             </p>
             <p className="body-copy">
-              In the source-replayed July 1927–September 2026 market/bills
+              In the July 1927–September 2026 historical market/bills
               simulation, the twelve-month own-trend rule compounded at 10.22%
               annually, close to the market&apos;s 10.26%, while reducing the
               historical maximum drawdown from −83.65% to −44.50%. The longest
@@ -219,7 +220,7 @@ export default function MomentumMarketRegularityPage() {
               <div className="artifact">
                 <div className="type">Public code</div>
                 <h3>Replication Code v1.0.3</h3>
-                <p>Original source-verified century market/bills code and Figure 7, alongside previously released factor analyses and corrected Figure 6.</p>
+                <p>Code for the century-long market/bills experiment and Figure 7, together with the U.S. equity and industry calculations.</p>
                 <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3" target="_blank" rel="noopener noreferrer">
                   Open GitHub Release &#8599;
                 </a>
@@ -228,10 +229,10 @@ export default function MomentumMarketRegularityPage() {
                 <div className="type">Archival record</div>
                 <h3>Previous Software Archive v1.0.0</h3>
                 <p>
-                  Zenodo v1.0.0 is preserved under its original DOI. GitHub v1.0.3
-                  is independently published, but its separate Zenodo New Version
-                  DOI has not been verified. This link points only to the preserved
-                  v1.0.0 deposit, not to a newer software archive.
+                  The Zenodo link identifies the earlier v1.0.0 software archive.
+                  The current replication code is available separately as
+                  GitHub release v1.0.3; this older archive does not represent
+                  that release.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   Open Zenodo Archive &#8599;
