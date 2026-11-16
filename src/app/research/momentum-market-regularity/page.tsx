@@ -16,7 +16,7 @@ const evidence = [
 export const metadata: Metadata = {
   title: "Momentum as a Market Regularity",
   description:
-    "Foundation research on long-run momentum, cross-sectional versus own-trend signals, crisis limitations, and systematic portfolio risk management.",
+    "Foundation research on recurring momentum across markets, distinct relative and absolute signals, and century-scale evidence on systematic risk-off and portfolio drawdowns.",
   alternates: { canonical: "/research/momentum-market-regularity/" },
 };
 
