@@ -1,0 +1,47 @@
+name: T20 v0.5.41 corrected-figure site final static QA (one-shot)
+on:
+  push:
+    branches: [review/t20-figure6-v101-site-20261115]
+    paths: [.github/workflows/t20-v0541-site-final-once.yml]
+permissions:
+  contents: read
+jobs:
+  publication-page-static-proof:
+    if: github.repository == 'slackquant80/slackquant-research'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm}
+      - name: Rebuild all 6-paper site pages without deployment
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run typecheck
+          npm run build
+      - name: Validate synced Figures6/7, DOI boundaries and v1.0.3 public release
+        run: |
+          set -euo pipefail
+          test -s public/research/momentum/figure-6-industry-momentum.svg
+          test -s public/research/momentum/figure-7-absolute-riskoff.svg
+          test -s out/research/momentum-market-regularity/index.html
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          p=Path('public/research/momentum/figure-7-absolute-riskoff.svg').read_text()
+          y={m.group(2):float(m.group(1)) for m in re.finditer(r'<text x="84" y="([0-9.]+)"[^>]*>(-100%|0%)</text>',p)}
+          assert y['0%']<y['-100%'],y
+          assert p.count('<polyline')==6
+          t=Path('out/research/momentum-market-regularity/index.html').read_text()
+          for v in ['figure-7-absolute-riskoff.svg','figure-6-industry-momentum.svg',
+              'Replication Code v1.0.3','releases/tag/v1.0.3','10.22%','−44.50%',
+              'Previous Software Archive v1.0.0']:
+              assert v in t,v
+          assert 'releases/tag/v1.0.2' not in t
+          assert '12.43%' not in t
+          print('T20_0541_SITE_RELEASE_VERIFIED_FIGURE7_DRAW_DOWN_STANDARD_AXIS_AND_ALL_PAGES_BUILD_PASS')
+          PY
