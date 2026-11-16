@@ -370,14 +370,14 @@ export const researchItems: ResearchItem[] = [
     authorLine: "Sungkyu Lee",
     affiliation: "Graduate School of Computing, Yonsei University",
     shortSummary:
-      "Momentum has appeared across long historical samples and asset classes, but its payoffs depend on the signal and the portfolio position it creates. This Foundation paper connects long-horizon return continuation, sharp reversals, and trend following to a source-replayed 1927–2026 long-only risk-off-and-re-entry experiment, clarifying when systematic exposure changes improve the historical loss path.",
+      "Momentum has appeared across long historical samples and asset classes, but its payoffs depend on the signal and the portfolio position it creates. This Foundation paper distinguishes relative selection, directional risk management, and funded portfolio allocations. In a 1927–2026 long-only market-to-bills experiment, a fixed response to prolonged weakness preserved near-market compound growth while substantially reducing the worst historical drawdown.",
     researchQuestion:
       "What does the historical recurrence of momentum reveal across markets, and when can relative selection, own-trend exposure changes, or a funded trend sleeve improve a real investor's portfolio without assuming that future crises can be forecast?",
     findings: [
       "U.S. stock momentum averages +0.618% per month over January 1927–September 2026, but the mean falls to +0.208% per month in January 2000–September 2026. Recurrence does not imply a uniform premium.",
       "Author-constructed momentum rankings across twelve U.S. industries produce a +0.427 percentage-point gross average monthly winner–loser spread over 1,191 months; an illustrative turnover charge reduces it to +0.343 points, before financing and short-borrow costs.",
       "An independent analysis of AQR time-series momentum factors finds a +2.59% monthly average for the aggregate factor in 49 severe U.S. equity-market months, while the equity-index trend component averages −0.80%. Defensive payoffs are conditional and differ by market.",
-      "A new 1927–September 2026 author-run U.S. market-to-Treasury-bills absolute-momentum test nearly matches buy-and-hold CAGR (10.22% versus 10.26%) while reducing MDD (−44.50% versus −83.65%). Compared with the same 75.6% average equity weight held statically, the rule has higher full-sample CAGR and a smaller MDD; since 2010 the static allocation does better on both, and quick rebounds expose the rule’s opportunity cost."
+      "A fixed 1927–September 2026 U.S. market-to-Treasury-bills absolute-momentum test nearly matches buy-and-hold CAGR (10.22% versus 10.26%) while reducing MDD (−44.50% versus −83.65%). Compared with the same 75.6% average equity weight held statically, the rule has higher full-sample CAGR and a smaller MDD; since 2010 the static allocation does better on both, and quick rebounds expose the rule’s opportunity cost."
     ],
     tags: [
       "Momentum",
