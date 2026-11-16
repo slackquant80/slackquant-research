@@ -555,6 +555,20 @@ def stage(args):
     return combined,identity,True
 
 
+def _release_build_checks_satisfied(builds):
+    """Require a completed successful build; ignore only superseded SKIPPED copies.
+
+    Multiple pull_request runs may attach same-name build checks to one commit.
+    A skipped duplicate is neither a successful build nor a veto when another
+    completed build is SUCCESS. Pending, failed, cancelled, or unknown checks
+    must never authorize publication.
+    """
+    return (bool(builds)
+        and all(x.get("status")=="completed" and
+                x.get("conclusion") in ("success","skipped") for x in builds)
+        and any(x.get("conclusion")=="success" for x in builds))
+
+
 def publish(args,combined):
     head=combined["head"]["sha"]
     if args.approved_head!=head:
@@ -582,8 +596,7 @@ def publish(args,combined):
         if any(x.get("conclusion") in ("failure","cancelled","timed_out",
                                       "action_required") for x in run):
             raise Hold("RELEASE_CI_FAILURE")
-        if builds and all(x["status"]=="completed" and
-                          x["conclusion"]=="success" for x in builds):
+        if _release_build_checks_satisfied(builds):
             break
         time.sleep(15)
     else: raise Hold("RELEASE_CI_UNCONFIRMED_NO_MERGE")
