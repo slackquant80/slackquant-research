@@ -16,7 +16,7 @@ const researchDetailRoutes=[
  '/research/equity-alpha/','/research/beyond-average-accuracy/',
  '/research/momentum-market-regularity/',
 ];
-const routes=selftest?['/']:['/','/systems/','/research/',...researchDetailRoutes,'/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
+const routes=argv.includes('--only-momentum')?['/research/momentum-market-regularity/']:(selftest?['/']:['/','/systems/','/research/',...researchDetailRoutes,'/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/']);
 const viewports=[{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 function need(cond,message){if(!cond)throw Error(message)}
