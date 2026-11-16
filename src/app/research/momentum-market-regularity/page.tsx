@@ -227,12 +227,13 @@ export default function MomentumMarketRegularityPage() {
               </div>
               <div className="artifact">
                 <div className="type">Archival record</div>
-                <h3>Previous Software Archive v1.0.0</h3>
+                <h3>Zenodo Software Archive v1.0.3</h3>
                 <p>
-                  The Zenodo link identifies the earlier v1.0.0 software archive.
-                  The current replication code is available separately as
-                  GitHub release v1.0.3; this older archive does not represent
-                  that release.
+                  The published software archive preserves the v1.0.3
+                  replication source, figures, and provenance records.
+                  Its version-specific DOI is 10.5281/zenodo.24268624.
+                  The accompanying working paper remains a separate
+                  publication on SSRN.
                 </p>
                 <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
                   Open Zenodo Archive &#8599;
