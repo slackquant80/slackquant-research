@@ -10,7 +10,7 @@ permissions:
 jobs:
   public-40-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 7
     steps:
       - uses: actions/checkout@v4
         with:
@@ -18,9 +18,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Provision Chromium explicitly (do not depend on runner image)
+        id: chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-dependencies: true
       - name: Inspect 20 live pages at desktop and mobile sizes (no site deployment)
-        timeout-minutes: 7
-        run: node scripts/check-site-browser.mjs --out /tmp/slackquant40-qa
+        timeout-minutes: 5
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          echo "CHROME_BIN=$CHROME_BIN"
+          "$CHROME_BIN" --version
+          node scripts/check-site-browser.mjs --out /tmp/slackquant40-qa
       - name: Archive exact result for evidence (short retention)
         if: always()
         uses: actions/upload-artifact@v4
