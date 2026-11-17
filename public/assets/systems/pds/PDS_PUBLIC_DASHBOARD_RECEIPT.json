@@ -2,8 +2,8 @@
   "artifact": "PDS_PUBLIC_CANONICAL_MIRROR_V1",
   "canonical_current_values_embedded": true,
   "environment_specific_values_embedded": false,
-  "html_sha256": "fedf9a0d2cfc63efb80c1b870e998a19d723b8226e2e2d738073522a7b5373e6",
-  "official_mark_through": "2026-11-13",
+  "html_sha256": "82ecce6444e9fbf7349632bdcaa238f2e66d8c052a8ffc00b6d81b7c35a93dc0",
+  "official_mark_through": "2026-11-16",
   "official_signal_period": "2026-10",
   "page_contract": [
     "core",
@@ -14,9 +14,9 @@
     "weights"
   ],
   "portfolio_history_xlsx_file": "PDS_Portfolio_History_Current_Definition.xlsx",
-  "portfolio_history_xlsx_sha256": "5f05e9d4446a0bafce28062be2a3dec8e88971ec643db1b40e25c60150bbd18e",
+  "portfolio_history_xlsx_sha256": "8c9b4c0dd80aa92c04cb60a4dd02622f9b443e4f064b77333d20b5f4e0834d4e",
   "presentation_contract": "RS03_CANONICAL_LOCAL_INFORMATION__PUBLIC_SANITIZED_MIRROR",
-  "preview_source_through": "2026-11-13",
+  "preview_source_through": "2026-11-16",
   "public_policy": "CANONICAL_LOCAL_INFORMATION__ENVIRONMENT_ONLY_SUPPRESSED",
   "sanitization": {
     "absolute_path_scan": "PASS",
@@ -25,6 +25,6 @@
     "removed_sensitive_keys": 129,
     "scrubbed_sensitive_strings": 583
   },
-  "source_private_dashboard_sha256": "08be0696f32c42e658f2cd62fc238dbb08cbaa89deb86c16698974491ffba29d",
+  "source_private_dashboard_sha256": "5327c440b311f9f9acc50af8f1698a5bfaf1036c7f6e732e0ddacef03b07fb38",
   "status": "PASS"
 }
