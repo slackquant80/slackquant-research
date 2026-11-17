@@ -24,6 +24,7 @@ export default function F2rSystemPage() {
   if (!item) notFound();
   const liveEvidence = getLiveSystemEvidence("f2r");
   const dashboardHref = item.links.publicDashboard ?? item.links.liveDashboard;
+  const dashboardIsFirstPartyApp = Boolean(item.links.publicDashboard);
 
   return (
     <main>
@@ -42,7 +43,7 @@ export default function F2rSystemPage() {
           </div>
           <div className="actions">
             {dashboardHref ? (
-              <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
+              <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                 Open Dashboard ↗
               </a>
             ) : null}
@@ -158,7 +159,7 @@ export default function F2rSystemPage() {
             <div className="evidence-note"><b>Performance boundary:</b> Completed history only. Current MTD and Preview are excluded.</div>
             <div className="actions">
               {dashboardHref ? (
-                <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
+                <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                   Open Full F2R Dashboard ↗
                 </a>
               ) : null}
@@ -185,7 +186,7 @@ export default function F2rSystemPage() {
             </p>
             <div className="repro-links documentation-artifacts">
               {dashboardHref ? (
-                <a className="artifact artifact-primary" href={dashboardHref} target="_blank" rel="noopener noreferrer">
+                <a className="artifact artifact-primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app={dashboardIsFirstPartyApp ? "true" : undefined}>
                   <span className="artifact-kicker">LIVE SYSTEM</span>
                   <strong>F2R Public Dashboard</strong>
                   <small>Official decision, intramonth preview, historical performance, and portfolio target history.</small>

@@ -100,6 +100,14 @@ async function run(){
       result.checks.push('PAPER_SHARED_HOUSE_STRUCTURE','PAPER_METHODS_LINK');
     }
 
+    if(route==='/systems/f2r/'){
+      // The global ExternalLinkPolicy runs after hydration and otherwise strips target="_blank".
+      // Check actual effective anchors, not only the server-rendered JSX attributes.
+      const links=await c.eval('(()=>[...document.querySelectorAll("a[href]")].filter(a=>new URL(a.href).pathname==="/systems/f2r/dashboard/").map(a=>({target:a.target,rel:a.rel,app:a.dataset.sqDashboardApp})))()');
+      need(links.length===3,'F2R_DASHBOARD_LINK_COUNT_'+links.length);
+      need(links.every(a=>a.target==='_blank'&&a.rel.includes('noopener')&&a.rel.includes('noreferrer')&&a.app==='true'),'F2R_DASHBOARD_NEW_TAB_POLICY_FAILURE_'+JSON.stringify(links));
+      result.checks.push('F2R_THREE_DASHBOARD_LINKS_NEW_TAB');
+    }
     if(route.startsWith('/systems/')&&route!='/systems/'&&!route.endsWith('/dashboard/'))need(s.links.some(x=>x.includes('dashboard')),'DASHBOARD_LINK_MISSING');
     if(route==='/systems/pds/dashboard/'||route==='/systems/adaa/dashboard/'){
       const frame=await c.eval('(()=>{const f=document.querySelector("iframe"),d=f?.contentDocument;return {found:!!f,ready:d?.readyState||"",chars:(d?.body?.innerText||"").trim().length,src:f?.src||""}})()');
