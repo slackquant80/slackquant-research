@@ -110,18 +110,54 @@ jobs:
           x=json.loads((Path(os.environ["RUNNER_TEMP"])/"pds_review.json").read_text())
           assert x["shell_exact_without_PDL_DATA"], "PDS_HTML_SHELL_CHANGE_HUMAN_REVIEW_HOLD"
           assert x["tag_and_attribute_identity"] and x["style_block_identity"] and x["script_shell_identity"]
-          # New daily observations legitimately extend these two running arrays.
-          # All schema-key changes and other array-length changes remain a HOLD.
+          # Multiple completed US trading sessions may be published in ONE refresh.
+          # Restrict the exception to the two established daily arrays, with
+          # matching strictly increasing YYYY-MM-DD observations and old dates
+          # preserved at the same indices. Do not treat unknown schema drift as data.
           allowed_daily_append={
             "$.fx_operational_sensitivity.current_mtd_daily",
             "$.adaptive.operational_daily",
           }
           for drift in x["payload"]["schema"]:
-            assert (drift.get("path") in allowed_daily_append and
-                    drift.get("new_length", -2) == drift.get("old_length", -1) + 1), (
+            advance=drift.get("new_length",-2)-drift.get("old_length",-1)
+            assert drift.get("path") in allowed_daily_append and 1<=advance<=10, (
               "PDS_UNEXPECTED_SCHEMA_CHANGE_HOLD",drift)
+          from datetime import date
+          def embedded_public_payload(path):
+            blob=Path(path).read_bytes()
+            key=b"window.PDL_DATA="
+            assert blob.count(key)==1, "PDS_DATA_MARKER_HOLD"
+            start=blob.index(key)+len(key)
+            end=blob.find(b";</script>",start)
+            assert end>start, "PDS_DATA_TERMINATOR_HOLD"
+            return json.loads(blob[start:end])
+          before=embedded_public_payload(Path(os.environ["RUNNER_TEMP"])/"pds_base.html")
+          after=embedded_public_payload("public/assets/systems/pds/Portfolio_Decision_System_Public.html")
+          observed=[]
+          for section,key in (("adaptive","operational_daily"),
+                              ("fx_operational_sensitivity","current_mtd_daily")):
+            old_rows=before[section][key]
+            new_rows=after[section][key]
+            earlier=[v["daily_date"] for v in old_rows]
+            current=[v["daily_date"] for v in new_rows]
+            assert current[:len(earlier)]==earlier, (
+              "PDS_PRIOR_DAILY_DATES_CHANGED_HOLD",section)
+            delta=current[len(earlier):]
+            assert 1<=len(delta)<=10 and all(
+              isinstance(d,str) and len(d)==10 and date.fromisoformat(d).isoformat()==d
+              and date.fromisoformat(d).weekday()<5 for d in delta), (
+              "PDS_DAILY_APPEND_DATE_INVALID_HOLD",section,delta)
+            assert earlier[-1]<delta[0] and all(
+              a<b for a,b in zip(delta,delta[1:])), (
+              "PDS_DAILY_APPEND_NONMONOTONE_HOLD",section,delta)
+            observed.append(delta)
+          assert observed[0]==observed[1], "PDS_DAILY_APPEND_CROSS_SERIES_MISMATCH_HOLD"
+          receipt=json.loads(Path("public/assets/systems/pds/PDS_PUBLIC_DASHBOARD_RECEIPT.json").read_text())
+          assert observed[0][-1]==receipt["official_mark_through"], (
+            "PDS_DAILY_APPEND_RECEIPT_CLOCK_MISMATCH_HOLD",observed[0][-1])
           print("PDS_CANONICAL_HTML_UI_SHELL_UNCHANGED_PASS")
           print("PDS_APPROVED_DAILY_APPEND_PATHS_ONLY_PASS",len(x["payload"]["schema"]))
+          print("PDS_MULTISESSION_DAILY_APPEND_DATES_PASS",observed[0])
           print("PDS_PAYLOAD_DELTA_COUNTS",
                 x["payload"]["numeric_changed_total"],
                 x["payload"]["non_numeric_total"])
