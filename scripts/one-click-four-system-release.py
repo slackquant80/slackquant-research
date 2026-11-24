@@ -415,29 +415,139 @@ def latest_merged_f2r_source(main_blob):
     raise Hold("F2R_LATEST_SOURCE_PUBLIC_STATE_NOT_APPROVED")
 
 
+
+# Only the existing source-owner bot intake and its exact independent CI may
+# advance F2R main under the operator's explicit routine release confirmation.
+F2R_REVIEW_FILES={F2R_SOURCE,"release_manifest.json",
+                  "src/dashboard/static/release_identity.json"}
+
+def f2r_market_floor(raw):
+    try:
+        state=json.loads(raw)
+        live=state["live_state"]
+        mtd=live["current_mtd"]
+        preview=live["preview"]
+        dates=(mtd["as_of_date"],preview["market_cutoff_date"])
+        if not mtd["available"] or not preview["available"]:
+            return ""
+        if not all(isinstance(d,str) and re.fullmatch(r"20\d{2}-\d{2}-\d{2}",d)
+                   for d in dates):
+            raise ValueError("invalid F2R clock")
+        return min(dates)
+    except (KeyError,ValueError,TypeError) as exc:
+        raise Hold("F2R_SOURCE_CLOCK_PARSE_HOLD") from exc
+
+def f2r_exact_independent_ci(head, branch):
+    response=gh(f"repos/{F2R}/actions/workflows/f2r-public-review.yml/runs"
+                f"?event=workflow_dispatch&head_sha={head}&per_page=100")
+    runs=response.get("workflow_runs",[])
+    if len(runs)>=100 or response.get("total_count",0)>len(runs):
+        raise Hold("F2R_INDEPENDENT_CI_CENSUS_TRUNCATED")
+    exact=[x for x in runs if x.get("head_sha")==head
+           and x.get("head_branch")==branch
+           and x.get("event")=="workflow_dispatch"
+           and x.get("path")==".github/workflows/f2r-public-review.yml"
+           and (x.get("actor") or {}).get("login")=="github-actions[bot]"]
+    if not exact:
+        return False
+    if any(x.get("status")!="completed" for x in exact):
+        return False
+    latest=max(exact,key=lambda x:(x.get("run_number",0),x.get("run_attempt",0)))
+    if latest.get("conclusion")!="success":
+        raise Hold("F2R_INDEPENDENT_CI_FAILED")
+    jobs=gh(f"repos/{F2R}/actions/runs/{latest['id']}/jobs?filter=latest&per_page=100")
+    rows=jobs.get("jobs",[])
+    if len(rows)>=100 or jobs.get("total_count",0)>len(rows):
+        raise Hold("F2R_INDEPENDENT_JOB_CENSUS_TRUNCATED")
+    verified=[j for j in rows if j.get("name")=="frozen-release"
+              and j.get("head_sha")==head and j.get("conclusion")=="success"
+              and any(s.get("name")=="If release files change, require exact live-identity and accounting contract"
+                      and s.get("conclusion")=="success" for s in j.get("steps",[]))]
+    if len(verified)!=1:
+        raise Hold("F2R_STRICT_RELEASE_JOB_NOT_VERIFIED")
+    return True
+
+def ready_f2r_source(args, platform_main, required, deadline):
+    """Read-only unless a standing, dated, verified source release needs promotion."""
+    while True:
+        source_main=gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]
+        raw=pinned_public_file(F2R,F2R_SOURCE,source_main)
+        if f2r_market_floor(raw)>=required:
+            return source_main
+        if not (getattr(args,"stage",False) and getattr(args,"publish",False)
+                and getattr(args,"standing_operator_consent",False)
+                and getattr(args,"expected_market_close","")):
+            return source_main
+        assert_standing_operator_authority()
+        reviews=gh(f"repos/{F2R}/pulls?state=open&per_page=100")
+        if len(reviews)>=100:
+            raise Hold("F2R_OPEN_PR_CENSUS_TRUNCATED")
+        current=[]
+        for item in reviews:
+            if not item.get("title","").startswith("Review F2R frozen public intake:"):
+                continue
+            pr=pull(F2R,item["number"])
+            if ((pr.get("user") or {}).get("login")!="github-actions[bot]"
+                or pr.get("state")!="open" or pr["base"]["ref"]!="main"
+                or pr["base"]["sha"]!=source_main
+                or (pr["head"].get("repo") or {}).get("full_name")!=F2R
+                or not re.fullmatch(r"release/f2r-reviewed-\d+-\d+",pr["head"]["ref"])
+                or not re.search(r"Private candidate ZIP SHA256: [a-f0-9]{64}(?:\s|$)",
+                                 pr.get("body") or "")):
+                continue
+            head=pr["head"]["sha"]
+            if not HEX40.fullmatch(head):
+                raise Hold("F2R_REVIEW_HEAD_INVALID")
+            modified=gh(f"repos/{F2R}/pulls/{pr['number']}/files?per_page=100")
+            if (len(modified)!=len(F2R_REVIEW_FILES)
+                or {x["filename"] for x in modified}!=F2R_REVIEW_FILES
+                or any(x.get("status")!="modified" for x in modified)):
+                raise Hold("F2R_REVIEW_FILE_SCOPE_HOLD")
+            proposed=pinned_public_file(F2R,F2R_SOURCE,head)
+            if f2r_market_floor(proposed)==required:
+                current.append((pr,proposed))
+        if len(current)>1:
+            raise Hold("F2R_MULTIPLE_CURRENT_SOURCE_CANDIDATES")
+        if current:
+            pr,proposed=current[0]
+            head=pr["head"]["sha"]
+            if f2r_exact_independent_ci(head,pr["head"]["ref"]):
+                # Same source-owned sync guard as the later Pages overlay.
+                validated_f2r_bytes(proposed,platform_main)
+                if pr["draft"]:
+                    proc=subprocess.run(["gh","pr","ready",str(pr["number"]),
+                                         "--repo",F2R],capture_output=True,
+                                        text=False,timeout=40,check=False)
+                    if proc.returncode:
+                        raise Hold("F2R_PR_READY_PERMISSION_HOLD")
+                now=pull(F2R,pr["number"])
+                if (now["head"]["sha"]!=head or now["base"]["sha"]!=source_main
+                    or now.get("draft") or now.get("state")!="open"
+                    or now.get("mergeable") is not True
+                    or gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]!=source_main):
+                    raise Hold("F2R_REVIEW_HEAD_OR_BASE_CHANGED")
+                assert_standing_operator_authority()
+                merged=gh(f"repos/{F2R}/pulls/{pr['number']}/merge","PUT",
+                          {"sha":head,"merge_method":"squash",
+                           "commit_title":"Release reviewed F2R "+required})
+                if not merged.get("merged"):
+                    raise Hold("F2R_REVIEW_MERGE_REFUSED")
+                new_main=gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]
+                if (new_main!=merged.get("sha") or
+                    pinned_public_file(F2R,F2R_SOURCE,new_main)!=proposed):
+                    raise Hold("F2R_MERGED_SOURCE_IDENTITY_HOLD")
+                print("F2R_REVIEWED_SOURCE_PROMOTED "+new_main,flush=True)
+                return new_main
+        if time.monotonic()>=deadline:
+            raise Hold("F2R_CURRENT_REVIEW_NOT_READY_"+required)
+        time.sleep(min(15.0,max(0,deadline-time.monotonic())))
+
 def choose_current_inputs(args):
     main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
     main_tree=tree(HOST,main)
     for path in (PDS_MARK,PDS_BINDING,ADAA_SNAPSHOT,EQUITY_OVERLAY,F2R_TARGET):
         if path not in main_tree:
             raise Hold("CURRENT_PUBLIC_SNAPSHOT_INCOMPLETE: "+path)
-    f2r_main=gh(f"repos/{F2R}/git/ref/heads/main")["object"]["sha"]
-    f2r_tree=tree(F2R,f2r_main)
-    source_blob=f2r_tree.get(F2R_SOURCE)
-    if not source_blob:
-        raise Hold("F2R_SOURCE_PUBLIC_STATE_MISSING")
-    # An already-public identical F2R blob needs no historical source PR scan.
-    # A new blob MUST be evidenced by a source-owned merged review PR.
-    source_approved=(None if main_tree[F2R_TARGET]==source_blob
-                     else latest_merged_f2r_source(source_blob))
-    raw=(pinned_public_file(HOST,F2R_TARGET,main) if source_approved is None
-         else pinned_public_file(F2R,F2R_SOURCE,f2r_main))
-    state=json.loads(raw)
-    if (state.get("schema_version")!="2.0" or
-        state.get("completed_performance",{}).get("support_end")!=
-        state.get("completed_performance",{}).get("as_of_date") or
-        len(state.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
-        raise Hold("F2R_SOURCE_PUBLIC_CONTRACT_HOLD")
     expected=getattr(args,"expected_market_close","") or ""
     if expected and not re.fullmatch(r"20\d{2}-\d{2}-\d{2}",expected):
         raise Hold("OPERATOR_REQUIRED_MARKET_CLOCK_INVALID")
@@ -469,6 +579,23 @@ def choose_current_inputs(args):
             raise Hold("CURRENT_SOURCE_OWNED_REVIEW_NOT_READY_FOR_MARKET_CLOSE: "+
                        (expected or desired_floor))
         time.sleep(min(15.0,max(0,deadline-time.monotonic())))
+    f2r_main=ready_f2r_source(args,main,max(expected,desired_floor),deadline)
+    f2r_tree=tree(F2R,f2r_main)
+    source_blob=f2r_tree.get(F2R_SOURCE)
+    if not source_blob:
+        raise Hold("F2R_SOURCE_PUBLIC_STATE_MISSING")
+    # An already-public identical F2R blob needs no historical source PR scan.
+    # A new blob MUST be evidenced by a source-owned merged review PR.
+    source_approved=(None if main_tree[F2R_TARGET]==source_blob
+                     else latest_merged_f2r_source(source_blob))
+    raw=(pinned_public_file(HOST,F2R_TARGET,main) if source_approved is None
+         else pinned_public_file(F2R,F2R_SOURCE,f2r_main))
+    state=json.loads(raw)
+    if (state.get("schema_version")!="2.0" or
+        state.get("completed_performance",{}).get("support_end")!=
+        state.get("completed_performance",{}).get("as_of_date") or
+        len(state.get("live_state",{}).get("official",{}).get("holdings",[]))!=4):
+        raise Hold("F2R_SOURCE_PUBLIC_CONTRACT_HOLD")
     merged_pds={**main_tree,**pds,**adaa}
     merged_eq={**main_tree,**eq}
     # This audited source-owned sync is invoked only for a new F2R blob,
