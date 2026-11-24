@@ -22,6 +22,105 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"F2R_LATEST_SOURCE_PUBLIC_STATE_NOT_APPROVED"):
                 mod.latest_merged_f2r_source("a"*40)
 
+
+    def test_f2r_stale_without_standing_consent_is_read_only(self):
+        args=SimpleNamespace(stage=True,publish=False,expected_market_close="2026-11-11")
+        with patch.object(mod,"gh",return_value={"object":{"sha":"a"*40}}) as gh,\
+             patch.object(mod,"pinned_public_file",return_value=self.f2r_fixture()),\
+             patch.object(mod,"assert_standing_operator_authority",
+                          side_effect=AssertionError("no authorization")):
+            self.assertEqual(mod.ready_f2r_source(args,"b"*40,"2026-11-11",0),"a"*40)
+        self.assertEqual(gh.call_count,1)
+
+    def test_f2r_exact_ci_ignores_unrelated_head_and_duplicate_pr_event(self):
+        good={"head_sha":"a"*40,"head_branch":"release/f2r-reviewed-123-1",
+              "event":"workflow_dispatch","path":".github/workflows/f2r-public-review.yml",
+              "actor":{"login":"github-actions[bot]"},"id":9,
+              "status":"completed","conclusion":"success"}
+        job={"name":"frozen-release","head_sha":"a"*40,"conclusion":"success",
+             "steps":[{"name":"If release files change, require exact live-identity and accounting contract",
+                       "conclusion":"success"}]}
+        with patch.object(mod,"gh",side_effect=[
+                {"workflow_runs":[{**good,"event":"pull_request","conclusion":"action_required"},
+                                  {**good,"head_sha":"b"*40},good]},
+                {"jobs":[job]}]):
+            self.assertTrue(mod.f2r_exact_independent_ci("a"*40,good["head_branch"]))
+        with patch.object(mod,"gh",return_value={"workflow_runs":[
+                {**good,"conclusion":"failure"}]}):
+            with self.assertRaisesRegex(mod.Hold,"F2R_INDEPENDENT_CI_FAILED"):
+                mod.f2r_exact_independent_ci("a"*40,good["head_branch"])
+        with patch.object(mod,"gh",return_value={"workflow_runs":[
+                {**good,"status":"in_progress"}]}):
+            self.assertFalse(mod.f2r_exact_independent_ci("a"*40,good["head_branch"]))
+
+    def test_f2r_standing_promotes_only_exact_review_after_ci(self):
+        old,head,new,platform=("a"*40,"b"*40,"c"*40,"d"*40)
+        fresh=json.loads(self.f2r_fixture())
+        fresh["live_state"]["current_mtd"]["as_of_date"]="2026-11-11"
+        fresh["live_state"]["preview"]["market_cutoff_date"]="2026-11-11"
+        fresh=json.dumps(fresh).encode()
+        args=SimpleNamespace(stage=True,publish=True,standing_operator_consent=True,
+                             expected_market_close="2026-11-11")
+        pr={"number":30,"title":"Review F2R frozen public intake: test",
+            "state":"open","draft":True,"mergeable":True,
+            "user":{"login":"github-actions[bot]"},
+            "base":{"ref":"main","sha":old},
+            "head":{"sha":head,"ref":"release/f2r-reviewed-123-1",
+                    "repo":{"full_name":mod.F2R}},
+            "body":"Private candidate ZIP SHA256: "+"e"*64}
+        writes=[]
+        def fake_gh(path,method="GET",data=None):
+            if path.endswith("/git/ref/heads/main"):
+                return {"object":{"sha":new if writes else old}}
+            if "pulls?state=open" in path:
+                return [pr]
+            if "/files?" in path:
+                return [{"filename":p,"status":"modified"} for p in mod.F2R_REVIEW_FILES]
+            if path.endswith("/merge") and method=="PUT":
+                self.assertEqual(data["sha"],head)
+                self.assertEqual(data["merge_method"],"squash")
+                writes.append(path)
+                return {"merged":True,"sha":new}
+            raise AssertionError(path)
+        def file(repo,path,ref):
+            return self.f2r_fixture() if ref==old else fresh
+        with patch.object(mod,"gh",side_effect=fake_gh),\
+             patch.object(mod,"pull",side_effect=[pr,{**pr,"draft":False}]),\
+             patch.object(mod,"pinned_public_file",side_effect=file),\
+             patch.object(mod,"f2r_exact_independent_ci",return_value=True),\
+             patch.object(mod,"assert_standing_operator_authority",return_value=True),\
+             patch.object(mod,"validated_f2r_bytes",return_value=fresh) as validate,\
+             patch.object(mod.subprocess,"run",return_value=SimpleNamespace(returncode=0)):
+            self.assertEqual(mod.ready_f2r_source(args,platform,"2026-11-11",0),new)
+        validate.assert_called_once_with(fresh,platform)
+        self.assertEqual(len(writes),1)
+
+    def test_f2r_pending_ci_never_merges(self):
+        old,head="a"*40,"b"*40
+        fresh=json.loads(self.f2r_fixture())
+        fresh["live_state"]["current_mtd"]["as_of_date"]="2026-11-11"
+        fresh["live_state"]["preview"]["market_cutoff_date"]="2026-11-11"
+        pr={"number":30,"title":"Review F2R frozen public intake: test",
+            "state":"open","draft":True,"user":{"login":"github-actions[bot]"},
+            "base":{"ref":"main","sha":old},
+            "head":{"sha":head,"ref":"release/f2r-reviewed-123-1",
+                    "repo":{"full_name":mod.F2R}},
+            "body":"Private candidate ZIP SHA256: "+"e"*64}
+        args=SimpleNamespace(stage=True,publish=True,standing_operator_consent=True,
+                             expected_market_close="2026-11-11")
+        with patch.object(mod,"gh",side_effect=[
+                {"object":{"sha":old}},[pr],
+                [{"filename":p,"status":"modified"} for p in mod.F2R_REVIEW_FILES]]) as gh,\
+             patch.object(mod,"pull",return_value=pr),\
+             patch.object(mod,"pinned_public_file",side_effect=[
+                 self.f2r_fixture(),json.dumps(fresh).encode()]),\
+             patch.object(mod,"f2r_exact_independent_ci",return_value=False),\
+             patch.object(mod,"assert_standing_operator_authority",return_value=True),\
+             patch.object(mod.subprocess,"run",side_effect=AssertionError("no mutation")):
+            with self.assertRaisesRegex(mod.Hold,"F2R_CURRENT_REVIEW_NOT_READY"):
+                mod.ready_f2r_source(args,"c"*40,"2026-11-11",0)
+        self.assertEqual(gh.call_count,3)
+
     def test_absent_equity_never_stages(self):
         args=SimpleNamespace(pds_adaa_pr=75,f2r_pr=15,stage=True)
         with patch.object(mod,"source_inputs",side_effect=mod.Hold("EQUITY_MISSING")),\
