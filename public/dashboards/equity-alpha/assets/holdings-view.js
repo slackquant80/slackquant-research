@@ -52,21 +52,14 @@ const ETF_EXPOSURE_LABEL={
  VIG:'U.S. Dividend Growth', VYM:'U.S. High Dividend Yield', VYMI:'International High Dividend', FNDF:'Developed ex-U.S. Fundamental',
  VEA:'Developed ex-U.S.', EEM:'Emerging Markets', DXJ:'Japan Equity', EWG:'Germany Equity', EWP:'Spain Equity', EWT:'Taiwan Equity',
  GUNR:'Global Natural Resources', XOP:'U.S. Oil & Gas Exploration & Production', COPX:'Copper Miners', SIL:'Silver Miners', SILJ:'Silver Miners',
- XBI:'Biotechnology', ARKG:'Genomics / Biotechnology', LIT:'Lithium / Battery', PAVE:'Infrastructure', VPU:'Utilities', XLU:'Utilities'
+ XBI:'Biotechnology', ARKG:'Genomics / Biotechnology', LIT:'Lithium / Battery', PAVE:'Infrastructure', VPU:'Utilities', XLU:'Utilities',
+ IHI:'U.S. Medical Devices', XLE:'U.S. Energy Sector', VDE:'U.S. Energy Sector', IYW:'U.S. Technology Sector', SCHD:'U.S. Dividend Equity',
+ FDN:'Internet', MTUM:'U.S. Momentum Factor', GSLC:'U.S. Large-Cap Multi-Factor', SCHV:'U.S. Large-Cap Value', SPHQ:'U.S. Large-Cap Quality'
 };
-function tableRows(body,preview){
- return [...body.querySelectorAll('tr')].map(tr=>{
-   const cells=[...tr.children];
-   const c=cells.map(td=>td.textContent.trim());
-   const ticker=String(c[2]||'').toUpperCase(),role=c[3]||'';
-   let exposure=c[4]||'';
-   if(ETF_EXPOSURE_LABEL[ticker])exposure=ETF_EXPOSURE_LABEL[ticker];
-   else if(!exposure||/^exposure$/i.test(exposure))exposure=role||ticker;
-   if(cells[4]&&exposure&&cells[4].textContent.trim()!==exposure)cells[4].textContent=exposure;
-   return preview
-     ?{ticker,role,exposure,weight:parsePct(c[6]),status:c[5]}
-     :{ticker,role,exposure,weight:parsePct(c[5]),status:'OFFICIAL'};
- }).filter(r=>r.ticker&&r.weight>1e-12);
+function modelRows(rows){
+ return (rows||[]).filter(r=>Number(r.targetWeight)>1e-12).map(r=>({
+   ticker:String(r.ticker||''),role:String(r.roleFamily||''),exposure:String(r.exposureGroup||''),weight:Number(r.targetWeight)
+ }));
 }
 function norm(s){return String(s||'').trim().toLowerCase()}
 function informativeExposure(r){
@@ -89,8 +82,11 @@ function investmentExposure(r){
  if(/taiwan/.test(e)||t==='EWT')return 'Taiwan';
  // Preserve economically distinct sector/theme mandates rather than collapsing by role family.
  if(/semiconductor/.test(e)||['SMH','SOXX'].includes(t))return 'Semiconductors';
- if(/expanded technology|technology sector|software/.test(e)||['IGM','XLK'].includes(t))return 'U.S. Technology';
+ if(/medical devices?/.test(e)||t==='IHI')return 'Medical Devices';
+ if(/energy sector/.test(e)||['XLE','VDE'].includes(t))return 'U.S. Energy Sector';
+ if(t==='SCHD')return 'U.S. Dividend Equity';
  if(/biotech|genomic/.test(e)||['XBI','ARKG'].includes(t))return 'Biotech / Genomics';
+ if(/expanded technology|technology sector|software/.test(e)||['IGM','XLK'].includes(t))return 'U.S. Technology';
  if(/oil.*gas/.test(e)||t==='XOP')return 'Oil & Gas';
  if(/natural resource/.test(e)||t==='GUNR')return 'Natural Resources';
  if(/copper/.test(e)||t==='COPX')return 'Copper / Mining';
@@ -105,7 +101,7 @@ function investmentExposure(r){
  if(/large-cap value|value factor/.test(e)||['IVE','IWD','VTV','VLUE'].includes(t))return 'U.S. Large-Cap Value';
  if(/dividend growth|high dividend yield/.test(e)||['VIG','VYM'].includes(t))return 'U.S. Dividend Equity';
  if(/international high dividend/.test(e)||t==='VYMI')return 'International Dividend';
- if(/developed ex-u\.s.*fundamental|fundamental/.test(e)||t==='FNDF')return 'Developed ex-U.S. Fundamental';
+ if(/developed ex-u\.s.*fundamental/.test(e)||t==='FNDF')return 'Developed ex-U.S. Fundamental';
  if(/s&p 500|s&p 100|russell 1000/.test(e)||['SPY','OEF','IWB','SCHX'].includes(t))return 'U.S. Broad / Large Cap';
  if(/russell 3000|total u\.s\. equity|total u\.s\. market/.test(e)||['IWV','VTI'].includes(t))return 'Total U.S. Market';
  // Broad regional products retain the broad region only when no more specific geography exists.
@@ -113,7 +109,7 @@ function investmentExposure(r){
  if(/emerging market/.test(e)||t==='EEM')return 'Emerging Markets';
  // Role family is deliberately the last fallback, not the primary grouping key.
  const fallback=String(r.role||'').trim();
- return fallback||explicit||'Other equity';
+ return explicit||fallback||'Other equity';
 }
 function clusterRows(rows){
  const m=new Map();
@@ -124,14 +120,15 @@ function clusterRows(rows){
  });
  return [...m.values()].sort((a,b)=>b.weight-a.weight||a.label.localeCompare(b.label));
 }
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function drawBars(el,rows){
  if(!el)return;const max=Math.max(...rows.map(r=>r.weight),1e-9);
  el.innerHTML=rows.map(r=>{
-   const title=(r.title||r.members?.join(' · ')||r.label).replace(/"/g,'&quot;');
-   return `<div class="bar-row" title="${title}"><span class="bar-label" title="${title}">${r.label}</span><div class="bar-track"><div class="bar-fill ${r.label.startsWith('Benchmark core')||r.label.startsWith('ACWI core')?'core':''}" style="width:${Math.min(100,r.weight/max*100)}%"></div></div><b class="bar-value">${pctText(r.weight)}</b></div>`;
+   const title=escapeHtml(r.title||r.members?.join(' · ')||r.label);
+   return `<div class="bar-row" title="${title}"><span class="bar-label" title="${title}">${escapeHtml(r.label)}</span><div class="bar-track"><div class="bar-fill ${r.label.startsWith('Benchmark core')||r.label.startsWith('ACWI core')?'core':''}" style="width:${Math.min(100,r.weight/max*100)}%"></div></div><b class="bar-value">${pctText(r.weight)}</b></div>`;
  }).join('');
 }
-function previewAvailable(){return L.preview?.meta?.status==='PREVIEW'&&$('#previewHoldingDetailBody')?.querySelectorAll('tr').length>0}
+function previewAvailable(){return L.preview?.meta?.status==='PREVIEW'&&Array.isArray(window.EA_HOLDINGS_ROWS?.preview)&&window.EA_HOLDINGS_ROWS.preview.some(r=>Number(r.targetWeight)>1e-12)}
 function renderTabs(ok){
  const el=$('#holdingsModeTabs');if(!el)return;
  if(mode==='preview'&&!ok)mode='official';
@@ -141,9 +138,10 @@ function renderTabs(ok){
 function refresh(){
  const x=ensureStructure();if(!x)return;
  const ok=previewAvailable();renderTabs(ok);const isPreview=mode==='preview';
- const rows=tableRows(isPreview?x.preBody:x.offBody,isPreview);
+ const rows=modelRows(window.EA_HOLDINGS_ROWS?.[isPreview?'preview':'official']);
  const etfRows=rows.map(r=>({label:`${r.ticker} · ${informativeExposure(r)}`,weight:r.weight})).sort((a,b)=>b.weight-a.weight||a.label.localeCompare(b.label));
  drawBars($('#holdingBars'),etfRows);drawBars($('#roleBars'),clusterRows(rows));
+ const total=rows.reduce((s,r)=>s+r.weight,0);const note=$('#holdingsExposureTotal');if(note)note.textContent=rows.length?`Target weight total ${pctText(total)} · ETF mandate allocation, not constituent look-through`:'No eligible target rows.';
  if(x.lh)x.lh.textContent=isPreview?'Preview ETF target weights':'Official ETF target weights';
  if(x.rh)x.rh.textContent=isPreview?'Preview investment exposures':'Official investment exposures';
  if(x.rp)x.rp.textContent='Similar ETF mandates are combined, while specific country, sector, style and thematic exposures are retained when informative. Role family is used only when no clearer exposure is available; this is not constituent look-through.';
@@ -151,10 +149,8 @@ function refresh(){
  const ctx=$('#holdingsViewContext');if(ctx){const pm=L.preview?.meta||{};ctx.textContent=isPreview?`As of ${pm.previewAsOf||'—'} · Signal ${pm.prospectiveSignalMonth||'—'} → proposed holding ${pm.prospectiveHoldingMonth||'—'} · not executed`:'Current Official target with live holding-month weights shown in the detail table.'}
  const hp=$('#holdingProfileContext');if(hp){const pm=L.preview?.meta||{};hp.textContent=isPreview?`As of ${pm.previewAsOf||'—'} · proposed holding ${pm.prospectiveHoldingMonth||'—'} · not executed`:`Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · official target`}
 }
-function observeBaseRenders(){
- ['#holdingDetailBody','#previewHoldingDetailBody'].forEach(sel=>{const n=$(sel);if(n)new MutationObserver(()=>queueMicrotask(refresh)).observe(n,{childList:true})});
- document.addEventListener('change',()=>setTimeout(refresh,0),true);
- document.addEventListener('input',e=>{if(e.target?.matches('input[type="range"]'))setTimeout(refresh,0)},true);
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{refresh();observeBaseRenders()});else{refresh();observeBaseRenders()}
+window.EA_EXPOSURE_POLICY={informativeExposure,investmentExposure,clusterRows,modelRows};
+window.EA_REFRESH_HOLDINGS=refresh;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
 })();
+// EQUITY_FINAL_MP_READER_V1

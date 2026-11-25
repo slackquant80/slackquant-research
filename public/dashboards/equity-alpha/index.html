@@ -112,25 +112,9 @@
 
  <div class="grid cols2 section">
   <section class="panel">
-   <div class="panel-title">
-    <div>
-     <h3>ML selection ranking</h3>
-     <p><b>ML Broad rank</b> shows the primary ML Selection layer’s cross-sectional order. Rank 1 is strongest; it does not represent final portfolio weight.</p>
-    </div>
-    <span class="badge good">ML LAYER</span>
-   </div>
-   <div class="rank-explainer">
-    <div><b>1 · REX2</b><span>Cross-sectional ranking from the REX2 forecast.</span></div>
-    <div><b>2 · Chronos-2</b><span>Cross-sectional ranking from the Chronos-2 forecast.</span></div>
-    <div><b>3 · Broad rank</b><span>Combine normalized REX2 and Chronos-2 rank strength at 80/20, then order strongest to weakest.</span></div>
-   </div>
-   <div class="rank-weight-note">The 80/20 blend uses normalized rank strength, <b>not</b> the displayed rank numbers themselves.</div>
-   <div class="tablewrap"><table class="tbl rank-watch-table"><thead><tr><th class="num">Broad rank</th><th>ETF</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Broad state</th></tr></thead><tbody id="rankWatchBody"></tbody></table></div>
-   <div class="rank-rule-note">
-    <span><b>Held · 1–10</b>: current holding remains in the entry zone</span>
-    <span><b>Held · 11–15</b>: incumbent is retained by the hold buffer</span>
-    <span><b>Wait · 1–10</b>: strong new candidate, but all 10 Broad slots are still occupied by valid incumbents</span>
-   </div>
+   <div class="panel-title"><div><h3>Decision layer target contributions</h3><p>Actual ETF-level allocations in the selected investor profile. Contributions are capital weights, not return attribution.</p></div></div>
+   <div class="tablewrap"><table class="tbl"><thead><tr><th>Layer</th><th class="num">Official wt</th><th class="num">ETFs</th><th class="num">Preview wt</th><th class="num">ETFs</th></tr></thead><tbody id="layerAllocationBody"></tbody></table></div>
+   <p class="muted">ETFs may receive weights from more than one layer; counts are not additive. Preview has not been executed.</p>
   </section>
   <section class="panel">
    <div class="panel-title"><div><h3>Decision structure</h3><p>Three independent decision layers combined into one final portfolio</p></div><span class="badge dark">3 LAYERS</span></div>
@@ -193,22 +177,47 @@
    <div id="holdingBars"></div>
   </section>
   <section class="panel">
-   <div class="panel-title"><div><h3>Portfolio composition</h3><p>Investor portfolio target weights by presentation group</p></div></div>
-   <div id="roleBars"></div>
+   <div class="panel-title"><div><h3>Official investment exposures</h3><p>Target weights aggregated by ETF investment mandate; not constituent look-through.</p></div></div>
+   <div id="roleBars"></div><p class="muted" id="holdingsExposureTotal"></p>
   </section>
  </div>
  <section class="panel section">
   <div class="panel-title"><div><h3>Official holdings detail</h3><p id="holdingsSignalContext"></p></div><span class="badge good">OFFICIAL</span></div>
-  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th class="num">ML rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th class="num">Target wt</th><th class="num">Current wt</th><th class="num">Holding MTD</th></tr></thead><tbody id="holdingDetailBody"></tbody></table></div>
+  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th>ETF</th><th>Role family</th><th>Exposure</th><th class="num">ML</th><th class="num">Regional</th><th class="num">Selective</th><th class="num">Target wt</th><th class="num">Current wt</th><th class="num">Holding return</th></tr></thead><tbody id="holdingDetailBody"></tbody></table></div>
  </section>
  <section class="panel section">
   <div class="panel-title"><div><h3>Preview holdings detail</h3><p id="previewHoldingsContext"></p></div><span class="badge warn">PREVIEW · NOT EXECUTED</span></div>
-  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th class="num">ML rank</th><th>ETF</th><th>Role family</th><th>Exposure</th><th>Status</th><th class="num">Preview wt</th><th class="num">Official wt</th><th class="num">Δ wt</th></tr></thead><tbody id="previewHoldingDetailBody"></tbody></table></div>
+  <div class="tablewrap"><table class="tbl"><thead><tr><th>Driver</th><th>ETF</th><th>Role family</th><th>Exposure</th><th>Status</th><th class="num">ML</th><th class="num">Regional</th><th class="num">Selective</th><th class="num">Preview wt</th><th class="num">Official wt</th><th class="num">Δ wt</th></tr></thead><tbody id="previewHoldingDetailBody"></tbody></table></div>
  </section>
 </section>
 
 <section class="page" id="page-universe">
- <div class="grid cols4" id="universeKpis"></div>
+ <div class="notice"><strong>ML opportunity-set diagnostics.</strong> Broad and Static cover the ML Selection layer, not all eligible ETFs in the final three-layer MP. Regional uses a separate geographic universe; Selective Alpha uses a separate sector, style and thematic universe. No common cross-layer rank exists.</div>
+ <div class="grid cols2 section">
+  <section class="panel">
+   <div class="panel-title">
+    <div>
+     <h3>ML selection ranking</h3>
+     <p><b>ML Broad rank</b> shows the primary ML Selection layer’s cross-sectional order. Rank 1 is strongest; it does not represent final portfolio weight.</p>
+    </div>
+    <span class="badge good">ML LAYER</span>
+   </div>
+   <div class="rank-explainer">
+    <div><b>1 · REX2</b><span>Cross-sectional ranking from the REX2 forecast.</span></div>
+    <div><b>2 · Chronos-2</b><span>Cross-sectional ranking from the Chronos-2 forecast.</span></div>
+    <div><b>3 · Broad rank</b><span>Combine normalized REX2 and Chronos-2 rank strength at 80/20, then order strongest to weakest.</span></div>
+   </div>
+   <div class="rank-weight-note">The 80/20 blend uses normalized rank strength, <b>not</b> the displayed rank numbers themselves.</div>
+   <div class="tablewrap"><table class="tbl rank-watch-table"><thead><tr><th class="num">Broad rank</th><th>ETF</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Broad state</th></tr></thead><tbody id="rankWatchBody"></tbody></table></div>
+   <div class="rank-rule-note">
+    <span><b>Held · 1–10</b>: current holding remains in the entry zone</span>
+    <span><b>Held · 11–15</b>: incumbent is retained by the hold buffer</span>
+    <span><b>Wait · 1–10</b>: strong new candidate, but all 10 Broad slots are still occupied by valid incumbents</span>
+   </div>
+  </section>
+  <section class="panel"><div class="panel-title"><div><h3>Regional and Selective Alpha</h3><p>Separate decision sets. Preview evidence only; not a combined ranking.</p></div></div><div class="status-list" id="otherLayerEvidence"></div></section>
+ </div>
+ <div class="grid cols4 section" id="universeKpis"></div>
 
  <div class="grid cols2 section">
   <section class="chart">
@@ -242,7 +251,7 @@
 
 <section class="page" id="page-history">
  <section class="panel">
-   <div class="panel-title"><div><h3 id="historyHeatmapTitle">ML Broad selection heatmap</h3><p id="historyHeatmapNote">Last 36 ML Broad decisions · completed history plus the current Official open holding month</p></div><div class="profile-tabs compact" id="historySleeveTabs"></div></div>
+   <div class="panel-title"><div><h3 id="historyHeatmapTitle">Final Global Alpha target history</h3><p id="historyHeatmapNote">Merged ETF weights before optional ACWI core; ML-only diagnostics are available separately.</p></div><div class="profile-tabs compact" id="historySleeveTabs"></div></div>
    <div class="heatmap" id="historyHeatmap"></div>
  </section>
  <section class="panel section">
@@ -250,8 +259,8 @@
     <div><h3>Monthly portfolio history</h3><p id="historyProfileContext"></p></div>
     <div class="panel-actions"><a class="export-btn" href="exports/Global_Equity_Alpha_Full_History.xlsx" download>Download full history (.xlsx)</a><span class="badge dark">HISTORY + CURRENT</span></div>
    </div>
-   <div class="history-clock-note">Completed rows show closed holding-month returns. The current Official row is shown separately as <b>OPEN</b>; its return columns show Current MTD and are excluded from completed performance history. ML Broad and ML Static holdings are shown as diagnostics of the primary ML layer. Final Global returns and turnover reflect the full three-layer portfolio. The Excel export includes the full final target-weight history.</div>
-   <div class="tablewrap"><table class="tbl"><thead><tr><th>State</th><th>Signal</th><th>Holding</th><th>ACWI / Global Alpha</th><th>ML Broad holdings</th><th>ML Static holdings</th><th class="num">Portfolio turnover</th><th class="num">Return / MTD</th><th class="num">Excess / MTD</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+   <div class="history-clock-note">Completed rows show closed holding-month returns. The current Official row is shown separately as <b>OPEN</b>; its return columns show Current MTD and are excluded from completed performance history. The final target column is the merged Global Alpha model before optional ACWI core. ML Broad and Static are separate diagnostics. Turnover refers to the 100% Global Alpha model at execution, not the selected investor profile. Returns are completed calendar-month investor-profile returns. The Excel export includes the full final target-weight history.</div>
+   <div class="tablewrap"><table class="tbl"><thead><tr><th>State</th><th>Signal</th><th>Holding</th><th>ACWI / Global Alpha</th><th>Final Global Alpha targets</th><th class="num">Global Alpha turnover</th><th class="num">Return / MTD</th><th class="num">Excess / MTD</th></tr></thead><tbody id="historyBody"></tbody></table></div>
  </section>
 </section>
 
@@ -266,7 +275,8 @@
 </section>
 
 <section class="page" id="page-robustness">
- <div class="grid cols4" id="robustKpis"></div>
+ <section class="panel"><div class="panel-title"><div><h3>Final Global Alpha · realized historical evidence</h3><p>Completed daily path at 100% Global Alpha; not a sensitivity test or independent out-of-sample claim.</p></div></div><div class="grid cols4" id="finalRobustKpis"></div></section>
+ <div class="grid cols4 section" id="robustKpis"></div>
  <div class="support-strip" id="robustnessBasisStrip"></div>
  <div class="grid cols2 section">
   <section class="panel"><div class="panel-title"><div><h3>ML transaction-cost sensitivity</h3><p>Primary ML layer only · internal Broad / Static structure</p></div></div><div class="tablewrap compact-tablewrap"><table class="tbl robustness-cost-table"><thead><tr><th>Cost / side</th><th class="num">IR</th><th class="num">Ann. active</th><th class="num">TE</th><th class="num">CAGR</th><th class="num">MDD</th></tr></thead><tbody id="costBody"></tbody></table></div></section>
@@ -276,6 +286,7 @@
 
 <section class="page" id="page-method">
  <div class="grid cols4" id="architectureKpis"></div>
+ <section class="panel section"><div class="panel-title"><div><h3>Final MP construction</h3><p>Independent signals → layer targets → ETF-level merge → investor risk profile</p></div></div><div class="flow architecture-flow"><div class="step"><div class="n">01</div><b>ML Selection</b><p>Broad point-in-time and Static ETF forecasts, normalized ranks and entry/hold selection.</p></div><div class="step"><div class="n">02</div><b>Regional Allocation</b><p>Relative price trend across SPY, QQQ, VEA and EEM; two horizons and regional risk constraints determine layer targets.</p></div><div class="step"><div class="n">03</div><b>Selective Alpha</b><p>Independent sector, style and thematic selections from longer-horizon price momentum and Ridge / ElasticNet forecasts.</p></div><div class="step"><div class="n">04</div><b>Unified Global Alpha MP</b><p>Apply frozen strategy allocations and sum contributions for overlapping ETFs; measure turnover on the merged portfolio.</p></div><div class="step"><div class="n">05</div><b>Investor portfolio</b><p>Scale the Global Alpha target by the selected alpha share and add the remaining ACWI core. This changes risk, not model decisions.</p></div></div></section>
  <section class="panel section">
   <div class="panel-title"><div><h3>ML selection engine</h3><p>Internal forecast-to-rank process used by the primary alpha layer</p></div></div>
   <div class="flow architecture-flow">
@@ -287,7 +298,7 @@
    <div class="step"><div class="n">06</div><b>Entry / hold rule</b><p>10 positions · enter at ranks 1–10 · existing holdings may remain through rank 15.</p></div>
    <div class="step static-step"><div class="n">07</div><b>Static universe diversifier</b><p>Small static-universe sub-portfolio using the ML ranking framework with its own entry / hold mapping.</p></div>
    <div class="step"><div class="n">08</div><b>Merge ML sub-portfolios</b><p>Broad and Static targets are combined inside the ML layer; overlapping ETFs are merged before the Global layers are combined.</p></div>
-   <div class="step"><div class="n">09</div><b>Investor risk translation</b><p>Optional ACWI core changes investor-level active risk after the Global portfolio is formed; model selections are unchanged.</p></div>
+   <div class="step"><div class="n">09</div><b>ML layer output</b><p>Pass the ML target to the final three-layer merge. ML rank is not a final portfolio rank.</p></div>
   </div>
  </section>
  <section class="panel section"><div class="panel-title"><div><h3>Model contract</h3></div></div><div class="status-list" id="contractRows"></div></section>
@@ -301,9 +312,10 @@
 </div>
 </div>
 
-<script src="data/dashboard_data.js?v=v1592"></script>
-<script src="data/live_overlay.js?v=v1592"></script>
-<script src="assets/app.js?v=v1592"></script>
-<script src="assets/holdings-view.js?v=v15101"></script>
+<script src="data/dashboard_data.js?v=v15103"></script>
+<script src="data/live_overlay.js?v=v15103"></script>
+<script src="assets/holdings-view.js?v=v15103"></script>
+<script src="assets/app.js?v=v15103"></script>
 </body>
 </html>
+<!-- EQUITY_FINAL_MP_READER_V1 -->
