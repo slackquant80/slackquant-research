@@ -57,7 +57,7 @@ function prettyRole(x){
 // Fail-safe display provenance: historical/current Universe data owns the canonical
 // mutually-exclusive role_family.  Live/ticker display labels may never redefine it.
 const CANONICAL_ROLE_BY_TICKER=new Map();
-[...(D.universe?.historicalUnion||[]),...(D.universe?.latest||[])].forEach(x=>{
+[...(D.universe?.historicalUnion||[]),...(D.universe?.latest||[]),...(L.currentStaticUniverse?.rows||[]),...(L.currentUniverseRanks||[])].forEach(x=>{
  const t=String(x.ticker||'').toUpperCase();
  const r=String(x.roleFamily||'');
  if(t&&r)CANONICAL_ROLE_BY_TICKER.set(t,r);
@@ -66,12 +66,17 @@ function canonicalRoleForTicker(ticker,fallback=''){
  return CANONICAL_ROLE_BY_TICKER.get(String(ticker||'').toUpperCase())||String(fallback||'');
 }
 
+function holdingExposure(ticker,raw,role){const r={ticker,exposure:prettyExposure(raw),role:prettyRole(canonicalRoleForTicker(ticker,role))};return window.EA_EXPOSURE_POLICY?.informativeExposure(r)||r.exposure||r.role||String(ticker);}
+function layerTargetValue(x,key){const v=x[key];return v==null||!Number.isFinite(Number(v))?null:Number(v);}
+function layerFields(x){return {a0Contribution:layerTargetValue(x,'a0Contribution'),regionalContribution:layerTargetValue(x,'regionalContribution'),alphaContribution:layerTargetValue(x,'alphaContribution')};}
+function scaledLayers(x,a){return Object.fromEntries(Object.entries(layerFields(x)).map(([k,v])=>[k,v==null?null:a*v]));}
+function layerCells(x){return ['a0Contribution','regionalContribution','alphaContribution'].map(k=>{const v=layerTargetValue(x,k);return `<td class="num">${v==null?(x.status==='CORE'?'—':'N/A'):v===0?'—':pct(v,2)}</td>`}).join('');}
 const tooltip=document.createElement('div');tooltip.className='chart-tooltip';document.body.appendChild(tooltip);
 
 let alphaWeight=Number(D.profileConfig?.defaultAlphaWeight??1);
 let universeEngine='broad';
 let universeView='latest';
-let historySleeve='broad';
+let historySleeve='final';
 let profileCache=new Map();
 
 function clamp(x,a,b){return Math.min(b,Math.max(a,x))}
@@ -92,7 +97,8 @@ function rollingMetric(pr,br,w,kind){
    if(Number.isFinite(pr[k])&&Number.isFinite(br[k]))ex.push(pr[k]-br[k]);
   }
   if(ex.length!==w)continue;
-  const sd=stdev(ex); if(!(sd>0))continue;
+  const sd=stdev(ex); if(sd==null||!Number.isFinite(sd))continue;
+  if(sd===0){if(kind==='te')out[i]=0;continue;}
   const ar=mean(ex)*252, te=sd*Math.sqrt(252);
   out[i]=kind==='te'?te:ar/te;
  }
@@ -138,9 +144,9 @@ function currentProfile(){return buildProfile(alphaWeight)}
 function profileLabel(a=alphaWeight){return `ACWI core ${pct(1-a,0)} / Global Alpha ${pct(a,0)}`}
 function alphaBaseHoldings(){
  if(Array.isArray(L.currentHoldings)&&L.currentHoldings.length){
-   return L.currentHoldings.map((x,i)=>({rank:x.broadRank??null,ticker:String(x.ticker),name:String(x.name||''),roleFamily:prettyRole(canonicalRoleForTicker(x.ticker,x.roleFamily||'')),exposureGroup:prettyExposure(x.exposureGroup||''),weight:Number(x.targetWeight||0),currentAlphaWeight:Number(x.currentWeight??x.targetWeight??0),holdingReturn:Number(x.holdingReturn??0),score:x.broadScore==null?null:Number(x.broadScore),inBroad:Boolean(x.inBroad),inStatic:Boolean(x.inStatic),driver:String(x.driver||'Model'),drivers:Array.isArray(x.drivers)?x.drivers:[],group:String(x.group||'Global Equity'),a0Contribution:Number(x.a0Contribution||0),regionalContribution:Number(x.regionalContribution||0),alphaContribution:Number(x.alphaContribution||0),source:'LIVE'}));
+   return L.currentHoldings.map((x,i)=>({rank:x.broadRank??null,ticker:String(x.ticker),name:String(x.name||''),roleFamily:prettyRole(canonicalRoleForTicker(x.ticker,x.roleFamily||'')),exposureGroup:holdingExposure(x.ticker,x.exposureGroup,x.roleFamily),weight:Number(x.targetWeight||0),currentAlphaWeight:Number(x.currentWeight??x.targetWeight??0),holdingReturn:Number(x.holdingReturn??0),score:x.broadScore==null?null:Number(x.broadScore),inBroad:Boolean(x.inBroad),inStatic:Boolean(x.inStatic),driver:String(x.driver||'Model'),drivers:Array.isArray(x.drivers)?x.drivers:[],group:String(x.group||'Global Equity'),...layerFields(x),source:'LIVE'}));
  }
- return (D.currentAlphaHoldings||[]).map((x,i)=>({rank:x.broadRank??x.rank??null,ticker:String(x.ticker),name:String(x.name||''),roleFamily:prettyRole(canonicalRoleForTicker(x.ticker,x.roleFamily||'')),exposureGroup:prettyExposure(x.exposureGroup||''),weight:Number(x.weight??x.targetWeight??0),currentAlphaWeight:Number(x.weight??x.targetWeight??0),holdingReturn:null,score:x.score==null?null:Number(x.score),inBroad:Boolean(x.inBroad),inStatic:Boolean(x.inStatic),driver:String(x.driver||'Model'),group:String(x.group||'Global Equity'),source:'HISTORICAL_FALLBACK'}));
+ return (D.currentAlphaHoldings||[]).map((x,i)=>({rank:x.broadRank??x.rank??null,ticker:String(x.ticker),name:String(x.name||''),roleFamily:prettyRole(canonicalRoleForTicker(x.ticker,x.roleFamily||'')),exposureGroup:holdingExposure(x.ticker,x.exposureGroup,x.roleFamily),weight:Number(x.weight??x.targetWeight??0),currentAlphaWeight:Number(x.weight??x.targetWeight??0),holdingReturn:null,score:x.score==null?null:Number(x.score),inBroad:Boolean(x.inBroad),inStatic:Boolean(x.inStatic),driver:String(x.driver||'Model'),group:String(x.group||'Global Equity'),source:'HISTORICAL_FALLBACK'}));
 }
 function previewAllHoldings(){
  const rows=Array.isArray(L.preview?.holdings)?L.preview.holdings:[];
@@ -148,7 +154,8 @@ function previewAllHoldings(){
    rank:x.rank??null,
    ticker:String(x.ticker),name:String(x.name||''),
    roleFamily:prettyRole(canonicalRoleForTicker(x.ticker,x.roleFamily||'')),
-   exposureGroup:prettyExposure(x.exposureGroup||''),
+   exposureGroup:holdingExposure(x.ticker,x.exposureGroup,x.roleFamily),
+   ...layerFields(x),
    weight:Number(x.targetWeight||0),
    score:x.score==null?null:Number(x.score),
    rex2Rank:x.rex2Rank??null,chronosRank:x.chronosRank??null,
@@ -171,12 +178,12 @@ function previewInvestorHoldings(includeExits=false){
  });
  const base=includeExits?previewAllHoldings():previewBaseHoldings();
  base.forEach(x=>rows.push({
-   ...x,targetWeight:alphaWeight*Number(x.weight||0),
+   ...x,...scaledLayers(x,alphaWeight),targetWeight:alphaWeight*Number(x.weight||0),
    officialWeight:alphaWeight*Number(x.officialWeight||0),
    weightChange:alphaWeight*Number(x.weightChange||0),
    status:'ALPHA'
  }));
- return rows;
+ return rows.filter(x=>x.targetWeight>1e-12||(includeExits&&x.officialWeight>1e-12));
 }
 
 
@@ -195,12 +202,12 @@ function investorHoldings(){
    holdingReturn:bmMtd,score:null,status:'CORE',inBroad:false,inStatic:false
  });
  alphaRows.forEach(x=>rows.push({
-   ...x,
+   ...x,...scaledLayers(x,alphaWeight),
    targetWeight:alphaWeight*Number(x.weight||0),
    currentWeight:totalValue>0?(alphaValue*Number(x.currentAlphaWeight||0))/totalValue:alphaWeight*Number(x.currentAlphaWeight||0),
    status:'ALPHA'
  }));
- return rows;
+ return rows.filter(x=>x.targetWeight>1e-12);
 }
 function setAlphaWeight(a){
  alphaWeight=clamp(Number(a),0,1);
@@ -324,7 +331,8 @@ function staticDecisionClass(status){
 
 function holdingSourceLabel(x){
  if(x.status==='CORE'||x.driver==='ACWI Core')return 'ACWI Core';
- return String(x.driver||'Model');
+ const drivers=Array.isArray(x.drivers)?x.drivers.filter(Boolean):[];
+ return drivers.length?drivers.join(' + '):String(x.driver||'Model');
 }
 function holdingRankLabel(x){return x.rank==null?'—':`#${x.rank}`}
 function holdingReasonLabel(x){
@@ -336,7 +344,7 @@ function holdingReasonLabel(x){
 }
 function holdingCard(x){
  const driver=holdingSourceLabel(x),group=String(x.group||x.exposureGroup||'Global Equity');
- const rank=x.rank!=null?`<span class="pill muted">ML ${holdingRankLabel(x)}</span>`:'';
+ const rank='';
  return `<div class="holding-card"><div class="holding-card-top"><div class="holding-ticker"><b>${esc(x.ticker)}</b><span>${esc(x.exposureGroup)}</span></div><div class="holding-weight">${pct(x.targetWeight,2)}</div></div><div class="holding-card-bottom"><div class="holding-badges"><span class="pill good">${esc(driver)}</span><span class="pill muted">${esc(group)}</span>${rank}</div><div class="holding-reason">Current ${x.currentWeight==null?'—':pct(x.currentWeight,2)}</div></div></div>`;
 }
 
@@ -376,7 +384,7 @@ function previewReasonLabel(x){
  return `${d} · ${g} · ${status}`;
 }
 function previewHoldingCard(x){
- const rank=x.rank!=null?`<span class="pill muted">ML #${esc(x.rank)}</span>`:'';
+ const rank='';
  const statusBadge=`<span class="pill ${previewStatusClass(x.previewStatus)}">${esc(previewStatusLabel(x.previewStatus))}</span>`;
  return `<div class="holding-card preview-card ${String(x.previewStatus||'').toLowerCase()}">
    <div class="holding-card-top">
@@ -384,7 +392,7 @@ function previewHoldingCard(x){
     <div class="holding-weight">${pct(x.targetWeight,2)}</div>
    </div>
    <div class="holding-card-bottom">
-    <div class="holding-badges"><span class="pill good">${esc(x.driver||'Model')}</span><span class="pill muted">${esc(x.group||'Global Equity')}</span>${rank}${statusBadge}</div>
+    <div class="holding-badges"><span class="pill good">${esc(holdingSourceLabel(x))}</span><span class="pill muted">${esc(x.group||'Global Equity')}</span>${rank}${statusBadge}</div>
     <div class="holding-reason">Δ ${pct(x.weightChange,2)}</div>
    </div>
   </div>`;
@@ -412,26 +420,27 @@ function renderCockpit(){
  ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
  $('#cockpitCompletedSupport').innerHTML=`<strong>Performance history:</strong> ${P.support.start} → ${P.support.end} · IR, annualized active return, Relative DD and CAGR use the same daily history · Current MTD excluded`;
  const ah=alphaBaseHoldings();
- $('#cockpitProfileContext').textContent=`Official portfolio · ${profileLabel()} · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · ${ah.length} model ETFs${alphaWeight<1?' + ACWI core':''}`;
+ $('#cockpitProfileContext').textContent=`Official portfolio · ${profileLabel()} · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · ${h.filter(x=>x.status!=='CORE').length} invested model ETFs${alphaWeight<1?' + ACWI core':''}`;
  $('#officialPortfolioLegend').innerHTML=`<span><b>Unified portfolio</b> · overlapping ETF weights combined</span><span><b>ML Selection</b> · primary alpha engine</span><span><b>Regional</b> · benchmark-relative diversification</span><span><b>Selective Alpha</b> · independent decision path</span>`;
- $('#latestHoldings').innerHTML=h.filter(x=>x.status!=='CORE').map(holdingCard).join('');
+ $('#latestHoldings').innerHTML=h.map(holdingCard).join('');
  const ph=previewInvestorHoldings(),pm=L.preview?.meta||{};
  const previewOk=pm.status==='PREVIEW';
  const pha=ph.filter(x=>x.status!=='CORE');
  const hasDriver=(x,d)=>Array.isArray(x.drivers)?x.drivers.includes(d):String(x.driver||'')===d;
  const pMlN=pha.filter(x=>hasDriver(x,'ML Selection')).length,pRegN=pha.filter(x=>hasDriver(x,'Regional')).length,pAlphaN=pha.filter(x=>hasDriver(x,'Selective Alpha')).length,pMultipleN=pha.filter(x=>String(x.driver||'')==='Multiple').length;
  const pNewN=pha.filter(x=>String(x.previewStatus).toUpperCase()==='NEW').length,pChangeN=pha.filter(x=>String(x.previewStatus).toUpperCase()==='WEIGHT_CHANGE').length;
- const pExitN=Array.isArray(L.preview?.changeSummary?.exitNames)?L.preview.changeSummary.exitNames.length:0;
+ const pExitN=alphaWeight>0&&Array.isArray(L.preview?.changeSummary?.exitNames)?L.preview.changeSummary.exitNames.length:0;
  $('#previewProfileContext').textContent=previewOk?`Preview · not executed · As of ${pm.previewAsOf} · Signal ${pm.prospectiveSignalMonth} → Proposed holding ${pm.prospectiveHoldingMonth}`:`Preview unavailable${pm.reason?' · '+pm.reason:''}`;
  $('#previewPortfolioLegend').innerHTML=previewOk?`<span><b>Unified preview</b> · overlapping ETF weights combined</span><span><b>Drivers</b> · ML ${pMlN} · Regional ${pRegN} · Selective Alpha ${pAlphaN} · Multiple ${pMultipleN}</span><span><b>Changes</b> · ${pNewN} new · ${pChangeN} reweighted · ${pExitN} exits</span>`:'<span><b>Preview unavailable</b></span>';
- $('#previewHoldings').innerHTML=previewOk?pha.map(previewHoldingCard).join(''):'<div class="preview-unavailable">No synchronized Final Portfolio Preview is available for this refresh.</div>';
+ $('#previewHoldings').innerHTML=previewOk?ph.map(previewHoldingCard).join(''):'<div class="preview-unavailable">No synchronized Final Portfolio Preview is available for this refresh.</div>';
  const ls=pm.layerStatus||{};
  $('#previewSummary').innerHTML=previewOk?[
    ['Status',previewExecutionLabel(pm.executionStatus||'NOT_EXECUTED')],
    ['Preview as-of',pm.previewAsOf||'—'],
    ['Preview signal',pm.prospectiveSignalMonth||'—'],
    ['Proposed holding',pm.prospectiveHoldingMonth||'—'],
-   ['ML Selection',previewLayerLabel(ls['ML Selection']||'Synchronized')],
+   ['ML Selection',previewLayerLabel(ls['ML Selection']||'Unavailable')],
+   ['ML Static preview',String(pm.a0PreviewSource?.staticPreviewStatus||'Not reported').replaceAll('_',' ')],
    ['Regional',previewLayerLabel(ls['Regional']||'Synchronized')],
    ['Selective Alpha',previewLayerLabel(ls['Selective Alpha']||'Synchronized')]
  ].map(x=>`<div class="status-row"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join(''):'<div class="status-row"><span>Status</span><b>Unavailable</b></div>';
@@ -445,6 +454,9 @@ function renderCockpit(){
  const modelDev=Number(fm.developmentIR??fm.development_ir??dm.ir);
  const modelBridge=Number(fm.temporalBridgeIR??fm.temporal_bridge_ir??bm.ir);
  const rw=(Array.isArray(L.rankWatch)&&L.rankWatch.length)?L.rankWatch:(D.rankWatchlist||[]);
+ const layerRows=[['ACWI Core','core'],['ML Selection','a0Contribution'],['Regional','regionalContribution'],['Selective Alpha','alphaContribution']];
+ const sumLayer=(rs,key)=>{if(key==='core'){const a=rs.filter(x=>x.status==='CORE');return {w:a.reduce((s,x)=>s+x.targetWeight,0),n:a.length};}const a=rs.filter(x=>x.status!=='CORE'&&x.targetWeight>1e-12);if(a.some(x=>x[key]==null))return {w:null,n:null};return {w:a.reduce((s,x)=>s+Number(x[key]),0),n:a.filter(x=>Number(x[key])>1e-12).length};};
+ $('#layerAllocationBody').innerHTML=layerRows.map(([label,key])=>{const o=sumLayer(h,key),p=previewOk?sumLayer(ph,key):{w:null,n:null};return '<tr><td>'+esc(label)+'</td><td class="num">'+pct(o.w,2)+'</td><td class="num">'+(o.n??'—')+'</td><td class="num">'+pct(p.w,2)+'</td><td class="num">'+(p.n??'—')+'</td></tr>';}).join('');
  $('#rankWatchBody').innerHTML=rw.map(r=>`<tr class="${String(r.status).startsWith('SELECTED')?'selected-row':''}"><td class="num"><b>${r.rank}</b></td><td><b>${esc(r.ticker)}</b></td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td><span class="pill ${rankDecisionClass(r.status)}">${esc(rankDecisionLabel(r.status))}</span></td></tr>`).join('');
  const sw=Number(D.model?.legacyStaticWeight||0);
  $('#regularizationSummary').innerHTML=[
@@ -508,14 +520,16 @@ function renderPerformance(){
 function renderHoldings(){
  const h=investorHoldings(),ph=previewInvestorHoldings(true),pm=L.preview?.meta||{};
  $('#holdingProfileContext').textContent=`OFFICIAL FINAL PORTFOLIO · ${profileLabel()} · Signal ${L.meta?.signalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'}`;
- $('#holdingsSignalContext').textContent=`Official target: Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · Current wt as-of ${L.meta?.marketDataThrough||'—'} · Holding MTD ${L.meta?.mtdBaselineDate||'—'} → ${L.meta?.marketDataThrough||'—'} provisional / execution-day stitched`;
- const barRows=h.map(x=>({label:`${x.ticker} · ${x.roleFamily}`,weight:x.targetWeight,isCore:x.status==='CORE'}));
+ $('#holdingsSignalContext').textContent=`Official target: Signal ${L.meta?.signalMonth||D.meta?.latestSignalMonth||'—'} → Holding ${L.meta?.holdingMonth||'—'} · Current wt as-of ${L.meta?.marketDataThrough||'—'} · ETF holding return since ${L.meta?.executionDate||'—'} close; ACWI core uses calendar MTD. Layer columns are investor-level target contributions, not returns; — = no allocation, N/A = unavailable`;
+ const barRows=h.map(x=>({label:`${x.ticker} · ${x.exposureGroup}`,weight:x.targetWeight,isCore:x.status==='CORE'}));
  bars($('#holdingBars'),barRows,'weight','label',v=>pct(v,2),'isCore');
- const roles={};h.forEach(x=>{const g=x.status==='CORE'?'Benchmark Core':String(x.group||'Global Equity');roles[g]=(roles[g]||0)+Number(x.targetWeight||0)});
- bars($('#roleBars'),Object.entries(roles).map(([role,weight])=>({role,weight})),'weight','role',v=>pct(v,2));
- $('#holdingDetailBody').innerHTML=h.map(x=>`<tr><td><span class="pill ${x.status==='CORE'?'muted':'good'}">${esc(holdingSourceLabel(x))}</span></td><td class="num">${x.rank??'—'}</td><td title="${esc(x.name||'')}"><b>${esc(x.ticker)}</b></td><td>${esc(x.roleFamily)}</td><td>${esc(x.exposureGroup)}</td><td class="num">${pct(x.targetWeight,2)}</td><td class="num">${x.currentWeight==null?'—':pct(x.currentWeight,2)}</td><td class="num">${x.holdingReturn==null?'—':pct(x.holdingReturn,2)}</td></tr>`).join('');
- $('#previewHoldingsContext').textContent=pm.status==='PREVIEW'?`PREVIEW — NOT EXECUTED · As-of ${pm.previewAsOf} · Candidate Signal ${pm.prospectiveSignalMonth} · Holding ${pm.prospectiveHoldingMonth}`:`Preview unavailable${pm.reason?' · '+pm.reason:''}`;
- $('#previewHoldingDetailBody').innerHTML=ph.map(x=>`<tr class="${x.previewStatus==='NEW'?'selected-row':''}"><td>${esc(x.driver||'—')}</td><td class="num">${x.rank??'—'}</td><td title="${esc(x.name||'')}"><b>${esc(x.ticker)}</b></td><td>${esc(x.roleFamily)}</td><td>${esc(x.exposureGroup)}</td><td><span class="pill ${previewStatusClass(x.previewStatus)}">${esc(previewStatusLabel(x.previewStatus))}</span></td><td class="num">${pct(x.targetWeight,2)}</td><td class="num">${pct(x.officialWeight??0,2)}</td><td class="num">${pct(x.weightChange??0,2)}</td></tr>`).join('');
+ const fallback={};h.forEach(x=>{const g=x.status==='CORE'?'Benchmark core':x.exposureGroup||x.ticker;fallback[g]=(fallback[g]||0)+x.targetWeight});
+ bars($('#roleBars'),Object.entries(fallback).map(([role,weight])=>({role,weight})).sort((a,b)=>b.weight-a.weight),'weight','role',v=>pct(v,2));
+ window.EA_HOLDINGS_ROWS={official:h,preview:ph};
+ $('#holdingDetailBody').innerHTML=h.map(x=>`<tr><td><span class="pill ${x.status==='CORE'?'muted':'good'}">${esc(holdingSourceLabel(x))}</span></td><td title="${esc(x.name||'')}"><b>${esc(x.ticker)}</b></td><td>${esc(x.roleFamily)}</td><td>${esc(x.exposureGroup)}</td>${layerCells(x)}<td class="num">${pct(x.targetWeight,2)}</td><td class="num">${x.currentWeight==null?'—':pct(x.currentWeight,2)}</td><td class="num">${x.holdingReturn==null?'—':pct(x.holdingReturn,2)}</td></tr>`).join('');
+ $('#previewHoldingsContext').textContent=pm.status==='PREVIEW'?`PREVIEW — NOT EXECUTED · As-of ${pm.previewAsOf} · Candidate Signal ${pm.prospectiveSignalMonth} · Holding ${pm.prospectiveHoldingMonth} · Layer columns are proposed investor-level target contributions; — = no allocation, N/A = unavailable`:`Preview unavailable${pm.reason?' · '+pm.reason:''}`;
+ $('#previewHoldingDetailBody').innerHTML=ph.map(x=>`<tr class="${x.previewStatus==='NEW'?'selected-row':''}"><td>${esc(holdingSourceLabel(x))}</td><td title="${esc(x.name||'')}"><b>${esc(x.ticker)}</b></td><td>${esc(x.roleFamily)}</td><td>${esc(x.exposureGroup)}</td><td><span class="pill ${previewStatusClass(x.previewStatus)}">${esc(previewStatusLabel(x.previewStatus))}</span></td>${layerCells(x)}<td class="num">${pct(x.targetWeight,2)}</td><td class="num">${pct(x.officialWeight??0,2)}</td><td class="num">${pct(x.weightChange??0,2)}</td></tr>`).join('');
+ window.EA_REFRESH_HOLDINGS?.();
 }
 function effectiveLatestUniverse(){
  const base=(D.universe?.latest||[]),live=(L.currentUniverseRanks||[]); if(!live.length)return base;
@@ -531,6 +545,9 @@ function effectiveStaticUniverse(){
 }
 function renderUniverse(){
  const U=D.universe||{},latest=effectiveLatestUniverse(),union=U.historicalUnion||[],S=L.currentStaticUniverse||{},staticRows=effectiveStaticUniverse();
+ const pm=L.preview?.meta||{},layers=L.preview?.decisionLayers||{},reg=layers.regional||{},selAlpha=layers.selectiveAlpha||{};
+ const names=x=>Object.entries(x||{}).filter(([t,w])=>Number(w)>1e-12).map(([t])=>t).join(', ')||'—';
+ const ev=$('#otherLayerEvidence');if(ev)ev.innerHTML=(pm.status==='PREVIEW'?[['As of',pm.previewAsOf+' · not executed'],['Regional opportunity set',Object.keys(reg.target||{}).join(', ')||'Not published'],['Regional selected',names(reg.target)],['Selective eligible feature rows',selAlpha.diagnostics?.featureBreadth??'Not published'],['Selective forecast-ready rows',selAlpha.diagnostics?.forecastBreadth??'Not published'],['Selective selected',names(selAlpha.target)],['Full Selective ranking','Not published; see Holdings for merged targets']]:[['Preview evidence','Unavailable']]).map(([k,v])=>'<div class="status-row"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join('');
  const selected=new Set(alphaBaseHoldings().map(x=>x.ticker)),isStatic=universeEngine==='static';
  if(isStatic){
   $('#universeKpis').innerHTML=[
@@ -541,10 +558,10 @@ function renderUniverse(){
   ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${esc(x[2])}</div></div>`).join('');
  }else{
   $('#universeKpis').innerHTML=[
-   ['Current ML universe',latest.length||U.latestCount||'—',L.meta?.signalMonth?`signal ${L.meta.signalMonth}`:(U.latestMonth||'current')],
+   ['Current ML Broad universe',latest.length,L.meta?.signalMonth?`signal ${L.meta.signalMonth}`:(U.latestMonth||'current')],
    ['Historical ML universe',U.historicalUnionCount??'—','unique ETFs represented over time'],
-   ['Scored this month',latest.filter(x=>x.isScored).length||U.scoredCount||'—','ETFs with a current ML score'],
-   ['Selected by ML layer',alphaBaseHoldings().filter(x=>x.inBroad||x.inStatic).length,'current ML selections']
+   ['Scored this month',latest.filter(x=>x.isScored).length,'ETFs with a current ML score'],
+   ['Selected by ML Broad',latest.filter(x=>x.selectedBroad).length,'current ML Broad selections only']
   ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
  }
  const roleRows=isStatic?staticRows:latest,roleCounts={};roleRows.forEach(x=>{const k=prettyRole(x.roleFamily||'Unclassified')||'Unclassified';roleCounts[k]=(roleCounts[k]||0)+1});
@@ -562,7 +579,7 @@ function renderUniverse(){
  if(isStatic){
   $('#universeViewTabs').innerHTML=`<button class="active">ML Static (${S.canonicalCount??staticRows.length??0})</button>`;
  }else{
-  const views=[['latest',`Current universe (${U.latestCount??0})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
+  const views=[['latest',`Current universe (${latest.length})`],['union',`Historical universe (${U.historicalUnionCount??0})`]];
   $('#universeViewTabs').innerHTML=views.map(([k,l])=>`<button data-v="${k}" class="${universeView===k?'active':''}">${l}</button>`).join('');
   $('#universeViewTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{universeView=b.dataset.v;renderUniverse()});
  }
@@ -584,11 +601,16 @@ function renderUniverseTable(){
    $('#universeBody').innerHTML=`<tr><td colspan="10" class="muted">${esc(reason)}</td></tr>`;return;
   }
   $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedStatic?'selected-row':''}"><td class="num"><b>${r.staticRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.staticScore==null?'—':num(r.staticScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td class="num">${r.multiSignalRank??'—'}</td><td><span class="pill ${staticDecisionClass(r.staticState)}">${esc(staticDecisionLabel(r.staticState))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td></tr>`).join('');
+ }else if(universeView==='union'){
+  $('#universeInventoryTitle').textContent='ML Broad historical representative inventory';
+  $('#universeInventoryNote').textContent='Historical point-in-time representative union; no current rank or selection status is inferred from historical metadata.';
+  $('#universeTableHead').innerHTML='<tr><th>ETF</th><th>Name</th><th>Role family</th><th>Exposure</th><th>First represented</th><th>Last represented</th><th class="num">Months represented</th></tr>';
+  $('#universeBody').innerHTML=filtered.map(r=>`<tr><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td><td>${esc(r.firstRepMonth||'—')}</td><td>${esc(r.lastRepMonth||'—')}</td><td class="num">${r.representativeMonths??'—'}</td></tr>`).join('');
  }else{
   $('#universeInventoryTitle').textContent='ML Broad universe ranking';
   $('#universeInventoryNote').innerHTML=`<b>Signal ${esc(L.meta?.signalMonth||'—')}</b> · Current universe ${latest.length} · Scored ${latest.filter(x=>x.isScored).length}. <b>ML Broad rank</b> is the current cross-sectional rank; <b>Blend score</b> is a normalized ranking diagnostic, not an expected return or probability. Lower rank is stronger.`;
   $('#universeTableHead').innerHTML='<tr><th class="num">Broad rank</th><th>ETF</th><th>Name</th><th class="num">Blend score</th><th class="num">REX2 rank</th><th class="num">Chronos-2 rank</th><th>Rank band</th><th>Current state</th><th>Role family</th><th>Exposure</th><th class="num">Months represented</th><th>60-month history</th></tr>';
-  $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedComposite?'selected-row':''}"><td class="num"><b>${r.finalRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.finalScore==null?'—':num(r.finalScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td>${r.rankZone?`<span class="pill ${String(r.rankZone).includes('TOP10')?'good':'muted'}">${esc(rankBandLabel(r.rankZone))}</span>`:'—'}</td><td><span class="pill ${rankDecisionClass(r.portfolioStatus)}">${esc(rankDecisionLabel(r.portfolioStatus,r.unscoredReason))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td><td class="num">${r.representativeMonths??'—'}</td><td>${r.modelReadyProxy?'<span class="pill good">YES</span>':'<span class="pill muted">NO</span>'}</td></tr>`).join('');
+  $('#universeBody').innerHTML=filtered.map(r=>`<tr class="${r.selectedBroad?'selected-row':''}"><td class="num"><b>${r.finalRank??'—'}</b></td><td><b>${esc(r.ticker)}</b></td><td>${esc(r.name||'')}</td><td class="num">${r.finalScore==null?'—':num(r.finalScore,4)}</td><td class="num">${r.rex2Rank??'—'}</td><td class="num">${r.chronosRank??'—'}</td><td>${r.rankZone?`<span class="pill ${String(r.rankZone).includes('TOP10')?'good':'muted'}">${esc(rankBandLabel(r.rankZone))}</span>`:'—'}</td><td><span class="pill ${rankDecisionClass(r.portfolioStatus)}">${esc(rankDecisionLabel(r.portfolioStatus,r.unscoredReason))}</span></td><td>${esc(prettyRole(r.roleFamily))}</td><td>${esc(prettyExposure(r.exposure))}</td><td class="num">${r.representativeMonths??'—'}</td><td>${r.modelReadyProxy?'<span class="pill good">YES</span>':'<span class="pill muted">NO</span>'}</td></tr>`).join('');
  }
 }
 
@@ -597,6 +619,11 @@ function staticHistoryMap(){
  (D.performanceRows||[]).forEach(r=>{if(Array.isArray(r.staticSelectedTickers)&&r.staticSelectedTickers.length)out.set(String(r.signalMonth),{selectedTickers:r.staticSelectedTickers,source:'V142_SELECTED_ALPHA_PATH'})});
  (L.staticDecisionHistory||[]).forEach(r=>{if(Array.isArray(r.selectedTickers)&&r.selectedTickers.length)out.set(String(r.signalMonth),r)});
  return out;
+}
+function finalHistoryMap(){
+ const m=new Map((D.finalTargetHistory||[]).map(r=>[String(r.signalMonth),r.weights]));
+ if(L.meta?.signalMonth&&Array.isArray(L.currentHoldings)&&L.currentHoldings.length)m.set(String(L.meta.signalMonth),Object.fromEntries(L.currentHoldings.map(x=>[x.ticker,Number(x.targetWeight)])));
+ return m;
 }
 function renderHistory(){
  const sh=staticHistoryMap();
@@ -618,16 +645,25 @@ function renderHistory(){
  }
  rows.sort((a,b)=>String(a.signalMonth).localeCompare(String(b.signalMonth)));
 
+ const finalMap=finalHistoryMap(),isFinal=historySleeve==='final';
  const sleeveField=historySleeve==='static'?'staticSelectedTickers':'selectedTickers';
- const months=rows.slice(-36),tickers=[...new Set(months.flatMap(m=>m[sleeveField]||[]))].sort();
- let head='<tr><th>Ticker</th>'+months.map(m=>`<th title="${m._state==='OFFICIAL_OPEN'?'Current Official open holding month':'Completed decision'}">${esc(String(m.signalMonth).slice(2))}${m._state==='OFFICIAL_OPEN'?'*':''}</th>`).join('')+'</tr>';
- let body=tickers.map(t=>`<tr><td>${esc(t)}</td>`+months.map((m,i)=>{const on=(m[sleeveField]||[]).includes(t),prev=i?(months[i-1][sleeveField]||[]).includes(t):false;return `<td class="cell ${on?(prev?'on':'new'):''} ${m._state==='OFFICIAL_OPEN'?'open-decision':''}" title="${esc(m.signalMonth)} · ${esc(t)} · ${historySleeve==='static'?'ML Static':'ML Broad'} · ${m._state==='OFFICIAL_OPEN'?'Official open':'Completed'}"></td>`}).join('')+'</tr>').join('');
- $('#historyHeatmap').innerHTML=tickers.length?`<table class="heatgrid">${head}${body}</table>`:'<div class="muted">ML Static decision history is not available for this refresh.</div>';
- $('#historySleeveTabs').innerHTML=[['broad','ML Broad'],['static','ML Static']].map(([k,l])=>`<button data-h="${k}" class="${historySleeve===k?'active':''}">${l}</button>`).join('');
+ const months=rows.slice(-36);
+ const selected=m=>isFinal?Object.keys(finalMap.get(String(m.signalMonth))||{}).filter(t=>Number(finalMap.get(String(m.signalMonth))[t])>1e-12):(m[sleeveField]||[]);
+ const tickers=[...new Set(months.flatMap(selected))].sort();
+ const layer=isFinal?'Final Global Alpha':historySleeve==='static'?'ML Static':'ML Broad';
+ let head='<tr><th>Ticker</th>'+months.map(m=>'<th title="'+esc(m._state==='OFFICIAL_OPEN'?'Current Official open holding month':'Completed decision')+'">'+esc(String(m.signalMonth).slice(2))+(m._state==='OFFICIAL_OPEN'?'*':'')+'</th>').join('')+'</tr>';
+ let body=tickers.map(t=>'<tr><td>'+esc(t)+'</td>'+months.map((m,i)=>{
+  const known=!isFinal||finalMap.has(String(m.signalMonth)),on=selected(m).includes(t),prev=i?selected(months[i-1]).includes(t):false;
+  const wt=isFinal?finalMap.get(String(m.signalMonth))?.[t]:null;
+  const detail=known?(on?(isFinal?' · '+pct(wt,2):' · selected'):' · not selected'):' · target history unavailable';
+  return '<td class="cell '+(on?(prev?'on':'new'):'')+' '+(m._state==='OFFICIAL_OPEN'?'open-decision':'')+'" title="'+esc(m.signalMonth+' · '+t+' · '+layer+detail)+'">'+(known?'':'—')+'</td>';
+ }).join('')+'</tr>').join('');
+ $('#historyHeatmap').innerHTML=tickers.length?'<table class="heatgrid">'+head+body+'</table>':'<div class="muted">Selected target history is unavailable for this refresh.</div>';
+ $('#historySleeveTabs').innerHTML=[['final','Final MP'],['broad','ML Broad'],['static','ML Static']].map(([k,l])=>'<button data-h="'+k+'" class="'+(historySleeve===k?'active':'')+'">'+l+'</button>').join('');
  $('#historySleeveTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{historySleeve=b.dataset.h;renderHistory()});
- $('#historyHeatmapTitle').textContent=historySleeve==='static'?'ML Static selection heatmap':'ML Broad selection heatmap';
+ $('#historyHeatmapTitle').textContent=isFinal?'Final Global Alpha target history':layer+' selection heatmap';
  const histStart=months[0]?.signalMonth||'—',histEnd=months.at(-1)?.signalMonth||'—';
- $('#historyHeatmapNote').textContent=`Last ${months.length} ${historySleeve==='static'?'ML Static':'ML Broad'} decisions · signal history ${histStart} → ${histEnd} · completed history plus current Official open month`;
+ $('#historyHeatmapNote').textContent=layer+' · signals '+histStart+' → '+histEnd+(isFinal?' · merged targets before ACWI core; hover for weight; — = no verified target record':' · layer-specific selections, not final MP holdings');
 
  const P=currentProfile(),LP=liveProfile(alphaWeight);
  $('#historyProfileContext').textContent=`${profileLabel()} · completed performance through ${D.meta?.performanceThroughCompletedDate||currentProfile().support.end||'—'} · current Official ${officialSignal||'—'} → ${officialHolding||'—'}; Current MTD ${L.meta?.mtdBaselineDate||'—'} → ${L.meta?.marketDataThrough||'—'} shown separately`;
@@ -638,9 +674,10 @@ function renderHistory(){
    const ret=open?(LP?LP.mtd:null):pr?.portfolio;
    const active=open?(LP?LP.activeMtd:null):pr?.active;
    const state=open?'<span class="pill warn">OPEN · OFFICIAL</span>':'<span class="pill muted">COMPLETED</span>';
-   const broad=(r.selectedTickers||[]).join(', ')||'—';
-   const stat=(r.staticSelectedTickers||[]).join(', ')||'—';
-   return `<tr class="${open?'history-open-row':''}"><td>${state}</td><td>${esc(r.signalMonth)}</td><td>${esc(r.holdingMonth||r.month||'—')}</td><td>${pct(1-alphaWeight,0)} / ${pct(alphaWeight,0)}</td><td>${esc(broad)}</td><td>${esc(stat)}</td><td class="num">${r.alphaTurnover==null?'—':pct(r.alphaTurnover,1)}</td><td class="num">${ret==null?'—':pct(ret,2)}${open?' <small>MTD</small>':''}</td><td class="num ${active!=null&&active>=0?'goodtext':'badtext'}">${active==null?'—':pct(active,2)}${open?' <small>MTD</small>':''}</td></tr>`;
+   const targets=finalMap.get(String(r.signalMonth));
+   const targetText=targets?Object.entries(targets).filter(([t,w])=>Number(w)>1e-12).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([t,w])=>t+' '+pct(w,2)).join(' · '):'Unavailable — see verified Excel export';
+   const turnover=open?L.currentCost?.finalPortfolioOneWayTurnover:r.alphaTurnover;
+   return `<tr class="${open?'history-open-row':''}"><td>${state}</td><td>${esc(r.signalMonth)}</td><td>${esc(r.holdingMonth||r.month||'—')}</td><td>${pct(1-alphaWeight,0)} / ${pct(alphaWeight,0)}</td><td>${esc(targetText)}</td><td class="num">${turnover==null?'—':pct(turnover,1)}</td><td class="num">${ret==null?'—':pct(ret,2)}${open?' <small>MTD</small>':''}</td><td class="num ${active!=null&&active>=0?'goodtext':'badtext'}">${active==null?'—':pct(active,2)}${open?' <small>MTD</small>':''}</td></tr>`;
  }).join('');
 }
 
@@ -665,18 +702,19 @@ function renderRobustness(){
  const dev=Number(m.developmentIR??m.development_ir);
  const bridge=Number(m.temporalBridgeIR??m.temporal_bridge_ir);
  const floor=Number(m.robustFloorIR??m.robust_floor_ir);
- const histRows=D.performanceRows||[],monthlyStart=histRows[0]?.holdingMonth||currentProfile().support.holdingStart||'—',monthlyEnd=D.meta?.performanceThroughHoldingMonth||currentProfile().support.holdingEnd||'—';
- const selectedSpec=p.find(x=>String(x.lane_id)===String(m.selectedLaneId||m.selected_lane_id))||p[0]||{};
- const nFull=selectedSpec.n_months__COMBINED??histRows.length,nEarly=selectedSpec.n_months__DEVELOPMENT??'—',nLate=selectedSpec.n_months__TEMPORAL_BRIDGE??'—';
+ const F=buildProfile(1),fm=F.metrics;
+ $('#finalRobustKpis').innerHTML=[['Final Global IR',num(fm.ir,2)],['Final Global TE',pct(fm.te,2)],['Final Global CAGR',pct(fm.cagr,2)],['Final Global relative DD',pct(fm.relativeDD,2)]].map(([k,v])=>`<div class="kpi"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="note">${esc(F.support.start+' → '+F.support.end)}</div></div>`).join('');
+ const selectedSpec=p.find(x=>String(x.lane_id)===String(m.selectedLaneId||m.selected_lane_id))||{};
+ const nFull=selectedSpec.n_months__COMBINED??'—',nEarly=selectedSpec.n_months__DEVELOPMENT??'—',nLate=selectedSpec.n_months__TEMPORAL_BRIDGE??'—';
  $('#robustKpis').innerHTML=[
   ['Selected ML blend IR',num(combined,2),`${nFull}-month full monthly history`],
   ['Earlier-period IR',num(dev,2),`${nEarly}-month earlier sample`],
   ['Later-period IR',num(bridge,2),`${nLate}-month later sample`],
   ['Lower period IR',num(floor,2),'minimum of earlier and later periods']
  ].map((x,i)=>`<div class="kpi ${i===0?'accent':''}"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
- $('#robustnessBasisStrip').innerHTML=`<strong>ML layer diagnostics only:</strong> completed monthly returns ${monthlyStart} → ${monthlyEnd}. These checks describe the primary ML selection layer, not the full three-layer Global portfolio. Monthly IR here is therefore different from the completed daily portfolio IR on Performance.`;
+ $('#robustnessBasisStrip').innerHTML=`<strong>Frozen ML-layer diagnostics only:</strong> ${nFull} monthly observations (${nEarly} earlier / ${nLate} later); the exact sample endpoints are not supplied with this evidence. These are not current full-MP sensitivity results or independent out-of-sample proof.`;
  $('#costBody').innerHTML=c.map(x=>`<tr><td>${x.cost_bps_per_side} bp</td><td class="num">${num(x.ir,2)}</td><td class="num">${pct(x.active_return,2)}</td><td class="num">${pct(x.te,2)}</td><td class="num">${pct(x.cagr,2)}</td><td class="num">${pct(x.mdd,2)}</td></tr>`).join('');
- const csn=$('#costBody')?.closest('section')?.querySelector('.panel-title p');if(csn)csn.textContent=`Primary ML layer only · completed monthly returns ${monthlyStart} → ${monthlyEnd} · monthly accounting`;
+ const csn=$('#costBody')?.closest('section')?.querySelector('.panel-title p');if(csn)csn.textContent=`Primary ML layer only · frozen monthly cost scenarios (${c[0]?.n_months??'—'} observations); not full-MP cost sensitivity`;
  $('#plateauBody').innerHTML=p.map(x=>{const selected=String(x.lane_id)===String(m.selectedLaneId||m.selected_lane_id);return `<tr class="${selected?'selected-spec-row':''}"><td>${pct(x.rex2_weight,0)} / ${pct(x.chronos_weight,0)} · Hold ${x.hold_rank}${selected?' <span class="pill good">SELECTED</span>':''}</td><td class="num">${num(x.ir__COMBINED,2)}</td><td class="num">${num(x.ir__DEVELOPMENT,2)}</td><td class="num">${num(x.ir__TEMPORAL_BRIDGE,2)}</td><td class="num">${pct(x.avg_one_way_turnover__COMBINED,1)}</td></tr>`}).join('');
 }
 function renderMethod(){
@@ -715,3 +753,4 @@ $('#footerModel').textContent='Global Equity Alpha · Live';
 renderGlobalProfileControl();
 renderCockpit();renderPerformance();renderHoldings();renderUniverse();renderHistory();renderRisk();renderRobustness();renderMethod();nav('cockpit');
 })();
+// EQUITY_FINAL_MP_READER_V1
