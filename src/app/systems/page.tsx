@@ -8,7 +8,7 @@ import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
 export const metadata: Metadata = {
   title: "Systems",
   description:
-    "Operational investment systems from SlackQuant, organized into portfolio operating, investment strategy, and risk & analytics layers.",
+    "Operational investment systems from SlackQuant, organized into portfolio operations, portfolio architecture, investment strategies, and risk & scenario analysis.",
   alternates: { canonical: "/systems/" },
 };
 
@@ -38,7 +38,7 @@ export default function SystemsPage() {
           <div className="eyebrow">Systems</div>
           <h1>Investment systems, organized by operating role.</h1>
           <p className="hero-copy">
-            SlackQuant separates portfolio operating infrastructure, investment strategy engines, and risk & analytics systems.
+            SlackQuant distinguishes portfolio operations, portfolio architecture, independent investment strategies, and risk & analytics systems.
             Strategy engines are further grouped by opportunity domain—multi-asset and equity alpha—while related research remains
             independently versioned under Research.
           </p>
@@ -48,12 +48,11 @@ export default function SystemsPage() {
       <section className="section">
         <div className="shell">
           <div className="research-stream-head systems-stream-head">
-            <div className="kicker">Three-layer system architecture</div>
+            <div className="kicker">System architecture</div>
             <h2>Clear roles. Distinct strategy domains.</h2>
             <p>
               The hierarchy distinguishes where a system sits in the investment process from the market domain in which a strategy operates.
-              Portfolio Operations handles integration and portfolio-level decisions; Investment Strategies generate positions; Risk & Analytics supports diagnosis
-              and stress interpretation.
+              Portfolio Operations integrates providers and applies portfolio-level controls; Portfolio Architecture selects and combines allocation rules; Investment Strategies generate positions; Risk & Analytics supports diagnosis and stress interpretation.
             </p>
           </div>
 
@@ -113,8 +112,7 @@ export default function SystemsPage() {
           </div>
 
           <p className="systems-rollout-note">
-            The three layers describe operating roles, not performance ranking. Multi-Asset Strategies and Equity Alpha Strategies are peer families
-            inside the Investment Strategy Layer; PDS remains the portfolio operating layer, while the Stress Lab remains a risk & analytics system.
+            These roles are not performance rankings or a claim that every strategy is currently used in ADAA or PDS. Multi-Asset Strategies and Equity Alpha Strategies are peer investment domains; the Stress Lab supports analysis across portfolios.
           </p>
         </div>
       </section>

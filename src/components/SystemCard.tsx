@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
 function evidenceLinkLabel(item: SystemItem) {
-  if (item.evidenceLabel === "Public Working Paper") return "Working Paper ↗";
-  if (item.evidenceLabel === "Technical White Paper") return "Technical White Paper ↗";
+  if (item.evidenceLabel === "Public Working Paper") return "Working Paper (SSRN) ↗";
+  if (item.evidenceLabel === "Technical White Paper") return "Technical White Paper (SSRN) ↗";
   return "SSRN ↗";
 }
 
@@ -39,6 +39,9 @@ export function SystemCard({ item }: { item: SystemItem }) {
             >
               Open Dashboard ↗
             </a>
+          ) : null}
+          {item.links.relatedResearch ? (
+            <Link href={item.links.relatedResearch}>View Research →</Link>
           ) : null}
           {item.links.ssrn ? (
             <a href={item.links.ssrn} target="_blank" rel="noopener noreferrer">

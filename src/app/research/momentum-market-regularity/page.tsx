@@ -221,7 +221,7 @@ export default function MomentumMarketRegularityPage() {
                 <div className="type">Public code</div>
                 <h3>Replication Code v1.0.3</h3>
                 <p>Code for the century-long market/bills experiment and Figure 7, together with the U.S. equity and industry calculations.</p>
-                <a href="https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3" target="_blank" rel="noopener noreferrer">
+                <a href={item.links.replication} target="_blank" rel="noopener noreferrer">
                   Open GitHub Release &#8599;
                 </a>
               </div>

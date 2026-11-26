@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { researchItems } from "@/data/research";
 import { quantitativeMethods } from "@/data/methods";
+import { quantumLabs } from "@/data/quantum";
 import { site } from "@/data/site";
-import { systemItems } from "@/data/systems";
+import { getRelatedSystem, systemItems } from "@/data/systems";
 import { methodsRootHref } from "@/lib/methodsHref";
 
 export const metadata: Metadata = {
   title: "SlackQuant Research",
   description:
-    "Systematic investing, asset allocation, forecasting, financial data science, AI/ML, quantitative methods, and operational portfolio systems.",
+    site.description,
   alternates: { canonical: "/" },
 };
 
@@ -18,6 +19,7 @@ export default function HomePage() {
     researchItems.find((item) => item.stream === "investment" && item.featured) ??
     researchItems.find((item) => item.stream === "investment") ??
     researchItems[0];
+  const relatedFeaturedSystem = getRelatedSystem(investmentFeatured.slug);
   const featuredSystem =
     systemItems.find((item) => item.prominence === "flagship") ?? systemItems[0];
   const supportingSystems = systemItems.filter(
@@ -36,12 +38,11 @@ export default function HomePage() {
       <section className="hero">
         <div className="shell">
           <div className="eyebrow">Research platform</div>
-          <h1>Systematic investing, forecasting, and financial data science.</h1>
+          <h1>{site.tagline}</h1>
           <p className="hero-copy">
-            Investment and academic research, operational systems, and quantitative
-            methods across systematic investing, asset allocation, forecasting,
-            financial data science, and AI/ML. Where available, projects link directly
-            to papers, evidence, code, tools, documentation, and live interfaces.
+            Research in systematic investing, economic forecasting, financial data science,
+            artificial intelligence, and quantum computing. Explore working papers,
+            reproducible methods, computational experiments, and practical investment systems.
           </p>
           <div className="actions">
             <Link className="btn primary" href="/research/">
@@ -53,9 +54,9 @@ export default function HomePage() {
             <a className="btn soft" href={methodsRootHref}>
               Quantitative Methods
             </a>
-            <a className="btn soft ext" href={site.github} target="_blank" rel="noopener noreferrer">
-              GitHub
-            </a>
+            <Link className="btn soft" href="/quantum/">
+              Quantum Lab
+            </Link>
           </div>
         </div>
       </section>
@@ -89,12 +90,14 @@ export default function HomePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Open SSRN Record ↗
+                      Working Paper (SSRN) ↗
                     </a>
                   ) : null}
-                  <Link className="btn soft" href="/systems/equity-alpha/">
-                    Related System
-                  </Link>
+                  {relatedFeaturedSystem ? (
+                    <Link className="btn soft" href={`/systems/${relatedFeaturedSystem.slug}/`}>
+                      Related System
+                    </Link>
+                  ) : null}
                 </div>
               </div>
               <aside className="feature-side">
@@ -221,7 +224,7 @@ export default function HomePage() {
       <section className="section">
         <div className="shell">
           <div className="section-head">
-            <div className="section-title">Quantitative Methods</div>
+            <div className="section-title">Methods &amp; Experiments</div>
             <a className="section-link" href={methodsRootHref}>
               Open methods library &#8594;
             </a>
@@ -241,13 +244,13 @@ export default function HomePage() {
               </a>
             </article>
             <article className="stream">
-              <div className="kicker">Quantum Lab · Foundations I</div>
-              <h3>From qubit states to entanglement.</h3>
+              <div className="kicker">Quantum Lab</div>
+              <h3>Explore the foundations of quantum computing.</h3>
               <p>
-                Four compact experiments connect statevectors, phase interference,
+                The first four experiments connect statevectors, phase interference,
                 tensor products, and Bell states to reproducible NumPy and Qiskit
-                calculations. Each lesson distinguishes ideal simulation from
-                physical quantum hardware.
+                calculations. The lab develops the foundations for further quantum
+                information and machine-learning research; current results are ideal simulations.
               </p>
               <Link className="section-link strong-link" href="/quantum/">
                 Explore Quantum Lab &#8594;
@@ -276,13 +279,12 @@ export default function HomePage() {
               <div className="output-label">Methods Articles</div>
             </div>
             <div className="output-metric">
-              <div className="output-value">{publicRepositoryCount}</div>
-              <div className="output-label">Public Repositories</div>
+              <div className="output-value">{quantumLabs.length}</div>
+              <div className="output-label">Quantum Experiments</div>
             </div>
           </div>
           <p className="output-note">
-            Counts reflect the current public catalog across Research, Systems, and Quantitative Methods.
-            Repository links are deduplicated across research, deployment, and replication records.
+            Counts reflect the current public catalog across Research, Systems, Quantitative Methods, and Quantum Lab. The research and system records link to {publicRepositoryCount} distinct public repositories.
           </p>
         </div>
       </section>
@@ -325,9 +327,9 @@ export default function HomePage() {
           </div>
           <div className="about-copy">
             <p>
-              SlackQuant Research brings investment research, academic research,
-              operational systems, and a shared Quantitative Methods library into one
-              public platform while keeping the role of each resource clear.
+              SlackQuant Research connects investment and academic research with
+              computational methods, experiments, and operational systems. Published
+              evidence, educational material, and current model portfolios serve distinct purposes.
             </p>
             <div className="researcher-line">
               <span className="researcher-prefix">Research by</span>

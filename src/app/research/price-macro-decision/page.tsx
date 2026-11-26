@@ -41,7 +41,7 @@ export default function PriceMacroDecisionPage() {
 
   return (
     <main>
-      <ResearchPaperHero item={item} relatedSystem={{ href: "/systems/f2r/", label: "F2R System" }} />
+      <ResearchPaperHero item={item} relatedSystem={{ href: "/systems/f2r/", label: "Related F2R System" }} />
 
       <div className="shell detail-layout">
         <aside className="toc">

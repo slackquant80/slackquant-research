@@ -90,10 +90,48 @@ def audit_static(require_build: bool) -> list[Check]:
 
     identities = {
         "PDS registry identity": ['slug: "pds"', 'systemGroup: "portfolio-decision"', 'prominence: "flagship"', 'status: "Public live"'],
-        "ADAA registry identity": ['slug: "adaa"', 'title: "ADAA"', 'systemGroup: "portfolio-strategy"', 'status: "Public live"'],
+        "ADAA registry identity": ['slug: "adaa"', 'title: "ADAA"', 'systemGroup: "portfolio-architecture"', 'status: "Public live"'],
         "F2R formal identity": ['slug: "f2r"', 'title: "Forecast-to-Rank Allocation (F2R)"', 'subtitle: "Machine-Learning Cross-Asset Portfolio Strategy"', 'systemGroup: "portfolio-strategy"'],
     }
-    for name, toks in identities.items(): add(c, name, all(t in systems for t in toks), "; ".join(toks))
+    def registry_blocks(source: str) -> dict[str, str]:
+        return {slug: block for slug, block in re.findall(r'(?ms)^  \{\n    slug: "([^"]+)",\n(.*?)^  \},?$', source)}
+
+    def registry_field(block: str, key: str) -> str:
+        match = re.search(r'(?m)^\s*' + re.escape(key) + r':\s*"([^"]+)"', block)
+        return match.group(1) if match else ""
+
+    sys_blocks = registry_blocks(systems)
+    research_blocks = registry_blocks(text(ROOT / "src/data/research.ts"))
+    for name, toks in identities.items():
+        slug = re.search(r'slug: "([^"]+)"', toks[0]).group(1)
+        block = sys_blocks.get(slug, "")
+        add(c, name, bool(block) and all(t in block for t in toks[1:]), "; ".join(toks))
+    link_errors = []
+    for source, registry in ((systems, sys_blocks), (text(ROOT / "src/data/research.ts"), research_blocks)):
+        if len(registry) != len(re.findall(r'(?m)^    slug: "[^"]+",$', source)):
+            link_errors.append("registry record parse/count mismatch")
+    dashboard_paths = set()
+    for slug, block in sys_blocks.items():
+        related = registry_field(block, "relatedResearch")
+        dashboard = registry_field(block, "publicDashboard")
+        if related:
+            match = re.fullmatch(r"/research/([^/]+)/", related)
+            target = research_blocks.get(match.group(1), "") if match else ""
+            if not target or not registry_field(block, "ssrnId") or registry_field(block, "ssrnId") != registry_field(target, "ssrnId") or registry_field(block, "ssrn") != registry_field(target, "ssrn"):
+                link_errors.append(f"{slug}:primary research identity")
+            if target and registry_field(target, "operationalDashboard") and registry_field(target, "operationalDashboard") != dashboard:
+                link_errors.append(f"{slug}:research dashboard path mismatch")
+        if dashboard:
+            if not re.fullmatch(r"/(?!/)[^?#]+/", dashboard) or not ((ROOT / "src/app" / dashboard.strip("/") / "page.tsx").is_file() or (ROOT / "public" / dashboard.strip("/") / "index.html").is_file()):
+                link_errors.append(f"{slug}:dashboard route missing or invalid")
+            dashboard_paths.add(dashboard)
+    for registry in (sys_blocks, research_blocks):
+        for slug, block in registry.items():
+            paper_id = registry_field(block, "ssrnId")
+            paper_url = registry_field(block, "ssrn")
+            if paper_id and not re.search(r"[?&]abstract_id=" + re.escape(paper_id) + r"(?:&|$)", paper_url):
+                link_errors.append(f"{slug}:SSRN URL/id mismatch")
+    add(c, "Registry paper and dashboard identities", bool(sys_blocks and research_blocks) and not link_errors, f"{len(sys_blocks)} systems / {len(research_blocks)} research records / {len(dashboard_paths)} first-party dashboards", "; ".join(link_errors))
     add(c, "Unified operating-state labels", systems.count('status: "Public live"') >= 5 and systems.count('dateLabel: "Monthly decision cycle"') >= 2 and 'dateLabel: "Operational dashboard"' in systems and 'dateLabel: "Validated baseline v1 · On-demand analysis"' in systems and "Updated August 2026" not in systems and "Updated August 30, 2026" not in systems, "system cards separate common public status from system-specific operating state")
     add(c, "ADAA repository semantics", "replicationRepository:" in systems and not re.search(r'slug:\s*"adaa"[\s\S]{0,1500}?deploymentRepository:', systems), "ADAA replication repo separated from deployment semantics")
 
@@ -114,7 +152,7 @@ def audit_static(require_build: bool) -> list[Check]:
         add(c, f"{slug.upper()} page CTA wording", "Open Dashboard ↗" in s, "Open Dashboard ↗")
     pds = text(SYSTEM_PAGE_FILES["pds"])
     add(c, "PDS approved same-origin new-tab marker", 'href="/systems/pds/dashboard/"' in pds and 'target="_blank"' in pds and 'rel="noopener noreferrer"' in pds and 'data-sq-dashboard-app="true"' in pds, "PDS dashboard opens securely in new tab")
-    add(c, "ExternalLinkPolicy approved first-party exceptions", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "isFirstPartyPdf", ".pdf", "/systems/pds/dashboard/", "/systems/adaa/dashboard/", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]), "PDF documents plus marked PDS and ADAA dashboard application routes are eligible")
+    add(c, "ExternalLinkPolicy approved first-party exceptions", all(x in policy for x in ["FIRST_PARTY_NEW_TAB_APP_PATHS", "getFirstPartyDashboardPaths()", "isFirstPartyPdf", ".pdf", "anchor.dataset.sqDashboardApp", "noopener", "noreferrer", "normalizeFirstPartyAnchor"]) and {"/systems/pds/dashboard/", "/systems/adaa/dashboard/", "/systems/f2r/dashboard/", "/dashboards/equity-alpha/"}.issubset(dashboard_paths), "PDF documents plus explicitly marked, registry-owned dashboard paths are eligible")
 
     unauthorized = []
     for p in (ROOT / "src").rglob("*.tsx"):
@@ -125,7 +163,7 @@ def audit_static(require_build: bool) -> list[Check]:
             href_m = re.search(r'href="(/[^"]+)"', tag)
             if not href_m: continue
             href = href_m.group(1)
-            if href == "/systems/pds/dashboard/" and 'data-sq-dashboard-app="true"' in tag: continue
+            if href in dashboard_paths and 'data-sq-dashboard-app="true"' in tag: continue
             if href.lower().endswith(".pdf"): continue
             unauthorized.append(f"{p.relative_to(ROOT)} -> {href}")
     add(c, "No unauthorized same-origin new-tab", not unauthorized, "none", "; ".join(unauthorized[:8]))
@@ -167,6 +205,7 @@ def audit_static(require_build: bool) -> list[Check]:
             if not dest.is_file() or route not in text(dest): reverse_missing.append(f"{mid}->{slug}")
     add(c, "Method reverse system usage", not reverse_missing, "all mapped Methods backlink to Systems", ", ".join(reverse_missing))
 
+    add(c, "Sitemap dashboard registry binding", "...getFirstPartyDashboardPaths()" in sitemap_src, "first-party dashboard routes derive from system registry")
     add(c, "Sitemap automatic Method discovery", all(x in sitemap_src for x in ["collectMethodArticleRoutes", 'entry.name === "article.html"', "...collectMethodArticleRoutes()"]), "future rendered QM articles auto-discovered")
     add(c, "Canonical sitemap fallback", 'https://research.slackquant.com' in sitemap_src and 'http://localhost:3000' not in sitemap_src, "production canonical fallback")
     add(c, "Robots sitemap contract", 'https://research.slackquant.com' in robots_src and 'sitemap: `${siteUrl}/sitemap.xml`' in robots_src, "robots always points to root sitemap")
@@ -245,6 +284,8 @@ def audit_static(require_build: bool) -> list[Check]:
         if sitemap_file.is_file():
             sx = text(sitemap_file)
             exp_urls = [f"{CANONICAL}{href}" for href in hrefs.values()]
+            dashboard_missing = [CANONICAL + href for href in sorted(dashboard_paths) if CANONICAL + href not in sx]
+            add(c, "Built sitemap dashboard inclusion", not dashboard_missing, "all registry-owned first-party dashboard routes present", ", ".join(dashboard_missing))
             miss = [u for u in exp_urls if u not in sx]
             bad = [x for x in ["localhost", "/private/", "/internal/"] if x in sx.lower()]
             add(c, "Built sitemap Method inclusion", not miss, "all Method articles in root sitemap", ", ".join(miss[:8]))

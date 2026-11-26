@@ -18,7 +18,8 @@ a:focus-visible,.btn:focus-visible{outline:3px solid rgba(29,79,102,.32);outline
 .site-header{position:sticky;top:0;z-index:10;background:rgba(247,247,243,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .brand{font-weight:720;letter-spacing:-.025em;font-size:19px}
-.nav-links{display:flex;gap:28px;align-items:center;font-size:14px;color:#34383c}
+.nav-links{display:flex;gap:28px;row-gap:8px;align-items:center;flex-wrap:wrap;min-width:0;font-size:14px;color:#34383c}
+.nav-links a{white-space:nowrap}
 .nav-links a:hover{color:var(--accent)}
 .ext::after{content:" ↗";font-size:.85em}
 .hero,.about-hero,.index-hero{padding:100px 0 82px;border-bottom:1px solid var(--line)}

@@ -16,7 +16,9 @@ const researchDetailRoutes=[
  '/research/equity-alpha/','/research/beyond-average-accuracy/',
  '/research/momentum-market-regularity/',
 ];
-const routes=selftest?['/']:['/','/systems/','/research/',...researchDetailRoutes,'/methods/','/about/','/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/equity-alpha/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
+const ramaResearch='/research/rama/';
+const quantumRoutes=['/quantum/','/quantum/quantum-states/','/quantum/gates-and-interference/','/quantum/tensor-products/','/quantum/entanglement/'];
+const routes=selftest?['/']:['/','/systems/','/research/',...researchDetailRoutes,ramaResearch,'/methods/','/about/',...quantumRoutes,'/systems/pds/','/systems/adaa/','/systems/f2r/','/systems/rama/','/systems/equity-alpha/','/systems/rama/dashboard/','/systems/pds/dashboard/','/systems/adaa/dashboard/','/systems/f2r/dashboard/','/dashboards/equity-alpha/'];
 const viewports=[{name:'desktop',width:1440,height:900},{name:'mobile',width:390,height:844}];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 function need(cond,message){if(!cond)throw Error(message)}
@@ -77,9 +79,30 @@ async function run(){
     need(s.bodyChars>=35,'RENDERED_CONTENT_MISSING');need(s.css>0,'CSS_MISSING');need(!s.brokenImages.length,'BROKEN_IMAGES '+s.brokenImages.join(','));
     result.checks.push('DOM','CSS','IMAGES');if(result.overflow)result.errors.push('HORIZONTAL_VIEWPORT_OVERFLOW_'+s.width+'_'+s.viewport);
     if(route==='/')need(s.links.some(x=>x.includes('/systems/')),'HOME_SYSTEMS_LINK_MISSING');
-    if(route==='/systems/')for(const name of ['pds','adaa','f2r','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
+    if(route==='/systems/')for(const name of ['pds','adaa','f2r','rama','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
     if(route==='/research/'){
       need(s.links.some(x=>x.includes('/research/momentum-market-regularity/')),'MOMENTUM_FOUNDATION_INDEX_LINK_MISSING');
+    }
+    if(!selftest&&!route.includes('/dashboard/')&&!route.startsWith('/dashboards/')){
+      const nav=await c.eval('(()=>{const n=document.querySelector(".nav-links,.sq-platform-nav-links");if(!n)return null;return [...n.querySelectorAll("a[href]")].map(a=>({path:new URL(a.href).pathname,visible:!!a.getClientRects().length,inside:a.getBoundingClientRect().left>=-1&&a.getBoundingClientRect().right<=innerWidth+1}))})()');
+      need(nav&&nav.length===6,'PLATFORM_NAV_COUNT_'+JSON.stringify(nav));
+      need(nav.slice(0,5).map(a=>a.path).join('|')==='/research/|/systems/|/methods/|/quantum/|/about/'&&nav.every(a=>a.visible&&a.inside),'PLATFORM_NAV_ORDER_OR_OVERFLOW_'+JSON.stringify(nav));
+      result.checks.push('SIX_LINK_PLATFORM_NAV');
+    }
+    if(route===ramaResearch){
+      const structure=await c.eval('(()=>[".detail-layout","#question","#design","#findings","#evidence","#interpretation","#citation"].every(s=>document.querySelector(s)))()');
+      need(structure,'RAMA_PAPER_STRUCTURE_MISSING');
+      need(s.links.some(x=>x.includes('/systems/rama/'))&&s.links.some(x=>x.includes('abstract_id=7757240')),'RAMA_COMPANION_LINK_MISSING');
+      result.checks.push('RAMA_PAPER_EVIDENCE_AND_IDENTITY');
+    }
+    if(route==='/quantum/'){
+      for(const lab of quantumRoutes.slice(1))need(s.links.some(x=>new URL(x).pathname===lab),'QUANTUM_LAB_LINK_MISSING_'+lab);
+      result.checks.push('QUANTUM_FOUR_EXPERIMENTS');
+    }
+    if(route===ramaResearch||route==='/systems/rama/'||route==='/systems/'){
+      const links=await c.eval('(()=>[...document.querySelectorAll("a[href]")].filter(a=>new URL(a.href).pathname==="/systems/rama/dashboard/").map(a=>({target:a.target,rel:a.rel,app:a.dataset.sqDashboardApp})))()');
+      need(links.length>=1&&links.every(a=>a.target==='_blank'&&a.rel.includes('noopener')&&a.rel.includes('noreferrer')&&a.app==='true'),'RAMA_DASHBOARD_LINK_POLICY_'+JSON.stringify(links));
+      result.checks.push('RAMA_DASHBOARD_NEW_TAB');
     }
     if(researchDetailRoutes.includes(route)){
       if(route==='/research/momentum-market-regularity/'){
@@ -109,10 +132,22 @@ async function run(){
       result.checks.push('F2R_THREE_DASHBOARD_LINKS_NEW_TAB');
     }
     if(route.startsWith('/systems/')&&route!='/systems/'&&!route.endsWith('/dashboard/'))need(s.links.some(x=>x.includes('dashboard')),'DASHBOARD_LINK_MISSING');
-    if(route==='/systems/pds/dashboard/'||route==='/systems/adaa/dashboard/'){
+    if(route==='/systems/pds/dashboard/'||route==='/systems/adaa/dashboard/'||route==='/systems/rama/dashboard/'){
       const frame=await c.eval('(()=>{const f=document.querySelector("iframe"),d=f?.contentDocument;return {found:!!f,ready:d?.readyState||"",chars:(d?.body?.innerText||"").trim().length,src:f?.src||""}})()');
       need(frame.found&&frame.ready==='complete'&&frame.chars>=300,'DASHBOARD_IFRAME_NOT_RENDERED');
       result.iframe={src:frame.src,contentChars:frame.chars};result.checks.push('IFRAME_CONTENT_RENDERED');
+      if(route==='/systems/rama/dashboard/'){
+        need(new URL(frame.src).pathname==='/assets/systems/rama/index.html','RAMA_WRONG_IFRAME');
+        for(const name of ['overview','performance','history','signals','method']){
+          const key=JSON.stringify(name);
+          const ok=await c.eval('(()=>{const d=document.querySelector("iframe").contentDocument;const b=d.querySelector("button[data-page="+ '+key+' +"]");if(!b)return false;b.click();const p=d.getElementById('+key+');return b.getAttribute("aria-selected")==="true"&&p&&!p.hidden&&p.getBoundingClientRect().width>0})()');
+          need(ok,'RAMA_TAB_NOT_ACTIVE_'+name);
+          result.checks.push('RAMA_TAB_'+name+'_active');
+        }
+        const facts=await c.eval('(()=>{const d=document.querySelector("iframe").contentDocument;return {clock:!!d.querySelector("#clock")?.innerText.trim(),paper:!!d.querySelector("#paper table"),private:/PRIVATE REVIEW|v0\\.13/.test(d.body.innerText),width:d.documentElement.scrollWidth,viewport:d.documentElement.clientWidth}})()');
+        need(facts.clock&&facts.paper&&!facts.private&&facts.width<=facts.viewport+16,'RAMA_RENDER_OR_OVERFLOW_'+JSON.stringify(facts));
+        result.checks.push('RAMA_CLOCK_PAPER_AND_MOBILE');
+      }
       if(route==='/systems/adaa/dashboard/'){
         for(const name of ['monitor','overview','allocations']){
           const key=JSON.stringify(name);

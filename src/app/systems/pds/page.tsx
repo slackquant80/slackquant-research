@@ -275,15 +275,13 @@ export default function PdsSystemPage() {
             <div className="kicker">Current Active Core providers</div>
             <h2>Complementary strategy systems inside the PDS portfolio process</h2>
             <p className="body-copy">
-              ADAA and F2R are the strategy systems currently admitted to the Active Core. Each remains an independent Portfolio
-              Strategy System with its own models, research record, and operating history; PDS is responsible for portfolio-level
-              admission, integration, the current combined decision, and monitoring.
+              ADAA and F2R are the providers currently admitted to the Active Core. ADAA is a decision-diversified portfolio allocation engine; F2R is an independent forecasting-based investment strategy. Each maintains its own research and operating history. PDS integrates the current providers and governs portfolio-level risk, currency implementation, and monitoring.
             </p>
             <div className="dual pds-provider-dual">
               <div className="dual-card">
-                <div className="kicker">Portfolio Strategy System</div>
+                <div className="kicker">Portfolio Architecture</div>
                 <h3>ADAA</h3>
-                <p>A multi-asset strategy built around Decision Diversification, combining complementary decision horizons, opportunity views, defensive responses, and persistence.</p>
+                <p>A portfolio allocation framework built around Decision Diversification, with a current multi-asset implementation combining complementary decision horizons, opportunity views, defensive responses, and persistence.</p>
                 <Link className="btn soft" href="/systems/adaa/">View ADAA</Link>
               </div>
               <div className="dual-card">

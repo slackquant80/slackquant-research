@@ -1,14 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { getFirstPartyDashboardPaths } from "@/data/systems";
 
 const CANONICAL_HOST = "research.slackquant.com";
-const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set([
-  "/systems/pds/dashboard/",
-  "/systems/adaa/dashboard/",
-  "/systems/f2r/dashboard/",
-  "/dashboards/equity-alpha/",
-]);
+const FIRST_PARTY_NEW_TAB_APP_PATHS = new Set(getFirstPartyDashboardPaths());
 const FIRST_PARTY_FULLSIZE_ASSET_EXTENSIONS = [".png", ".jpg", ".jpeg", ".svg", ".webp"];
 
 function secureNewTabAnchor(anchor: HTMLAnchorElement) {

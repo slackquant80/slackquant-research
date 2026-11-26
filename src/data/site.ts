@@ -2,7 +2,8 @@ export const site = {
   name: "SlackQuant Research",
   baseName: "SlackQuant",
   description:
-    "Systematic investing, asset allocation, forecasting, financial data science, AI/ML, quantitative methods, and operational portfolio systems.",
+    "Quantitative research, computational methods, and investment systems, spanning systematic investing, economic forecasting, financial data science, artificial intelligence, and quantum computing.",
+  tagline: "Quantitative research, computational methods, and investment systems.",
   researcher: {
     name: "Sungkyu Lee",
     nameKo: "이성규",

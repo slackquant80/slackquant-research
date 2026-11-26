@@ -21,7 +21,7 @@ export default function AdaaPage() {
 
   return (
     <main>
-      <ResearchPaperHero item={item} relatedSystem={{ href: "/systems/adaa/", label: "ADAA System" }} />
+      <ResearchPaperHero item={item} />
 
       <div className="shell detail-layout">
         <aside className="toc">
@@ -259,10 +259,10 @@ export default function AdaaPage() {
                 {item.links.operationalDashboard ? (
                   <ArtifactLink
                     href={item.links.operationalDashboard}
-                    external
+                    dashboardApp
                     variant="inverse"
                   >
-                    Open Dashboard
+                    Open Dashboard ↗
                   </ArtifactLink>
                 ) : null}
               </div>

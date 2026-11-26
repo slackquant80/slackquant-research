@@ -13,6 +13,7 @@ export function SiteHeader() {
           <Link href="/research/">Research</Link>
           <Link href="/systems/">Systems</Link>
           <a href={methodsRootHref}>Methods</a>
+          <Link href="/quantum/">Quantum Lab</Link>
           <Link href="/about/">About</Link>
           <a className="ext" href={site.github} target="_blank" rel="noopener noreferrer">
             GitHub
