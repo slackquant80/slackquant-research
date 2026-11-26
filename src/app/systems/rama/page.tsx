@@ -38,7 +38,7 @@ export default function RamaSystemPage() {
           <div className="paper-track-row"><div className="eyebrow">SlackQuant Systems</div><span className="track-chip">{item.category}</span></div>
           <h1 className="paper-title">{item.title}</h1>
           <div className="paper-subtitle">{item.subtitle}</div>
-          <div className="paper-meta"><span>{item.status}</span><span>Monthly decision cycle</span><span>Global10 · USD</span></div>
+          <div className="paper-meta"><span>{item.status}</span><span>Completed through {evidence.completedThrough}</span><span>Global10 · USD</span></div>
           <div className="actions">
             {dashboardHref ? <a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">Open Dashboard ↗</a> : null}
             {item.links.relatedResearch ? <Link className="btn soft" href={item.links.relatedResearch}>View Related Research</Link> : null}

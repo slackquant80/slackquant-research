@@ -4,6 +4,7 @@ import { systemGroupDefinitions, systemItems, systemLayerDefinitions } from "@/d
 import { pdsCanonicalSummary } from "@/data/pdsCanonicalSummary";
 import { getLiveSystemEvidence } from "@/lib/liveSystemEvidence";
 import { getEquityAlphaEvidence } from "@/lib/equityAlphaEvidence";
+import { getRamaEvidence } from "@/lib/ramaEvidence";
 
 export const metadata: Metadata = {
   title: "Systems",
@@ -29,6 +30,7 @@ export default function SystemsPage() {
   const publishedThrough: Record<string, string> = {
     adaa: getLiveSystemEvidence("adaa").completedThrough,
     f2r: getLiveSystemEvidence("f2r").completedThrough,
+    rama: getRamaEvidence().completedThrough,
     "equity-alpha": getEquityAlphaEvidence().supportEnd,
   };
   return (

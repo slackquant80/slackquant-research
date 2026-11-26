@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { SystemItem } from "@/data/systems";
 
 function evidenceLinkLabel(item: SystemItem) {
-  if (item.evidenceLabel === "Public Working Paper") return "Working Paper (SSRN) ↗";
+  if (item.evidenceLabel === "Public Working Paper" || item.evidenceLabel === "Working Paper") return "Working Paper (SSRN) ↗";
   if (item.evidenceLabel === "Technical White Paper") return "Technical White Paper (SSRN) ↗";
   return "SSRN ↗";
 }

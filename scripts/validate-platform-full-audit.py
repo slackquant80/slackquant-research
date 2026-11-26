@@ -50,6 +50,8 @@ def main() -> int:
     need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app", "getRamaEvidence()", "Completed Model Performance", "LivePerformanceChart", "LiveMonthlyReturnsChart", "Recent 12 Completed Holding Months", 'MethodsUsed researchSlug="rama-system"')
     need("src/lib/ramaEvidence.ts", "public/assets/systems/rama/index.html", "RAMA_PUBLIC_WORKSPACE_V1", "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1", "p.dailyMetrics", "primary.rows.slice(-12)", "completedThrough: d.execution")
     need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
+    need("src/app/systems/page.tsx", "rama: getRamaEvidence().completedThrough")
+    need("src/components/SystemCard.tsx", 'item.evidenceLabel === "Working Paper"', 'Working Paper (SSRN)')
     # Momentum Foundation is public working-paper research, not peer-reviewed journal publication.
     momentum_page = need(
         "src/app/research/momentum-market-regularity/page.tsx",

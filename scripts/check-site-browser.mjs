@@ -80,6 +80,12 @@ async function run(){
     result.checks.push('DOM','CSS','IMAGES');if(result.overflow)result.errors.push('HORIZONTAL_VIEWPORT_OVERFLOW_'+s.width+'_'+s.viewport);
     if(route==='/')need(s.links.some(x=>x.includes('/systems/')),'HOME_SYSTEMS_LINK_MISSING');
     if(route==='/systems/')for(const name of ['pds','adaa','f2r','rama','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
+    if(route==='/systems/'){
+      const cards=await c.eval('(()=>{return ["f2r","rama"].map(slug=>{const a=[...document.querySelectorAll(".system-card")].find(e=>[...e.querySelectorAll("a[href]")].some(x=>new URL(x.href).pathname==="/systems/"+slug+"/"));return a?{meta:a.querySelector(".card-meta")?.innerText||"",paper:[...a.querySelectorAll("a[href]")].filter(x=>x.href.includes("abstract_id=")).map(x=>({text:x.innerText,href:x.href,target:x.target})),links:[...a.querySelectorAll(".card-artifact-links a")].map(x=>x.innerText)}:null})})()');
+      need(cards.every(x=>x&&/Completed through 20\d{2}-\d{2}-\d{2}/.test(x.meta)&&x.paper.length===1&&x.paper[0].text.trim()==='Working Paper (SSRN) ↗'&&x.paper[0].target==='_blank'&&x.links.length===3),'STRATEGY_CARD_PARITY_'+JSON.stringify(cards));
+      need(cards[1].paper[0].href.includes('abstract_id=7757240'),'RAMA_CARD_PAPER_ID');
+      result.checks.push('STRATEGY_CARD_PAPER_AND_CLOCK_PARITY');
+    }
     if(route==='/research/'){
       need(s.links.some(x=>x.includes('/research/momentum-market-regularity/')),'MOMENTUM_FOUNDATION_INDEX_LINK_MISSING');
     }

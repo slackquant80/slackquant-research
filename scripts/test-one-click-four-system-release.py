@@ -566,6 +566,110 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"SOURCE_REVIEW_TARGET_CHANGED"):
                 mod._review_public_snapshot("pds",pr,current)
 
+
+    def test_rama_real_published_artifact_exact_refresh_receiver(self):
+        import tempfile
+        import runpy
+        root=SOURCE.parent.parent
+        ns=runpy.run_path(str(SOURCE.parent/"sync-rama-public-candidate.py"))
+        html=(root/mod.RAMA_TARGET).read_bytes()
+        body=html.decode("utf-8").split("<script>const D=",1)[1]
+        d,end=json.JSONDecoder().raw_decode(body)
+        state=body[:end].encode("utf-8")
+        artifacts={"index.html":hashlib.sha256(html).hexdigest(),
+                   "public_state.json":hashlib.sha256(state).hexdigest()}
+        receipt={"schema":"RAMA_PUBLIC_WORKSPACE_V1","status":"HOLD_PUBLIC_APPROVAL",
+                 "candidate":"a"*64,"marketThrough":d["through"],
+                 "completedThrough":d["execution"],"artifacts":artifacts}
+        approval={"schema":receipt["schema"],"status":"APPROVED_PUBLIC_RELEASE",
+                  "candidate":receipt["candidate"],"artifacts":artifacts,
+                  "rights":"APPROVED","ssrnId":"7757240",
+                  "venue":"NOT_APPLICABLE_TO_EXISTING_MODEL_REFRESH",
+                  "basis":"OPERATOR_CONFIRMED_THIS_RUN","scope":"RAMA_DERIVED_WORKSPACE_ONLY"}
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp); (p/"index.html").write_bytes(html)
+            (p/"public_state.json").write_bytes(state)
+            (p/"PRIVATE_REVIEW_RECEIPT.json").write_text(json.dumps(receipt),encoding="utf-8")
+            ap=p/"approval.json"
+            def write(a):
+                raw=json.dumps(a).encode("utf-8");ap.write_bytes(raw)
+                return hashlib.sha256(raw).hexdigest()
+            h=write(approval)
+            actual,parsed=ns["approved"](p,ap,h,existing_model_refresh=True)
+            self.assertEqual(actual,html)
+            self.assertEqual(parsed,d)
+            with self.assertRaises(Exception):
+                ns["approved"](p,ap,h)
+            with self.assertRaises(Exception):
+                ns["approved"](p,ap,"0"*64,existing_model_refresh=True)
+            for changes in ({"rights":"PENDING"},{"basis":"STANDING"},
+                            {"scope":"RAW_PRICES"},{"venue":"VERIFIED"}):
+                bad=write({**approval,**changes})
+                with self.assertRaises(Exception):
+                    ns["approved"](p,ap,bad,existing_model_refresh=True)
+            original=write({**approval,"venue":"VERIFIED"})
+            self.assertEqual(ns["approved"](p,ap,original)[0],html)
+            h=write(approval)
+            (p/"index.html").write_bytes(html+b" ")
+            with self.assertRaises(Exception):
+                ns["approved"](p,ap,h,existing_model_refresh=True)
+
+    def test_rama_requires_complete_per_run_approval(self):
+        args=SimpleNamespace(rama_candidate=Path("candidate"),rama_approval=Path("approval"),
+                             rama_approval_sha256="a"*64)
+        with self.assertRaisesRegex(mod.Hold,"RAMA_PER_RUN_OPERATOR_CONSENT_REQUIRED"):
+            mod.rama_options(args)
+        args.rama_operator_consent=True
+        self.assertEqual(mod.rama_options(args)[2],"a"*64)
+        args.rama_approval=None
+        with self.assertRaisesRegex(mod.Hold,"RAMA_EXACT_APPROVAL_ARGUMENTS_REQUIRED"):
+            mod.rama_options(args)
+
+    def test_rama_standalone_does_not_invoke_incumbent_sources(self):
+        args=SimpleNamespace(rama_only=True,rama_operator_consent=True,
+            rama_candidate=Path("candidate"),rama_approval=Path("approval"),
+            rama_approval_sha256="a"*64,expected_market_close="2026-11-25")
+        old="b"*40; new="c"*40; main="d"*40
+        base={mod.PDS_MARK:"e"*40,mod.RAMA_TARGET:old,"src/app/page.tsx":"f"*40}
+        approved={"blob":new,"marketThrough":"2026-11-25"}
+        with patch.object(mod,"gh",return_value={"object":{"sha":main}}),\
+             patch.object(mod,"tree",return_value=base),\
+             patch.object(mod,"validated_rama_bytes",return_value=(b"data",approved)),\
+             patch.object(mod,"_market_clock_from_blob",return_value="2026-11-25"),\
+             patch.object(mod,"choose_current_inputs",side_effect=AssertionError("incumbent refresh")):
+            actual,_,updates,identity=mod.source_inputs(args)
+        self.assertEqual(actual,main)
+        self.assertEqual(updates,{mod.RAMA_TARGET:new})
+        self.assertEqual(identity["rama"],approved)
+
+    def test_rama_stale_fails_and_equal_blob_is_no_change(self):
+        args=SimpleNamespace(rama_only=True,rama_operator_consent=True,
+            rama_candidate=Path("candidate"),rama_approval=Path("approval"),
+            rama_approval_sha256="a"*64,expected_market_close="")
+        main="b"*40; blob="c"*40
+        base={mod.PDS_MARK:"d"*40,mod.RAMA_TARGET:blob}
+        approved={"blob":blob,"marketThrough":"2026-11-25"}
+        with patch.object(mod,"gh",return_value={"object":{"sha":main}}),\
+             patch.object(mod,"tree",return_value=base),\
+             patch.object(mod,"validated_rama_bytes",return_value=(b"data",approved)),\
+             patch.object(mod,"_market_clock_from_blob",return_value="2026-11-25"):
+            self.assertEqual(mod.stage(args)[0],None)
+        with patch.object(mod,"gh",return_value={"object":{"sha":main}}),\
+             patch.object(mod,"tree",return_value=base),\
+             patch.object(mod,"validated_rama_bytes",return_value=(b"data",approved)),\
+             patch.object(mod,"_market_clock_from_blob",return_value="2026-11-26"):
+            with self.assertRaisesRegex(mod.Hold,"RAMA_BELOW_PDS_MARK"):
+                mod.source_inputs(args)
+
+    def test_rama_combined_requires_exact_base(self):
+        args=SimpleNamespace(rama_operator_consent=True,rama_candidate=Path("candidate"),
+            rama_approval=Path("approval"),rama_approval_sha256="a"*64)
+        with patch.object(mod,"gh",return_value={"object":{"sha":"b"*40}}),\
+             patch.object(mod,"validated_rama_bytes",return_value=(b"data",{"blob":"c"*40})),\
+             patch.object(mod,"choose_current_inputs",return_value=("d"*40,{}, {}, {})):
+            with self.assertRaisesRegex(mod.Hold,"RAMA_PLATFORM_BASE_CHANGED"):
+                mod.source_inputs(args)
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
