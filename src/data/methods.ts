@@ -29,6 +29,13 @@ const systemMethodContext: Record<string, Record<string, string>> = {
     QM024: "Explains how heterogeneous predictive views can be combined or aggregated without confusing forecast weights, forecast scales, rank aggregation, and downstream portfolio weights.",
     QM025: "Defines the evaluation boundary for Chronos-2 and other pretrained time-series foundation models, separating inference-time information from pretraining knowledge and historical-evaluation claims.",
   },
+  "rama-system": {
+    QM007: "Explains how the completed month-end signal, next-close execution and between-rebalance drift determine the RAMA model wealth path.",
+    QM008: "Explains daily maximum drawdown and recovery behavior used to interpret RAMA's risk-based allocation.",
+    QM009: "Explains bilateral turnover and net accounting when RAMA changes its selected positions or target weights.",
+    QM010: "Distinguishes the absolute TIP exposure decision from the cross-sectional momentum ranking.",
+    QM027: "Explains the top-six ranking step and why selected assets need not receive equal or positive final weights.",
+  },
   "pds-system": {
     QM007: "Defines portfolio accounting and rebalance timing used to maintain a continuous PDS Core performance path across provider decisions.",
     QM008: "Defines drawdown, underwater duration, and recovery measures used to interpret path-dependent PDS Core downside behavior.",
@@ -304,6 +311,8 @@ export const quantitativeMethods: QuantitativeMethod[] = [
 
 const artifactMethodIds: Record<string, string[]> = {
   "momentum-market-regularity": ["QM010", "QM007", "QM008", "QM009", "QM013"],
+  "rama": ["QM010", "QM027", "QM007", "QM008", "QM009", "QM012"],
+  "rama-system": ["QM007", "QM008", "QM009", "QM010", "QM027"],
   "beyond-average-accuracy": ["QM001", "QM002", "QM003", "QM004", "QM005"],
   "adaa": ["QM007", "QM010", "QM011"],
   "adaa-system": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
@@ -328,6 +337,17 @@ export function getMethodContextForArtifact(
       throw new Error(`Missing system-specific method context: ${artifactSlug} / ${method.id}`);
     }
     return systemContext;
+  }
+  if (artifactSlug === "rama") {
+    const context: Record<string, string> = {
+      QM010: "Distinguishes the TIP canary from the cross-sectional momentum selection and explains why score definitions matter.",
+      QM027: "Explains the top-six selection independently of the subsequent variance-minimizing weights.",
+      QM007: "Explains completed signal dates, next-close execution and drift in the matched historical comparison.",
+      QM008: "Explains drawdown measures used to compare risk-based and equal-weight sizing.",
+      QM009: "Explains how drift-adjusted bilateral turnover and trading costs affect the return comparison.",
+      QM012: "Explains the overlapping three- and five-year return windows and why they are not independent trials.",
+    };
+    return context[method.id] ?? method.researchContext;
   }
   return method.researchContext;
 }

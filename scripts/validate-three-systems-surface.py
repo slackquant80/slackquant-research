@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = "https://research.slackquant.com"
 SYSTEM_METHODS = {
     "adaa": ["QM007", "QM009", "QM010", "QM011", "QM014", "QM029"],
+    "rama": ["QM007", "QM008", "QM009", "QM010", "QM027"],
     "f2r": ["QM001", "QM002", "QM003", "QM007", "QM009", "QM013", "QM019", "QM020", "QM027", "QM024", "QM025"],
     "pds": ["QM007", "QM008", "QM009", "QM011", "QM013", "QM014", "QM028", "QM029"],
     "scenario-stress-lab": ["QM001", "QM003", "QM006", "QM015", "QM016", "QM017", "QM018"],

@@ -90,7 +90,7 @@ async function run(){
       result.checks.push('SIX_LINK_PLATFORM_NAV');
     }
     if(route===ramaResearch){
-      const structure=await c.eval('(()=>[".detail-layout","#question","#design","#findings","#evidence","#interpretation","#citation"].every(s=>document.querySelector(s)))()');
+      const structure=await c.eval('(()=>[".detail-layout","#overview","#question","#design","#findings","#evidence","#interpretation","#methods","#citation"].every(s=>document.querySelector(s)))()');
       need(structure,'RAMA_PAPER_STRUCTURE_MISSING');
       need(s.links.some(x=>x.includes('/systems/rama/'))&&s.links.some(x=>x.includes('abstract_id=7757240')),'RAMA_COMPANION_LINK_MISSING');
       result.checks.push('RAMA_PAPER_EVIDENCE_AND_IDENTITY');
@@ -98,6 +98,11 @@ async function run(){
     if(route==='/quantum/'){
       for(const lab of quantumRoutes.slice(1))need(s.links.some(x=>new URL(x).pathname===lab),'QUANTUM_LAB_LINK_MISSING_'+lab);
       result.checks.push('QUANTUM_FOUR_EXPERIMENTS');
+    }
+    if(route==='/systems/rama/'){
+      const evidence=await c.eval('(()=>["#empirical-evidence .live-performance-svg","#empirical-evidence .live-monthly-svg","#empirical-evidence .evidence-table","#operation","#methods .method-used-row"].every(s=>document.querySelector(s)))()');
+      need(evidence,'RAMA_SYSTEM_EVIDENCE_MISSING');
+      result.checks.push('RAMA_SYSTEM_COMPLETED_EVIDENCE');
     }
     if(route===ramaResearch||route==='/systems/rama/'||route==='/systems/'){
       const links=await c.eval('(()=>[...document.querySelectorAll("a[href]")].filter(a=>new URL(a.href).pathname==="/systems/rama/dashboard/").map(a=>({target:a.target,rel:a.rel,app:a.dataset.sqDashboardApp})))()');

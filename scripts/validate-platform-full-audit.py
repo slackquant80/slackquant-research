@@ -46,8 +46,9 @@ def main() -> int:
     rama = research.split('slug: "rama"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
     for token in ('investmentTrack: "strategy"', 'ssrnId: "7757240"', 'publicVersion: "v0.20"'):
         if token not in rama: raise RuntimeError("RAMA research identity missing: " + token)
-    need("src/app/research/rama/page.tsx", "ResearchPaperHero", "9.44%", "12.58%", "25 bp", "no independent out-of-sample test")
-    need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app")
+    need("src/app/research/rama/page.tsx", "ResearchPaperHero", "9.44%", "12.58%", "25 bp", "no independent out-of-sample test", "PeerRiskFigure", "Mature-period matched sizing controls", "MethodsUsed researchSlug={item.slug}")
+    need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app", "getRamaEvidence()", "Completed Model Performance", "LivePerformanceChart", "LiveMonthlyReturnsChart", "Recent 12 Completed Holding Months", 'MethodsUsed researchSlug="rama-system"')
+    need("src/lib/ramaEvidence.ts", "public/assets/systems/rama/index.html", "RAMA_PUBLIC_WORKSPACE_V1", "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1", "p.dailyMetrics", "primary.rows.slice(-12)", "completedThrough: d.execution")
     need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
     # Momentum Foundation is public working-paper research, not peer-reviewed journal publication.
     momentum_page = need(
