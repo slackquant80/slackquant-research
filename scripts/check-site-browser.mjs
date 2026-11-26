@@ -26,7 +26,7 @@ class CDP{
  constructor(url){this.ws=new WebSocket(url);this.seq=0;this.waiting=new Map();this.errors=[];
   this.ws.addEventListener('message',e=>{let v;try{v=JSON.parse(e.data)}catch{return}
    if(v.id){const p=this.waiting.get(v.id);if(p){this.waiting.delete(v.id);v.error?p.reject(Error(v.error.message)):p.resolve(v.result||{})}}
-   else if(v.method==='Runtime.exceptionThrown')this.errors.push('JS_EXCEPTION '+(v.params.exceptionDetails?.text||'unknown'));
+   else if(v.method==='Runtime.exceptionThrown'){const e=v.params.exceptionDetails;this.errors.push('JS_EXCEPTION '+(e?.exception?.description||e?.text||'unknown')+' @ '+(e?.url||'unknown')+':'+(e?.lineNumber??'?'));}
    else if(v.method==='Log.entryAdded'&&v.params.entry?.level==='error')this.errors.push('CONSOLE '+(v.params.entry.url||'UNKNOWN_URL')+' '+v.params.entry.text);
    else if(v.method==='Network.responseReceived'&&v.params.response?.status>=400)this.errors.push('HTTP_RESOURCE_'+v.params.response.status+' '+v.params.response.url);
   });
@@ -93,6 +93,9 @@ async function run(){
       const structure=await c.eval('(()=>[".detail-layout","#overview","#question","#design","#findings","#evidence","#interpretation","#methods","#citation"].every(s=>document.querySelector(s)))()');
       need(structure,'RAMA_PAPER_STRUCTURE_MISSING');
       need(s.links.some(x=>x.includes('/systems/rama/'))&&s.links.some(x=>x.includes('abstract_id=7757240')),'RAMA_COMPANION_LINK_MISSING');
+      const plot=await c.eval('(()=>{const s=document.querySelector("#evidence svg.live-performance-svg");return {points:s?.querySelectorAll("circle").length||0,titles:s?[...s.querySelectorAll("circle title")].map(t=>t.textContent):[]}})()');
+      need(plot.points===6&&plot.titles.length===6&&plot.titles.every(t=>t.includes("CAGR")&&t.includes("drawdown")),'RAMA_PEER_EXHIBIT_RENDER_'+JSON.stringify(plot));
+      result.checks.push('RAMA_PEER_EXHIBIT_RENDER');
       result.checks.push('RAMA_PAPER_EVIDENCE_AND_IDENTITY');
     }
     if(route==='/quantum/'){
