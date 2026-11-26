@@ -50,7 +50,7 @@ export default function RamaSystemPage() {
         <aside className="toc"><strong>On this page</strong>
           <a href="#overview">System Role</a><a href="#process">Strategy Architecture</a>
           <a href="#universe">Investment Universe</a><a href="#empirical-evidence">Empirical Evidence</a>
-          <a href="#operation">Operating States</a><a href="#evidence">Research &amp; Public Artifacts</a><a href="#methods">Quantitative Methods</a>
+          <a href="#operation">Operating States</a><a href="#evidence">Related Research &amp; Dashboard</a><a href="#methods">Quantitative Methods</a>
         </aside>
         <article>
           <section className="prose-section" id="overview">
@@ -89,7 +89,7 @@ export default function RamaSystemPage() {
             {dashboardHref ? <div className="actions"><a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">Open Full RAMA Dashboard ↗</a></div> : null}
             <div className="research-snapshot-block">
               <div className="kicker">Working paper evidence</div><h3>Historical sizing comparison at 25 bp</h3>
-              <p className="body-copy">The working paper uses 215 holding intervals, from 1 August 2008 to 1 July 2026, with monthly-return volatility and Sharpe and daily maximum drawdown. The paper applies 25 bp per dollar bought or sold to its main comparison, rather than the dashboard’s 10 bp.</p>
+              <p className="body-copy">The working paper covers 215 holding periods from 1 August 2008 to 1 July 2026. Volatility and Sharpe use monthly returns; maximum drawdown uses daily valuations. The main comparison deducts 25 bp per dollar bought or sold from gross returns, rather than the dashboard’s 10 bp charge at execution.</p>
               <div className="metrics system-metrics research-snapshot-metrics">{[["9.44%","Net CAGR"],["8.84%","Annualized monthly volatility"],["−12.58%","Daily maximum drawdown"],["1.07","Sharpe (Rf=0)"]].map(([v,l]) => <div className="metric" key={l}><div className="value">{v}</div><div className="label">{l}</div></div>)}</div>
               <div className="evidence-note">Source: RAMA working paper v0.20, Table 3. The matched equal-weight rule returned 9.52% with 9.75% volatility and −16.40% daily maximum drawdown.</div>
             </div>
@@ -105,7 +105,7 @@ export default function RamaSystemPage() {
             <div className="boundary-note"><strong>Model portfolio.</strong> The dashboard reports model allocations and performance, not executed account trades. Calendar-month and year-to-date returns are distinct from execution-to-execution holding-period returns.</div>
           </section>
           <section className="prose-section" id="evidence">
-            <div className="kicker">Related Research &amp; Dashboard</div><h2>Strategy research and model implementation</h2>
+            <div className="kicker">Related research</div><h2>Research and model portfolio</h2>
             <p className="body-copy">The working paper compares variance-based sizing with equal weighting and alternative sizing rules. It also examines transaction costs, changes to the investment universe and comparisons with HAA, AAA and KDA. The research page presents those historical results, while the dashboard tracks the current model portfolio.</p>
             <div className="repro-links documentation-artifacts">
               {item.links.relatedResearch ? <Link className="artifact" href={item.links.relatedResearch}><span className="artifact-kicker">STRATEGY RESEARCH</span><strong>Risk-Aware Momentum Allocation (RAMA)</strong><small>Working paper, historical comparisons and robustness analysis.</small><span className="artifact-action">View Research →</span></Link> : null}
