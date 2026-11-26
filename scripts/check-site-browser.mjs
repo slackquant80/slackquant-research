@@ -118,6 +118,14 @@ async function run(){
       need(links.length>=1&&links.every(a=>a.target==='_blank'&&a.rel.includes('noopener')&&a.rel.includes('noreferrer')&&a.app==='true'),'RAMA_DASHBOARD_LINK_POLICY_'+JSON.stringify(links));
       result.checks.push('RAMA_DASHBOARD_NEW_TAB');
     }
+    if(route===ramaResearch||route==='/systems/rama/'){
+      const layout=await c.eval('(()=>{const scope=document.querySelector("main .rama-detail-layout");const group=scope?.querySelector(".documentation-artifacts");if(!group)return null;const cards=[...group.querySelectorAll(":scope > .artifact")];const box=e=>e.getBoundingClientRect();return {count:cards.length,groupGap:box(group).top-box(group.previousElementSibling).bottom,columns:getComputedStyle(group).gridTemplateColumns,cards:cards.map(a=>{const parts=[".artifact-kicker","strong","small",".artifact-action"].map(q=>a.querySelector(q));if(parts.some(x=>!x))return null;const rects=parts.map(box);const style=getComputedStyle(a);return {stacked:style.display==="flex"&&style.flexDirection==="column",separated:rects.slice(1).every((r,i)=>r.top>=rects[i].bottom+2),contained:rects.every(r=>r.left>=box(a).left-1&&r.right<=box(a).right+1&&r.bottom<=box(a).bottom+1),title:parts[1].textContent,action:parts[3].textContent}})}})()');
+      need(layout&&layout.count===2&&layout.groupGap>=12&&layout.cards.every(a=>a&&a.stacked&&a.separated&&a.contained),'RAMA_RESOURCE_CARD_VISUAL_LAYOUT_'+JSON.stringify(layout));
+      need(layout.cards.some(a=>a.title==='RAMA Public Dashboard'&&a.action==='Open Dashboard ↗'),'RAMA_RESOURCE_CARD_LABEL');
+      need(mode.name!=='mobile'||layout.columns.trim().split(/\s+/).length===1,'RAMA_MOBILE_CARD_COLUMNS_'+layout.columns);
+      result.checks.push('RAMA_RESOURCE_CARD_LAYOUT_AND_TEXT');
+
+    }
     if(researchDetailRoutes.includes(route)){
       if(route==='/research/momentum-market-regularity/'){
         // Publication exhibits are below the fold and intentionally loading="lazy".

@@ -48,6 +48,9 @@ def main() -> int:
         if token not in rama: raise RuntimeError("RAMA research identity missing: " + token)
     need("src/app/research/rama/page.tsx", "ResearchPaperHero", "9.44%", "12.58%", "25 bp", "no independent out-of-sample test", "PeerRiskFigure", "Mature-period matched sizing controls", "MethodsUsed researchSlug={item.slug}")
     need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app", "getRamaEvidence()", "Completed Model Performance", "LivePerformanceChart", "LiveMonthlyReturnsChart", "Recent 12 Completed Holding Months", 'MethodsUsed researchSlug="rama-system"')
+    for rel in ("src/app/research/rama/page.tsx", "src/app/systems/rama/page.tsx"):
+        need(rel, 'rama-detail-layout', 'repro-links documentation-artifacts', 'RAMA Public Dashboard', 'artifact-kicker', 'artifact-action')
+    need("src/app/globals.css", ".rama-detail-layout .body-copy + .documentation-artifacts", ".rama-detail-layout .rama-universe-table")
     need("src/lib/ramaEvidence.ts", "public/assets/systems/rama/index.html", "RAMA_PUBLIC_WORKSPACE_V1", "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1", "p.dailyMetrics", "primary.rows.slice(-12)", "completedThrough: d.execution")
     need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
     need("src/app/systems/page.tsx", "rama: getRamaEvidence().completedThrough")
