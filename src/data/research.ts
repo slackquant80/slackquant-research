@@ -77,7 +77,7 @@ export const researchItems: ResearchItem[] = [
       researchDashboard:
         "https://slackquant80.github.io/adaa-slackquant/",
       operationalDashboard:
-        "https://research.slackquant.com/systems/adaa/dashboard/"
+        "/systems/adaa/dashboard/"
     }
   },
   {
@@ -430,6 +430,33 @@ export const researchItems: ResearchItem[] = [
       replication: "https://github.com/slackquant80/momentum-market-regularity-replication/releases/tag/v1.0.3",
       archivalRelease: "https://doi.org/10.5281/zenodo.24268624",
       doi: "https://doi.org/10.5281/zenodo.24268624"
+    }
+  },
+  {
+    slug: "rama",
+    title: "Risk-Aware Momentum Allocation (RAMA)",
+    subtitle: "Combining Canary Momentum and Minimum-Variance Portfolio Construction",
+    stream: "investment",
+    streamLabel: "Investment Research Series",
+    investmentTrack: "strategy",
+    investmentTrackLabel: "Strategy Research",
+    status: "Working Paper · SSRN review",
+    publicVersion: "v0.20",
+    ssrnId: "7757240",
+    dateLabel: "November 2026",
+    authorLine: "Sungkyu Lee",
+    affiliation: "Graduate School of Computing, Yonsei University",
+    shortSummary: "RAMA separates market exposure, momentum-based asset selection and constrained minimum-variance sizing to manage portfolio risk.",
+    researchQuestion: "Can variance-based position sizing preserve the returns of momentum selection while reducing realized portfolio risk?",
+    findings: [
+      "Over 215 historical holding months, RAMA returned 9.44% per year net of 25 bp per traded dollar, versus 9.52% for the matched equal-weight rule.",
+      "Annualized volatility was 8.84% versus 9.75%, and daily maximum drawdown was 12.58% versus 16.40%; Calmar ratios were 0.75 and 0.58.",
+      "Diagonal covariance produced similar risk-adjusted results with less turnover in the mature sample. The evidence is retrospective; no independent out-of-sample test is reported."
+    ],
+    tags: ["Dynamic Asset Allocation", "Momentum", "Minimum Variance", "Risk Management"],
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7757240",
+      operationalDashboard: "/systems/rama/dashboard/",
     }
   },
   {

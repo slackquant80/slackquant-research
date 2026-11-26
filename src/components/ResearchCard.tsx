@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { ResearchItem } from "@/data/types";
+import { getRelatedSystem } from "@/data/systems";
 
 export function ResearchCard({ item }: { item: ResearchItem }) {
+  const related = getRelatedSystem(item.slug);
   return (
     <article className="research-card">
       <div className="card-kicker-row">
@@ -29,17 +31,20 @@ export function ResearchCard({ item }: { item: ResearchItem }) {
         <div className="card-artifact-links" aria-label={`${item.title} public artifacts`}>
           {item.links.ssrn ? (
             <a href={item.links.ssrn} target="_blank" rel="noopener noreferrer">
-              SSRN ↗
+              Working Paper (SSRN) ↗
             </a>
           ) : null}
           {item.links.github ? (
             <a href={item.links.github} target="_blank" rel="noopener noreferrer">
-              GitHub ↗
+              Replication Repository ↗
             </a>
+          ) : null}
+          {related ? (
+            <Link href={`/systems/${related.slug}/`}>View System →</Link>
           ) : null}
           {item.links.archivalRelease ? (
             <a href={item.links.archivalRelease} target="_blank" rel="noopener noreferrer">
-              Archive ↗
+              Archival DOI ↗
             </a>
           ) : null}
         </div>

@@ -1,5 +1,6 @@
 import { ArtifactLink } from "@/components/ArtifactLink";
 import type { ResearchItem } from "@/data/types";
+import { getRelatedSystem } from "@/data/systems";
 
 type RelatedSystem = {
   href: string;
@@ -16,7 +17,9 @@ export function ResearchPaperHero({
   relatedSystem,
 }: ResearchPaperHeroProps) {
   const paperHref = item.links.ssrn ?? item.links.paper;
-  const paperLabel = item.links.ssrn ? "Open SSRN Record" : "Open Paper";
+  const paperLabel = item.links.ssrn ? "Working Paper (SSRN)" : "Open Paper";
+  const primarySystem = getRelatedSystem(item.slug);
+  const systemLink = primarySystem ? { href: `/systems/${primarySystem.slug}/`, label: "View System" } : relatedSystem;
 
   return (
     <section className="paper-hero">
@@ -61,9 +64,9 @@ export function ResearchPaperHero({
             </ArtifactLink>
           ) : null}
 
-          {relatedSystem ? (
-            <ArtifactLink href={relatedSystem.href}>
-              {relatedSystem.label}
+          {systemLink ? (
+            <ArtifactLink href={systemLink.href}>
+              {systemLink.label}
             </ArtifactLink>
           ) : null}
         </div>

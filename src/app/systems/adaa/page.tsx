@@ -11,9 +11,9 @@ import { adaaPublishedEvidence } from "@/data/systemEvidence";
 const item = getSystem("adaa");
 
 export const metadata: Metadata = {
-  title: "ADAA — Portfolio Strategy System",
+  title: "ADAA — Decision-Diversified Portfolio Architecture",
   description:
-    "Live multi-asset Portfolio Strategy System built around Decision Diversification, with complementary decision horizons, opportunity views, defensive responses, and persistence under a defined monthly decision and execution process.",
+    "Decision-diversified portfolio architecture with a live multi-asset implementation combining complementary allocation rules under a defined monthly decision and execution process.",
   alternates: { canonical: "/systems/adaa/" },
 };
 
@@ -78,7 +78,7 @@ export default function AdaaSystemPage() {
             <div className="kicker">System role</div>
             <h2>Decision Diversification for a live multi-asset portfolio</h2>
             <p className="lede">
-              ADAA is a live multi-asset Portfolio Strategy System built around Decision Diversification: diversify the
+              ADAA is a portfolio architecture with a live multi-asset implementation, built around Decision Diversification: diversify the
               decision process before relying on asset diversification alone. Complementary allocation perspectives carry
               different horizons, opportunity views, defensive responses, and persistence, so portfolio behavior is not
               tied to one rule, one model family, or one regime response.
@@ -157,7 +157,7 @@ export default function AdaaSystemPage() {
               recipe. Detailed implementation, historical tests, and reproducibility materials remain in the versioned research record.
             </div>
             <div className="system-operating-list adaa-pds-relationship">
-              <div><strong>Relationship to PDS.</strong><span> ADAA remains an independent Portfolio Strategy System while currently serving as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. That provider status is an operating state, not the definition of PDS.</span></div>
+              <div><strong>Relationship to PDS.</strong><span> ADAA is an independent portfolio allocation engine and currently serves as an admitted Active Core provider within the broader </span><Link href="/systems/pds/">Portfolio Decision System</Link><span>. Its strategy pool can evolve through research and review; current PDS integration and ADAA composition remain as documented.</span></div>
             </div>
           </section>
 

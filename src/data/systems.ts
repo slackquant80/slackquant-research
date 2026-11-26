@@ -1,5 +1,6 @@
 export type SystemGroupKey =
   | "portfolio-decision"
+  | "portfolio-architecture"
   | "portfolio-strategy"
   | "equity-alpha"
   | "risk-scenario";
@@ -45,7 +46,7 @@ export const systemItems: SystemItem[] = [
     dateLabel: "Operational dashboard",
     shortSummary:
       "SlackQuant's multi-strategy portfolio operating system. PDS Core combines independently maintained strategy providers, PDS Adaptive adds a bounded hybrid risk-control layer that combines an RL signal with independent volatility confirmation, and Dynamic FX applies a separately managed investor-level currency overlay. The public dashboard shows the current operating state while machine-specific infrastructure remains internal.",
-    role: "Provider Review, Portfolio Integration, Decision Process, and Monitoring",
+    role: "Portfolio Integration, Risk Control, and Monitoring",
     methodsKey: "pds-system",
     links: {
       publicDashboard: "/systems/pds/dashboard/",
@@ -55,14 +56,14 @@ export const systemItems: SystemItem[] = [
     slug: "adaa",
     title: "ADAA",
     subtitle: "Autonomous Dynamic Asset Allocation",
-    category: "Multi-Asset Strategy",
-    systemGroup: "portfolio-strategy",
+    category: "Portfolio Architecture",
+    systemGroup: "portfolio-architecture",
     prominence: "standard",
     status: "Public live",
     dateLabel: "Monthly decision cycle",
     shortSummary:
-      "A live multi-asset strategy built around Decision Diversification: combining complementary decision horizons, cross-asset opportunity views, defensive responses, and persistence so the portfolio does not depend on a single allocation rule. Official decisions, current drift, and provisional preview states are shown separately.",
-    role: "Decision-Diversified Multi-Asset Portfolio Strategy",
+      "ADAA selects and combines complementary allocation rules under strategy uncertainty. Its current multi-asset implementation diversifies decision horizons, opportunity views, defensive responses, and persistence. The strategy pool can evolve when evidence supports a change. Official decisions, current drift, and provisional preview states are shown separately.",
+    role: "Decision-Diversified Portfolio Architecture",
     ssrnId: "7251518",
     evidenceLabel: "Public Working Paper",
     methodsKey: "adaa-system",
@@ -99,6 +100,25 @@ export const systemItems: SystemItem[] = [
     },
   },
 
+  {
+    slug: "rama",
+    title: "Risk-Aware Momentum Allocation (RAMA)",
+    subtitle: "Momentum Selection and Constrained Minimum-Variance Allocation",
+    category: "Multi-Asset Strategy",
+    systemGroup: "portfolio-strategy",
+    prominence: "standard",
+    status: "Model portfolio",
+    dateLabel: "Monthly decision cycle",
+    shortSummary: "An independent multi-asset strategy using TIP momentum for market exposure, relative momentum for ETF selection, and a shrunk covariance estimate for position sizing.",
+    role: "Risk-Aware Multi-Asset Portfolio Strategy",
+    ssrnId: "7757240",
+    evidenceLabel: "Working Paper",
+    links: {
+      ssrn: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7757240",
+      relatedResearch: "/research/rama/",
+      publicDashboard: "/systems/rama/dashboard/",
+    },
+  },
   {
     slug: "equity-alpha",
     title: "Equity Alpha",
@@ -160,6 +180,13 @@ export const systemGroupDefinitions: Array<{
       "Portfolio-level strategy review, integration, combined decisions, and ongoing monitoring.",
   },
   {
+    key: "portfolio-architecture",
+    kicker: "Portfolio construction",
+    title: "Portfolio Architecture",
+    description:
+      "Strategy selection, decision diversification, and robust capital allocation across complementary investment rules.",
+  },
+  {
     key: "portfolio-strategy",
     kicker: "Multi-asset family",
     title: "Multi-Asset Strategies",
@@ -183,7 +210,7 @@ export const systemGroupDefinitions: Array<{
 ];
 
 export const systemLayerDefinitions: Array<{
-  key: "portfolio-operating" | "investment-strategy" | "risk-analytics";
+  key: "portfolio-operating" | "portfolio-architecture" | "investment-strategy" | "risk-analytics";
   kicker: string;
   title: string;
   description: string;
@@ -194,8 +221,16 @@ export const systemLayerDefinitions: Array<{
     kicker: "Portfolio operating layer",
     title: "Portfolio Operations",
     description:
-      "The portfolio-level operating layer determines which strategy providers are admitted, how their decisions are combined, and how the resulting portfolio is monitored over time.",
+      "The portfolio operating layer integrates admitted portfolio providers, governs portfolio-level risk and currency controls, and monitors the resulting portfolio. The current PDS Core combines ADAA and F2R.",
     groupKeys: ["portfolio-decision"],
+  },
+  {
+    key: "portfolio-architecture",
+    kicker: "Portfolio architecture layer",
+    title: "Portfolio Architecture",
+    description:
+      "ADAA provides the decision-diversified framework for selecting, weighting, and combining complementary allocation rules. Its current portfolio is one implementation of this architecture.",
+    groupKeys: ["portfolio-architecture"],
   },
   {
     key: "investment-strategy",
@@ -217,4 +252,15 @@ export const systemLayerDefinitions: Array<{
 
 export function getSystem(slug: string) {
   return systemItems.find((item) => item.slug === slug);
+}
+
+export function getRelatedSystem(researchSlug: string) {
+  return systemItems.find((item) => item.links.relatedResearch === `/research/${researchSlug}/`);
+}
+
+export function getFirstPartyDashboardPaths() {
+  return systemItems.flatMap((item) => {
+    const href = item.links.publicDashboard;
+    return href && /^\/(?!\/)[^?#]+\/$/.test(href) ? [href] : [];
+  });
 }

@@ -149,6 +149,38 @@ need((ROOT/'src/app/systems/f2r/dashboard/page.tsx').is_file() and
      (ROOT/'src/components/F2RStaticDashboard.tsx').is_file(),
      'F2R static: viewer source missing')
 
+# RAMA: independent source-owned derived workspace, never a platform model.
+# Pending and activated states are mutually exclusive; route/registry/artifact
+# must move together. Approval itself is checked by the scoped intake receiver.
+rama_system = re.search(r'(?ms)^  \{\n    slug: "rama",\n(.*?)^  \},?$', systems)
+rama_research = re.search(r'(?ms)^  \{\n    slug: "rama",\n(.*?)^  \},?$', txt('src/data/research.ts'))
+need(rama_system is not None and rama_research is not None, 'RAMA: paired records missing')
+rama_href = '/systems/rama/dashboard/'
+def rama_link(block, key):
+    match = re.search(r'(?m)^\s*' + re.escape(key) + r':\s*"([^"]+)"', block.group(1))
+    return match.group(1) if match else ''
+rama_system_href = rama_link(rama_system, 'publicDashboard')
+rama_research_href = rama_link(rama_research, 'operationalDashboard')
+rama_route = ROOT/'src/app/systems/rama/dashboard/page.tsx'
+rama_html = ROOT/'public/assets/systems/rama/index.html'
+need(rama_system_href == rama_research_href and rama_system_href in ('', rama_href),
+     'RAMA: research/system dashboard links disagree or are noncanonical')
+if rama_system_href:
+    need(rama_route.is_file() and rama_html.is_file(), 'RAMA: activated dashboard route/artifact missing')
+    need('/assets/systems/rama/index.html' in txt('src/app/systems/rama/dashboard/page.tsx'),
+         'RAMA: dashboard wrapper points to wrong artifact')
+    import runpy
+    rama_receiver = runpy.run_path(str(ROOT/'scripts/sync-rama-public-candidate.py'))
+    try:
+        rama_state = rama_receiver['validate_state'](rama_receiver['embedded'](rama_html.read_bytes()))
+    except (ValueError, KeyError, TypeError, IndexError) as exc:
+        raise SystemExit(f'SYSTEM_PUBLICATION_BOUNDARY_FAIL: RAMA derived workspace: {exc}')
+    print('RAMA_PUBLIC_WORKSPACE_PARITY_PASS market=' + rama_state['through'] +
+          ' completed=' + rama_state['execution'])
+else:
+    need(not rama_route.exists() and not rama_html.exists(), 'RAMA: unlinked dashboard route/artifact present')
+    print('RAMA_PUBLIC_WORKSPACE_PENDING')
+
 print('SYSTEM_PLATFORM_DATA_PARITY_PASS ADAA=' + adaa_end +
       ' F2R=' + f2r_end + ' EquityAlpha=' + history[-1]['date'])
 

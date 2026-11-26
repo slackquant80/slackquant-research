@@ -22,7 +22,7 @@ export function SiteFooter() {
             LinkedIn
           </a>
         </div>
-        <div className="footer-meta">Public research, methods &amp; systems platform</div>
+        <div className="footer-meta">Research, computational methods &amp; investment systems</div>
       </div>
     </footer>
   );

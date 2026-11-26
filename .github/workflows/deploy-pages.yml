@@ -131,6 +131,29 @@ jobs:
         run: python3 scripts/check-four-system-live-release.py --root . --source-sha "${GITHUB_SHA}"
 
 
+      - name: Verify RAMA public artifact byte parity (read-only)
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, time, urllib.request
+          p = pathlib.Path("public/assets/systems/rama/index.html")
+          expected = hashlib.sha256(p.read_bytes()).hexdigest()
+          url = "https://research.slackquant.com/assets/systems/rama/index.html"
+          for attempt in range(6):
+              try:
+                  req = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+                  with urllib.request.urlopen(req, timeout=15) as response:
+                      actual = hashlib.sha256(response.read()).hexdigest()
+                  if actual == expected:
+                      print("RAMA_HOSTED_ARTIFACT_SHA256_PASS", expected)
+                      break
+              except Exception as exc:
+                  print("RAMA hosted retry:", type(exc).__name__)
+              time.sleep(5)
+          else:
+              raise SystemExit("RAMA_HOSTED_ARTIFACT_PARITY_HOLD")
+          PY
+
       - name: Setup Node 24 for postdeploy browser QA
         uses: actions/setup-node@v4
         with:
@@ -142,7 +165,7 @@ jobs:
           chrome-version: stable
           install-dependencies: true
       - name: Public desktop/mobile browser QA after actual deployment
-        timeout-minutes: 5
+        timeout-minutes: 8
         env:
           CHROME_BIN: ${{ steps.postdeploy_chrome.outputs.chrome-path }}
         run: node scripts/check-site-browser.mjs --out browser-qa-results

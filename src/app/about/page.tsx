@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "About SlackQuant Research, its researcher, research streams, operational systems, Quantitative Methods library, and separation between research evidence and live operation.",
+    "About SlackQuant Research, its investment and academic research, computational methods, quantum experiments, and operational systems.",
   alternates: { canonical: "/about/" },
 };
 
@@ -17,9 +17,7 @@ export default function AboutPage() {
           <div className="eyebrow">About</div>
           <h1>SlackQuant Research</h1>
           <p className="hero-copy">
-            A public platform for systematic investing, asset allocation,
-            forecasting, financial data science, AI/ML, quantitative methods, and
-            operational portfolio systems.
+            {site.description}
           </p>
         </div>
       </section>
@@ -36,13 +34,13 @@ export default function AboutPage() {
           </div>
           <div className="identity-copy">
             <p>
-              SlackQuant Research brings practitioner-oriented investment
-              research and academic research into one public platform. Quantitative
-              Methods provides reusable explanations of recurring methods, while
-              Systems presents operational tools separately from the versioned research
-              that supports them. Papers, evidence, code, dashboards, and documentation
-              remain connected, while research evidence and live operation stay as
-              separate records.
+              SlackQuant Research brings practitioner-oriented investment and academic
+              research into one public platform. Research ranges from portfolio decisions
+              and economic forecasting to computational methods and artificial intelligence.
+              Quantitative Methods explains reusable techniques, Quantum Lab develops
+              reproducible computational experiments, and Systems presents operational
+              investment and analytical tools. Published research evidence remains separate
+              from current model portfolio results.
             </p>
 
             <div className="person-card">
@@ -107,8 +105,8 @@ export default function AboutPage() {
             <div className="section-title">&nbsp;</div>
             <h3>Academic Research</h3>
             <p>
-              Forecasting, financial data science, AI/ML, empirical methods,
-              and related technical research.
+              Economics, economic forecasting, financial data science, artificial
+              intelligence, and empirical and computational methods.
             </p>
             <Link
               className="section-link strong-link"
@@ -154,6 +152,25 @@ export default function AboutPage() {
             </p>
             <Link className="section-link strong-link" href="/methods/">
               Explore Quantitative Methods &#8594;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="shell about-columns">
+          <div>
+            <div className="section-title">Computational experiments</div>
+            <h3>Quantum Lab</h3>
+          </div>
+          <div>
+            <p>
+              Reproducible experiments in quantum computing and quantum information,
+              beginning with analytic and ideal-circuit simulations. Further quantum
+              machine-learning studies will be added as evidence becomes available.
+            </p>
+            <Link className="section-link strong-link" href="/quantum/">
+              Explore Quantum Lab &#8594;
             </Link>
           </div>
         </div>

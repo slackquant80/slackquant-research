@@ -14,7 +14,7 @@ export default function QuantumLandingPage() {
       <section className="q-hero">
         <div className="shell q-hero-grid">
           <div>
-            <div className="q-overline">SlackQuant / Methods &amp; Experiments</div>
+            <div className="q-overline">SlackQuant / Quantum Lab</div>
             <h1>Quantum Lab<span className="q-period">.</span></h1>
             <p className="q-tagline">From amplitudes to entanglement.</p>
             <p className="q-lede">

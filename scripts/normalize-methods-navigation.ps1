@@ -14,6 +14,7 @@ if (-not (Test-Path $methodsRoot)) {
 $research = '<a href="https://research.slackquant.com/research/" target="_self">Research</a>'
 $systems  = '<a href="https://research.slackquant.com/systems/" target="_self">Systems</a>'
 $methods  = '<a href="https://research.slackquant.com/methods/" target="_self">Methods</a>'
+$quantum  = '<a href="https://research.slackquant.com/quantum/" target="_self">Quantum Lab</a>'
 $about    = '<a href="https://research.slackquant.com/about/" target="_self">About</a>'
 $githubHref = 'href="https://github.com/slackquant80/slackquant-research"'
 $oldFilter = 'var filterRegex = new RegExp("https:\/\/research\.slackquant\.com\/methods\/");'
@@ -143,10 +144,40 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
   }
   $nav = $next.Substring($navRange.Start, $navRange.End - $navRange.Start)
 
+  # Header-only projection from the canonical Methods source. Do not rerender
+  # scientific content solely for the new platform navigation destination.
+  if ((Count-Token $nav $quantum) -eq 0) {
+    if ($CheckOnly) {
+      throw "Quantum Lab missing from Methods platform header: $path"
+    }
+    if ((Count-Token $nav $methods) -ne 1) {
+      throw "Expected one Methods anchor before Quantum Lab insertion: $path"
+    }
+    $offset = $nav.IndexOf($methods) + $methods.Length
+    $absolute = $navRange.Start + $offset
+    $next = $next.Insert($absolute, "`r`n      " + $quantum)
+    $navRange = Find-PlatformNavRange -Text $next -Path $path
+    $nav = $next.Substring($navRange.Start, $navRange.End - $navRange.Start)
+  }
+
+  # The extra peer destination must wrap on narrow screens. Match the
+  # source-owned Quarto header without rewriting scientific content or CSS.
+  $plainNav = '<nav class="sq-platform-nav-links" aria-label="Primary">'
+  $wrappedNav = '<nav class="sq-platform-nav-links" aria-label="Primary" style="flex-wrap:wrap;row-gap:8px">'
+  if ((Count-Token $nav $wrappedNav) -ne 1) {
+    if ($CheckOnly -or (Count-Token $nav $plainNav) -ne 1) {
+      throw "Methods responsive navigation contract mismatch: $path"
+    }
+    $next = $next.Substring(0, $navRange.Start) + $nav.Replace($plainNav, $wrappedNav) + $next.Substring($navRange.End)
+    $navRange = Find-PlatformNavRange -Text $next -Path $path
+    $nav = $next.Substring($navRange.Start, $navRange.End - $navRange.Start)
+  }
+
   foreach ($pair in @(
     @{Name="Research"; Token=$research},
     @{Name="Systems"; Token=$systems},
     @{Name="Methods"; Token=$methods},
+    @{Name="Quantum Lab"; Token=$quantum},
     @{Name="About"; Token=$about}
   )) {
     if ((Count-Token $nav $pair.Token) -ne 1) {
@@ -162,12 +193,13 @@ Get-ChildItem $methodsRoot -Recurse -File -Filter *.html | ForEach-Object {
     $nav.IndexOf($research),
     $nav.IndexOf($systems),
     $nav.IndexOf($methods),
+    $nav.IndexOf($quantum),
     $nav.IndexOf($about),
     $nav.IndexOf($githubHref)
   )
   for ($i = 1; $i -lt $positions.Count; $i++) {
     if ($positions[$i] -le $positions[$i - 1]) {
-      throw "Methods navigation order must be Research -> Systems -> Methods -> About -> GitHub: $path"
+      throw "Methods navigation order must be Research -> Systems -> Methods -> Quantum Lab -> About -> GitHub: $path"
     }
   }
 

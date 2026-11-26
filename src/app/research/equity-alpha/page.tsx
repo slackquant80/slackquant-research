@@ -26,10 +26,7 @@ export default function EquityAlphaResearchPage() {
 
   return (
     <main>
-      <ResearchPaperHero
-        item={item}
-        relatedSystem={{ href: "/systems/equity-alpha/", label: "Equity Alpha System" }}
-      />
+      <ResearchPaperHero item={item} />
 
       <div className="shell detail-layout">
         <aside className="toc">
@@ -224,12 +221,14 @@ export default function EquityAlphaResearchPage() {
                 <small>Portfolio structure, benchmark-relative risk, and live-system context.</small>
                 <span className="artifact-action">View System →</span>
               </Link>
-              <Link className="artifact" href="/dashboards/equity-alpha/">
-                <span className="artifact-kicker">PUBLIC DASHBOARD</span>
-                <strong>Global Equity Alpha Dashboard</strong>
-                <small>Completed performance, current month, Official portfolio, and Preview.</small>
-                <span className="artifact-action">View Dashboard →</span>
-              </Link>
+              {item.links.operationalDashboard ? (
+                <a className="artifact" href={item.links.operationalDashboard} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">
+                  <span className="artifact-kicker">PUBLIC DASHBOARD</span>
+                  <strong>Global Equity Alpha Dashboard</strong>
+                  <small>Completed performance, current month, Official portfolio, and Preview.</small>
+                  <span className="artifact-action">Open Dashboard ↗</span>
+                </a>
+              ) : null}
             </div>
           </section>
 

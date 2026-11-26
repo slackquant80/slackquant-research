@@ -29,10 +29,7 @@ export default function SecondOpinionPortfolioPage() {
 
   return (
     <main>
-      <ResearchPaperHero
-        item={item}
-        relatedSystem={{ href: "/systems/f2r/", label: "F2R System" }}
-      />
+      <ResearchPaperHero item={item} />
 
       <div className="shell detail-layout">
         <aside className="toc">

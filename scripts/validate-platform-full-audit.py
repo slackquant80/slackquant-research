@@ -26,7 +26,7 @@ def main() -> int:
 
     expected_research_slugs = {
         "adaa", "protection-patience", "price-macro-decision", "beyond-average-accuracy",
-        "second-opinion-portfolio", "equity-alpha", "momentum-market-regularity"
+        "second-opinion-portfolio", "equity-alpha", "momentum-market-regularity", "rama"
     }
     research = need(
         "src/data/research.ts",
@@ -42,6 +42,13 @@ def main() -> int:
             f"expected={sorted(expected_research_slugs)} found={research_slugs}"
         )
 
+    # RAMA identity and frozen research versus operational model separation.
+    rama = research.split('slug: "rama"', 1)[1].split('slug: "beyond-average-accuracy"', 1)[0]
+    for token in ('investmentTrack: "strategy"', 'ssrnId: "7757240"', 'publicVersion: "v0.20"'):
+        if token not in rama: raise RuntimeError("RAMA research identity missing: " + token)
+    need("src/app/research/rama/page.tsx", "ResearchPaperHero", "9.44%", "12.58%", "25 bp", "no independent out-of-sample test")
+    need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app")
+    need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
     # Momentum Foundation is public working-paper research, not peer-reviewed journal publication.
     momentum_page = need(
         "src/app/research/momentum-market-regularity/page.tsx",
@@ -74,8 +81,8 @@ def main() -> int:
     equity_paper = need(
         "src/app/research/equity-alpha/page.tsx",
         'getResearch("equity-alpha")',
-        'href: "/systems/equity-alpha/"',
-        'href="/dashboards/equity-alpha/"',
+        "<ResearchPaperHero item={item} />",
+        "href={item.links.operationalDashboard}",
         "Published Evidence",
         "31 August 2026",
         "What Each Additional Layer Changes",
@@ -92,8 +99,7 @@ def main() -> int:
             raise RuntimeError(f"Equity Alpha published paper binding missing: {required}")
     if "github:" in equity_research or "archivalRelease:" in equity_research:
         raise RuntimeError("Equity Alpha must not invent a public replication or archive")
-    if "/systems/equity-alpha/" not in equity_paper:
-        raise RuntimeError("Equity Alpha research-to-system link missing")
+    need("src/data/systems.ts", 'relatedResearch: "/research/equity-alpha/"')
     if 'affiliation: "Graduate School of Computing, Yonsei University"' not in equity_research:
         raise RuntimeError("Equity Alpha author affiliation must match published paper")
     need("src/data/methods.ts", '"equity-alpha": [', '"equity-alpha-system": [')
@@ -107,7 +113,7 @@ def main() -> int:
         raise RuntimeError("Equity Alpha research/system separation missing")
 
 
-    expected_system_slugs = {"pds", "adaa", "f2r", "equity-alpha", "scenario-stress-lab"}
+    expected_system_slugs = {"pds", "adaa", "f2r", "rama", "equity-alpha", "scenario-stress-lab"}
     systems = need(
         "src/data/systems.ts",
         *[f'slug: "{slug}"' for slug in sorted(expected_system_slugs)],
@@ -159,8 +165,9 @@ def main() -> int:
         'item.stream === "investment" && item.featured',
         "investmentFeatured.ssrnId",
         "investmentFeatured.researchQuestion",
-        "Open SSRN Record",
-        'href="/systems/equity-alpha/"',
+        "Working Paper (SSRN)",
+        "getRelatedSystem(investmentFeatured.slug)",
+        "relatedFeaturedSystem.slug",
         'Explore Academic Research',
         'href="/research/#academic-research-heading"',
         '{[...researchItems].reverse().map((item) => (',
@@ -240,7 +247,7 @@ def main() -> int:
     )
     need(
         "src/app/systems/page.tsx",
-        "Three-layer system architecture",
+        "System architecture",
         "Clear roles. Distinct strategy domains.",
         "Multi-Asset Strategies",
         "Equity Alpha Strategies",
@@ -305,9 +312,7 @@ def main() -> int:
         raise RuntimeError("Equity Alpha reader page must not expose an internal-style Public Scope section")
     need(
         "src/components/ExternalLinkPolicy.tsx",
-        '"/systems/pds/dashboard/"',
-        '"/systems/adaa/dashboard/"',
-        '"/dashboards/equity-alpha/"',
+        "getFirstPartyDashboardPaths()",
         'anchor.dataset.sqDashboardApp === "true"',
         'secureNewTabAnchor(anchor)',
     )
@@ -329,7 +334,7 @@ def main() -> int:
     )
     need(
         "src/components/ResearchPaperHero.tsx",
-        "Open SSRN Record",
+        "Working Paper (SSRN)",
         "Replication Repository",
         "Research Dashboard",
         "paper-hero-actions",
@@ -347,15 +352,15 @@ def main() -> int:
             raise RuntimeError(f"bespoke research-detail hero remains: {rel}")
     need(
         "src/app/research/adaa/page.tsx",
-        'label: "ADAA System"',
+        "<ResearchPaperHero item={item} />",
     )
     need(
         "src/app/research/price-macro-decision/page.tsx",
-        'label: "F2R System"',
+        'relatedSystem={{ href: "/systems/f2r/", label: "Related F2R System" }}',
     )
     need(
         "src/app/research/second-opinion-portfolio/page.tsx",
-        'label: "F2R System"',
+        "<ResearchPaperHero item={item} />",
         "10.5281/zenodo.22750810",
     )
     need(
@@ -643,7 +648,7 @@ def main() -> int:
         "src/app/systems/pds/page.tsx",
         "PDS Core, Adaptive Risk Control, and Dynamic FX",
         "Chronos-2 pretrained time-series forecasting",
-        "ADAA and F2R are the strategy systems currently admitted to the Active Core.",
+        "ADAA and F2R are the providers currently admitted to the Active Core.",
     )
 
     # Methods mirror.
@@ -714,6 +719,8 @@ def main() -> int:
             "out/systems/equity-alpha/index.html",
             "out/research/equity-alpha/index.html",
             "out/research/momentum-market-regularity/index.html",
+            "out/research/rama/index.html",
+            "out/systems/rama/index.html",
             "out/dashboards/equity-alpha/index.html",
             "out/dashboards/equity-alpha/assets/app.js",
             "out/dashboards/equity-alpha/assets/styles.css",
@@ -727,6 +734,22 @@ def main() -> int:
         for rel in required_out:
             if not (ROOT / rel).is_file():
                 raise RuntimeError(f"built route/artifact missing: {rel}")
+        # All four peer destinations must survive static export; RAMA's
+        # operational link is conditional on the qualified public artifact.
+        for rel in ("out/index.html", "out/research/index.html", "out/systems/index.html", "out/about/index.html", "out/quantum/index.html", "out/research/rama/index.html", "out/systems/rama/index.html"):
+            rendered = (ROOT / rel).read_text(encoding="utf-8-sig")
+            if 'href="/quantum/"' not in rendered or "Quantum Lab" not in rendered:
+                raise RuntimeError(f"built Quantum Lab navigation missing: {rel}")
+        if (ROOT / "src/app/systems/rama/dashboard/page.tsx").is_file():
+            dashboard_href = 'href="/systems/rama/dashboard/"'
+            for rel in ("out/research/rama/index.html", "out/systems/rama/index.html", "out/systems/index.html"):
+                rendered = (ROOT / rel).read_text(encoding="utf-8-sig")
+                tags = re.findall(r"<a\b[^>]*>", rendered)
+                if not any(dashboard_href in tag and 'data-sq-dashboard-app="true"' in tag and 'target="_blank"' in tag for tag in tags):
+                    raise RuntimeError(f"built RAMA dashboard link missing or not marked: {rel}")
+            for rel in ("out/systems/rama/dashboard/index.html", "out/assets/systems/rama/index.html"):
+                if not (ROOT / rel).is_file():
+                    raise RuntimeError(f"built RAMA dashboard artifact missing: {rel}")
         built_f2r_doc = ROOT / "out/resources/systems/f2r/F2R_System_Documentation_v2.1.pdf"
         if not built_f2r_doc.is_file() or built_f2r_doc.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError("built F2R System Documentation v2.1 PDF missing or invalid")
@@ -737,7 +760,7 @@ def main() -> int:
                 raise RuntimeError(f"built PDS recent-month chart missing token: {token}")
 
     print("PLATFORM_FULL_REAUDIT_PASS")
-    print("Research=7 Systems=5 Methods=26 / exact registry sets=PASS")
+    print("Research=8 Systems=6 Methods=26 / exact registry sets=PASS")
     print("External/new-tab policy=PASS; duplicate-arrow scan=PASS")
 
     for stale in [
@@ -750,7 +773,7 @@ def main() -> int:
     print("Methods whole-host first-party navigation=PASS")
     print("PDS current operational platform / four-portfolio summary / current dashboard=PASS")
     print("F2R v2.1 / Chronos-2 architecture-visible / recipe-protected=PASS")
-    print("PDS / ADAA / F2R / Equity Alpha system-page editorial positioning + three-layer taxonomy=PASS")
+    print("System-page editorial positioning + portfolio architecture taxonomy=PASS")
     print("About research links / shared research-detail hero=PASS")
     if require_build:
         print("Built routes / sitemap / robots=PASS")
