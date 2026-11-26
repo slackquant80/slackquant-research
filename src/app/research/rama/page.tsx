@@ -57,7 +57,7 @@ function PeerRiskFigure() {
         {[10,15,20,25,30].map(v => <g key={v}><line className="live-chart-grid" x1={x(v)} x2={x(v)} y1={46} y2={268}/><text className="live-chart-date" x={x(v)} y={287} textAnchor="middle">{v}%</text></g>)}
         <text className="live-chart-axis" x={68} y={23}>CAGR</text>
         <text className="live-chart-axis" x={358} y={314} textAnchor="middle">Absolute daily maximum drawdown</text>
-        {peers.map((p,i) => <g key={p.name}><circle cx={x(p.dd)} cy={y(p.cagr)} r={i===0?6:4.5} fill={i===0?"#167c80":"#64748b"}><title>{p.name}: {p.cagr.toFixed(2)}% CAGR; {p.dd.toFixed(2)}% drawdown</title></circle><text className="live-chart-axis" x={x(p.dd)+labels[i].dx} y={y(p.cagr)+labels[i].dy} textAnchor={i===5?"end":"start"}>{p.name}</text></g>)}
+        {peers.map((p,i) => <g key={p.name}><circle cx={x(p.dd)} cy={y(p.cagr)} r={i===0?6:4.5} fill={i===0?"#167c80":"#64748b"}><title>{`${p.name}: ${p.cagr.toFixed(2)}% CAGR; ${p.dd.toFixed(2)}% drawdown`}</title></circle><text className="live-chart-axis" x={x(p.dd)+labels[i].dx} y={y(p.cagr)+labels[i].dy} textAnchor={i===5?"end":"start"}>{p.name}</text></g>)}
       </svg>
     </div><div className="evidence-table-source">Source: RAMA working paper v0.20, Table 4. Replotted from the reported statistics.</div>
   </figure>;
