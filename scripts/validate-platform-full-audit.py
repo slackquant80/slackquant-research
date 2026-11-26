@@ -48,8 +48,13 @@ def main() -> int:
         if token not in rama: raise RuntimeError("RAMA research identity missing: " + token)
     need("src/app/research/rama/page.tsx", "ResearchPaperHero", "9.44%", "12.58%", "25 bp", "no independent out-of-sample test", "PeerRiskFigure", "Mature-period matched sizing controls", "MethodsUsed researchSlug={item.slug}")
     need("src/app/systems/rama/page.tsx", "getSystem", "36 monthly returns", "10 bp", "data-sq-dashboard-app", "getRamaEvidence()", "Completed Model Performance", "LivePerformanceChart", "LiveMonthlyReturnsChart", "Recent 12 Completed Holding Months", 'MethodsUsed researchSlug="rama-system"')
+    for rel in ("src/app/research/rama/page.tsx", "src/app/systems/rama/page.tsx"):
+        need(rel, 'rama-detail-layout', 'repro-links documentation-artifacts', 'RAMA Public Dashboard', 'artifact-kicker', 'artifact-action')
+    need("src/app/globals.css", ".rama-detail-layout .body-copy + .documentation-artifacts", ".rama-detail-layout .rama-universe-table")
     need("src/lib/ramaEvidence.ts", "public/assets/systems/rama/index.html", "RAMA_PUBLIC_WORKSPACE_V1", "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1", "p.dailyMetrics", "primary.rows.slice(-12)", "completedThrough: d.execution")
     need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
+    need("src/app/systems/page.tsx", "rama: getRamaEvidence().completedThrough")
+    need("src/components/SystemCard.tsx", 'item.evidenceLabel === "Working Paper"', 'Working Paper (SSRN)')
     # Momentum Foundation is public working-paper research, not peer-reviewed journal publication.
     momentum_page = need(
         "src/app/research/momentum-market-regularity/page.tsx",
@@ -748,6 +753,15 @@ def main() -> int:
                 tags = re.findall(r"<a\b[^>]*>", rendered)
                 if not any(dashboard_href in tag and 'data-sq-dashboard-app="true"' in tag and 'target="_blank"' in tag for tag in tags):
                     raise RuntimeError(f"built RAMA dashboard link missing or not marked: {rel}")
+            for rel in ("out/research/rama/index.html", "out/systems/rama/index.html"):
+                rendered = (ROOT / rel).read_text(encoding="utf-8-sig")
+                # The linked-card variant needs its shared layout container; its
+                # inline spans have no independent vertical styling.
+                groups = re.findall(r'<div\b[^>]*class="[^"]*repro-links documentation-artifacts[^"]*"[^>]*>(.*?)</div>', rendered, re.S)
+                if not any(group.count('class="artifact-kicker"') == 2
+                           and group.count('class="artifact-action"') == 2
+                           and "RAMA Public Dashboard" in group for group in groups):
+                    raise RuntimeError(f"built RAMA documentation-card structure missing: {rel}")
             for rel in ("out/systems/rama/dashboard/index.html", "out/assets/systems/rama/index.html"):
                 if not (ROOT / rel).is_file():
                     raise RuntimeError(f"built RAMA dashboard artifact missing: {rel}")

@@ -129,12 +129,16 @@ def embedded(html):
     return strict_json(rest[:end])
 
 
-def approved(candidate, approval, expected_approval_hash):
+def approved(candidate, approval, expected_approval_hash, *, existing_model_refresh=False):
     receipt=strict_json((candidate/'PRIVATE_REVIEW_RECEIPT.json').read_bytes())
     raw=approval.read_bytes();require(sha(raw)==expected_approval_hash,'approval hash')
     a=strict_json(raw)
     require(receipt['schema']==a['schema']==SCHEMA and receipt['status']=='HOLD_PUBLIC_APPROVAL' and a['status']=='APPROVED_PUBLIC_RELEASE','release authority')
-    require(a['rights']=='APPROVED' and a['venue']=='VERIFIED' and a['ssrnId']=='7757240','rights / venue')
+    require(a['rights']=='APPROVED' and a['ssrnId']=='7757240','rights / paper identity')
+    if existing_model_refresh:
+        require(a['venue']=='NOT_APPLICABLE_TO_EXISTING_MODEL_REFRESH' and a.get('basis')=='OPERATOR_CONFIRMED_THIS_RUN','model refresh consent')
+    else:
+        require(a['venue']=='VERIFIED','venue verification')
     require(a['scope']=='RAMA_DERIVED_WORKSPACE_ONLY' and a['candidate']==receipt['candidate'] and a['artifacts']==receipt['artifacts'],'exact candidate approval')
     require(set(a['artifacts'])=={'index.html','public_state.json'},'artifact scope')
     html=(candidate/'index.html').read_bytes();state=(candidate/'public_state.json').read_bytes()

@@ -80,6 +80,12 @@ async function run(){
     result.checks.push('DOM','CSS','IMAGES');if(result.overflow)result.errors.push('HORIZONTAL_VIEWPORT_OVERFLOW_'+s.width+'_'+s.viewport);
     if(route==='/')need(s.links.some(x=>x.includes('/systems/')),'HOME_SYSTEMS_LINK_MISSING');
     if(route==='/systems/')for(const name of ['pds','adaa','f2r','rama','equity-alpha'])need(s.links.some(x=>x.includes('/systems/'+name+'/')),'SYSTEM_LINK_MISSING_'+name);
+    if(route==='/systems/'){
+      const cards=await c.eval('(()=>{return ["f2r","rama"].map(slug=>{const a=[...document.querySelectorAll(".system-card")].find(e=>[...e.querySelectorAll("a[href]")].some(x=>new URL(x.href).pathname==="/systems/"+slug+"/"));return a?{meta:a.querySelector(".card-meta")?.innerText||"",paper:[...a.querySelectorAll("a[href]")].filter(x=>x.href.includes("abstract_id=")).map(x=>({text:x.innerText,href:x.href,target:x.target})),links:[...a.querySelectorAll(".card-artifact-links a")].map(x=>x.innerText)}:null})})()');
+      need(cards.every(x=>x&&/Completed through 20\d{2}-\d{2}-\d{2}/.test(x.meta)&&x.paper.length===1&&x.paper[0].text.trim()==='Working Paper (SSRN) ↗'&&x.paper[0].target==='_blank'&&x.links.length===3),'STRATEGY_CARD_PARITY_'+JSON.stringify(cards));
+      need(cards[1].paper[0].href.includes('abstract_id=7757240'),'RAMA_CARD_PAPER_ID');
+      result.checks.push('STRATEGY_CARD_PAPER_AND_CLOCK_PARITY');
+    }
     if(route==='/research/'){
       need(s.links.some(x=>x.includes('/research/momentum-market-regularity/')),'MOMENTUM_FOUNDATION_INDEX_LINK_MISSING');
     }
@@ -111,6 +117,14 @@ async function run(){
       const links=await c.eval('(()=>[...document.querySelectorAll("a[href]")].filter(a=>new URL(a.href).pathname==="/systems/rama/dashboard/").map(a=>({target:a.target,rel:a.rel,app:a.dataset.sqDashboardApp})))()');
       need(links.length>=1&&links.every(a=>a.target==='_blank'&&a.rel.includes('noopener')&&a.rel.includes('noreferrer')&&a.app==='true'),'RAMA_DASHBOARD_LINK_POLICY_'+JSON.stringify(links));
       result.checks.push('RAMA_DASHBOARD_NEW_TAB');
+    }
+    if(route===ramaResearch||route==='/systems/rama/'){
+      const layout=await c.eval('(()=>{const scope=document.querySelector("main .rama-detail-layout");const group=scope?.querySelector(".documentation-artifacts");if(!group)return null;const cards=[...group.querySelectorAll(":scope > .artifact")];const box=e=>e.getBoundingClientRect();return {count:cards.length,groupGap:box(group).top-box(group.previousElementSibling).bottom,columns:getComputedStyle(group).gridTemplateColumns,cards:cards.map(a=>{const parts=[".artifact-kicker","strong","small",".artifact-action"].map(q=>a.querySelector(q));if(parts.some(x=>!x))return null;const rects=parts.map(box);const style=getComputedStyle(a);return {stacked:style.display==="flex"&&style.flexDirection==="column",separated:rects.slice(1).every((r,i)=>r.top>=rects[i].bottom+2),contained:rects.every(r=>r.left>=box(a).left-1&&r.right<=box(a).right+1&&r.bottom<=box(a).bottom+1),title:parts[1].textContent,action:parts[3].textContent}})}})()');
+      need(layout&&layout.count===2&&layout.groupGap>=12&&layout.cards.every(a=>a&&a.stacked&&a.separated&&a.contained),'RAMA_RESOURCE_CARD_VISUAL_LAYOUT_'+JSON.stringify(layout));
+      need(layout.cards.some(a=>a.title==='RAMA Public Dashboard'&&a.action==='Open Dashboard ↗'),'RAMA_RESOURCE_CARD_LABEL');
+      need(mode.name!=='mobile'||layout.columns.trim().split(/\s+/).length===1,'RAMA_MOBILE_CARD_COLUMNS_'+layout.columns);
+      result.checks.push('RAMA_RESOURCE_CARD_LAYOUT_AND_TEXT');
+
     }
     if(researchDetailRoutes.includes(route)){
       if(route==='/research/momentum-market-regularity/'){

@@ -109,8 +109,9 @@ export const systemItems: SystemItem[] = [
     prominence: "standard",
     status: "Model portfolio",
     dateLabel: "Monthly decision cycle",
-    shortSummary: "An independent multi-asset strategy using TIP momentum for market exposure, relative momentum for ETF selection, and a shrunk covariance estimate for position sizing.",
+    shortSummary: "Risk-Aware Momentum Allocation (RAMA) is a monthly multi-asset strategy that separates market exposure, asset selection, and portfolio sizing. TIP momentum determines offensive or defensive exposure, relative momentum ranks eligible ETFs, and constrained minimum-variance allocation determines offensive weights. The public dashboard reports effective targets, current drift, provisional decisions, and model portfolio performance.",
     role: "Risk-Aware Multi-Asset Portfolio Strategy",
+    methodsKey: "rama-system",
     ssrnId: "7757240",
     evidenceLabel: "Working Paper",
     links: {

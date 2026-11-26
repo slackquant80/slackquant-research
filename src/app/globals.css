@@ -2193,3 +2193,19 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:64px;li
   margin-top:48px;
 }
 /* /SYSTEM_DETAIL_VERTICAL_RHYTHM_V1 */
+
+/* RAMA detail pages: use the shared documentation-card layout and preserve
+   the spacing and readable column widths of the existing strategy pages. */
+.rama-detail-layout .body-copy + .documentation-artifacts,
+.rama-detail-layout .body-copy + .system-role-grid,
+.rama-detail-layout .body-copy + .evidence-table-wrap,
+.rama-detail-layout .system-role-grid + .evidence-note,
+.rama-detail-layout .body-copy + .evidence-note,
+.rama-detail-layout .evidence-table-wrap + .evidence-note {margin-top:22px}
+.rama-detail-layout .documentation-artifacts .artifact {min-width:0;overflow-wrap:break-word}
+.rama-detail-layout .rama-two-column {grid-template-columns:repeat(2,minmax(0,1fr))}
+.rama-detail-layout .rama-compact-table {min-width:340px}
+.rama-detail-layout .rama-universe-table {min-width:440px}
+.rama-detail-layout .rama-universe-table td {white-space:normal;text-align:left}
+.rama-detail-layout .rama-universe-table th {text-align:left}
+@media(max-width:760px){.rama-detail-layout .rama-two-column {grid-template-columns:minmax(0,1fr)}}

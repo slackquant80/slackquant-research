@@ -18,6 +18,8 @@ HOST="slackquant80/slackquant-research"
 F2R="slackquant80/f2r-forecast-to-rank-allocation"
 F2R_SOURCE="src/dashboard/public_data/f2r_public_state.json"
 F2R_TARGET="public/data/systems/f2r/public_state.json"
+RAMA_TARGET="public/assets/systems/rama/index.html"
+RAMA_RECEIVER="scripts/sync-rama-public-candidate.py"
 EQUITY="public/dashboards/equity-alpha/"
 EQUITY_PATHS={EQUITY+x for x in ("index.html","assets/app.js","assets/holdings-view.js",
  "assets/styles.css","data/dashboard_data.js","data/live_overlay.js",
@@ -100,6 +102,7 @@ SOURCE_ONLY_MAIN_CHANGES={
     "scripts/equity-standing-publication-policy.json",
     "scripts/test-equity-standing-policy.py",
     "scripts/verify_equity_intake_release.py",
+    "scripts/sync-rama-public-candidate.py",
 }
 def source_base_compatible(source_base,current_main,source_paths):
     if source_base==current_main: return True
@@ -119,9 +122,14 @@ def source_base_compatible(source_base,current_main,source_paths):
 def pinned_public_file(repo, path, commit):
     """Require exact Git blob identity, never a mutable working-tree file."""
     item=gh(f"repos/{repo}/contents/{path}?ref={commit}")
-    if item.get("encoding")!="base64" or not HEX40.fullmatch(item.get("sha","")):
+    if not HEX40.fullmatch(item.get("sha","")):
         raise Hold("SOURCE_OWNED_PUBLIC_FILE_PIN_UNAVAILABLE: "+path)
-    data=base64.b64decode(item["content"])
+    # Derived RAMA history will eventually exceed the Contents API's 1 MB
+    # inline payload limit. Preserve exact Git blob identity, not a download URL.
+    payload=item if item.get("encoding")=="base64" else gh(f"repos/{repo}/git/blobs/{item['sha']}")
+    if payload.get("encoding")!="base64":
+        raise Hold("SOURCE_OWNED_PUBLIC_FILE_PIN_UNAVAILABLE: "+path)
+    data=base64.b64decode(payload["content"])
     actual=hashlib.sha1(b"blob "+str(len(data)).encode()+b"\x00"+data).hexdigest()
     if actual!=item["sha"]:
         raise Hold("SOURCE_OWNED_PUBLIC_GIT_BLOB_MISMATCH: "+path)
@@ -621,9 +629,68 @@ def choose_current_inputs(args):
     return main,main_tree,changed,identity
 
 
+def rama_options(args):
+    values=[getattr(args,k,None) for k in
+            ("rama_candidate","rama_approval","rama_approval_sha256")]
+    requested=getattr(args,"rama_only",False) or getattr(args,"rama_operator_consent",False)
+    if (any(values) or requested) and not all(values):
+        raise Hold("RAMA_EXACT_APPROVAL_ARGUMENTS_REQUIRED")
+    if all(values) and not getattr(args,"rama_operator_consent",False):
+        raise Hold("RAMA_PER_RUN_OPERATOR_CONSENT_REQUIRED")
+    return values if all(values) else None
+
+
+def validated_rama_bytes(args, main, minimum):
+    """Use the existing exact-hash receiver; no model computation or rights issuance."""
+    import runpy
+    values=rama_options(args)
+    if values is None: raise Hold("RAMA_APPROVED_CANDIDATE_REQUIRED")
+    candidate,approval,approval_sha=values
+    if not re.fullmatch(r"[a-f0-9]{64}",approval_sha):
+        raise Hold("RAMA_APPROVAL_HASH_INVALID")
+    try:
+        with tempfile.TemporaryDirectory(prefix="sq_rama_release_") as tmp:
+            receiver=Path(tmp)/"receiver.py"
+            receiver.write_bytes(pinned_public_file(HOST,RAMA_RECEIVER,main))
+            ns=runpy.run_path(str(receiver))
+            old=ns["validate_state"](ns["embedded"](pinned_public_file(HOST,RAMA_TARGET,main)))
+            raw,state=ns["approved"](Path(candidate),Path(approval),approval_sha,existing_model_refresh=True)
+            if state["through"]<old["through"] or state["execution"]<old["execution"]:
+                raise Hold("RAMA_PUBLIC_CLOCK_REGRESSION")
+            if minimum and state["through"]<minimum:
+                raise Hold("RAMA_BELOW_REQUIRED_MARKET_CLOSE")
+            ident={"blob":hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest(),
+                   "sha256":hashlib.sha256(raw).hexdigest(),
+                   "approvalSha256":approval_sha,"marketThrough":state["through"],
+                   "completedThrough":state["execution"]}
+            return raw,ident
+    except Hold: raise
+    except Exception as exc:
+        raise Hold("RAMA_EXACT_RECEIVER_HOLD "+type(exc).__name__+": "+str(exc)[:160]) from exc
+
+
 def source_inputs(args):
-    """Compatibility accessor for offline source tests and reporting."""
-    return choose_current_inputs(args)
+    """Existing four-system selection plus an optional separately approved RAMA overlay."""
+    if not rama_options(args): return choose_current_inputs(args)
+    # Validate RAMA before incumbent source promotion to avoid a known early HOLD.
+    main=gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]
+    raw,rama=validated_rama_bytes(args,main,getattr(args,"expected_market_close","") or "")
+    if getattr(args,"rama_only",False):
+        selected=main
+        main_tree=tree(HOST,main)
+        updates={}
+        identity={"platform_main":main,"mode":"RAMA_ONLY"}
+    else:
+        selected,main_tree,updates,identity=choose_current_inputs(args)
+    if selected!=main or RAMA_TARGET not in main_tree or PDS_MARK not in main_tree:
+        raise Hold("RAMA_PLATFORM_BASE_CHANGED_OR_INITIAL_RELEASE_MISSING")
+    # Existing choose_current_inputs establishes the current PDS market floor.
+    floor=_market_clock_from_blob(PDS_MARK,updates.get(PDS_MARK,main_tree[PDS_MARK]))
+    if rama["marketThrough"]<floor: raise Hold("RAMA_BELOW_PDS_MARK")
+    identity["rama"]=rama
+    if main_tree[RAMA_TARGET]!=rama["blob"]:
+        updates[RAMA_TARGET]=rama["blob"]
+    return selected,main_tree,updates,identity
 
 
 def stage(args):
@@ -632,7 +699,8 @@ def stage(args):
         # Explicit no-op: no PR, no new Actions and no Pages deployment.
         return None,identity,False
     ident=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()[:16]
-    branch="review/four-system-one-pages-"+ident
+    branch=("review/rama-one-pages-" if getattr(args,"rama_only",False)
+            else "review/four-system-one-pages-")+ident
     matches=[x for x in open_pulls() if x["head"]["ref"]==branch]
     if len(matches)>1: raise Hold("DUPLICATE_COMBINED_RELEASE")
     if matches:
@@ -641,6 +709,11 @@ def stage(args):
             MARKER not in (combined.get("body") or "") or
             json.dumps(identity,sort_keys=True) not in (combined.get("body") or "")):
             raise Hold("EXISTING_COMBINED_REVIEW_BASE_OR_PROVENANCE_HOLD")
+        if "rama" in identity:
+            reviewed=tree(HOST,combined["head"]["sha"])
+            actual={k:v for k,v in reviewed.items() if main_tree.get(k)!=v}
+            if actual!=updates or set(main_tree)-set(reviewed):
+                raise Hold("RAMA_EXISTING_COMBINED_REVIEW_TREE_HOLD")
         return combined,identity,False
     if not args.stage:
         raise Hold("SOURCE_READY_NO_NEW_PR_REQUESTED")
@@ -664,20 +737,32 @@ def stage(args):
             "encoding":"base64"})
         if imported.get("sha")!=expected:
             raise Hold("F2R_PLATFORM_GIT_BLOB_IMPORT_PARITY_HOLD")
+    if RAMA_TARGET in updates:
+        raw,rama=validated_rama_bytes(args,main,getattr(args,"expected_market_close","") or "")
+        if rama!=identity.get("rama") or rama["blob"]!=updates[RAMA_TARGET]:
+            raise Hold("RAMA_APPROVED_BYTES_CHANGED")
+        imported=gh(f"repos/{HOST}/git/blobs","POST",{
+            "content":base64.b64encode(raw).decode("ascii"),"encoding":"base64"})
+        if imported.get("sha")!=rama["blob"]:
+            raise Hold("RAMA_PLATFORM_GIT_BLOB_IMPORT_PARITY_HOLD")
     base_commit=gh(f"repos/{HOST}/git/commits/{main}")
     elements=[{"path":x,"mode":"100644","type":"blob","sha":sha}
               for x,sha in sorted(updates.items())]
     candidate_tree=gh(f"repos/{HOST}/git/trees","POST",
         {"base_tree":base_commit["tree"]["sha"],"tree":elements})["sha"]
     commit=gh(f"repos/{HOST}/git/commits","POST",
-        {"message":"Stage source-owned current four-system data only",
+        {"message":("Stage source-owned RAMA data only" if getattr(args,"rama_only",False)
+                    else "Stage source-owned current five-system data only" if "rama" in identity
+                    else "Stage source-owned current four-system data only"),
          "tree":candidate_tree,"parents":[main]})["sha"]
     gh(f"repos/{HOST}/git/refs","POST",{"ref":"refs/heads/"+branch,"sha":commit})
     body=(MARKER+"\nPinned, current source evidence: "+json.dumps(identity,sort_keys=True)+
        "\nDRAFT: original source reviews, exact current clocks and one Pages CI "
        "MUST PASS prior to one public release. No model compute.")
     combined=gh(f"repos/{HOST}/pulls","POST",
-         {"title":"Reviewed current four-system one-Pages release "+ident,
+         {"title":("Reviewed current RAMA one-Pages release " if getattr(args,"rama_only",False)
+                   else "Reviewed current five-system one-Pages release " if "rama" in identity
+                   else "Reviewed current four-system one-Pages release ")+ident,
           "head":branch,"base":"main","body":body,"draft":True})
     return combined,identity,True
 
@@ -771,6 +856,11 @@ def main():
     p.add_argument("--standing-operator-consent",action="store_true",
                    help="Existing one-button Y authorizes routine release under ACTIVE owner policy")
     p.add_argument("--approved-head",default="")
+    p.add_argument("--rama-candidate",type=Path)
+    p.add_argument("--rama-approval",type=Path)
+    p.add_argument("--rama-approval-sha256")
+    p.add_argument("--rama-operator-consent",action="store_true")
+    p.add_argument("--rama-only",action="store_true")
     p.add_argument("--wait-seconds",type=int,default=900)
     p.add_argument("--expected-market-close",default="",
                    help="Source-owned PDS validated completed US market close")
@@ -791,7 +881,11 @@ def main():
                 "head":combined["head"]["sha"],"created":created,
                 "provenance":identity,"public_deployment":False}
         if a.publish:
-            if a.standing_operator_consent:
+            if a.rama_only:
+                rama_options(a)
+                a.approved_head=combined["head"]["sha"]
+                print("RAMA_PER_RUN_OWNER_SCOPE "+a.approved_head,flush=True)
+            elif a.standing_operator_consent:
                 assert_standing_operator_authority()
                 a.approved_head=combined["head"]["sha"]
                 print("STANDING_OWNER_SCOPE_WITH_ONE_OPERATOR_CONFIRMATION "+
