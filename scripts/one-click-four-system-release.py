@@ -781,6 +781,82 @@ def _release_build_checks_satisfied(builds):
         and any(x.get("conclusion")=="success" for x in builds))
 
 
+PAGES_WORKFLOW="deploy-pages.yml"
+PAGES_TRIGGER_GRACE_SECONDS=120
+PAGES_REQUIRED_DEPLOY_STEPS={
+    "Deploy to GitHub Pages",
+    "Verify live 4-system data bytes and source evidence (read-only)",
+    "Verify RAMA public artifact byte parity (read-only)",
+    "Public desktop/mobile browser QA after actual deployment",
+}
+
+
+def pages_runs(commit):
+    result=gh(f"repos/{HOST}/actions/workflows/{PAGES_WORKFLOW}/runs"
+              f"?head_sha={commit}&per_page=30")
+    rows=result.get("workflow_runs")
+    if not isinstance(rows,list) or len(rows)>=30 or result.get("total_count",len(rows))>len(rows):
+        raise Hold("PAGES_RUN_CENSUS_INCOMPLETE")
+    return [x for x in rows if x.get("head_sha")==commit and
+            x.get("event") in ("push","workflow_dispatch")]
+
+
+def pages_certified(run,commit):
+    if run.get("head_sha")!=commit or run.get("status")!="completed" or run.get("conclusion")!="success":
+        raise Hold("PAGES_DEPLOY_OR_POSTDEPLOY_QA_FAILED")
+    result=gh(f"repos/{HOST}/actions/runs/{run['id']}/jobs?per_page=100")
+    jobs=result.get("jobs")
+    if not isinstance(jobs,list) or len(jobs)>=100 or result.get("total_count",len(jobs))>len(jobs):
+        raise Hold("PAGES_JOB_CENSUS_INCOMPLETE")
+    for name in ("build","deploy"):
+        exact=[x for x in jobs if x.get("name")==name]
+        if len(exact)!=1 or exact[0].get("status")!="completed" or exact[0].get("conclusion")!="success":
+            raise Hold("PAGES_REQUIRED_JOB_NOT_CERTIFIED:"+name)
+        if name=="deploy":
+            steps=exact[0].get("steps",[])
+            if any(len([x for x in steps if x.get("name")==step and
+                        x.get("conclusion")=="success"])!=1 for step in PAGES_REQUIRED_DEPLOY_STEPS):
+                raise Hold("PAGES_REQUIRED_DEPLOY_STEPS_NOT_CERTIFIED")
+    return {"status":"PAGES_PUBLIC_AND_BROWSER_QA_PASS","commit":commit,
+            "run":run["id"],"event":run["event"]}
+
+
+def wait_for_pages(commit,wait_seconds,*,clock=None,pause=None):
+    """Only the fresh, approved merge may invoke this one-shot fallback.
+
+    Do not dispatch on an existing/pending/failed run, ambiguous API response,
+    changed main, or an old no-change request. An audit-only run cannot certify
+    deployment. A late push can race the fallback; never initiate a second one.
+    """
+    if not HEX40.fullmatch(commit):raise Hold("PAGES_MERGE_SHA_INVALID")
+    clock=clock or time.monotonic;pause=pause or time.sleep
+    start=clock();deadline=start+wait_seconds
+    dispatched=False
+    def lease():
+        if gh(f"repos/{HOST}/git/ref/heads/main")["object"]["sha"]!=commit:
+            raise Hold("PAGES_MAIN_CHANGED_AFTER_MERGE")
+    while clock()<deadline:
+        lease()
+        runs=pages_runs(commit)
+        if len(runs)>1:raise Hold("PAGES_MULTIPLE_EXACT_RUNS_REVIEW_REQUIRED")
+        if runs:
+            if runs[0].get("status")=="completed":
+                result=pages_certified(runs[0],commit);lease();return result
+        elif not dispatched and clock()-start>=PAGES_TRIGGER_GRACE_SECONDS:
+            # Recheck absence and main immediately before the single normal
+            # workflow dispatch. No new PR/commit or redundant retry.
+            lease()
+            if not pages_runs(commit):
+                dispatched=True
+                print("PAGES_MISSING_PUSH_TRIGGER_FALLBACK "+commit,flush=True)
+                gh(f"repos/{HOST}/actions/workflows/{PAGES_WORKFLOW}/dispatches",
+                   "POST",{"ref":"main","inputs":{"audit_only":"false"}})
+                lease()
+                deadline=max(deadline,clock()+wait_seconds)
+        pause(15)
+    raise Hold("PAGES_POSTDEPLOY_QA_NOT_YET_CERTIFIED")
+
+
 def publish(args,combined):
     head=combined["head"]["sha"]
     if args.approved_head!=head:
@@ -817,19 +893,7 @@ def publish(args,combined):
                "commit_title":"Publish approved four-system Pages release"})
     if not merged.get("merged"): raise Hold("GITHUB_REFUSED_APPROVED_MERGE")
     commit=merged["sha"]
-    end=time.monotonic()+args.wait_seconds
-    while time.monotonic()<end:
-        runs=gh(f"repos/{HOST}/actions/workflows/deploy-pages.yml/runs"+
-                f"?head_sha={commit}&per_page=30").get("workflow_runs",[])
-        exact=[x for x in runs if x.get("head_sha")==commit and
-               x.get("event")=="push"]
-        if len(exact)==1 and exact[0]["status"]=="completed":
-            if exact[0]["conclusion"]!="success":
-                raise Hold("PAGES_DEPLOY_OR_POSTDEPLOY_QA_FAILED")
-            return {"status":"PAGES_PUBLIC_AND_BROWSER_QA_PASS",
-                    "commit":commit,"run":exact[0]["id"]}
-        time.sleep(15)
-    raise Hold("PAGES_POSTDEPLOY_QA_NOT_YET_CERTIFIED")
+    return wait_for_pages(commit,args.wait_seconds)
 
 
 def assert_standing_operator_authority():
