@@ -53,7 +53,7 @@ def main() -> int:
     need("src/app/globals.css", ".rama-detail-layout .body-copy + .documentation-artifacts", ".rama-detail-layout .rama-universe-table")
     need("src/lib/ramaEvidence.ts", "public/assets/systems/rama/index.html", "RAMA_PUBLIC_WORKSPACE_V1", "SLACKQUANT_LIVE_BILATERAL_10BP_PER_SIDE_V1", "calendarPerformance", "cal.monthly.slice(-12)", "holdingCompletedThrough:d.execution", "calendar month native parity")
     need("src/data/systems.ts", 'relatedResearch: "/research/rama/"')
-    rama_registry = txt("src/data/systems.ts").split('slug: "rama"',1)[1].split('slug: "equity-alpha"',1)[0]
+    rama_registry = need("src/data/systems.ts").split('slug: "rama"',1)[1].split('slug: "equity-alpha"',1)[0]
     if 'status: "Public live"' not in rama_registry: raise RuntimeError("RAMA hosted service status mismatch")
     need("src/app/systems/page.tsx", "rama: getRamaEvidence().completedThrough")
     need("src/components/SystemCard.tsx", 'item.evidenceLabel === "Working Paper"', 'Working Paper (SSRN)')
