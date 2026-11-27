@@ -670,6 +670,69 @@ class ReleaseSafety(unittest.TestCase):
             with self.assertRaisesRegex(mod.Hold,"RAMA_PLATFORM_BASE_CHANGED"):
                 mod.source_inputs(args)
 
+    def test_missing_pages_push_fallback_once_and_exact_deploy(self):
+        commit="a"*40
+        now=[0];calls=[];dispatched=[False]
+        run={"head_sha":commit,"event":"workflow_dispatch","status":"completed","conclusion":"success","id":17}
+        def api(path,method="GET",data=None):
+            calls.append((path,method,data))
+            if "/git/ref/heads/main" in path:return {"object":{"sha":commit}}
+            if path.endswith("/dispatches"):
+                dispatched[0]=True
+                self.assertEqual(data,{"ref":"main","inputs":{"audit_only":"false"}})
+                return {}
+            if "/jobs?" in path:return {"jobs":[{"name":"build","status":"completed","conclusion":"success"},
+                {"name":"deploy","status":"completed","conclusion":"success","steps":[{"name":x,"conclusion":"success"} for x in mod.PAGES_REQUIRED_DEPLOY_STEPS]}]}
+            if "/runs?" in path:return {"workflow_runs":[run] if dispatched[0] else []}
+            raise AssertionError(path)
+        with patch.object(mod,"gh",side_effect=api):
+            out=mod.wait_for_pages(commit,180,clock=lambda:now[0],pause=lambda n:now.__setitem__(0,now[0]+n))
+        self.assertEqual(out["event"],"workflow_dispatch")
+        self.assertEqual(sum(m=="POST" for _,m,_ in calls),1)
+        self.assertGreaterEqual(now[0],mod.PAGES_TRIGGER_GRACE_SECONDS)
+
+    def test_pages_existing_push_no_fallback(self):
+        commit="a"*40
+        run={"head_sha":commit,"event":"push","status":"completed","conclusion":"success","id":18}
+        with patch.object(mod,"gh",return_value={"object":{"sha":commit}}) as api,\
+             patch.object(mod,"pages_runs",return_value=[run]),\
+             patch.object(mod,"pages_certified",return_value={"status":"PASS","run":18}):
+            self.assertEqual(mod.wait_for_pages(commit,180)["run"],18)
+            self.assertTrue(all(x.args[0].endswith("/main") for x in api.call_args_list))
+
+    def test_pages_pending_or_failed_never_dispatch(self):
+        commit="a"*40
+        for status,conclusion in [("in_progress",None),("completed","failure")]:
+            now=[0]
+            run={"head_sha":commit,"event":"push","status":status,"conclusion":conclusion,"id":18}
+            with patch.object(mod,"gh",return_value={"object":{"sha":commit}}) as api,\
+                 patch.object(mod,"pages_runs",return_value=[run]):
+                with self.assertRaises(mod.Hold):
+                    mod.wait_for_pages(commit,180,clock=lambda:now[0],pause=lambda n:now.__setitem__(0,now[0]+n))
+                self.assertTrue(all(x.args[0].endswith("/main") for x in api.call_args_list))
+
+    def test_pages_main_movement_or_ambiguous_runs_hold(self):
+        commit="a"*40
+        with patch.object(mod,"gh",return_value={"object":{"sha":"b"*40}}),\
+             patch.object(mod,"pages_runs") as runs:
+            with self.assertRaisesRegex(mod.Hold,"PAGES_MAIN_CHANGED"):
+                mod.wait_for_pages(commit,180)
+            runs.assert_not_called()
+        with patch.object(mod,"gh",return_value={"object":{"sha":commit}}),\
+             patch.object(mod,"pages_runs",return_value=[{},{}]):
+            with self.assertRaisesRegex(mod.Hold,"PAGES_MULTIPLE"):
+                mod.wait_for_pages(commit,180)
+
+    def test_pages_audit_only_success_is_not_deployment(self):
+        commit="a"*40
+        run={"head_sha":commit,"event":"workflow_dispatch","status":"completed","conclusion":"success","id":19}
+        with patch.object(mod,"gh",return_value={"jobs":[{"name":"build","status":"completed","conclusion":"skipped"},{"name":"deploy","status":"completed","conclusion":"skipped"}]}):
+            with self.assertRaisesRegex(mod.Hold,"PAGES_REQUIRED_JOB"):
+                mod.pages_certified(run,commit)
+        with patch.object(mod,"gh",return_value={"jobs":[{"name":"build","status":"completed","conclusion":"success"},{"name":"deploy","status":"completed","conclusion":"success","steps":[]}]}):
+            with self.assertRaisesRegex(mod.Hold,"PAGES_REQUIRED_DEPLOY_STEPS"):
+                mod.pages_certified(run,commit)
+
     def test_no_commands_triggered_by_import(self):
         self.assertEqual(mod.MARKER,"SLACKQUANT_ONE_PAGES_FOUR_SYSTEM_V1")
 
