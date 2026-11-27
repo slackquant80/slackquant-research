@@ -84,6 +84,7 @@ async function run(){
       const cards=await c.eval('(()=>{return ["f2r","rama"].map(slug=>{const a=[...document.querySelectorAll(".system-card")].find(e=>[...e.querySelectorAll("a[href]")].some(x=>new URL(x.href).pathname==="/systems/"+slug+"/"));return a?{meta:a.querySelector(".card-meta")?.innerText||"",paper:[...a.querySelectorAll("a[href]")].filter(x=>x.href.includes("abstract_id=")).map(x=>({text:x.innerText,href:x.href,target:x.target})),links:[...a.querySelectorAll(".card-artifact-links a")].map(x=>x.innerText)}:null})})()');
       need(cards.every(x=>x&&/Completed through 20\d{2}-\d{2}-\d{2}/.test(x.meta)&&x.paper.length===1&&x.paper[0].text.trim()==='Working Paper (SSRN) ↗'&&x.paper[0].target==='_blank'&&x.links.length===3),'STRATEGY_CARD_PARITY_'+JSON.stringify(cards));
       need(cards[1].paper[0].href.includes('abstract_id=7757240'),'RAMA_CARD_PAPER_ID');
+      need(cards.every(x=>x.meta.includes('Public live')),'STRATEGY_CARD_PUBLIC_STATUS_PARITY');
       result.checks.push('STRATEGY_CARD_PAPER_AND_CLOCK_PARITY');
     }
     if(route==='/research/'){
@@ -111,6 +112,8 @@ async function run(){
     if(route==='/systems/rama/'){
       const evidence=await c.eval('(()=>["#empirical-evidence .live-performance-svg","#empirical-evidence .live-monthly-svg","#empirical-evidence .evidence-table","#operation","#methods .method-used-row"].every(s=>document.querySelector(s)))()');
       need(evidence,'RAMA_SYSTEM_EVIDENCE_MISSING');
+      const clock=await c.eval('(()=>{const m=document.querySelector(".paper-meta")?.innerText||"";const p=document.querySelector("#empirical-evidence")?.innerText||"";return m.includes("Public live")&&m.includes("Completed through")&&p.includes("completed calendar month")&&p.includes("execution-to-execution holding periods through")&&p.includes("Recent Completed Monthly Returns")})()');
+      need(clock,'RAMA_CALENDAR_AND_HOLDING_CLOCK_DISCLOSURE');
       result.checks.push('RAMA_SYSTEM_COMPLETED_EVIDENCE');
     }
     if(route===ramaResearch||route==='/systems/rama/'||route==='/systems/'){

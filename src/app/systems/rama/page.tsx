@@ -77,15 +77,15 @@ export default function RamaSystemPage() {
           </section>
           <section className="prose-section" id="empirical-evidence">
             <div className="kicker">Model portfolio evidence</div><h2>Completed Model Performance</h2>
-            <p className="body-copy">The model portfolio has {evidence.periods} completed holding periods through {evidence.completedThrough}. Market data are available through {evidence.through}; the current, unfinished holding period is excluded from the charts and statistics below.</p>
-            <LivePerformanceChart points={evidence.points} primaryLabel="RAMA" benchmarkLabel="Matched equal weight" subtitle={evidence.start + " → " + evidence.completedThrough + " · month-end observations and execution endpoints · net 10 bp per traded dollar"} />
-            <LiveMonthlyReturnsChart rows={evidence.recentMonthly} primaryLabel="RAMA" benchmarkLabel="Matched equal weight" title="Recent 12 Completed Holding Months" subtitle="Execution-close to next execution-close returns · not calendar-month returns" />
+            <p className="body-copy">Calendar-month performance is completed through {evidence.completedThrough}. Market data are available through {evidence.through}. The charts and statistics below exclude the unfinished calendar month; the dashboard also reports {evidence.periods} completed execution-to-execution holding periods through {evidence.holdingCompletedThrough}.</p>
+            <LivePerformanceChart points={evidence.points} primaryLabel="RAMA" benchmarkLabel="Matched equal weight" subtitle={evidence.start + " → " + evidence.completedThrough + " · completed calendar months · net 10 bp per traded dollar"} />
+            <LiveMonthlyReturnsChart rows={evidence.recentMonthly} primaryLabel="RAMA" benchmarkLabel="Matched equal weight" title="Recent Completed Monthly Returns" subtitle="Calendar-month returns · current MTD excluded" />
             <div className="metrics system-metrics">{[[pct(main.cagr),"RAMA CAGR"],[num(main.sharpe),"Sharpe (Rf=0)"],[pct(main.mdd),"Daily maximum drawdown"],[pct(main.annVol),"Annualized daily volatility"]].map(([v,l]) => <div className="metric" key={l}><div className="value">{v}</div><div className="label">{l}</div></div>)}</div>
             <div className="evidence-table-wrap" role="region" aria-label="RAMA completed model performance" tabIndex={0}><table className="evidence-table">
               <thead><tr><th>Series</th><th>Cumulative</th><th>CAGR</th><th>Volatility</th><th>Sharpe</th><th>Daily MDD</th><th>Calmar</th></tr></thead>
               <tbody>{evidence.rows.map(r => <tr key={r.label}><th scope="row">{r.label}</th><td>{pct(r.cumulativeReturn)}</td><td>{pct(r.cagr)}</td><td>{pct(r.annVol)}</td><td>{num(r.sharpe)}</td><td>{pct(r.mdd)}</td><td>{num(r.calmar)}</td></tr>)}</tbody>
             </table></div>
-            <div className="evidence-note"><strong>Performance basis.</strong> Historical model portfolio returns are not actual investor returns or an independent forward test. Risk statistics use completed daily net returns; CAGR uses elapsed time. The 60/40 reference (SPY and IEF) is shown in the table and full dashboard.</div>
+            <div className="evidence-note"><strong>Performance basis.</strong> Historical model portfolio returns are not actual investor returns or an independent forward test. Risk statistics use daily net returns through the last completed calendar month; CAGR uses elapsed time. The 60/40 reference (SPY and IEF) is shown in the table and full dashboard.</div>
             {dashboardHref ? <div className="actions"><a className="btn primary" href={dashboardHref} target="_blank" rel="noopener noreferrer" data-sq-dashboard-app="true">Open Full RAMA Dashboard ↗</a></div> : null}
             <div className="research-snapshot-block">
               <div className="kicker">Working paper evidence</div><h3>Historical sizing comparison at 25 bp</h3>
@@ -98,7 +98,7 @@ export default function RamaSystemPage() {
             <div className="kicker">Decision timing</div><h2>Model Accounting and Operating States</h2>
             <p className="body-copy">Signals use completed common month-end adjusted USD closes; new targets take effect at the next common trading close. The previous portfolio remains effective through that close; the new target earns returns from the following close-to-close interval. A proportional cost of 10 bp per dollar bought or sold is deducted from portfolio value at execution. Weights drift with market prices between rebalances.</p>
             <div className="system-role-grid adaa-state-grid">
-              <div className="system-role-card adaa-state-card official"><div className="kicker">01 · Official</div><h3>Effective target</h3><p>Last completed signal: {evidence.signal}. Effective execution close: {evidence.completedThrough}.</p></div>
+              <div className="system-role-card adaa-state-card official"><div className="kicker">01 · Official</div><h3>Effective target</h3><p>Last completed signal: {evidence.signal}. Effective execution close: {evidence.holdingCompletedThrough}.</p></div>
               <div className="system-role-card adaa-state-card current"><div className="kicker">02 · Mark</div><h3>Current MTD and drift</h3><p>Model valuations and marked weights through {evidence.through}. Drift does not create a new target.</p></div>
               <div className="system-role-card adaa-state-card preview"><div className="kicker">03 · Next decision</div><h3>Preview or Target Ready</h3><p>Intramonth estimates are provisional. A completed signal awaiting its next execution close is Target Ready, not yet effective.</p></div>
             </div>
